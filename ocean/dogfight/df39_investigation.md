@@ -18,7 +18,14 @@ df39 local artifacts and W&B agree that the best runs are now on commit `1f1e7a0
 
 df38 reached target `8.9` on commit `ae750d44` in multiple runs. Representative top runs include `acj17oyc`, `k9wof24s`, `raewv8jo`, `y5aa27z9`, all at target `8.9`.
 
-df36 used different metric names. It logs `environment/stage` and `environment/avg_stage` instead of `env/curriculum_target`. Top df36 runs reached stage `20` on commit `171482a9`; the best score query found `d8jn9wiv` at stage `20`, score `0.9139`, base-stage kills `0.9569`. High-ELO df36 references also include commit `51514907`.
+df36 used different metric names. It logs `environment/stage` and `environment/avg_stage` instead of `env/curriculum_target`. The user-provided df36 W&B run `kinvert-k/df36/8wv5m6ru` points at the PufferLib 3.0 commit `171482a9b9889bebaa427ab658c95c0fc391c031` (`Increase Max Checpoint Promotions`). Top df36 runs reached stage `20` on commit `171482a9`; the best score query found `d8jn9wiv` at stage `20`, score `0.9139`, base-stage kills `0.9569`. High-ELO df36 references also include commit `51514907`.
+
+Crash/OOB reward check for that exact df36 commit:
+
+- `171482a9b9889bebaa427ab658c95c0fc391c031:pufferlib/ocean/dogfight/dogfight.h` already has the simplified crash rewards: crasher `-1.0`, survivor `+0.25`.
+- Opponent OOB/crash at that commit sets player reward `0.25` and opponent reward `-1.0`.
+- Player OOB/crash at that commit sets player reward `-1.0` and opponent reward `0.25`.
+- Supersonic at that commit sets both player and opponent rewards to `-1.0`.
 
 ## Open Metric Anomaly
 
@@ -95,12 +102,18 @@ Terminal kill parity update:
 - `test_terminal_kill_reference.c` confirms Dogfight5 matches Dogfight3 for the player kill reward, zero-sum opponent reward, terminal flag, reset-visible death/winner bookkeeping, and kill/log counters.
 - This rules out the basic player-kill terminal reward/log/reset path as the current training-quality mismatch. OOB, timeout, opponent-kill, and longer reset traces still need coverage.
 
+Terminal OOB parity update:
+
+- Added a numeric fixture from the exact df36 PufferLib 3.0 commit `171482a9b9889bebaa427ab658c95c0fc391c031` for scripted player-crash and opponent-crash terminal steps.
+- `test_terminal_oob_reference.c` confirms Dogfight5 matches df36 for crasher/survivor rewards, zero-sum opponent rewards, terminal flag, reset-visible OOB bookkeeping, ground-hit counters, base-stage counters, and score/perf logs.
+- This rules out the basic player/opponent OOB terminal reward/log/reset path as the current training-quality mismatch. Timeout, opponent-kill, and longer reset traces still need coverage.
+
 ## Next Tests
 
 - Run a short df40 sweep after this config/obs fix and compare against the old df39 top: target must clear 7-9 without the stage-9 ramp.
 - Run a short `max-runs 2` state-buffer sweep smoke before trusting larger state-memory sweeps.
 - Add additional parity tests against Dogfight3 for scheme 1 observations under broader scripted states.
-- Add OOB, timeout, and opponent-kill reset parity probes against Dogfight3.
+- Add timeout and opponent-kill reset parity probes against Dogfight3.
 - Add physics/step parity probes for neutral action traces and scripted action traces against Dogfight3.
 - Audit `flightlib.h` differences before changing physics.
 
@@ -133,3 +146,6 @@ Terminal kill parity update:
 - `python -m pytest ocean/dogfight/tests/test_c_regressions.py::test_dogfight_c_regression -q -k terminal_kill_reference`: first failed because the new parity test file was missing, then passed after adding the fixture test.
 - `python -m pytest ocean/dogfight/tests/test_c_regressions.py -q`: `9 passed`.
 - `python -m pytest ocean/dogfight/tests -q`: `64 passed, 1 skipped, 2 warnings`.
+- `python -m pytest ocean/dogfight/tests/test_c_regressions.py::test_dogfight_c_regression -q -k terminal_oob_reference`: first failed because the new parity test file was missing, then passed after adding the fixture test.
+- `python -m pytest ocean/dogfight/tests/test_c_regressions.py -q`: `10 passed`.
+- `python -m pytest ocean/dogfight/tests -q`: `65 passed, 1 skipped, 2 warnings`.
