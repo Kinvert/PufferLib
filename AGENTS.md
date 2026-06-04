@@ -23,8 +23,10 @@ Reference repos:
 
 - `/home/claude/dogfight3`
   - PufferLib 3.0-era Dogfight branch.
-  - Trains well and is the behavioral reference for self-play, league, reward,
-    curriculum, evaluation, observations, and opponent handling.
+  - Contains the known-trainable df36 source of truth for self-play, league,
+    reward, curriculum, evaluation, observations, physics, and opponent
+    handling. The user-provided df36 run `kinvert-k/df36/8wv5m6ru` used commit
+    `171482a9b9889bebaa427ab658c95c0fc391c031`.
   - Read-only.
 - `/home/claude/dogfight4`
   - Prior PufferLib 4.0 Dogfight port attempt.
@@ -38,15 +40,20 @@ Reference repos:
 ## Goal
 
 Port Dogfight into clean PufferLib 5.0 in a way that can eventually be cleaned
-up and merged upstream, while preserving the behavior that made Dogfight 3.0
-train well.
+up and merged upstream, while preserving the known-trainable df36/PufferLib 3.0
+environment behavior.
 
 This is not a blind restart. The strategy is:
 
 - Use PufferLib 5.0 as the clean base.
 - Bring in Dogfight incrementally, tests first.
 - Use `/home/claude/PufferLib` and `/home/claude/dogfight4` for 4.0 structure.
-- Use `/home/claude/dogfight3` for behavior and training quality.
+- Use `/home/claude/dogfight3` commit
+  `171482a9b9889bebaa427ab658c95c0fc391c031` as the source of truth for
+  training behavior. Do not change curriculum difficulty, reward semantics,
+  observations, reset semantics, or flight physics away from that commit unless
+  a PufferLib 5 compatibility boundary forces an adapter, and document the
+  adapter with a parity test.
 - Do not enable 5.0 state memory until a normal Dogfight baseline works.
 - Add 5.0 state save/load only after deterministic state roundtrip tests exist.
 
@@ -462,6 +469,13 @@ Latest verification after restoring Dogfight3 scheme1 native observations:
   ocean/dogfight/tests/test_c_regressions.py -q` passed with `10 passed`, and
   `.venv/bin/python -m pytest ocean/dogfight/tests -q` passed with
   `65 passed, 1 skipped, 2 warnings`.
+- Follow-up terminal timeout parity coverage:
+  `test_terminal_timeout_reference` first failed from the regression inventory
+  because the test file was missing, then passed after adding the exact df36
+  commit fixture. `.venv/bin/python -m pytest
+  ocean/dogfight/tests/test_c_regressions.py -q` passed with `11 passed`, and
+  `.venv/bin/python -m pytest ocean/dogfight/tests -q` passed with
+  `66 passed, 1 skipped, 2 warnings`.
 
 Latest plain local-venv GPU smoke after the env-default restore:
 

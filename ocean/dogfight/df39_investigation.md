@@ -5,7 +5,13 @@ Date: 2026-06-04
 ## Constraints
 
 - Do not make the Dogfight curriculum easier than Dogfight3.
-- Treat Dogfight3 as the behavioral reference for curriculum stages, observations, physics, rewards, and self-play behavior.
+- Treat the df36 PufferLib 3.0 run `kinvert-k/df36/8wv5m6ru`, commit
+  `171482a9b9889bebaa427ab658c95c0fc391c031`, as the known-trainable source of
+  truth for curriculum stages, observations, physics, rewards, reset semantics,
+  and self-play behavior.
+- Make only the changes needed to adapt that environment to PufferLib 5.0 APIs,
+  state handling, build/registration, and trainer interfaces. Do not change
+  difficulty levels or flight physics as a training-quality fix.
 - Prefer Dogfight-local fixes. Do not change PufferLib core unless Dogfight-local options have been checked and ruled out.
 
 ## W&B Findings
@@ -26,6 +32,7 @@ Crash/OOB reward check for that exact df36 commit:
 - Opponent OOB/crash at that commit sets player reward `0.25` and opponent reward `-1.0`.
 - Player OOB/crash at that commit sets player reward `-1.0` and opponent reward `0.25`.
 - Supersonic at that commit sets both player and opponent rewards to `-1.0`.
+- Timeout at that commit sets both player and opponent rewards to `-0.5`.
 
 ## Open Metric Anomaly
 
@@ -108,12 +115,18 @@ Terminal OOB parity update:
 - `test_terminal_oob_reference.c` confirms Dogfight5 matches df36 for crasher/survivor rewards, zero-sum opponent rewards, terminal flag, reset-visible OOB bookkeeping, ground-hit counters, base-stage counters, and score/perf logs.
 - This rules out the basic player/opponent OOB terminal reward/log/reset path as the current training-quality mismatch. Timeout, opponent-kill, and longer reset traces still need coverage.
 
+Terminal timeout parity update:
+
+- Added a numeric fixture from the exact df36 PufferLib 3.0 commit `171482a9b9889bebaa427ab658c95c0fc391c031` for a scripted max-step timeout.
+- `test_terminal_timeout_reference.c` confirms Dogfight5 matches df36 for timeout rewards (`-0.5` for both sides), terminal flag, reset-visible timeout bookkeeping, base-stage counters, and score/perf logs.
+- This rules out the basic timeout terminal reward/log/reset path as the current training-quality mismatch. Opponent-kill and longer reset traces still need coverage.
+
 ## Next Tests
 
 - Run a short df40 sweep after this config/obs fix and compare against the old df39 top: target must clear 7-9 without the stage-9 ramp.
 - Run a short `max-runs 2` state-buffer sweep smoke before trusting larger state-memory sweeps.
 - Add additional parity tests against Dogfight3 for scheme 1 observations under broader scripted states.
-- Add timeout and opponent-kill reset parity probes against Dogfight3.
+- Add opponent-kill reset parity probes against Dogfight3.
 - Add physics/step parity probes for neutral action traces and scripted action traces against Dogfight3.
 - Audit `flightlib.h` differences before changing physics.
 
