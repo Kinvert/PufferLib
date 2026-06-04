@@ -352,6 +352,10 @@ Dogfight behavior restored from the 3.0 reference:
   nonterminal scripted step against `/home/claude/dogfight3`, covering player
   and opponent physics under explicit actions, reward breakdown, terminal
   flags, and next scheme1 observations.
+- `ocean/dogfight/tests/test_terminal_kill_reference.c` compares a scripted
+  player kill terminal transition against `/home/claude/dogfight3`, covering
+  player/opponent terminal rewards, reset-visible death/winner flags, and
+  kill/log counters.
 - Native Dogfight policy now uses a Dogfight-specific CUDA encoder matching the
   Dogfight 3 observation path shape: linear projection with bias followed by
   GELU before the recurrent core. This is wired through `create_custom_encoder`
@@ -439,6 +443,13 @@ Latest verification after restoring Dogfight3 scheme1 native observations:
   ocean/dogfight/tests/test_c_regressions.py -q` passed with `8 passed`, and
   `.venv/bin/python -m pytest ocean/dogfight/tests -q` passed with
   `63 passed, 1 skipped`.
+- Follow-up terminal kill parity coverage:
+  `test_terminal_kill_reference` first failed from the regression inventory
+  because the test file was missing, then passed after adding the Dogfight3
+  numeric fixture. `.venv/bin/python -m pytest
+  ocean/dogfight/tests/test_c_regressions.py -q` passed with `9 passed`, and
+  `.venv/bin/python -m pytest ocean/dogfight/tests -q` passed with
+  `64 passed, 1 skipped, 2 warnings`.
 
 Latest plain local-venv GPU smoke after the env-default restore:
 

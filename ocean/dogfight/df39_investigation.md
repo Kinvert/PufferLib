@@ -87,14 +87,20 @@ Step/reward parity update:
 
 - Added a Dogfight3 numeric fixture for one nonterminal scripted `c_step` with explicit player and opponent actions.
 - `test_scripted_step_reference.c` confirms Dogfight5 matches Dogfight3 for next player/opponent plane state, reward components, terminal/death flags, and next scheme1 observations in that fixture.
-- This reduces risk in the nonterminal step/reward path. Terminal kill/OOB/reset transitions and longer action traces still need coverage before treating the port as behavior-complete.
+- This reduces risk in the nonterminal step/reward path. Terminal OOB/timeout/opponent-kill transitions and longer action traces still need coverage before treating the port as behavior-complete.
+
+Terminal kill parity update:
+
+- Added a Dogfight3 numeric fixture for a scripted player kill terminal step.
+- `test_terminal_kill_reference.c` confirms Dogfight5 matches Dogfight3 for the player kill reward, zero-sum opponent reward, terminal flag, reset-visible death/winner bookkeeping, and kill/log counters.
+- This rules out the basic player-kill terminal reward/log/reset path as the current training-quality mismatch. OOB, timeout, opponent-kill, and longer reset traces still need coverage.
 
 ## Next Tests
 
 - Run a short df40 sweep after this config/obs fix and compare against the old df39 top: target must clear 7-9 without the stage-9 ramp.
 - Run a short `max-runs 2` state-buffer sweep smoke before trusting larger state-memory sweeps.
-- Add parity tests against Dogfight3 for scheme 1 observations under scripted states.
-- Add terminal kill/OOB/reset parity probes against Dogfight3.
+- Add additional parity tests against Dogfight3 for scheme 1 observations under broader scripted states.
+- Add OOB, timeout, and opponent-kill reset parity probes against Dogfight3.
 - Add physics/step parity probes for neutral action traces and scripted action traces against Dogfight3.
 - Audit `flightlib.h` differences before changing physics.
 
@@ -124,3 +130,6 @@ Step/reward parity update:
 - `python -m pytest ocean/dogfight/tests/test_c_regressions.py::test_dogfight_c_regression -q -k scripted_step_reference`: first failed because the new parity test file was missing, then passed after adding the fixture test.
 - `python -m pytest ocean/dogfight/tests/test_c_regressions.py -q`: `8 passed`.
 - `python -m pytest ocean/dogfight/tests -q`: `63 passed, 1 skipped`.
+- `python -m pytest ocean/dogfight/tests/test_c_regressions.py::test_dogfight_c_regression -q -k terminal_kill_reference`: first failed because the new parity test file was missing, then passed after adding the fixture test.
+- `python -m pytest ocean/dogfight/tests/test_c_regressions.py -q`: `9 passed`.
+- `python -m pytest ocean/dogfight/tests -q`: `64 passed, 1 skipped, 2 warnings`.

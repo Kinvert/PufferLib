@@ -61,6 +61,7 @@ def compile_and_run_c_test(repo_root: Path, test_name: str, tmp_path: Path):
         "test_observation_padding",
         "test_observation_scheme1_reference",
         "test_scripted_step_reference",
+        "test_terminal_kill_reference",
         "test_state_roundtrip",
     ],
 )
