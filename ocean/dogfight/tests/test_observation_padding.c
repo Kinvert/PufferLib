@@ -27,10 +27,11 @@ static void fill_obs(float* obs, float value) {
     for (int i = 0; i < TEST_OBS_SIZE; i++) obs[i] = value;
 }
 
-static int tail_is_zero(const char* label, const float* obs) {
+static int tail_is_unchanged(const char* label, const float* obs, float expected) {
     for (int i = 22; i < TEST_OBS_SIZE; i++) {
-        if (fabsf(obs[i]) > 1e-6f) {
-            printf("%s: obs[%d]=%.3f expected zero padding [FAIL]\n", label, i, obs[i]);
+        if (fabsf(obs[i] - expected) > 1e-6f) {
+            printf("%s: obs[%d]=%.3f expected untouched %.3f [FAIL]\n",
+                label, i, obs[i], expected);
             return 0;
         }
     }
@@ -52,7 +53,7 @@ static void setup_env(TestEnv* t) {
     t->env.opponent_observations = t->opponent_observations;
 }
 
-static int test_scheme0_zero_pads_fixed_native_obs_width(void) {
+static int test_scheme0_writes_only_declared_obs_width(void) {
     TestEnv t;
     setup_env(&t);
 
@@ -65,21 +66,21 @@ static int test_scheme0_zero_pads_fixed_native_obs_width(void) {
     fill_obs(t.opponent_observations, -123.0f);
     c_reset(&t.env);
     compute_opponent_observations(&t.env, t.opponent_observations);
-    if (!tail_is_zero("obs_padding_reset_player", t.observations)) return 1;
-    if (!tail_is_zero("obs_padding_reset_opponent", t.opponent_observations)) return 1;
+    if (!tail_is_unchanged("obs_width_reset_player", t.observations, 123.0f)) return 1;
+    if (!tail_is_unchanged("obs_width_reset_opponent", t.opponent_observations, -123.0f)) return 1;
 
     const float neutral[TEST_NUM_ATNS] = {0.5f, 0.0f, 0.0f, 0.0f, -1.0f};
     memcpy(t.actions, neutral, sizeof(neutral));
     fill_obs(t.observations, 77.0f);
     fill_obs(t.opponent_observations, -77.0f);
     c_step(&t.env);
-    if (!tail_is_zero("obs_padding_step_player", t.observations)) return 1;
-    if (!tail_is_zero("obs_padding_step_opponent", t.opponent_observations)) return 1;
+    if (!tail_is_unchanged("obs_width_step_player", t.observations, 77.0f)) return 1;
+    if (!tail_is_unchanged("obs_width_step_opponent", t.opponent_observations, -77.0f)) return 1;
 
-    printf("obs_padding: scheme0 zero-pads fixed native observation width [OK]\n");
+    printf("obs_width: scheme0 writes only declared observation width [OK]\n");
     return 0;
 }
 
 int main(void) {
-    return test_scheme0_zero_pads_fixed_native_obs_width();
+    return test_scheme0_writes_only_declared_obs_width();
 }

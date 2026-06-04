@@ -26,15 +26,16 @@ df36 used different metric names. It logs `environment/stage` and `environment/a
 - Dogfight5 had an active stage-9 bank ramp through config (`stage9_bank_deg=-1`, `stage9_bank_curriculum=1`). Dogfight3 did not train with that easier stage-9 ramp; stage 9 comes directly from `STAGES[9].bank == 30`.
 - df36 W&B configs often show `obs_scheme=2`, but local Dogfight3 only accepts schemes `0` and `1`; invalid scheme `2` falls back to scheme `0`. That means the df36 stage-20 reference likely trained on effective `OBS_PILOT` scheme `0`.
 - Dogfight5 config was using `obs_scheme=1`, which adds opponent up vector and opponent speed. That is a likely behavior mismatch, not a curriculum difficulty issue.
-- Dogfight5 native binding currently advertises fixed observation width `26`. Scheme 0 writes `22` values, so the unused tail must be zeroed to avoid stale observations.
+- Dogfight5 native binding previously advertised fixed observation width `26`. Scheme 0 writes `22` values, so that trained a 26-input native encoder on four structural zeros. The binding now exposes the df36-effective scheme-0 width directly (`22`) and clamps native Dogfight training to `OBS_PILOT`.
 
 ## Changes Made From This Investigation
 
 - Set `config/dogfight.ini` default `obs_scheme = 0` to match the likely effective df36 observation path.
 - Set `config/dogfight.ini` `stage9_bank_deg = 30.0` and `stage9_bank_curriculum = 0` so active training uses Dogfight3 stage-9 difficulty.
-- Added zero-padding for fixed-width native observations when a smaller Dogfight observation scheme is active.
-- Added `test_observation_padding.c` to prove scheme 0 does not leak stale values into the unused 26-wide native observation tail.
+- Replaced the earlier fixed-26 padding mitigation with a native `OBS_SIZE 22` binding for the active df36-effective scheme-0 path.
+- Updated `test_observation_padding.c` to prove scheme 0 writes only its declared 22 values instead of clearing/writing a 26-wide tail.
 - Set Dogfight's omitted-key stage-9 defaults to Dogfight3 behavior (`30.0` bank, no substep ramp). Explicit `stage9_bank_deg = -1` still keeps the diagnostic ramp reachable, but it is no longer the default in C init, native binding fallback, or Dogfight-specific pufferl curriculum setup.
+- Changed the native Dogfight binding to advertise `OBS_SIZE 22`, matching the df36-effective scheme-0 observation count. The direct C observation regression now proves scheme 0 writes only its declared 22 values instead of clearing/writing a 26-wide tail.
 
 ## Not Changed
 
@@ -47,9 +48,10 @@ df36 used different metric names. It logs `environment/stage` and `environment/a
 ## Current Culprit Ranking
 
 1. Observation mismatch: df36 effective scheme 0 vs df39 scheme 1. This is a real behavior mismatch and should be tested first.
-2. Stage-9 easing: df39 target `9.9` happened while stage 9 was easier than Dogfight3. Treat those results as not directly comparable to df36 until the fixed 30-degree stage-9 path is swept. The active config and omitted-key defaults now both use 30 degrees.
-3. Native policy architecture: commit `1f1e7a04` restored Dogfight3-style `Linear + bias + GELU` encoder behavior and df39 improved after it. Keep this under scrutiny because it lives in `src/ocean.cu`, but it uses the existing custom encoder extension point.
-4. Remaining likely areas: action scaling/logprob path, observation parity, step/reset semantics, reward terms, and physics parity. No curriculum step changes should be used as a fix.
+2. Native input width mismatch: df36-effective scheme 0 is 22 observations; the port previously gave the native policy 26 inputs. This is now fixed in the Dogfight binding.
+3. Stage-9 easing: df39 target `9.9` happened while stage 9 was easier than Dogfight3. Treat those results as not directly comparable to df36 until the fixed 30-degree stage-9 path is swept. The active config and omitted-key defaults now both use 30 degrees.
+4. Native policy architecture: commit `1f1e7a04` restored Dogfight3-style `Linear + bias + GELU` encoder behavior and df39 improved after it. Keep this under scrutiny because it lives in `src/ocean.cu`, but it uses the existing custom encoder extension point.
+5. Remaining likely areas: action scaling/logprob path, exact native weight initialization vs Dogfight3 recurrent wrapper, observation parity, step/reset semantics, reward terms, and physics parity. No curriculum step changes should be used as a fix.
 
 ## Next Tests
 
@@ -65,3 +67,6 @@ df36 used different metric names. It logs `environment/stage` and `environment/a
 - `python -m pytest ocean/dogfight/tests/test_c_regressions.py ocean/dogfight/tests/test_curriculum_progress.py -q`: `12 passed`.
 - `python -m pytest ocean/dogfight/tests -q`: `60 passed, 1 skipped`.
 - `python -m pytest ocean/dogfight/tests/test_port_build.py::test_dogfight_gpu_vec_creates_and_resets -q`: skipped in this environment.
+- `python -m pytest ocean/dogfight/tests/test_native_policy_architecture.py::test_dogfight_native_binding_uses_df36_effective_scheme0_width ocean/dogfight/tests/test_c_regressions.py::test_dogfight_c_regression -q -k 'native_binding or observation_padding'`: `2 passed`.
+- `python -m pytest ocean/dogfight/tests/test_c_regressions.py ocean/dogfight/tests/test_native_policy_architecture.py ocean/dogfight/tests/test_port_build.py::test_dogfight_training_backend_builds -q`: `9 passed`.
+- `python -m pytest ocean/dogfight/tests -q`: `61 passed, 1 skipped`.

@@ -740,16 +740,12 @@ void compute_obs_opponent_aware(Dogfight *env) {
 // ============================================================================
 // Dispatcher function
 // ============================================================================
-static inline void zero_observation_buffer(float *obs_buffer) {
-    int max_obs = 0;
-    for (int i = 0; i < OBS_SCHEME_COUNT; i++) {
-        if (OBS_SIZES[i] > max_obs) max_obs = OBS_SIZES[i];
-    }
-    for (int i = 0; i < max_obs; i++) obs_buffer[i] = 0.0f;
+static inline void zero_observation_buffer(float *obs_buffer, int obs_size) {
+    for (int i = 0; i < obs_size; i++) obs_buffer[i] = 0.0f;
 }
 
 void compute_observations(Dogfight *env) {
-    zero_observation_buffer(env->observations);
+    zero_observation_buffer(env->observations, env->obs_size);
     switch (env->obs_scheme) {
         // case OBS_MOMENTUM_GFORCE:  compute_obs_momentum_gforce(env); break;  // removed
         case OBS_PILOT:            compute_obs_pilot(env); break;
@@ -765,9 +761,10 @@ void compute_observations(Dogfight *env) {
 // In self-play, both player and opponent feed into the same policy,
 // so they must see identically-structured observations.
 void compute_opponent_observations(Dogfight *env, float *opp_obs_buffer) {
-    zero_observation_buffer(opp_obs_buffer);
     // Use opponent_obs_scheme if set, otherwise fall back to player's obs_scheme
     int scheme = (env->opponent_obs_scheme >= 0) ? env->opponent_obs_scheme : env->obs_scheme;
+    int obs_size = (scheme >= 0 && scheme < OBS_SCHEME_COUNT) ? OBS_SIZES[scheme] : OBS_SIZES[OBS_PILOT];
+    zero_observation_buffer(opp_obs_buffer, obs_size);
     switch (scheme) {
         // case OBS_MOMENTUM_GFORCE:  compute_obs_momentum_gforce_for_plane(env, &env->opponent, &env->player, opp_obs_buffer); break;  // removed
         case OBS_PILOT:            compute_obs_pilot_for_plane(env, &env->opponent, &env->player, opp_obs_buffer); break;
