@@ -19,8 +19,8 @@ def test_dogfight_native_encoder_restores_dogfight3_gelu_observation_path():
     assert "dogfight_gelu_bias_grad_kernel" in ocean_cu
 
 
-def test_dogfight_native_binding_uses_df36_effective_scheme0_width():
+def test_dogfight_native_binding_uses_dogfight3_default_scheme1_width():
     binding_c = (repo_root() / "ocean" / "dogfight" / "binding.c").read_text()
 
-    assert "#define OBS_SIZE 22" in binding_c
-    assert "if (obs_scheme != OBS_PILOT) obs_scheme = OBS_PILOT;" in binding_c
+    assert "#define OBS_SIZE 26" in binding_c
+    assert "if (obs_scheme != OBS_PILOT) obs_scheme = OBS_PILOT;" not in binding_c

@@ -44,18 +44,17 @@ Next audit step: after the next sweep uses normalized signed-bias telemetry, com
 
 - Curriculum stage enum and `STAGES` table match Dogfight3, including stage 9 bank `30`, stage 17 bank `60`, stage 18 crossing geometry, and stage 20 AutoAce.
 - Dogfight5 had an active stage-9 bank ramp through config (`stage9_bank_deg=-1`, `stage9_bank_curriculum=1`). Dogfight3 did not train with that easier stage-9 ramp; stage 9 comes directly from `STAGES[9].bank == 30`.
-- df36 W&B configs often show `obs_scheme=2`, but local Dogfight3 only accepts schemes `0` and `1`; invalid scheme `2` falls back to scheme `0`. That means the df36 stage-20 reference likely trained on effective `OBS_PILOT` scheme `0`.
-- Dogfight5 config was using `obs_scheme=1`, which adds opponent up vector and opponent speed. That is a likely behavior mismatch, not a curriculum difficulty issue.
-- Dogfight5 native binding previously advertised fixed observation width `26`. Scheme 0 writes `22` values, so that trained a 26-input native encoder on four structural zeros. The binding now exposes the df36-effective scheme-0 width directly (`22`) and clamps native Dogfight training to `OBS_PILOT`.
+- Dogfight3's checked-in config uses `obs_scheme=1`. In the Dogfight3 enum, scheme 1 is `OBS_OPPONENT_AWARE` and writes 26 observations.
+- df36 W&B configs often show `obs_scheme=2`, but local Dogfight3 only accepts schemes `0` and `1`; that metadata is ambiguous and is not stronger than the checked-in Dogfight3 config plus enum.
+- Dogfight5 was changed in `d9608b28` to native `OBS_SIZE 22` and a clamp to `OBS_PILOT`. That prevented the checked-in Dogfight3 default scheme1 / 26-wide path from being represented in native training.
 
 ## Changes Made From This Investigation
 
-- Set `config/dogfight.ini` default `obs_scheme = 0` to match the likely effective df36 observation path.
+- Restored `config/dogfight.ini` default `obs_scheme = 1` to match the checked-in Dogfight3 environment config.
 - Set `config/dogfight.ini` `stage9_bank_deg = 30.0` and `stage9_bank_curriculum = 0` so active training uses Dogfight3 stage-9 difficulty.
-- Replaced the earlier fixed-26 padding mitigation with a native `OBS_SIZE 22` binding for the active df36-effective scheme-0 path.
+- Restored native Dogfight binding `OBS_SIZE 26` and removed the scheme0 clamp, so native training can use Dogfight3's default scheme1 observation path.
 - Updated `test_observation_padding.c` to prove scheme 0 writes only its declared 22 values instead of clearing/writing a 26-wide tail.
 - Set Dogfight's omitted-key stage-9 defaults to Dogfight3 behavior (`30.0` bank, no substep ramp). Explicit `stage9_bank_deg = -1` still keeps the diagnostic ramp reachable, but it is no longer the default in C init, native binding fallback, or Dogfight-specific pufferl curriculum setup.
-- Changed the native Dogfight binding to advertise `OBS_SIZE 22`, matching the df36-effective scheme-0 observation count. The direct C observation regression now proves scheme 0 writes only its declared 22 values instead of clearing/writing a 26-wide tail.
 - Set Dogfight's direct native `policy.action_init_scale` default to `1.0`. Dogfight3's policy constructor used `0.01`, but `DogfightRecurrent` immediately reinitialized wrapped policy weights with orthogonal gain `1.0`, making `1.0` the effective df36 action-head scale.
 - Moved Dogfight reset/spawn/domain-randomization draws from process-global `rand()`/`rndf()` to `env->rng`, matching the PufferLib 5 state-memory pattern used by Boxoban/G2048. The added terminal roundtrip test first failed because restored pre-kill states reset into different future geometry, then passed after the local RNG fix.
 - Normalized Dogfight signed-bias telemetry by episode length before logging it, so `avg_signed_bias`, `base_stage_signed_bias_*`, and side-variant signed-bias diagnostics are mean per-step action biases rather than cumulative per-episode sums.
@@ -67,12 +66,12 @@ Next audit step: after the next sweep uses normalized signed-bias telemetry, com
 - Did not change action scaling, continuous-action distribution code, or optimizer code.
 - Did not change curriculum promotion logic; signed bias remains diagnostic and does not gate stage advancement.
 - Did not change general PufferLib core behavior. The only non-`ocean/dogfight` edit was Dogfight-specific fallback handling in `pufferlib/pufferl.py`.
-- Did not enable self-play or anchor-rating optimization for df39 stage-climb sweeps.
+- Did not enable self-play or anchor-rating optimization for df39/df40 stage-climb sweeps.
 
 ## Current Culprit Ranking
 
-1. Observation mismatch: df36 effective scheme 0 vs df39 scheme 1. This is a real behavior mismatch and should be tested first.
-2. Native input width mismatch: df36-effective scheme 0 is 22 observations; the port previously gave the native policy 26 inputs. This is now fixed in the Dogfight binding.
+1. Observation mismatch: current Dogfight5 had drifted to scheme0 / 22-wide native obs, while the checked-in Dogfight3 config uses scheme1 / 26-wide opponent-aware obs. This has been restored locally and needs df40 training evidence.
+2. Native input width mismatch: native `OBS_SIZE 22` plus a scheme0 clamp prevented the scheme1 config from taking effect. This is now fixed in the Dogfight binding.
 3. Stage-9 easing: df39 target `9.9` happened while stage 9 was easier than Dogfight3. Treat those results as not directly comparable to df36 until the fixed 30-degree stage-9 path is swept. The active config and omitted-key defaults now both use 30 degrees.
 4. Native policy architecture: commit `1f1e7a04` restored Dogfight3-style `Linear + bias + GELU` encoder behavior and df39 improved after it. Keep this under scrutiny because it lives in `src/ocean.cu`, but it uses the existing custom encoder extension point.
 5. State-memory reset RNG: before the env-local RNG fix, a restored preterminal state could produce a different post-terminal reset because reset/spawn used process-global `rand()`. This is now fixed for the stage-climb reset/spawn path and covered by `test_state_roundtrip.c`.
@@ -80,9 +79,9 @@ Next audit step: after the next sweep uses normalized signed-bias telemetry, com
 
 ## Next Tests
 
-- Run a short df39 sweep after this config/obs fix and compare against the old top: target must clear 7-9 without the stage-9 ramp.
+- Run a short df40 sweep after this config/obs fix and compare against the old df39 top: target must clear 7-9 without the stage-9 ramp.
 - Run a short `max-runs 2` state-buffer sweep smoke before trusting larger state-memory sweeps.
-- Add parity tests against Dogfight3 for scheme 0 observations under scripted states.
+- Add parity tests against Dogfight3 for scheme 1 observations under scripted states.
 - Add physics/step parity probes for neutral action traces and scripted action traces against Dogfight3.
 - Audit `flightlib.h` differences before changing physics.
 
@@ -93,7 +92,6 @@ Next audit step: after the next sweep uses normalized signed-bias telemetry, com
 - `python -m pytest ocean/dogfight/tests/test_c_regressions.py ocean/dogfight/tests/test_curriculum_progress.py -q`: `12 passed`.
 - `python -m pytest ocean/dogfight/tests -q`: `60 passed, 1 skipped`.
 - `python -m pytest ocean/dogfight/tests/test_port_build.py::test_dogfight_gpu_vec_creates_and_resets -q`: skipped in this environment.
-- `python -m pytest ocean/dogfight/tests/test_native_policy_architecture.py::test_dogfight_native_binding_uses_df36_effective_scheme0_width ocean/dogfight/tests/test_c_regressions.py::test_dogfight_c_regression -q -k 'native_binding or observation_padding'`: `2 passed`.
 - `python -m pytest ocean/dogfight/tests/test_c_regressions.py ocean/dogfight/tests/test_native_policy_architecture.py ocean/dogfight/tests/test_port_build.py::test_dogfight_training_backend_builds -q`: `9 passed`.
 - `python -m pytest ocean/dogfight/tests -q`: `61 passed, 1 skipped`.
 - `python -m pytest ocean/dogfight/tests/test_policy_init.py -q`: `7 passed`.
@@ -102,3 +100,8 @@ Next audit step: after the next sweep uses normalized signed-bias telemetry, com
 - `python -m pytest ocean/dogfight/tests -q`: `61 passed, 1 skipped`.
 - `source .venv/bin/activate && ./build.sh dogfight`: built `pufferlib/_C.cpython-312-x86_64-linux-gnu.so`.
 - `python -m pufferlib.pufferl train dogfight --train.gpus 1 --train.total-timesteps 5000000`: native trainer completed, TUI showed GPU usage and normal Dogfight curriculum metrics.
+- Red TDD check for scheme1 restore failed before implementation because native binding was `OBS_SIZE 22` and config was `obs_scheme = 0`; after the Dogfight-local fix, the same narrow check passed with `2 passed`.
+- `python -m pytest ocean/dogfight/tests/test_port_config.py ocean/dogfight/tests/test_native_policy_architecture.py ocean/dogfight/tests/test_policy_init.py -q`: `19 passed`.
+- `python -m pytest ocean/dogfight/tests/test_c_regressions.py -q`: `6 passed`.
+- `python -m pytest ocean/dogfight/tests -q`: `61 passed, 1 skipped`.
+- `source .venv/bin/activate && ./build.sh dogfight`: built `pufferlib/_C.cpython-312-x86_64-linux-gnu.so` after native `OBS_SIZE 26` was restored.

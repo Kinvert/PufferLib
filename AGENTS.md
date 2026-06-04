@@ -234,7 +234,7 @@ single-GPU W&B search command is:
 
 ```bash
 source .venv/bin/activate
-python -m pufferlib.pufferl sweep dogfight --sweep.gpus 1 --train.gpus 1 --sweep.max-runs 20 --wandb --wandb-project df39 --wandb-group df39-stage9-short
+python -m pufferlib.pufferl sweep dogfight --sweep.gpus 1 --train.gpus 1 --sweep.max-runs 20 --wandb --wandb-project df40 --wandb-group df40-scheme1-short
 ```
 
 Plain Dogfight training should stay Dogfight 3-derived unless a concrete
@@ -315,9 +315,9 @@ PufferLib 5 keys in `config/dogfight.ini`:
 
 - `policy.hidden_size = 128`
 - `policy.num_layers = 1` (Dogfight 3 used one recurrent layer)
-- `policy.action_init_scale = 0.01` default, with sweep max reaching `1.0`.
-  Dogfight 3's config constructed the continuous action head with `0.01`, but
-  its LSTM wrapper then reinitialized wrapped policy weights with scale `1.0`.
+- `policy.action_init_scale = 1.0`. Dogfight 3's config constructed the
+  continuous action head with `0.01`, but its LSTM wrapper then reinitialized
+  wrapped policy weights with scale `1.0`.
 - `policy.value_init_scale = 1.0`
 - `learning_rate = 0.00045`
 - `horizon = 64` (Dogfight 3 `bptt_horizon`)
@@ -336,12 +336,14 @@ PufferLib 5 keys in `config/dogfight.ini`:
 - `vtrace_c_clip = 3.5`
 - `replay_ratio = 1.0`
 - `env.domain_randomization = 0.05`
+- `env.obs_scheme = 1` (Dogfight 3 checked-in default, 26 opponent-aware obs)
 - `env.vertical_spawn_prob = 0.02`
 - `env.recovery_trigger_prob = 0.067`
 
 Dogfight behavior restored from the 3.0 reference:
 
-- Observation code matches Dogfight 3.
+- Observation code matches Dogfight 3, and native training uses the checked-in
+  Dogfight 3 default `obs_scheme = 1` / 26-wide opponent-aware observations.
 - Native Dogfight policy now uses a Dogfight-specific CUDA encoder matching the
   Dogfight 3 observation path shape: linear projection with bias followed by
   GELU before the recurrent core. This is wired through `create_custom_encoder`
@@ -368,10 +370,8 @@ Dogfight sweep space now includes:
   `base_stage_kills ~= 0.33`.
 - `vec.num_buffers` sampled as `int_uniform`, centered at `3` after the best
   measured short run used that topology.
-- `policy.action_init_scale` is centered at `1.0` for sweeps, while plain
-  training still defaults to the Dogfight 3 `0.01`. Dogfight 3's recurrent
-  wrapper made an effective `1.0` scale reachable, and the best 5.0 short run
-  used the native `1.0` action-head scale.
+- `policy.action_init_scale` is centered at `1.0` for sweeps, matching the
+  plain Dogfight5 default and the effective Dogfight3 recurrent wrapper scale.
 - `policy.num_layers` from `1` to `3`, sampled as `int_uniform`, centered at
   `2` for the current PufferLib 5 native sweep.
 - `train.minibatch_size` from `4096` to `16384`, centered at `4096`.
@@ -395,35 +395,28 @@ the Dogfight sweep config as a deliberate, reviewable search-space change. For
 environment behavior changes, first compare against Dogfight 3 and port one
 concrete mismatch at a time.
 
-Latest verification after the Dogfight native GELU encoder update:
+Latest verification after restoring Dogfight3 scheme1 native observations:
 
-- `.venv/bin/python -m pytest ocean/dogfight/tests -q`:
-  `58 passed, 1 skipped`.
-- `bash -lc "source .venv/bin/activate && ./build.sh dogfight"`:
-  built `pufferlib/_C.cpython-312-x86_64-linux-gnu.so`.
-- `.venv/bin/python -m pufferlib.pufferl sweep dogfight --sweep.gpus 1
-  --train.gpus 1 --sweep.max-runs 1`: completed with exit code `0`, GPU
-  active, `53.4K` params. It promoted from curriculum target `0.90` to `1.90`
-  around `1.3M` steps and finished the 50M baseline trial around target/stage
-  `1.9`. This verifies the custom encoder runs in native training; it does not
-  prove mastery-level training quality yet.
-- Loaded `config/dogfight.ini` keeps plain `[train]` on the Dogfight 3-derived
-  baseline (`learning_rate = 0.00045`, `horizon = 64`, `minibatch_size =
-  65536`, `policy.num_layers = 1`, `policy.action_init_scale = 0.01`).
-- A direct `Protein(...).suggest(...)` from the Dogfight sweep config returns
-  the new short-stage-climb center: `learning_rate = 0.005`, `horizon = 128`,
-  `minibatch_size = 4096`, `policy.num_layers = 2`, `action_init_scale = 1.0`,
-  `vec.num_buffers = 3`, `replay_ratio = 0.5`, `gamma = 0.98`, and `50M`
-  timesteps.
-- `.venv/bin/python -m pufferlib.pufferl sweep dogfight --sweep.gpus 1
-  --train.gpus 1 --sweep.max-runs 2`: completed with exit code `0`. Trial 1
-  used the short Dogfight 3 baseline (`53.3K` params). Trial 2 used the new
-  PROTEIN sweep center (`102.4K` params), GPU active, about `1.7/8G` VRAM and
-  roughly `0.8M-1.5M` SPS through the run.
-- `PYTHONUNBUFFERED=1 .venv/bin/python -m pufferlib.pufferl sweep dogfight --sweep.gpus 1 --train.gpus 1 --sweep.max-runs 2`:
-  completed with exit code `0`; the second PROTEIN trial launched with
-  nonzero state-memory sweep knobs and active GPU, around `1.8M` SPS and
-  `1.9/8G` VRAM.
+- Red check before implementation:
+  `.venv/bin/python -m pytest ocean/dogfight/tests/test_native_policy_architecture.py::test_dogfight_native_binding_uses_dogfight3_default_scheme1_width ocean/dogfight/tests/test_port_config.py::test_dogfight_config_matches_dogfight3_env_config_baseline -q`
+  failed because `binding.c` still advertised `OBS_SIZE 22` and
+  `config/dogfight.ini` still used `obs_scheme = 0`.
+- Green narrow check after implementation: same command passed with `2 passed`.
+- Focused checks:
+  `.venv/bin/python -m pytest ocean/dogfight/tests/test_port_config.py ocean/dogfight/tests/test_native_policy_architecture.py ocean/dogfight/tests/test_policy_init.py -q`
+  passed with `19 passed`.
+- C regressions:
+  `.venv/bin/python -m pytest ocean/dogfight/tests/test_c_regressions.py -q`
+  passed with `6 passed`.
+- Full Dogfight suite:
+  `.venv/bin/python -m pytest ocean/dogfight/tests -q` passed with
+  `61 passed, 1 skipped`.
+- Build:
+  `bash -lc 'source .venv/bin/activate && ./build.sh dogfight'` built
+  `pufferlib/_C.cpython-312-x86_64-linux-gnu.so`.
+- Training quality is not proven by this change yet. The next sweep should be
+  df40 and should first use a short bounded run to see whether the restored
+  26-wide scheme1 path climbs past early curriculum stages.
 
 Latest plain local-venv GPU smoke after the env-default restore:
 

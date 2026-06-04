@@ -50,7 +50,7 @@ def test_dogfight_gpu_vec_creates_and_resets():
         },
         "env": {
             "max_steps": 300,
-            "obs_scheme": 0,
+            "obs_scheme": 1,
             "curriculum_enabled": 1,
             "curriculum_randomize": 0,
             "reward_aim_scale": 0.001695,
@@ -84,7 +84,7 @@ def test_dogfight_gpu_vec_creates_and_resets():
         assert _C.gpu == 1
         assert vec.gpu == 1
         assert vec.total_agents == 1
-        assert vec.obs_size == 22
+        assert vec.obs_size == 26
         assert vec.num_atns == 5
         assert vec.act_sizes == [1, 1, 1, 1, 1]
         vec.reset()

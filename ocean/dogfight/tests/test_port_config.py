@@ -113,9 +113,12 @@ def test_dogfight_config_matches_dogfight3_env_config_baseline():
     repo_root = Path(__file__).resolve().parents[3]
     parser = ConfigParser()
     parser.read(repo_root / "config" / "dogfight.ini")
+    dogfight3 = ConfigParser()
+    dogfight3.read("/home/claude/dogfight3/pufferlib/config/ocean/dogfight.ini")
 
     assert parser.getint("env", "max_steps") == 300
-    assert parser.getint("env", "obs_scheme") == 0
+    assert dogfight3.getint("env", "obs_scheme") == 1
+    assert parser.getint("env", "obs_scheme") == dogfight3.getint("env", "obs_scheme")
     assert parser.getfloat("env", "reward_aim_scale") == 0.001695
     assert parser.getfloat("env", "reward_closing_scale") == 0.0001
     assert parser.getfloat("env", "penalty_neg_g") == 0.035
