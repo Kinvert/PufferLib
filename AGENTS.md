@@ -335,6 +335,11 @@ PufferLib 5 keys in `config/dogfight.ini`:
 Dogfight behavior restored from the 3.0 reference:
 
 - Observation code matches Dogfight 3.
+- Native Dogfight policy now uses a Dogfight-specific CUDA encoder matching the
+  Dogfight 3 observation path shape: linear projection with bias followed by
+  GELU before the recurrent core. This is wired through `create_custom_encoder`
+  for `env_name == "dogfight"` in `src/ocean.cu`; other envs keep their
+  existing native encoder paths.
 - Flight physics differs only by a macro rename from `K` to
   `INDUCED_DRAG_K`.
 - Stage 10 dive attack uses the Dogfight 3 angle window `120-175` degrees.
@@ -378,10 +383,18 @@ the Dogfight sweep config as a deliberate, reviewable search-space change. For
 environment behavior changes, first compare against Dogfight 3 and port one
 concrete mismatch at a time.
 
-Latest verification after the PufferLib 5 native short-sweep center update:
+Latest verification after the Dogfight native GELU encoder update:
 
 - `.venv/bin/python -m pytest ocean/dogfight/tests -q`:
-  `57 passed, 1 skipped`.
+  `58 passed, 1 skipped`.
+- `bash -lc "source .venv/bin/activate && ./build.sh dogfight"`:
+  built `pufferlib/_C.cpython-312-x86_64-linux-gnu.so`.
+- `.venv/bin/python -m pufferlib.pufferl sweep dogfight --sweep.gpus 1
+  --train.gpus 1 --sweep.max-runs 1`: completed with exit code `0`, GPU
+  active, `53.4K` params. It promoted from curriculum target `0.90` to `1.90`
+  around `1.3M` steps and finished the 50M baseline trial around target/stage
+  `1.9`. This verifies the custom encoder runs in native training; it does not
+  prove mastery-level training quality yet.
 - Loaded `config/dogfight.ini` keeps plain `[train]` on the Dogfight 3-derived
   baseline (`learning_rate = 0.00045`, `horizon = 64`, `minibatch_size =
   65536`, `policy.num_layers = 1`, `policy.action_init_scale = 0.01`).
@@ -395,8 +408,6 @@ Latest verification after the PufferLib 5 native short-sweep center update:
   used the short Dogfight 3 baseline (`53.3K` params). Trial 2 used the new
   PROTEIN sweep center (`102.4K` params), GPU active, about `1.7/8G` VRAM and
   roughly `0.8M-1.5M` SPS through the run.
-- `source .venv/bin/activate; ./build.sh dogfight`:
-  built `pufferlib/_C.cpython-312-x86_64-linux-gnu.so`.
 - `PYTHONUNBUFFERED=1 .venv/bin/python -m pufferlib.pufferl sweep dogfight --sweep.gpus 1 --train.gpus 1 --sweep.max-runs 2`:
   completed with exit code `0`; the second PROTEIN trial launched with
   nonzero state-memory sweep knobs and active GPU, around `1.8M` SPS and

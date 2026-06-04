@@ -107,6 +107,156 @@ __global__ void bias_grad_kernel(
     }
 }
 
+// ---- Dogfight encoder: Linear(obs -> hidden) + bias + GELU ----
+
+struct DogfightGELUEncoderWeights {
+    PrecisionTensor weight, bias;
+    int obs_size, hidden;
+};
+
+struct DogfightGELUEncoderActivations {
+    PrecisionTensor linear, out, saved_input, grad_linear, wgrad, bgrad;
+};
+
+__device__ __forceinline__ float dogfight_gelu(float x) {
+    constexpr float kAlpha = 0.7978845608028654f;
+    constexpr float kBeta = 0.044715f;
+    float x3 = x * x * x;
+    return 0.5f * x * (1.0f + tanhf(kAlpha * (x + kBeta * x3)));
+}
+
+__device__ __forceinline__ float dogfight_gelu_backward_value(float x) {
+    constexpr float kAlpha = 0.7978845608028654f;
+    constexpr float kBeta = 0.044715f;
+    float x2 = x * x;
+    float x3 = x2 * x;
+    float u = kAlpha * (x + kBeta * x3);
+    float t = tanhf(u);
+    float sech2 = 1.0f - t * t;
+    float du = kAlpha * (1.0f + 3.0f * kBeta * x2);
+    return 0.5f * (1.0f + t) + 0.5f * x * sech2 * du;
+}
+
+__global__ void dogfight_gelu_bias_kernel(
+    const precision_t* __restrict__ linear, const precision_t* __restrict__ bias,
+    precision_t* __restrict__ out, int total, int hidden) {
+    int idx = blockIdx.x * blockDim.x + threadIdx.x;
+    if (idx >= total) return;
+    float x = to_float(linear[idx]) + to_float(bias[idx % hidden]);
+    out[idx] = from_float(dogfight_gelu(x));
+}
+
+__global__ void dogfight_gelu_backward_kernel(
+    precision_t* __restrict__ grad_linear, const precision_t* __restrict__ grad_out,
+    const precision_t* __restrict__ linear, const precision_t* __restrict__ bias,
+    int total, int hidden) {
+    int idx = blockIdx.x * blockDim.x + threadIdx.x;
+    if (idx >= total) return;
+    float x = to_float(linear[idx]) + to_float(bias[idx % hidden]);
+    float grad = to_float(grad_out[idx]) * dogfight_gelu_backward_value(x);
+    grad_linear[idx] = from_float(grad);
+}
+
+__global__ void dogfight_gelu_bias_grad_kernel(
+    precision_t* __restrict__ bgrad, const precision_t* __restrict__ grad, int N, int dim) {
+    int d = blockIdx.x;
+    if (d >= dim) return;
+    float sum = 0.0f;
+    for (int i = threadIdx.x; i < N; i += blockDim.x)
+        sum += to_float(grad[i * dim + d]);
+    for (int offset = 16; offset > 0; offset >>= 1)
+        sum += __shfl_down_sync(0xffffffff, sum, offset);
+    __shared__ float sdata[32];
+    int lane = threadIdx.x % 32, warp = threadIdx.x / 32;
+    if (lane == 0) sdata[warp] = sum;
+    __syncthreads();
+    if (warp == 0) {
+        sum = (lane < (blockDim.x + 31) / 32) ? sdata[lane] : 0.0f;
+        for (int offset = 16; offset > 0; offset >>= 1)
+            sum += __shfl_down_sync(0xffffffff, sum, offset);
+        if (lane == 0) bgrad[d] = from_float(sum);
+    }
+}
+
+static PrecisionTensor dogfight_gelu_encoder_forward(void* w, void* activations, PrecisionTensor input, cudaStream_t stream) {
+    DogfightGELUEncoderWeights* ew = (DogfightGELUEncoderWeights*)w;
+    DogfightGELUEncoderActivations* a = (DogfightGELUEncoderActivations*)activations;
+    int B = input.shape[0], H = ew->hidden;
+    if (a->saved_input.data) puf_copy(&a->saved_input, &input, stream);
+    puf_mm(&input, &ew->weight, &a->linear, stream);
+    dogfight_gelu_bias_kernel<<<grid_size(B * H), BLOCK_SIZE, 0, stream>>>(
+        a->linear.data, ew->bias.data, a->out.data, B * H, H);
+    return a->out;
+}
+
+static void dogfight_gelu_encoder_backward(void* w, void* activations, PrecisionTensor grad, cudaStream_t stream) {
+    DogfightGELUEncoderWeights* ew = (DogfightGELUEncoderWeights*)w;
+    DogfightGELUEncoderActivations* a = (DogfightGELUEncoderActivations*)activations;
+    int B = grad.shape[0], H = ew->hidden;
+    dogfight_gelu_backward_kernel<<<grid_size(B * H), BLOCK_SIZE, 0, stream>>>(
+        a->grad_linear.data, grad.data, a->linear.data, ew->bias.data, B * H, H);
+    dogfight_gelu_bias_grad_kernel<<<H, 256, 0, stream>>>(
+        a->bgrad.data, a->grad_linear.data, B, H);
+    puf_mm_tn(&a->grad_linear, &a->saved_input, &a->wgrad, stream);
+}
+
+static void dogfight_gelu_encoder_init_weights(void* w, uint64_t* seed, cudaStream_t stream) {
+    DogfightGELUEncoderWeights* ew = (DogfightGELUEncoderWeights*)w;
+    PrecisionTensor wt = {
+        .data = ew->weight.data,
+        .shape = {ew->hidden, ew->obs_size},
+    };
+    puf_kaiming_init(&wt, std::sqrt(2.0f), (*seed)++, stream);
+    cudaMemsetAsync(ew->bias.data, 0, numel(ew->bias.shape) * sizeof(precision_t), stream);
+}
+
+static void dogfight_gelu_encoder_reg_params(void* w, Allocator* alloc) {
+    DogfightGELUEncoderWeights* ew = (DogfightGELUEncoderWeights*)w;
+    ew->weight = {.shape = {ew->hidden, ew->obs_size}};
+    ew->bias = {.shape = {ew->hidden}};
+    alloc_register(alloc,&ew->weight);
+    alloc_register(alloc,&ew->bias);
+}
+
+static void dogfight_gelu_encoder_reg_train(void* w, void* activations, Allocator* acts, Allocator* grads, int B_TT) {
+    DogfightGELUEncoderWeights* ew = (DogfightGELUEncoderWeights*)w;
+    DogfightGELUEncoderActivations* a = (DogfightGELUEncoderActivations*)activations;
+    *a = {};
+    a->linear = {.shape = {B_TT, ew->hidden}};
+    a->out = {.shape = {B_TT, ew->hidden}};
+    a->saved_input = {.shape = {B_TT, ew->obs_size}};
+    a->grad_linear = {.shape = {B_TT, ew->hidden}};
+    a->wgrad = {.shape = {ew->hidden, ew->obs_size}};
+    a->bgrad = {.shape = {ew->hidden}};
+    alloc_register(acts,&a->linear);
+    alloc_register(acts,&a->out);
+    alloc_register(acts,&a->saved_input);
+    alloc_register(acts,&a->grad_linear);
+    alloc_register(grads,&a->wgrad);
+    alloc_register(grads,&a->bgrad);
+}
+
+static void dogfight_gelu_encoder_reg_rollout(void* w, void* activations, Allocator* alloc, int B) {
+    DogfightGELUEncoderWeights* ew = (DogfightGELUEncoderWeights*)w;
+    DogfightGELUEncoderActivations* a = (DogfightGELUEncoderActivations*)activations;
+    *a = {};
+    a->linear = {.shape = {B, ew->hidden}};
+    a->out = {.shape = {B, ew->hidden}};
+    alloc_register(alloc,&a->linear);
+    alloc_register(alloc,&a->out);
+}
+
+static void* dogfight_gelu_encoder_create_weights(void* self) {
+    Encoder* e = (Encoder*)self;
+    DogfightGELUEncoderWeights* ew = (DogfightGELUEncoderWeights*)calloc(1, sizeof(DogfightGELUEncoderWeights));
+    ew->obs_size = e->in_dim;
+    ew->hidden = e->out_dim;
+    return ew;
+}
+
+static void dogfight_gelu_encoder_free_weights(void* weights) { free(weights); }
+static void dogfight_gelu_encoder_free_activations(void* activations) { free(activations); }
+
 // NCHW bias grad: sum over (B, OH, OW) for each OC channel
 __global__ void n3_conv_bias_grad_nchw(
     precision_t* __restrict__ bgrad, const precision_t* __restrict__ grad,
@@ -572,7 +722,21 @@ static void nmmo3_encoder_free_activations(void* activations) { free(activations
 
 // Override encoder vtable for known ocean environments. No-op for unknown envs.
 static void create_custom_encoder(const std::string& env_name, Encoder* enc) {
-    if (env_name == "nmmo3") {
+    if (env_name == "dogfight") {
+        *enc = Encoder{
+            .forward = dogfight_gelu_encoder_forward,
+            .backward = dogfight_gelu_encoder_backward,
+            .init_weights = dogfight_gelu_encoder_init_weights,
+            .reg_params = dogfight_gelu_encoder_reg_params,
+            .reg_train = dogfight_gelu_encoder_reg_train,
+            .reg_rollout = dogfight_gelu_encoder_reg_rollout,
+            .create_weights = dogfight_gelu_encoder_create_weights,
+            .free_weights = dogfight_gelu_encoder_free_weights,
+            .free_activations = dogfight_gelu_encoder_free_activations,
+            .in_dim = enc->in_dim, .out_dim = enc->out_dim,
+            .activation_size = sizeof(DogfightGELUEncoderActivations),
+        };
+    } else if (env_name == "nmmo3") {
         *enc = Encoder{
             .forward = nmmo3_encoder_forward,
             .backward = nmmo3_encoder_backward,
