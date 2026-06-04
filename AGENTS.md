@@ -359,6 +359,10 @@ Dogfight behavior restored from the 3.0 reference:
   nonterminal scripted step against `/home/claude/dogfight3`, covering player
   and opponent physics under explicit actions, reward breakdown, terminal
   flags, and next scheme1 observations.
+- `ocean/dogfight/tests/test_scripted_trace_reference.c` compares a 12-step
+  nonterminal scripted player/opponent action trace against the exact df36
+  commit, covering per-step rewards, final player/opponent physics state,
+  reward accumulators, previous-action state, and final scheme1 observations.
 - `ocean/dogfight/tests/test_terminal_kill_reference.c` compares a scripted
   player kill terminal transition against `/home/claude/dogfight3`, covering
   player/opponent terminal rewards, reset-visible death/winner flags, and
@@ -487,6 +491,13 @@ Latest verification after restoring Dogfight3 scheme1 native observations:
   ocean/dogfight/tests/test_c_regressions.py -q` passed with `12 passed`, and
   `.venv/bin/python -m pytest ocean/dogfight/tests -q` passed with
   `67 passed, 1 skipped, 2 warnings`.
+- Follow-up scripted-trace parity coverage:
+  `test_scripted_trace_reference` first failed from the regression inventory
+  because the test file was missing, then passed after adding the exact df36
+  commit fixture. `.venv/bin/python -m pytest
+  ocean/dogfight/tests/test_c_regressions.py -q` passed with `13 passed`, and
+  `.venv/bin/python -m pytest ocean/dogfight/tests -q` passed with
+  `68 passed, 1 skipped, 2 warnings`.
 
 Latest plain local-venv GPU smoke after the env-default restore:
 
