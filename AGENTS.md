@@ -340,10 +340,11 @@ Dogfight behavior restored from the 3.0 reference:
 
 Dogfight sweep space now includes:
 
-- Sweep metric: `curriculum_mastery_quality`, derived from curriculum target,
-  base-stage kill rate, and surface-control saturation. This replaced
-  `curriculum_soft_quality` because target progress alone can prefer early
-  promotion with poor base-stage kills.
+- Sweep metric: `curriculum_soft_quality`, derived from curriculum target and
+  surface-control saturation. It is the current cheap stage-climb proxy because
+  Dogfight 3's proven `anchor_rating` metric depends on anchor/self-play eval
+  machinery that is not ported yet. `curriculum_mastery_quality` is still
+  computed/logged as a diagnostic that also weights by current-stage kill rate.
 - `vec.total_agents` narrowed to `2048-4096`, default `4096`. A measured
   `8192`-agent run on `g240` was fast but trained worse, finishing around
   `base_stage_kills ~= 0.33`.

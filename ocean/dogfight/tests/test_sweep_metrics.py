@@ -60,7 +60,6 @@ def test_dogfight_configured_sweep_metric_can_be_derived_from_logs(monkeypatch):
     args = pufferl.load_config("dogfight")
     logs = {
         "env/curriculum_target": args["curriculum"]["initial_target"],
-        "env/base_stage_kill_rate": 0.5,
         "env/action_sat_elevator": 0.0,
         "env/action_sat_aileron": 0.0,
         "env/action_sat_rudder": 0.0,
@@ -68,7 +67,7 @@ def test_dogfight_configured_sweep_metric_can_be_derived_from_logs(monkeypatch):
 
     pufferl.add_derived_sweep_metrics(args, logs)
 
-    assert args["sweep"]["metric"] == "curriculum_mastery_quality"
+    assert args["sweep"]["metric"] == "curriculum_soft_quality"
     assert f'env/{args["sweep"]["metric"]}' in logs
 
 
@@ -349,6 +348,7 @@ def test_dogfight_wandb_payload_is_capped_to_high_signal_metrics():
         "util/vram_used_gb",
         "env/score",
         "env/match_score",
+        "env/curriculum_soft_quality",
         "env/curriculum_mastery_quality",
         "env/curriculum_target",
         "env/mastery_stage",
@@ -358,7 +358,6 @@ def test_dogfight_wandb_payload_is_capped_to_high_signal_metrics():
         "env/base_stage_ground_rate",
         "env/base_stage_episode_length",
         "env/base_stage_window_kill_rate",
-        "env/base_stage_window_eps",
         "env/base_stage_action_saturation",
         "env/base_stage_action_sat_elevator",
         "env/base_stage_action_sat_aileron",
