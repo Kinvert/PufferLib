@@ -50,7 +50,7 @@ def test_dogfight_gpu_vec_creates_and_resets():
         },
         "env": {
             "max_steps": 300,
-            "obs_scheme": 1,
+            "obs_scheme": 0,
             "curriculum_enabled": 1,
             "curriculum_randomize": 0,
             "reward_aim_scale": 0.001695,
@@ -74,6 +74,7 @@ def test_dogfight_gpu_vec_creates_and_resets():
             "recovery_bank_deg": 60.0,
             "domain_randomization": 0.0,
             "vertical_spawn_prob": 0.0,
+            "stage9_bank_deg": 30.0,
         },
     }
 

@@ -58,6 +58,7 @@ def compile_and_run_c_test(repo_root: Path, test_name: str, tmp_path: Path):
         "test_curriculum_stage_geometry",
         "test_curriculum_max_steps",
         "test_action_bounds",
+        "test_observation_padding",
         "test_state_roundtrip",
     ],
 )

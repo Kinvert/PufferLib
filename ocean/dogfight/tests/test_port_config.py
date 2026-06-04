@@ -115,7 +115,7 @@ def test_dogfight_config_matches_dogfight3_env_config_baseline():
     parser.read(repo_root / "config" / "dogfight.ini")
 
     assert parser.getint("env", "max_steps") == 300
-    assert parser.getint("env", "obs_scheme") == 1
+    assert parser.getint("env", "obs_scheme") == 0
     assert parser.getfloat("env", "reward_aim_scale") == 0.001695
     assert parser.getfloat("env", "reward_closing_scale") == 0.0001
     assert parser.getfloat("env", "penalty_neg_g") == 0.035
@@ -130,6 +130,8 @@ def test_dogfight_config_matches_dogfight3_env_config_baseline():
     assert parser.getint("curriculum", "warmup_steps") == 1_000_000
     assert parser.getint("curriculum", "eval_interval") == 60_000
     assert parser.getint("curriculum", "min_episodes") == 50
+    assert parser.getfloat("env", "stage9_bank_deg") == 30.0
+    assert parser.getint("curriculum", "stage9_bank_curriculum") == 0
 
 
 
