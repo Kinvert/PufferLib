@@ -112,9 +112,9 @@ pybind11::dict puf_eval_log(pybind11::object pufferl_obj) {
     pufferl.last_log_step = pufferl.global_step;
  
     pybind11::dict env_dict;
-    // Capacity 64 to fit chess's per-bank hist_score_bank/hist_n_bank entries
-    // (16 keys across 8 banks) on top of base env-log fields.
-    Dict* env_out = create_dict(64);
+    // Capacity fits Dogfight's detailed curriculum/action diagnostics and
+    // chess's per-bank hist_score_bank/hist_n_bank entries.
+    Dict* env_out = create_dict(128);
     static_vec_eval_log(pufferl.vec, env_out);
     for (int i = 0; i < env_out->size; i++) {
         env_dict[env_out->items[i].key] = env_out->items[i].value;
@@ -265,6 +265,11 @@ int py_count_aligned(py::object pufferl_obj, int tag_value, int reset_flags) {
     return pufferl_count_aligned(&pufferl, tag_value, reset_flags);
 }
 
+void py_set_curriculum_target(py::object pufferl_obj, float target) {
+    PuffeRL& pufferl = pufferl_obj.cast<PuffeRL&>();
+    pufferl_set_curriculum_target(&pufferl, target);
+}
+
 int py_num_envs(py::object pufferl_obj) {
     PuffeRL& pufferl = pufferl_obj.cast<PuffeRL&>();
     return pufferl_num_envs(&pufferl);
@@ -381,7 +386,7 @@ void cpu_vec_step_py(VecEnv& ve, long long actions_ptr) {
 }
 
 py::dict vec_log(VecEnv& ve) {
-    Dict* out = create_dict(32);
+    Dict* out = create_dict(128);
     static_vec_log(ve.vec, out);
     py::dict result;
     for (int i = 0; i < out->size; i++) {
@@ -396,6 +401,109 @@ void vec_close(VecEnv& ve) {
     static_vec_close(ve.vec);
     ve.vec = nullptr;
 }
+
+#ifdef MY_DOGFIGHT
+static int dogfight_env_count(VecEnv& ve) {
+    if (ve.vec == nullptr) {
+        throw std::runtime_error("VecEnv is closed");
+    }
+    return ve.vec->size;
+}
+
+py::array_t<float> vec_get_opponent_observations(VecEnv& ve) {
+    int env_count = dogfight_env_count(ve);
+    int obs_size = ve.vec->envs[0].opponent_obs_size;
+    py::array_t<float> out({env_count, obs_size});
+    py::buffer_info info = out.request();
+    float* data = static_cast<float*>(info.ptr);
+
+    for (int i = 0; i < env_count; i++) {
+        compute_opponent_observations(&ve.vec->envs[i], data + i * obs_size);
+    }
+
+    return out;
+}
+
+void vec_set_opponent_actions(VecEnv& ve, py::array actions) {
+    int env_count = dogfight_env_count(ve);
+    py::array_t<float, py::array::c_style> arr =
+        py::array_t<float, py::array::c_style>::ensure(actions);
+    if (!arr) {
+        throw py::type_error("actions must be a C-contiguous float32 numpy array");
+    }
+
+    py::buffer_info info = arr.request();
+    if (info.ndim != 2 || info.shape[0] != env_count || info.shape[1] != 5) {
+        throw py::value_error("actions must have shape (num_envs, 5)");
+    }
+
+    float* data = static_cast<float*>(info.ptr);
+    for (int i = 0; i < env_count; i++) {
+        for (int j = 0; j < 5; j++) {
+            ve.vec->envs[i].opponent_actions_override[j] = data[i * 5 + j];
+        }
+    }
+}
+
+void vec_enable_opponent_override(VecEnv& ve, int enable) {
+    int env_count = dogfight_env_count(ve);
+    for (int i = 0; i < env_count; i++) {
+        ve.vec->envs[i].use_opponent_override = enable ? 1 : 0;
+    }
+}
+
+void vec_set_opponent_obs_scheme(VecEnv& ve, int scheme) {
+    int env_count = dogfight_env_count(ve);
+    for (int i = 0; i < env_count; i++) {
+        ve.vec->envs[i].opponent_obs_scheme = scheme;
+        if (scheme >= 0 && scheme < OBS_SCHEME_COUNT) {
+            ve.vec->envs[i].opponent_obs_size = OBS_SIZES[scheme];
+        } else {
+            ve.vec->envs[i].opponent_obs_size = ve.vec->envs[i].obs_size;
+        }
+    }
+}
+
+void vec_set_opponent_buffers(VecEnv& ve, py::object opp_obs_obj, py::object opp_rew_obj) {
+    int env_count = dogfight_env_count(ve);
+    int obs_size = ve.vec->envs[0].obs_size;
+    float* opp_obs_data = nullptr;
+    float* opp_rew_data = nullptr;
+
+    py::array_t<float, py::array::c_style> opp_obs_arr;
+    if (!opp_obs_obj.is_none()) {
+        opp_obs_arr = py::array_t<float, py::array::c_style>::ensure(opp_obs_obj);
+        if (!opp_obs_arr) {
+            throw py::type_error("opponent observations must be a C-contiguous float32 numpy array or None");
+        }
+        py::buffer_info info = opp_obs_arr.request();
+        if (info.ndim != 2 || info.shape[0] != env_count || info.shape[1] != obs_size) {
+            throw py::value_error("opponent observations must have shape (num_envs, obs_size)");
+        }
+        opp_obs_data = static_cast<float*>(info.ptr);
+    }
+
+    py::array_t<float, py::array::c_style> opp_rew_arr;
+    if (!opp_rew_obj.is_none()) {
+        opp_rew_arr = py::array_t<float, py::array::c_style>::ensure(opp_rew_obj);
+        if (!opp_rew_arr) {
+            throw py::type_error("opponent rewards must be a C-contiguous float32 numpy array or None");
+        }
+        py::buffer_info info = opp_rew_arr.request();
+        if (info.ndim != 1 || info.shape[0] != env_count) {
+            throw py::value_error("opponent rewards must have shape (num_envs,)");
+        }
+        opp_rew_data = static_cast<float*>(info.ptr);
+    }
+
+    for (int i = 0; i < env_count; i++) {
+        ve.vec->envs[i].opponent_observations =
+            opp_obs_data == nullptr ? nullptr : opp_obs_data + i * obs_size;
+        ve.vec->envs[i].opponent_rewards =
+            opp_rew_data == nullptr ? nullptr : opp_rew_data + i;
+    }
+}
+#endif
 
 std::unique_ptr<PuffeRL> create_pufferl(py::dict args) {
     py::dict train_kwargs = args["train"].cast<py::dict>();
@@ -412,6 +520,8 @@ std::unique_ptr<PuffeRL> create_pufferl(py::dict args) {
     // Model architecture (num_atns computed from env in C++)
     hypers.hidden_size = get_config(policy_kwargs, "hidden_size");
     hypers.num_layers = get_config(policy_kwargs, "num_layers");
+    hypers.action_init_scale = get_config(policy_kwargs, "action_init_scale");
+    hypers.value_init_scale = get_config(policy_kwargs, "value_init_scale");
     // Learning rate
     hypers.lr = get_config(train_kwargs, "learning_rate");
     hypers.min_lr_ratio = get_config(train_kwargs, "min_lr_ratio");
@@ -543,6 +653,7 @@ PYBIND11_MODULE(_C, m) {
     m.def("set_agent_perm", &py_set_agent_perm);
     m.def("set_env_tags", &py_set_env_tags);
     m.def("count_aligned", &py_count_aligned);
+    m.def("set_curriculum_target", &py_set_curriculum_target);
     m.def("num_envs", &py_num_envs);
     m.def("python_vec_recv", &python_vec_recv);
     m.def("python_vec_send", &python_vec_send);
@@ -557,7 +668,8 @@ PYBIND11_MODULE(_C, m) {
         .def_readwrite("num_buffers", &HypersT::num_buffers)
         .def_readwrite("num_atns", &HypersT::num_atns)
         .def_readwrite("hidden_size", &HypersT::hidden_size)
-
+        .def_readwrite("action_init_scale", &HypersT::action_init_scale)
+        .def_readwrite("value_init_scale", &HypersT::value_init_scale)
         .def_readwrite("replay_ratio", &HypersT::replay_ratio)
         .def_readwrite("num_layers", &HypersT::num_layers)
         .def_readwrite("lr", &HypersT::lr)
@@ -640,6 +752,16 @@ PYBIND11_MODULE(_C, m) {
         .def("gpu_step", &gpu_vec_step_py)
         .def("cpu_step", &cpu_vec_step_py)
         .def("render", [](VecEnv& ve, int env_id) { static_vec_render(ve.vec, env_id); })
+        .def("set_curriculum_target", [](VecEnv& ve, float target) {
+            static_vec_set_curriculum_target(ve.vec, target);
+        })
+#ifdef MY_DOGFIGHT
+        .def("get_opponent_observations", &vec_get_opponent_observations)
+        .def("set_opponent_actions", &vec_set_opponent_actions)
+        .def("enable_opponent_override", &vec_enable_opponent_override)
+        .def("set_opponent_obs_scheme", &vec_set_opponent_obs_scheme)
+        .def("set_opponent_buffers", &vec_set_opponent_buffers)
+#endif
         .def("log",   &vec_log)
         .def("close", &vec_close);
 

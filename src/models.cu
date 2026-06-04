@@ -57,6 +57,7 @@ struct Decoder {
     free_weights_fn free_weights;
     free_activations_fn free_activations;
     int hidden_dim, output_dim;
+    float action_init_scale, value_init_scale;
     bool continuous;
 };
 
@@ -475,6 +476,7 @@ static void encoder_free_activations(void* activations) {
 struct DecoderWeights {
     PrecisionTensor weight, logstd;
     int hidden_dim, output_dim;
+    float action_init_scale, value_init_scale;
     bool continuous;
 };
 
@@ -494,11 +496,16 @@ static PrecisionTensor decoder_forward(void* w, void* activations, PrecisionTens
 
 static void decoder_init_weights(void* w, ulong* seed, cudaStream_t stream) {
     DecoderWeights* dw = (DecoderWeights*)w;
-    PrecisionTensor wt = {
+    PrecisionTensor action_wt = {
         .data = dw->weight.data,
-        .shape = {dw->output_dim + 1, dw->hidden_dim},
+        .shape = {dw->output_dim, dw->hidden_dim},
     };
-    puf_kaiming_init(&wt, 1.0f, (*seed)++, stream);
+    PrecisionTensor value_wt = {
+        .data = dw->weight.data + (long)dw->output_dim * dw->hidden_dim,
+        .shape = {1, dw->hidden_dim},
+    };
+    puf_kaiming_init(&action_wt, dw->action_init_scale, (*seed)++, stream);
+    puf_kaiming_init(&value_wt, dw->value_init_scale, (*seed)++, stream);
 }
 
 static void decoder_reg_params(void* w, Allocator* alloc) {
@@ -542,6 +549,8 @@ static void* decoder_create_weights(void* self) {
     Decoder* d = (Decoder*)self;
     DecoderWeights* dw = (DecoderWeights*)calloc(1, sizeof(DecoderWeights));
     dw->hidden_dim = d->hidden_dim; dw->output_dim = d->output_dim; dw->continuous = d->continuous;
+    dw->action_init_scale = d->action_init_scale;
+    dw->value_init_scale = d->value_init_scale;
     return dw;
 }
 

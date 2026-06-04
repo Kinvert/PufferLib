@@ -250,6 +250,8 @@ typedef struct {
     int num_atns;
     int hidden_size;
     int num_layers;
+    float action_init_scale;
+    float value_init_scale;
     // Learning rate
     float lr;
     float min_lr_ratio;
@@ -383,9 +385,9 @@ typedef struct {
 #undef PUFFER_CURRICULUM_IMPL
 
 Dict* log_environments_impl(PuffeRL& pufferl) {
-    // Capacity raised from 32 to 64 to accommodate chess's per-bank
-    // hist_score_bank_<b> / hist_n_bank_<b> entries (16 keys for 8 banks).
-    Dict* out = create_dict(64);
+    // Capacity fits Dogfight's detailed curriculum/action diagnostics and
+    // chess's per-bank hist_score_bank_<b> / hist_n_bank_<b> entries.
+    Dict* out = create_dict(128);
     static_vec_log(pufferl.vec, out);
     return out;
 }
@@ -1561,7 +1563,8 @@ void train_impl(PuffeRL& pufferl) {
 // has no heap state so this returns by value; callers store it wherever.
 static Policy build_policy(const char* env_name, int input_size, int hidden_size,
                            int num_layers, int decoder_output_size, int act_n,
-                           bool is_continuous, int horizon) {
+                           bool is_continuous, int horizon,
+                           float action_init_scale, float value_init_scale) {
     Encoder encoder = {
         .forward = encoder_forward,
         .backward = encoder_backward,
@@ -1586,7 +1589,9 @@ static Policy build_policy(const char* env_name, int input_size, int hidden_size
         .create_weights = decoder_create_weights,
         .free_weights = decoder_free_weights,
         .free_activations = decoder_free_activations,
-        .hidden_dim = hidden_size, .output_dim = decoder_output_size, .continuous = is_continuous,
+        .hidden_dim = hidden_size, .output_dim = decoder_output_size,
+        .action_init_scale = action_init_scale, .value_init_scale = value_init_scale,
+        .continuous = is_continuous,
     };
     Network network = {
         .forward = mingru_forward,
@@ -1623,7 +1628,8 @@ static void weight_bank_create_for_pufferl(WeightBank* bank, PuffeRL* pufferl,
     for (int i = 0; i < num_action_heads; i++) act_n += raw_act_sizes[i];
     int decoder_output_size = pufferl->is_continuous ? num_action_heads : act_n;
     bank->policy = build_policy(pufferl->env_name.c_str(), input_size, hidden_size,
-        num_layers, decoder_output_size, act_n, pufferl->is_continuous, pufferl->hypers.horizon);
+        num_layers, decoder_output_size, act_n, pufferl->is_continuous, pufferl->hypers.horizon,
+        pufferl->hypers.action_init_scale, pufferl->hypers.value_init_scale);
     bank->hidden_size = hidden_size;
     bank->num_layers = num_layers;
 
@@ -1782,6 +1788,10 @@ extern "C" int pufferl_count_aligned(PuffeRL* pufferl, int tag_value, int reset_
     return static_vec_count_aligned(pufferl->vec, tag_value, reset_flags);
 }
 
+extern "C" void pufferl_set_curriculum_target(PuffeRL* pufferl, float target) {
+    static_vec_set_curriculum_target(pufferl->vec, target);
+}
+
 extern "C" int pufferl_num_envs(PuffeRL* pufferl) {
     return pufferl->vec->size;
 }
@@ -1881,7 +1891,8 @@ std::unique_ptr<PuffeRL> create_pufferl_impl(HypersT& hypers,
         : 0;
 
     pufferl->policy = build_policy(env_name.c_str(), input_size, hidden_size,
-        num_layers, decoder_output_size, act_n, is_continuous, hypers.horizon);
+        num_layers, decoder_output_size, act_n, is_continuous, hypers.horizon,
+        hypers.action_init_scale, hypers.value_init_scale);
 
     // Create and allocate params
     Allocator* params = &pufferl->params_alloc;

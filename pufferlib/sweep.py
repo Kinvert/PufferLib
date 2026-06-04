@@ -44,22 +44,21 @@ def default_tensor_dtype(dtype):
         torch.set_default_dtype(old_dtype)
 
 class Space:
-    def __init__(self, min, max, scale, is_integer=False):
+    def __init__(self, min, max, scale, mean=None, is_integer=False):
         self.min = min
         self.max = max
         self.scale = scale
         self.norm_min = self.normalize(min)
         self.norm_max = self.normalize(max)
-        # Since min/max are normalized from -1 to 1, just use 0 as a mean
-        self.norm_mean = 0
+        self.norm_mean = self.normalize(mean) if mean is not None else 0
         self.is_integer = is_integer
 
 class Linear(Space):
-    def __init__(self, min, max, scale, is_integer=False):
+    def __init__(self, min, max, scale, mean=None, is_integer=False):
         if scale == 'auto':
             scale = 0.5
 
-        super().__init__(min, max, scale, is_integer)
+        super().__init__(min, max, scale, mean, is_integer)
 
     def normalize(self, value):
         #assert isinstance(value, (int, float))
@@ -74,12 +73,12 @@ class Linear(Space):
         return value
 
 class Pow2(Space):
-    def __init__(self, min, max, scale, is_integer=False):
+    def __init__(self, min, max, scale, mean=None, is_integer=False):
         if scale == 'auto':
             scale = 0.5
             #scale = 2 / (np.log2(max) - np.log2(min))
 
-        super().__init__(min, max, scale, is_integer)
+        super().__init__(min, max, scale, mean, is_integer)
 
     def normalize(self, value):
         #assert isinstance(value, (int, float))
@@ -96,14 +95,14 @@ class Pow2(Space):
 class Log(Space):
     base: int = 10
 
-    def __init__(self, min, max, scale, is_integer=False):
+    def __init__(self, min, max, scale, mean=None, is_integer=False):
         if scale == 'time':
             # TODO: Set scaling param intuitively based on number of jumps from min to max
             scale = 1 / (np.log2(max) - np.log2(min))
         elif scale == 'auto':
             scale = 0.5
 
-        super().__init__(min, max, scale, is_integer)
+        super().__init__(min, max, scale, mean, is_integer)
 
     def normalize(self, value):
         #assert isinstance(value, (int, float))
@@ -122,11 +121,11 @@ class Log(Space):
 class Logit(Space):
     base: int = 10
 
-    def __init__(self, min, max, scale, is_integer=False):
+    def __init__(self, min, max, scale, mean=None, is_integer=False):
         if scale == 'auto':
             scale = 0.5
 
-        super().__init__(min, max, scale, is_integer)
+        super().__init__(min, max, scale, mean, is_integer)
 
     def normalize(self, value):
         value = max(self.min, min(value, self.max))
@@ -166,6 +165,7 @@ def _params_from_puffer_sweep(sweep_config, only_include=None):
             min=param['min'],
             max=param['max'],
             scale=param['scale'],
+            mean=param.get('mean'),
         )
         if distribution == 'uniform':
             space = Linear(**kwargs)
@@ -538,6 +538,7 @@ class Protein:
             infer_batch_size = 4096,            
             optimizer_reset_frequency = 50,
             use_gpu = True,
+            seed_with_search_center = True,
             cost_param = "train/total_timesteps",
             prune_pareto = True,
         ):
@@ -550,6 +551,7 @@ class Protein:
         self.hyperparameters = Hyperparameters(sweep_config)
         self.metric_distribution = sweep_config['metric_distribution']
         self.global_search_scale = global_search_scale
+        self.seed_with_search_center = seed_with_search_center
         self.suggestions_per_pareto = suggestions_per_pareto
         self.resample_frequency = resample_frequency
         self.max_suggestion_cost = _max_suggestion_cost
@@ -757,10 +759,11 @@ class Protein:
         if fixed_total_timesteps is not None and self.cost_space is not None:
             fixed_cost_norm = self.cost_space.normalize(fixed_total_timesteps)
 
-        # NOTE: Changed pufferl to use the train args, NOT the sweep hyperparam search center
-        # if len(self.success_observations) == 0 and self.seed_with_search_center:
-        #     suggestion = self.hyperparameters.search_centers
-        #     return self.hyperparameters.to_dict(suggestion, fill), info
+        if self.suggestion_idx == 1 and self.seed_with_search_center:
+            suggestion = np.array(self.hyperparameters.search_centers, copy=True)
+            if fixed_cost_norm is not None:
+                suggestion[self.cost_param_idx] = fixed_cost_norm
+            return self.hyperparameters.to_dict(suggestion, fill), info
 
         if self.suggestion_idx <= self.num_random_samples:
             # Suggest the next point in the Sobol sequence

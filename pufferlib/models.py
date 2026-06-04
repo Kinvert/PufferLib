@@ -58,7 +58,7 @@ class MinimalEntityEncoder(nn.Module):
         return self.encoder(cat).max(dim=1)[0]
 
 class DefaultDecoder(nn.Module):
-    def __init__(self, nvec, hidden_size=128):
+    def __init__(self, nvec, hidden_size=128, action_init_scale=1.0, value_init_scale=1.0):
         super().__init__()
         self.nvec = tuple(nvec)
         self.is_continuous = sum(nvec) == len(nvec)
@@ -66,11 +66,20 @@ class DefaultDecoder(nn.Module):
         if self.is_continuous:
             num_atns = len(nvec)
             self.decoder_mean = nn.Linear(hidden_size, num_atns)
+            if action_init_scale != 1.0:
+                nn.init.orthogonal_(self.decoder_mean.weight, action_init_scale)
+                nn.init.constant_(self.decoder_mean.bias, 0.0)
             self.decoder_logstd = nn.Parameter(torch.zeros(1, num_atns))
         else:
             self.decoder = nn.Linear(hidden_size, int(np.sum(nvec)))
+            if action_init_scale != 1.0:
+                nn.init.orthogonal_(self.decoder.weight, action_init_scale)
+                nn.init.constant_(self.decoder.bias, 0.0)
 
         self.value_function = nn.Linear(hidden_size, 1)
+        if value_init_scale != 1.0:
+            nn.init.orthogonal_(self.value_function.weight, value_init_scale)
+            nn.init.constant_(self.value_function.bias, 0.0)
 
     def forward(self, hidden):
         if self.is_continuous:

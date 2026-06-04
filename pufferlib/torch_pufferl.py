@@ -481,7 +481,12 @@ def load_policy(args, vec):
 
     network = network_cls(**policy_kwargs)
     encoder = encoder_cls(vec.obs_size, policy_kwargs['hidden_size'])
-    decoder = decoder_cls(vec.act_sizes, policy_kwargs['hidden_size'])
+    decoder = decoder_cls(
+        vec.act_sizes,
+        policy_kwargs['hidden_size'],
+        action_init_scale=policy_kwargs.get('action_init_scale', 1.0),
+        value_init_scale=policy_kwargs.get('value_init_scale', 1.0),
+    )
     policy = pufferlib.models.Policy(encoder, decoder, network)
 
     device = 'cuda' if _C.gpu else 'cpu'

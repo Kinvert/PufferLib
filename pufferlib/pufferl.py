@@ -47,6 +47,85 @@ def unroll_nested_dict(d):
         else:
             yield k, v
 
+
+class _InlineResultQueue:
+    def __init__(self):
+        self.items = []
+
+    def put(self, item):
+        self.items.append(item)
+
+    def get(self):
+        return self.items.pop(0)
+
+
+MAX_WANDB_METRICS = 31
+
+DOGFIGHT_WANDB_METRICS = (
+    'SPS',
+    'uptime',
+    'util/gpu_percent',
+    'util/vram_used_gb',
+    'env/score',
+    'env/match_score',
+    'env/curriculum_mastery_quality',
+    'env/curriculum_target',
+    'env/mastery_stage',
+    'env/stage9_bank_deg',
+    'env/base_stage_kill_rate',
+    'env/base_stage_timeout_rate',
+    'env/base_stage_ground_rate',
+    'env/base_stage_episode_length',
+    'env/base_stage_window_kill_rate',
+    'env/base_stage_window_eps',
+    'env/base_stage_action_saturation',
+    'env/base_stage_action_sat_elevator',
+    'env/base_stage_action_sat_aileron',
+    'env/base_stage_action_sat_rudder',
+    'env/base_stage_signed_bias_elevator',
+    'env/base_stage_signed_bias_aileron',
+    'env/base_stage_signed_bias_rudder',
+    'env/base_stage_side_standard_kill_rate',
+    'env/base_stage_side_energy_kill_rate',
+    'loss/total',
+    'loss/policy',
+    'loss/value',
+    'loss/entropy',
+    'loss/kl',
+    'loss/clipfrac',
+)
+
+GENERIC_WANDB_METRICS = (
+    'SPS',
+    'uptime',
+    'env/score',
+    'loss/total',
+    'loss/policy',
+    'loss/value',
+    'loss/entropy',
+    'loss/kl',
+    'loss/clipfrac',
+    'util/gpu_percent',
+    'util/vram_used_gb',
+)
+
+
+def wandb_log_payload(args, flat_logs):
+    if args.get('env_name') == 'dogfight':
+        assert len(DOGFIGHT_WANDB_METRICS) <= MAX_WANDB_METRICS
+        return {k: flat_logs[k] for k in DOGFIGHT_WANDB_METRICS if k in flat_logs}
+
+    if len(flat_logs) <= MAX_WANDB_METRICS:
+        return dict(flat_logs)
+
+    payload = {k: flat_logs[k] for k in GENERIC_WANDB_METRICS if k in flat_logs}
+    for k, v in flat_logs.items():
+        if len(payload) >= MAX_WANDB_METRICS:
+            break
+        payload.setdefault(k, v)
+    return payload
+
+
 def abbreviate(num, b2, c2):
     prefixes = ['', 'K', 'M', 'B', 'T']
     for i, prefix in enumerate(prefixes):
@@ -168,6 +247,249 @@ def validate_config(args):
     assert minibatch_size <= horizon * total_agents, \
         f'minibatch_size {minibatch_size} > total_agents {total_agents} * horizon {horizon}'
 
+def setup_curriculum(args, backend, pufferl):
+    cfg = args.get('curriculum', {})
+    if not cfg or not cfg.get('enabled', 0):
+        return None
+    if not args.get('env', {}).get('curriculum_enabled', 0):
+        return None
+    if not hasattr(backend, 'set_curriculum_target'):
+        return None
+
+    target = float(cfg.get('initial_target', 0.0))
+    state = {
+        'target': target,
+        'max_target': float(cfg.get('max_target', 18.0)),
+        'step': float(cfg.get('step', 1.0)),
+        'promote_threshold': float(cfg.get('promote_threshold', 0.90)),
+        'min_episodes': float(cfg.get('min_episodes', 1024)),
+        'warmup_steps': int(cfg.get('warmup_steps', 0)),
+        'eval_interval': int(cfg.get('eval_interval', 0)),
+        'last_eval_step': int(cfg.get('warmup_steps', 0)),
+        'mastered_stage': int(target),
+        'base_stage_kills': 0.0,
+        'base_stage_eps': 0.0,
+        'window_decay': float(cfg.get('window_decay', 0.9)),
+        'stage9_bank_curriculum': int(cfg.get('stage9_bank_curriculum', 1)),
+        'stage9_bank_start_target': float(cfg.get('stage9_bank_start_target', 8.5)),
+        'stage9_bank_full_target': float(cfg.get('stage9_bank_full_target', 8.9)),
+        'stage9_bank_step': float(cfg.get('stage9_bank_step', 0.1)),
+        'stage9_bank_override': float(args.get('env', {}).get('stage9_bank_deg', -1.0)),
+    }
+    backend.set_curriculum_target(pufferl, target)
+    print(f'[CURRICULUM] target={target:.2f}', flush=True)
+    return state
+
+def stage9_bank_for_target(args, target):
+    override = float(args.get('env', {}).get('stage9_bank_deg', -1.0))
+    if override >= 0.0:
+        return override
+    if target < 8.6:
+        return 0.0
+    if target < 8.7:
+        return 5.0
+    if target < 8.8:
+        return 10.0
+    if target < 8.9:
+        return 15.0
+    return 30.0
+
+def stage9_bank_for_state(state, target):
+    override = state.get('stage9_bank_override', -1.0)
+    if override >= 0.0:
+        return override
+    return stage9_bank_for_target({'env': {'stage9_bank_deg': -1.0}}, target)
+
+def next_curriculum_target(state):
+    old_target = state['target']
+    max_target = state['max_target']
+    default_next = min(max_target, old_target + state['step'])
+    if not state.get('stage9_bank_curriculum', 1):
+        return default_next
+
+    start = state.get('stage9_bank_start_target', 8.5)
+    full = state.get('stage9_bank_full_target', 8.9)
+    substep = state.get('stage9_bank_step', 0.1)
+
+    if old_target < start and default_next >= full:
+        return min(max_target, start)
+    if start <= old_target < full - 1e-6:
+        return min(max_target, min(full, round(old_target + substep, 2)))
+    return default_next
+
+def add_mastery_stage_metrics(flat_logs):
+    n = float(flat_logs.get('env/n', 0.0))
+    base_eps = float(flat_logs.get('env/base_stage_eps', 0.0)) * n
+    base_kills = float(flat_logs.get('env/base_stage_kills', 0.0)) * n
+    kill_rate = base_kills / max(base_eps, 1.0)
+    flat_logs['env/base_stage_kill_rate'] = kill_rate
+    if base_eps <= 0.0:
+        return base_eps, kill_rate
+
+    def episode_sum(key):
+        return float(flat_logs.get(f'env/{key}', 0.0)) * n
+
+    flat_logs['env/base_stage_ground_rate'] = episode_sum('base_stage_ground') / base_eps
+    flat_logs['env/base_stage_timeout_rate'] = episode_sum('base_stage_timeouts') / base_eps
+    flat_logs['env/base_stage_episode_length'] = episode_sum('base_stage_episode_length_sum') / base_eps
+    flat_logs['env/base_stage_action_saturation'] = (
+        episode_sum('base_stage_action_saturation_sum') / base_eps
+    )
+    flat_logs['env/base_stage_signed_bias'] = episode_sum('base_stage_signed_bias_sum') / base_eps
+    for axis in ('elevator', 'aileron', 'rudder', 'trigger'):
+        flat_logs[f'env/base_stage_action_sat_{axis}'] = (
+            episode_sum(f'base_stage_action_sat_{axis}_sum') / base_eps
+        )
+    for axis in ('elevator', 'aileron', 'rudder'):
+        flat_logs[f'env/base_stage_signed_bias_{axis}'] = (
+            episode_sum(f'base_stage_signed_bias_{axis}_sum') / base_eps
+        )
+
+    for variant in ('side_standard', 'side_energy'):
+        prefix = f'base_stage_{variant}'
+        variant_eps = episode_sum(f'{prefix}_eps')
+        variant_kills = episode_sum(f'{prefix}_kills')
+        flat_logs[f'env/{prefix}_kill_rate'] = variant_kills / max(variant_eps, 1.0)
+        if variant_eps <= 0.0:
+            continue
+        flat_logs[f'env/{prefix}_ground_rate'] = episode_sum(f'{prefix}_ground') / variant_eps
+        flat_logs[f'env/{prefix}_timeout_rate'] = episode_sum(f'{prefix}_timeouts') / variant_eps
+        flat_logs[f'env/{prefix}_episode_length'] = (
+            episode_sum(f'{prefix}_episode_length_sum') / variant_eps
+        )
+        flat_logs[f'env/{prefix}_action_saturation'] = (
+            episode_sum(f'{prefix}_action_saturation_sum') / variant_eps
+        )
+        flat_logs[f'env/{prefix}_signed_bias'] = (
+            episode_sum(f'{prefix}_signed_bias_sum') / variant_eps
+        )
+        for axis in ('elevator', 'aileron', 'rudder', 'trigger'):
+            flat_logs[f'env/{prefix}_action_sat_{axis}'] = (
+                episode_sum(f'{prefix}_action_sat_{axis}_sum') / variant_eps
+            )
+        for axis in ('elevator', 'aileron', 'rudder'):
+            flat_logs[f'env/{prefix}_signed_bias_{axis}'] = (
+                episode_sum(f'{prefix}_signed_bias_{axis}_sum') / variant_eps
+            )
+    return base_eps, kill_rate
+
+def step_curriculum(state, backend, pufferl, flat_logs, epoch):
+    if state is None:
+        return
+
+    flat_logs['env/curriculum_target'] = state['target']
+    flat_logs['env/mastery_stage'] = int(state['target'] + 0.5)
+    flat_logs['env/stage9_bank_deg'] = stage9_bank_for_state(state, state['target'])
+    base_eps, kill_rate = add_mastery_stage_metrics(flat_logs)
+    total_steps = int(getattr(pufferl, 'global_step', epoch))
+    if total_steps < state.get('warmup_steps', 0):
+        return
+
+    state['base_stage_eps'] += base_eps
+    state['base_stage_kills'] += float(flat_logs.get('env/base_stage_kills', 0.0)) * float(
+        flat_logs.get('env/n', 0.0)
+    )
+    if total_steps - state.get('last_eval_step', 0) < state.get('eval_interval', 0):
+        return
+
+    state['last_eval_step'] = total_steps
+    window_eps = state['base_stage_eps']
+    window_kill_rate = state['base_stage_kills'] / max(window_eps, 1.0)
+    flat_logs['env/base_stage_window_eps'] = window_eps
+    flat_logs['env/base_stage_window_kill_rate'] = window_kill_rate
+    if window_eps < state['min_episodes'] or window_kill_rate < state['promote_threshold']:
+        state['base_stage_kills'] *= state.get('window_decay', 0.9)
+        state['base_stage_eps'] *= state.get('window_decay', 0.9)
+        return
+
+    old_target = state['target']
+    mastery_stage = int(old_target + 0.5)
+    if mastery_stage > state.get('mastered_stage', -1):
+        state['mastered_stage'] = mastery_stage
+    new_target = next_curriculum_target(state)
+    if new_target <= old_target:
+        return
+
+    state['target'] = new_target
+    state['base_stage_kills'] = 0.0
+    state['base_stage_eps'] = 0.0
+    backend.set_curriculum_target(pufferl, new_target)
+    flat_logs['env/curriculum_target'] = new_target
+    flat_logs['env/mastery_stage'] = int(new_target + 0.5)
+    flat_logs['env/stage9_bank_deg'] = stage9_bank_for_state(state, new_target)
+    print(
+        f'[CURRICULUM] epoch={epoch} target {old_target:.2f} -> {new_target:.2f} '
+        f'kill_rate={window_kill_rate:.3f} episodes={window_eps:.0f}',
+        flush=True,
+    )
+
+def add_derived_sweep_metrics(args, flat_logs):
+    if args.get('env_name') != 'dogfight':
+        return
+
+    target = flat_logs.get('env/curriculum_target')
+    surface_keys = (
+        'env/action_sat_elevator',
+        'env/action_sat_aileron',
+        'env/action_sat_rudder',
+    )
+    if target is None or any(k not in flat_logs for k in surface_keys):
+        return
+
+    try:
+        target = float(target)
+        surface_saturation = sum(float(flat_logs[k]) for k in surface_keys) / len(surface_keys)
+        max_target = float(args.get('curriculum', {}).get('max_target', 18.0))
+    except (TypeError, ValueError):
+        return
+
+    if max_target <= 0:
+        return
+
+    target_progress = min(max(target / max_target, 0.0), 1.0)
+    surface_saturation = min(max(surface_saturation, 0.0), 1.0)
+    flat_logs['env/curriculum_soft_quality'] = target_progress * (1.0 - 0.5 * surface_saturation)
+
+    kill_rate = flat_logs.get('env/base_stage_kill_rate')
+    if kill_rate is None:
+        return
+
+    try:
+        kill_rate = float(kill_rate)
+    except (TypeError, ValueError):
+        return
+
+    kill_rate = min(max(kill_rate, 0.0), 1.0)
+    flat_logs['env/curriculum_mastery_quality'] = (
+        target_progress * kill_rate * (1.0 - 0.5 * surface_saturation)
+    )
+
+def downsample_logs(all_logs, n):
+    metrics = {}
+    logged_timesteps = all_logs[-1]['agent_steps']
+    next_bin = logged_timesteps / (n - 1) if n > 1 else np.inf
+    for log in all_logs:
+        for k, v in log.items():
+            metrics.setdefault(k, [[]])[-1].append(v)
+
+        if log['agent_steps'] < next_bin:
+            continue
+
+        next_bin += logged_timesteps / (n - 1)
+        for values in metrics.values():
+            values[-1] = np.mean(values[-1]) if values[-1] else np.nan
+            values.append([])
+
+    for k, values in metrics.items():
+        if k in all_logs[-1]:
+            values[-1] = all_logs[-1][k]
+        elif values[-1]:
+            values[-1] = np.mean(values[-1])
+        else:
+            values.pop()
+
+    return metrics
+
 def _resolve_backend(args):
     compiled_env = getattr(_C, 'env_name', None)
     assert compiled_env is None or compiled_env == args['env_name'], \
@@ -241,6 +563,7 @@ def _train(env_name, args, sweep_obj=None, result_queue=None, verbose=False):
         if result_queue is not None:
             result_queue.put((args['gpu_id'], [], [], []))
         return
+    curriculum_state = setup_curriculum(args, backend, pufferl)
 
     model_path = ''
     flat_logs = {}
@@ -270,6 +593,9 @@ def _train(env_name, args, sweep_obj=None, result_queue=None, verbose=False):
 
         if epoch < train_epochs:
             selfplay.step(pufferl, backend, pool_state, flat_logs, epoch)
+            step_curriculum(curriculum_state, backend, pufferl, flat_logs, epoch)
+
+        add_derived_sweep_metrics(args, flat_logs)
 
         if verbose:
             print_dashboard(args, model_size, flat_logs)
@@ -278,7 +604,7 @@ def _train(env_name, args, sweep_obj=None, result_queue=None, verbose=False):
             continue
 
         if args['wandb']:
-            wandb.log(flat_logs, step=flat_logs['agent_steps'])
+            wandb.log(wandb_log_payload(args, flat_logs), step=flat_logs['agent_steps'])
 
         if epoch < train_epochs:
             all_logs.append(flat_logs)
@@ -321,30 +647,16 @@ def _train(env_name, args, sweep_obj=None, result_queue=None, verbose=False):
             args=match_args, verbose=verbose)
         match_score = float(match_logs['env/slot_0_score'])
         if args['wandb']:
-            wandb.log({'env/match_score': match_score}, step=flat_logs['agent_steps'])
+            wandb.log(
+                wandb_log_payload(args, {'env/match_score': match_score}),
+                step=flat_logs['agent_steps'],
+            )
 
     # This version has the training perf logs and eval env logs
     all_logs.append(flat_logs)
 
     # Downsample results
-    n = args['sweep']['downsample']
-    metrics = {k: [[]] for k in all_logs[0]}
-    logged_timesteps = all_logs[-1]['agent_steps']
-    next_bin = logged_timesteps / (n - 1) if n > 1 else np.inf
-    for log in all_logs:
-        for k, v in log.items():
-            metrics[k][-1].append(v)
-
-        if log['agent_steps'] < next_bin:
-            continue
-
-        next_bin += logged_timesteps / (n - 1)
-        for k in metrics:
-            metrics[k][-1] = np.mean(metrics[k][-1])
-            metrics[k].append([])
-
-    for k in metrics:
-        metrics[k][-1] = all_logs[-1][k]
+    metrics = downsample_logs(all_logs, args['sweep']['downsample'])
 
     # Match-mode: single observation at final-training cost. Protein's curve
     # fit collapses to one point — we only trust the match winrate, not any
@@ -395,7 +707,7 @@ def train(env_name, args=None, gpus=None, **kwargs):
         worker_args['rank'] = rank
         worker_args['gpu_id'] = gpu_id
         if rank == 0 and not subprocess:
-            _train(env_name, worker_args, verbose=True)
+            _train(env_name, worker_args, verbose=True, **kwargs)
         else:
             # Protein's GP models live on cuda:0 on non-WSL setups; spawn-pickling
             # them works fine via CUDA IPC. On WSL, sweep.py forces device='cpu'
@@ -408,7 +720,10 @@ def sweep(env_name, args=None, pareto=False):
     args = args or load_config(env_name)
     exp_gpus = args['train']['gpus']
     sweep_gpus = args['sweep']['gpus'] or len(os.listdir('/proc/driver/nvidia/gpus'))
-    args['vec']['num_threads'] //= (sweep_gpus // exp_gpus)
+    max_active = sweep_gpus // exp_gpus
+    if max_active < 1:
+        raise ValueError(f'sweep.gpus {sweep_gpus} must be >= train.gpus {exp_gpus}')
+    args['vec']['num_threads'] //= max_active
     args['no_model_upload'] = True
 
     sweep_config = args['sweep']
@@ -420,17 +735,22 @@ def sweep(env_name, args=None, pareto=False):
         raise ValueError(f'Invalid sweep method {method}. See pufferlib.sweep')
 
     sweep_obj = sweep_cls(sweep_config)
+    if getattr(sweep_obj, 'seed_with_search_center', False):
+        # The sweep loop runs an explicit baseline with default/centered hypers.
+        # Protein should spend its first suggestion on a new point, not repeat it.
+        sweep_obj.seed_with_search_center = False
     num_experiments = args['sweep']['max_runs']
     ts_default = args['train']['total_timesteps']
     ts_config = sweep_config.get('train', {}).get('total_timesteps', {'min': ts_default, 'max': ts_default})
     
     all_timesteps = np.geomspace(ts_config['min'], ts_config['max'], sweep_gpus)
-    result_queue = mp.get_context('spawn').Queue()
+    inline_single_gpu_trial = max_active == 1 and exp_gpus == 1
+    result_queue = _InlineResultQueue() if inline_single_gpu_trial else mp.get_context('spawn').Queue()
 
     active = {}
     completed = 0
     while completed < num_experiments:
-        if len(active) >= sweep_gpus//exp_gpus: # Collect completed runs
+        if len(active) >= max_active: # Collect completed runs
             gpu_id, scores, costs, timesteps = result_queue.get()
             done_args = active.pop(gpu_id)
 
@@ -450,7 +770,7 @@ def sweep(env_name, args=None, pareto=False):
         # TODO: only 1 per sweep etc
         gpu_id = next(i for i in range(sweep_gpus) if i not in active)
         timestep_total = all_timesteps[gpu_id] if pareto else None
-        if idx > 1: # First experiment uses defaults
+        if idx > 0:
             sweep_obj.suggest(args, fixed_total_timesteps=timestep_total)
 
         try:
@@ -461,8 +781,13 @@ def sweep(env_name, args=None, pareto=False):
             continue
 
         exp_args = deepcopy(args)
+        if idx == 0:
+            # Baseline keeps default hypers but uses the sweep time budget.
+            baseline_timesteps = timestep_total if timestep_total is not None else ts_config.get('mean', ts_default)
+            exp_args['train']['total_timesteps'] = int(baseline_timesteps)
         active[gpu_id] = exp_args
-        train(env_name, exp_args, range(gpu_id, gpu_id + exp_gpus),
+        trial_gpus = None if inline_single_gpu_trial else range(gpu_id, gpu_id + exp_gpus)
+        train(env_name, exp_args, trial_gpus,
             sweep_obj=sweep_obj, result_queue=result_queue)
 
 def eval(env_name, args=None, load_path=None):
