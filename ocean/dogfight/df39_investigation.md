@@ -77,11 +77,18 @@ Next audit step: after the next sweep uses normalized signed-bias telemetry, com
 5. State-memory reset RNG: before the env-local RNG fix, a restored preterminal state could produce a different post-terminal reset because reset/spawn used process-global `rand()`. This is now fixed for the stage-climb reset/spawn path and covered by `test_state_roundtrip.c`.
 6. Remaining likely areas: action scaling/logprob path, exact native encoder/recurrent weight initialization vs Dogfight3 recurrent wrapper, observation parity, step/reset semantics, reward terms, and physics parity. AutoAce stage-20 tactical randomness still needs a separate state-memory audit if sweeps target stage 20. No curriculum step changes should be used as a fix.
 
+Observation parity update:
+
+- Added a Dogfight3 numeric fixture for a scripted `OBS_OPPONENT_AWARE` state.
+- `test_observation_scheme1_reference.c` confirms Dogfight5's 26-wide scheme1 observation math matches that Dogfight3 fixture.
+- This reduces observation-math drift risk for the restored scheme1 path, but it does not prove reward, step/reset, action distribution, or training quality.
+
 ## Next Tests
 
 - Run a short df40 sweep after this config/obs fix and compare against the old df39 top: target must clear 7-9 without the stage-9 ramp.
 - Run a short `max-runs 2` state-buffer sweep smoke before trusting larger state-memory sweeps.
 - Add parity tests against Dogfight3 for scheme 1 observations under scripted states.
+- Add reward/step parity probes for scripted nonterminal and terminal transitions against Dogfight3.
 - Add physics/step parity probes for neutral action traces and scripted action traces against Dogfight3.
 - Audit `flightlib.h` differences before changing physics.
 
@@ -105,3 +112,6 @@ Next audit step: after the next sweep uses normalized signed-bias telemetry, com
 - `python -m pytest ocean/dogfight/tests/test_c_regressions.py -q`: `6 passed`.
 - `python -m pytest ocean/dogfight/tests -q`: `61 passed, 1 skipped`.
 - `source .venv/bin/activate && ./build.sh dogfight`: built `pufferlib/_C.cpython-312-x86_64-linux-gnu.so` after native `OBS_SIZE 26` was restored.
+- `python -m pytest ocean/dogfight/tests/test_c_regressions.py::test_dogfight_c_regression -q -k observation_scheme1_reference`: first failed because the new parity test file was missing, then passed after adding the fixture test.
+- `python -m pytest ocean/dogfight/tests/test_c_regressions.py -q`: `7 passed`.
+- `python -m pytest ocean/dogfight/tests -q`: `62 passed, 1 skipped`.

@@ -344,6 +344,10 @@ Dogfight behavior restored from the 3.0 reference:
 
 - Observation code matches Dogfight 3, and native training uses the checked-in
   Dogfight 3 default `obs_scheme = 1` / 26-wide opponent-aware observations.
+- `ocean/dogfight/tests/test_observation_scheme1_reference.c` compares a
+  scripted 26-wide scheme1 observation vector against a numeric fixture
+  generated from `/home/claude/dogfight3`, so observation math drift is covered
+  beyond width/config checks.
 - Native Dogfight policy now uses a Dogfight-specific CUDA encoder matching the
   Dogfight 3 observation path shape: linear projection with bias followed by
   GELU before the recurrent core. This is wired through `create_custom_encoder`
@@ -417,6 +421,13 @@ Latest verification after restoring Dogfight3 scheme1 native observations:
 - Training quality is not proven by this change yet. The next sweep should be
   df40 and should first use a short bounded run to see whether the restored
   26-wide scheme1 path climbs past early curriculum stages.
+- Follow-up scheme1 observation parity coverage:
+  `test_observation_scheme1_reference` first failed from the regression
+  inventory because the test file was missing, then passed after adding the
+  Dogfight3 numeric fixture. `.venv/bin/python -m pytest
+  ocean/dogfight/tests/test_c_regressions.py -q` passed with `7 passed`, and
+  `.venv/bin/python -m pytest ocean/dogfight/tests -q` passed with
+  `62 passed, 1 skipped`.
 
 Latest plain local-venv GPU smoke after the env-default restore:
 
