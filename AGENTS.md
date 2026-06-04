@@ -348,6 +348,10 @@ Dogfight behavior restored from the 3.0 reference:
   scripted 26-wide scheme1 observation vector against a numeric fixture
   generated from `/home/claude/dogfight3`, so observation math drift is covered
   beyond width/config checks.
+- `ocean/dogfight/tests/test_scripted_step_reference.c` compares one
+  nonterminal scripted step against `/home/claude/dogfight3`, covering player
+  and opponent physics under explicit actions, reward breakdown, terminal
+  flags, and next scheme1 observations.
 - Native Dogfight policy now uses a Dogfight-specific CUDA encoder matching the
   Dogfight 3 observation path shape: linear projection with bias followed by
   GELU before the recurrent core. This is wired through `create_custom_encoder`
@@ -428,6 +432,13 @@ Latest verification after restoring Dogfight3 scheme1 native observations:
   ocean/dogfight/tests/test_c_regressions.py -q` passed with `7 passed`, and
   `.venv/bin/python -m pytest ocean/dogfight/tests -q` passed with
   `62 passed, 1 skipped`.
+- Follow-up scripted-step parity coverage:
+  `test_scripted_step_reference` first failed from the regression inventory
+  because the test file was missing, then passed after adding the Dogfight3
+  numeric fixture. `.venv/bin/python -m pytest
+  ocean/dogfight/tests/test_c_regressions.py -q` passed with `8 passed`, and
+  `.venv/bin/python -m pytest ocean/dogfight/tests -q` passed with
+  `63 passed, 1 skipped`.
 
 Latest plain local-venv GPU smoke after the env-default restore:
 
