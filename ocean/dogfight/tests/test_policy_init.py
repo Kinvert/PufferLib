@@ -61,13 +61,14 @@ def test_dogfight_sweep_keeps_reference_recurrent_action_init_reachable():
     )
 
 
-def test_dogfight_sweep_keeps_state_curriculum_disabled_until_baseline_trains():
+def test_dogfight_sweep_keeps_state_curriculum_disabled_by_default_but_searchable():
     parser = ConfigParser()
     parser.read(repo_root() / "config" / "dogfight.ini")
 
     assert not parser.has_option("train", "state_buffer_size")
-    assert not parser.has_section("sweep.train.state_buffer_size")
-    assert not parser.has_section("sweep.train.cl_frac")
+    assert not parser.has_option("train", "cl_frac")
+    assert parser.has_section("sweep.train.state_buffer_size")
+    assert parser.has_section("sweep.train.cl_frac")
 
 
 def test_default_policy_config_keeps_existing_native_init_scale_defaults():

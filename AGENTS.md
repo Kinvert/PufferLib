@@ -162,9 +162,9 @@ Current Dogfight state-memory status:
 - `ocean/dogfight/tests/test_state_roundtrip.c` proves a saved state restored
   into a fresh env produces the same scripted future step.
 - The default Dogfight train run still leaves state curriculum disabled through
-  inherited `train.state_buffer_size = 0`. State curriculum is exposed only as a
-  sweep option in `config/dogfight.ini` via `sweep.train.state_buffer_size` and
-  `sweep.train.cl_frac`.
+  inherited `train.state_buffer_size = 0` and `train.cl_frac = 0`. State
+  curriculum is exposed only as a sweep option in `config/dogfight.ini` via
+  `sweep.train.state_buffer_size` and `sweep.train.cl_frac`.
 
 How PufferLib 5.0 state works in working envs:
 
@@ -236,10 +236,12 @@ profile until a normal baseline shows early-stage progress: `learning_rate =
 `clip_coef = 0.11`. Wider or higher-learning-rate probes are only useful after a
 short run proves stage movement without action saturation.
 
-Do not sweep `train.state_buffer_size` or `train.cl_frac` yet. Those enable the
-PufferLib 5 state-memory path, and this port should keep state memory off until
-the normal Dogfight baseline trains through early curriculum stages and has
-deterministic Dogfight state roundtrip tests.
+Dogfight now exposes the PufferLib 5 state-memory knobs only in the sweep
+space: `sweep.train.state_buffer_size` and `sweep.train.cl_frac`. Plain
+training remains state-memory-off through inherited defaults. Before trusting a
+large W&B state-memory sweep, run a short `max-runs 2` state-buffer smoke and
+check that both trials launch, use GPU, keep expected SPS, and emit normal
+curriculum metrics.
 
 Keep architecture/topology-like sweep parameters discrete. Dogfight's
 `sweep.policy.num_layers` and `sweep.vec.num_buffers` use `int_uniform` so
@@ -351,17 +353,26 @@ Dogfight sweep space now includes:
 - `policy.num_layers` from `1` to `3`, sampled as `int_uniform`.
 - Sweep trial length is short: `50M-125M`, centered at `75M`, so bad
   configurations are rejected before wasting `400M` validation-scale runs.
+- `train.state_buffer_size` from `512` to `20_000`, centered at `8192`, sampled
+  as `int_uniform` so PROTEIN produces whole buffer sizes.
+- `train.cl_frac` from `0.05` to `0.8`, centered at `0.35`, so sampled trials
+  actually enable state curriculum while staying below the 5.0 `<= 0.9`
+  assertion.
 
 Do not replace this with ad hoc high-LR/tiny-run trainer CLI overrides while
 debugging training quality. First compare behavior against Dogfight 3 and port
 one concrete behavior mismatch at a time.
 
-Latest verification after the sweep metric/range update:
+Latest verification after the state-memory sweep-space update:
 
 - `.venv/bin/python -m pytest ocean/dogfight/tests -q`:
-  `54 passed, 1 skipped`.
+  `57 passed, 1 skipped`.
 - `source .venv/bin/activate; ./build.sh dogfight`:
   built `pufferlib/_C.cpython-312-x86_64-linux-gnu.so`.
+- `PYTHONUNBUFFERED=1 .venv/bin/python -m pufferlib.pufferl sweep dogfight --sweep.gpus 1 --train.gpus 1 --sweep.max-runs 2`:
+  completed with exit code `0`; the second PROTEIN trial launched with
+  nonzero state-memory sweep knobs and active GPU, around `1.8M` SPS and
+  `1.9/8G` VRAM.
 
 Latest plain local-venv GPU smoke after the env-default restore:
 
