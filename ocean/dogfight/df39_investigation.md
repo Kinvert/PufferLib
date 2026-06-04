@@ -20,6 +20,20 @@ df38 reached target `8.9` on commit `ae750d44` in multiple runs. Representative 
 
 df36 used different metric names. It logs `environment/stage` and `environment/avg_stage` instead of `env/curriculum_target`. Top df36 runs reached stage `20` on commit `171482a9`; the best score query found `d8jn9wiv` at stage `20`, score `0.9139`, base-stage kills `0.9569`. High-ELO df36 references also include commit `51514907`.
 
+## Open Metric Anomaly
+
+The df39 runs `dp2u2tx8` and `qbktakds` advanced to target `9.9`/mastery stage `10` despite apparently large signed control-bias metrics such as `base_stage_signed_bias_rudder`. This needs a deeper audit before treating those runs as clean evidence of learning quality.
+
+Questions to answer:
+
+- Are the signed-bias metrics computed on the same episode/time window as curriculum advancement, or are they an aggregate over a later/current base-stage evaluation window?
+- Are the metric names in W&B unambiguous, or is TUI truncation hiding which control axis/window is being inspected?
+- Can high signed rudder/aileron bias still coexist with enough stage-specific kills because the stage geometry/reward allows a biased tactic, especially before self-play/anchor eval exists?
+- Did the old stage-9 ramp let a biased policy advance in df39 in a way that the Dogfight3 fixed curriculum would not?
+- Does `curriculum_soft_quality` over-credit stage advancement relative to true kill/win behavior when action bias is extreme?
+
+Next audit step: pull full W&B history for `dp2u2tx8` and `qbktakds`, inspect the exact steps where curriculum target advanced, and compare `curriculum_target`, `base_stage_kills`, `base_stage_ground`, `base_stage_timeouts`, action saturation, and signed-bias metrics at those same steps. Then trace the local metric code that emits each `base_stage_signed_bias_*` value so the interpretation is grounded in the actual denominator/window.
+
 ## Reference Differences Checked
 
 - Curriculum stage enum and `STAGES` table match Dogfight3, including stage 9 bank `30`, stage 17 bank `60`, stage 18 crossing geometry, and stage 20 AutoAce.
