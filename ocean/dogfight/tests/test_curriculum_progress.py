@@ -38,6 +38,22 @@ def dogfight_args():
     }
 
 
+def minimal_dogfight_args():
+    return {
+        "env_name": "dogfight",
+        "env": {
+            "curriculum_enabled": 1,
+        },
+        "curriculum": {
+            "enabled": 1,
+            "initial_target": 0.9,
+            "max_target": 18.0,
+            "step": 1.0,
+            "promote_threshold": 0.90,
+        },
+    }
+
+
 def test_setup_curriculum_initializes_enabled_dogfight_curriculum():
     import pufferlib.pufferl as pufferl
 
@@ -49,6 +65,19 @@ def test_setup_curriculum_initializes_enabled_dogfight_curriculum():
     assert state["target"] == 0.9
     assert state["max_target"] == 18.0
     assert backend.targets == [(pufferl_obj, 0.9)]
+
+
+def test_stage9_defaults_to_dogfight3_full_bank_without_hidden_ramp():
+    import pufferlib.pufferl as pufferl
+
+    state = pufferl.setup_curriculum(minimal_dogfight_args(), FakeBackend(), object())
+    state["target"] = 8.4
+
+    assert state["stage9_bank_curriculum"] == 0
+    assert math.isclose(state["stage9_bank_override"], 30.0)
+    assert math.isclose(pufferl.stage9_bank_for_target({"env": {}}, 8.5), 30.0)
+    assert math.isclose(pufferl.stage9_bank_for_state(state, 8.5), 30.0)
+    assert math.isclose(pufferl.next_curriculum_target(state), 9.4)
 
 
 def test_step_curriculum_promotes_after_mastery_stage_success():

@@ -57,7 +57,7 @@ void my_init(Env* env, Dict* kwargs) {
         .recovery_bank_deg = (float)dict_get_default(kwargs, "recovery_bank_deg", 60.0),
         .domain_randomization = (float)dict_get_default(kwargs, "domain_randomization", 0.0),
         .vertical_spawn_prob = (float)dict_get_default(kwargs, "vertical_spawn_prob", 0.0),
-        .stage9_bank_deg = (float)dict_get_default(kwargs, "stage9_bank_deg", -1.0),
+        .stage9_bank_deg = (float)dict_get_default(kwargs, "stage9_bank_deg", 30.0),
         .side_energy_spawn_prob = (float)dict_get_default(kwargs, "side_energy_spawn_prob", 0.2),
     };
     apply_runtime_config(env, &runtime_cfg);

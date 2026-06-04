@@ -151,11 +151,51 @@ static int sample_stage9_standard_bank(float target, const RuntimeConfig* cfg, f
     return 0;
 }
 
+static int sample_stage9_standard_bank_after_init(float target, float* bank_deg, int* mode) {
+    TestEnv t;
+    setup_curriculum_env(&t, CURRICULUM_SIDE_MANEUVERING);
+    set_curriculum_target(&t.env, target);
+
+    for (int i = 0; i < 500; i++) {
+        c_reset(&t.env);
+        if (t.env.stage != CURRICULUM_SIDE_MANEUVERING) continue;
+        if (t.env.side_spawn_variant != SIDE_SPAWN_STANDARD) continue;
+        *bank_deg = t.env.opponent_ap.target_bank * TEST_RAD_TO_DEG;
+        *mode = t.env.opponent_ap.mode;
+        return 1;
+    }
+    return 0;
+}
+
 static int test_stage9_bank_curriculum_and_override_scope(void) {
     RuntimeConfig defaults = default_runtime_config();
-    if (fabsf(defaults.stage9_bank_deg - -1.0f) > 1e-4f) {
-        printf("stage9_bank_auto_default: got %.1f expected -1 auto [FAIL]\n",
+    if (fabsf(defaults.stage9_bank_deg - 30.0f) > 1e-4f) {
+        printf("stage9_bank_default: got %.1f expected Dogfight3 30 [FAIL]\n",
             defaults.stage9_bank_deg);
+        return 1;
+    }
+
+    float default_bank_deg = -999.0f;
+    int default_mode = -1;
+    if (!sample_stage9_standard_bank(8.5f, &defaults, &default_bank_deg, &default_mode)) {
+        printf("stage9_bank_default: no standard stage-9 side spawn sampled [FAIL]\n");
+        return 1;
+    }
+    if (fabsf(default_bank_deg - 30.0f) > 1e-3f || default_mode == AP_STRAIGHT) {
+        printf("stage9_bank_default: got %.1f mode=%d expected Dogfight3 30 turning [FAIL]\n",
+            default_bank_deg, default_mode);
+        return 1;
+    }
+
+    float init_bank_deg = -999.0f;
+    int init_mode = -1;
+    if (!sample_stage9_standard_bank_after_init(8.5f, &init_bank_deg, &init_mode)) {
+        printf("stage9_bank_init_default: no standard stage-9 side spawn sampled [FAIL]\n");
+        return 1;
+    }
+    if (fabsf(init_bank_deg - 30.0f) > 1e-3f || init_mode == AP_STRAIGHT) {
+        printf("stage9_bank_init_default: got %.1f mode=%d expected Dogfight3 30 turning [FAIL]\n",
+            init_bank_deg, init_mode);
         return 1;
     }
 

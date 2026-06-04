@@ -270,18 +270,18 @@ def setup_curriculum(args, backend, pufferl):
         'base_stage_kills': 0.0,
         'base_stage_eps': 0.0,
         'window_decay': float(cfg.get('window_decay', 0.9)),
-        'stage9_bank_curriculum': int(cfg.get('stage9_bank_curriculum', 1)),
+        'stage9_bank_curriculum': int(cfg.get('stage9_bank_curriculum', 0)),
         'stage9_bank_start_target': float(cfg.get('stage9_bank_start_target', 8.5)),
         'stage9_bank_full_target': float(cfg.get('stage9_bank_full_target', 8.9)),
         'stage9_bank_step': float(cfg.get('stage9_bank_step', 0.1)),
-        'stage9_bank_override': float(args.get('env', {}).get('stage9_bank_deg', -1.0)),
+        'stage9_bank_override': float(args.get('env', {}).get('stage9_bank_deg', 30.0)),
     }
     backend.set_curriculum_target(pufferl, target)
     print(f'[CURRICULUM] target={target:.2f}', flush=True)
     return state
 
 def stage9_bank_for_target(args, target):
-    override = float(args.get('env', {}).get('stage9_bank_deg', -1.0))
+    override = float(args.get('env', {}).get('stage9_bank_deg', 30.0))
     if override >= 0.0:
         return override
     if target < 8.6:
@@ -295,7 +295,7 @@ def stage9_bank_for_target(args, target):
     return 30.0
 
 def stage9_bank_for_state(state, target):
-    override = state.get('stage9_bank_override', -1.0)
+    override = state.get('stage9_bank_override', 30.0)
     if override >= 0.0:
         return override
     return stage9_bank_for_target({'env': {'stage9_bank_deg': -1.0}}, target)
@@ -304,7 +304,7 @@ def next_curriculum_target(state):
     old_target = state['target']
     max_target = state['max_target']
     default_next = min(max_target, old_target + state['step'])
-    if not state.get('stage9_bank_curriculum', 1):
+    if not state.get('stage9_bank_curriculum', 0):
         return default_next
 
     start = state.get('stage9_bank_start_target', 8.5)

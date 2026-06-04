@@ -34,19 +34,20 @@ df36 used different metric names. It logs `environment/stage` and `environment/a
 - Set `config/dogfight.ini` `stage9_bank_deg = 30.0` and `stage9_bank_curriculum = 0` so active training uses Dogfight3 stage-9 difficulty.
 - Added zero-padding for fixed-width native observations when a smaller Dogfight observation scheme is active.
 - Added `test_observation_padding.c` to prove scheme 0 does not leak stale values into the unused 26-wide native observation tail.
+- Set Dogfight's omitted-key stage-9 defaults to Dogfight3 behavior (`30.0` bank, no substep ramp). Explicit `stage9_bank_deg = -1` still keeps the diagnostic ramp reachable, but it is no longer the default in C init, native binding fallback, or Dogfight-specific pufferl curriculum setup.
 
 ## Not Changed
 
 - Did not change the `STAGES` curriculum table or make any curriculum step easier.
 - Did not change Dogfight physics in `flightlib.h`.
 - Did not change action scaling, continuous-action distribution code, or optimizer code.
-- Did not change PufferLib core in this investigation.
+- Did not change general PufferLib core behavior. The only non-`ocean/dogfight` edit was Dogfight-specific fallback handling in `pufferlib/pufferl.py`.
 - Did not enable self-play or anchor-rating optimization for df39 stage-climb sweeps.
 
 ## Current Culprit Ranking
 
 1. Observation mismatch: df36 effective scheme 0 vs df39 scheme 1. This is a real behavior mismatch and should be tested first.
-2. Stage-9 easing: df39 target `9.9` happened while stage 9 was easier than Dogfight3. Treat those results as not directly comparable to df36 until the fixed 30-degree stage-9 path is swept.
+2. Stage-9 easing: df39 target `9.9` happened while stage 9 was easier than Dogfight3. Treat those results as not directly comparable to df36 until the fixed 30-degree stage-9 path is swept. The active config and omitted-key defaults now both use 30 degrees.
 3. Native policy architecture: commit `1f1e7a04` restored Dogfight3-style `Linear + bias + GELU` encoder behavior and df39 improved after it. Keep this under scrutiny because it lives in `src/ocean.cu`, but it uses the existing custom encoder extension point.
 4. Remaining likely areas: action scaling/logprob path, observation parity, step/reset semantics, reward terms, and physics parity. No curriculum step changes should be used as a fix.
 
@@ -61,4 +62,6 @@ df36 used different metric names. It logs `environment/stage` and `environment/a
 
 - `git diff --check`: clean.
 - `source .venv/bin/activate && ./build.sh dogfight`: built `pufferlib/_C.cpython-312-x86_64-linux-gnu.so`.
-- `python -m pytest ocean/dogfight/tests -q`: `59 passed, 1 skipped`.
+- `python -m pytest ocean/dogfight/tests/test_c_regressions.py ocean/dogfight/tests/test_curriculum_progress.py -q`: `12 passed`.
+- `python -m pytest ocean/dogfight/tests -q`: `60 passed, 1 skipped`.
+- `python -m pytest ocean/dogfight/tests/test_port_build.py::test_dogfight_gpu_vec_creates_and_resets -q`: skipped in this environment.

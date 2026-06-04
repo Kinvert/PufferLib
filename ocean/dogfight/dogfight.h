@@ -296,7 +296,7 @@ static inline RuntimeConfig default_runtime_config(void) {
         .recovery_bank_deg = 60.0f,
         .domain_randomization = 0.0f,
         .vertical_spawn_prob = 0.0f,
-        .stage9_bank_deg = -1.0f,
+        .stage9_bank_deg = 30.0f,
         .side_energy_spawn_prob = 0.2f,
     };
 }
@@ -989,7 +989,7 @@ void init(Dogfight *env, int obs_scheme, RewardConfig *rcfg, int curriculum_enab
     env->vertical_spawn_prob = 0.0f;
     env->vertical_level = 0;
     env->vertical_spawn_used = 0;
-    env->stage9_bank_deg = -1.0f;
+    env->stage9_bank_deg = 30.0f;
     env->side_energy_spawn_prob = 0.2f;
 
     // Rate observation previous values (schemes 4, 5)
