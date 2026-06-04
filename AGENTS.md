@@ -350,6 +350,11 @@ Dogfight behavior restored from the 3.0 reference:
 - Flight physics differs only by a macro rename from `K` to
   `INDUCED_DRAG_K`.
 - Stage 10 dive attack uses the Dogfight 3 angle window `120-175` degrees.
+- Signed-bias telemetry now logs mean signed action per step, not cumulative
+  signed action per episode. Older df39 runs before this fix can show large
+  `base_stage_signed_bias_*` values that must be divided by episode length to
+  interpret as actual mean control bias. Signed bias is diagnostic only;
+  curriculum promotion still gates on the base-stage kill-rate window.
 
 Dogfight sweep space now includes:
 

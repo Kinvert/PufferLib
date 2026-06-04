@@ -159,8 +159,8 @@ typedef struct Log {
 
     // RAW SUMS - exported to Python, become correct averages after vec_log divides by n
     float total_stage_weight;       // Sum of stage weights (exported as avg_stage_weight)
-    float total_abs_bias;           // Sum of |aileron_bias| (exported as avg_abs_bias)
-    float total_signed_bias;        // Sum of signed aileron_bias (exported as avg_signed_bias)
+    float total_abs_bias;           // Sum of per-episode mean |aileron| bias (exported as avg_abs_bias)
+    float total_signed_bias;        // Sum of per-episode mean signed aileron bias (exported as avg_signed_bias)
     float stage_sum;                // Sum of stages (exported as avg_stage)
     float total_control_rate;       // Sum of per-episode mean squared deltas (exported as avg_control_rate)
     float curriculum_quality;       // Target progress weighted by unsaturated surface controls
@@ -170,7 +170,7 @@ typedef struct Log {
     float base_stage_timeouts;      // Timeout terminations at current mastery stage
     float base_stage_episode_length; // Episode ticks accumulated at current mastery stage
     float base_stage_action_saturation; // Surface saturation accumulated at current mastery stage
-    float base_stage_signed_bias;   // Signed aileron bias accumulated at current mastery stage
+    float base_stage_signed_bias;   // Mean signed aileron bias accumulated at current mastery stage
     float base_stage_action_sat_elevator;
     float base_stage_action_sat_aileron;
     float base_stage_action_sat_rudder;
@@ -1215,14 +1215,17 @@ static void add_side_variant_log(Dogfight* env, int ground_termination,
     *timeouts += env->death_reason == DEATH_TIMEOUT ? 1.0f : 0.0f;
     *episode_length += (float)env->tick;
     *action_saturation += surface_saturation;
-    *signed_bias += env->aileron_bias;
+    float mean_elevator_bias = env->elevator_bias / episode_ticks;
+    float mean_aileron_bias = env->aileron_bias / episode_ticks;
+    float mean_rudder_bias = env->rudder_bias / episode_ticks;
+    *signed_bias += mean_aileron_bias;
     *action_sat_elevator += env->episode_action_sat_elevator / episode_ticks;
     *action_sat_aileron += env->episode_action_sat_aileron / episode_ticks;
     *action_sat_rudder += env->episode_action_sat_rudder / episode_ticks;
     *action_sat_trigger += env->episode_action_sat_trigger / episode_ticks;
-    *signed_bias_elevator += env->elevator_bias;
-    *signed_bias_aileron += env->aileron_bias;
-    *signed_bias_rudder += env->rudder_bias;
+    *signed_bias_elevator += mean_elevator_bias;
+    *signed_bias_aileron += mean_aileron_bias;
+    *signed_bias_rudder += mean_rudder_bias;
 }
 
 void add_log(Dogfight *env) {
@@ -1276,11 +1279,14 @@ void add_log(Dogfight *env) {
     env->log.stage = (float)env->stage;
 
     env->log.total_stage_weight += STAGES[env->stage].weight; // coeffs to scale metrics based on difficulty
-    env->log.total_abs_bias += fabsf(env->aileron_bias);
-    env->log.total_signed_bias += env->aileron_bias;
     env->log.stage_sum += (float)env->stage;  // Accumulate for avg_stage
     // Mean squared control delta per step this episode (lower = smoother control)
     float episode_ticks = fmaxf((float)env->tick, 1.0f);
+    float mean_elevator_bias = env->elevator_bias / episode_ticks;
+    float mean_aileron_bias = env->aileron_bias / episode_ticks;
+    float mean_rudder_bias = env->rudder_bias / episode_ticks;
+    env->log.total_abs_bias += fabsf(mean_aileron_bias);
+    env->log.total_signed_bias += mean_aileron_bias;
     env->log.total_control_rate += env->episode_control_rate / episode_ticks;
     float surface_saturation = (
         env->episode_action_sat_elevator / episode_ticks +
@@ -1315,14 +1321,14 @@ void add_log(Dogfight *env) {
         env->log.base_stage_timeouts += env->death_reason == DEATH_TIMEOUT ? 1.0f : 0.0f;
         env->log.base_stage_episode_length += (float)env->tick;
         env->log.base_stage_action_saturation += surface_saturation;
-        env->log.base_stage_signed_bias += env->aileron_bias;
+        env->log.base_stage_signed_bias += mean_aileron_bias;
         env->log.base_stage_action_sat_elevator += env->episode_action_sat_elevator / episode_ticks;
         env->log.base_stage_action_sat_aileron += env->episode_action_sat_aileron / episode_ticks;
         env->log.base_stage_action_sat_rudder += env->episode_action_sat_rudder / episode_ticks;
         env->log.base_stage_action_sat_trigger += env->episode_action_sat_trigger / episode_ticks;
-        env->log.base_stage_signed_bias_elevator += env->elevator_bias;
-        env->log.base_stage_signed_bias_aileron += env->aileron_bias;
-        env->log.base_stage_signed_bias_rudder += env->rudder_bias;
+        env->log.base_stage_signed_bias_elevator += mean_elevator_bias;
+        env->log.base_stage_signed_bias_aileron += mean_aileron_bias;
+        env->log.base_stage_signed_bias_rudder += mean_rudder_bias;
         add_side_variant_log(env, ground_termination, episode_ticks, surface_saturation);
     }
 

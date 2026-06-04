@@ -24,15 +24,21 @@ df36 used different metric names. It logs `environment/stage` and `environment/a
 
 The df39 runs `dp2u2tx8` and `qbktakds` advanced to target `9.9`/mastery stage `10` despite apparently large signed control-bias metrics such as `base_stage_signed_bias_rudder`. This needs a deeper audit before treating those runs as clean evidence of learning quality.
 
-Questions to answer:
+Decoded local W&B histories on 2026-06-04:
 
-- Are the signed-bias metrics computed on the same episode/time window as curriculum advancement, or are they an aggregate over a later/current base-stage evaluation window?
-- Are the metric names in W&B unambiguous, or is TUI truncation hiding which control axis/window is being inspected?
+- Both runs reached target `9.9` only after old-stage promotion windows reported high kill rates, usually `0.90-1.00`. Promotion itself only gates on `base_stage_kills/base_stage_eps`; signed bias is diagnostic and was not a promotion gate.
+- `dp2u2tx8` promoted `8.90 -> 9.90` at `71.3M` steps with window kill rate `0.995`, ground rate `0.005`, episode length about `747`, and cumulative signed biases `elevator=-408.8`, `aileron=196.3`, `rudder=-361.6`. Normalized per-step, those are about `-0.55`, `0.26`, `-0.48`.
+- `qbktakds` promoted `8.90 -> 9.90` at `64.5M` steps with window kill rate `0.990`, ground rate `0.010`, episode length about `641`, and cumulative signed biases `elevator=-269.7`, `aileron=106.4`, `rudder=498.0`. Normalized per-step, those are about `-0.42`, `0.17`, `0.78`.
+- `qbktakds` then collapsed by the final row at `68.7M` steps: base-stage kill rate `0.042`, window kill rate `0.033`, ground rate `0.958`, action saturation `0.719`, and normalized per-step biases about `elevator=-0.21`, `aileron=-0.61`, `rudder=0.87`. It reached target `9.9`, but the final policy was not actually healthy at stage 10.
+- Root metric issue found: `base_stage_signed_bias_*` was emitted as cumulative signed action per episode averaged over episodes, not mean signed action per tick. This made W&B values look like impossible constant full-control commands. The Dogfight-local telemetry path now normalizes signed-bias logs by episode length before exporting them.
+
+Questions still open:
+
 - Can high signed rudder/aileron bias still coexist with enough stage-specific kills because the stage geometry/reward allows a biased tactic, especially before self-play/anchor eval exists?
 - Did the old stage-9 ramp let a biased policy advance in df39 in a way that the Dogfight3 fixed curriculum would not?
 - Does `curriculum_soft_quality` over-credit stage advancement relative to true kill/win behavior when action bias is extreme?
 
-Next audit step: pull full W&B history for `dp2u2tx8` and `qbktakds`, inspect the exact steps where curriculum target advanced, and compare `curriculum_target`, `base_stage_kills`, `base_stage_ground`, `base_stage_timeouts`, action saturation, and signed-bias metrics at those same steps. Then trace the local metric code that emits each `base_stage_signed_bias_*` value so the interpretation is grounded in the actual denominator/window.
+Next audit step: after the next sweep uses normalized signed-bias telemetry, compare promotion rows against final rows and look for policies that both advance and retain healthy stage-10 kill/ground rates. Treat `qbktakds`-style "advanced then crashed" runs as weak evidence even if `curriculum_soft_quality` is high.
 
 ## Reference Differences Checked
 
@@ -52,12 +58,14 @@ Next audit step: pull full W&B history for `dp2u2tx8` and `qbktakds`, inspect th
 - Changed the native Dogfight binding to advertise `OBS_SIZE 22`, matching the df36-effective scheme-0 observation count. The direct C observation regression now proves scheme 0 writes only its declared 22 values instead of clearing/writing a 26-wide tail.
 - Set Dogfight's direct native `policy.action_init_scale` default to `1.0`. Dogfight3's policy constructor used `0.01`, but `DogfightRecurrent` immediately reinitialized wrapped policy weights with orthogonal gain `1.0`, making `1.0` the effective df36 action-head scale.
 - Moved Dogfight reset/spawn/domain-randomization draws from process-global `rand()`/`rndf()` to `env->rng`, matching the PufferLib 5 state-memory pattern used by Boxoban/G2048. The added terminal roundtrip test first failed because restored pre-kill states reset into different future geometry, then passed after the local RNG fix.
+- Normalized Dogfight signed-bias telemetry by episode length before logging it, so `avg_signed_bias`, `base_stage_signed_bias_*`, and side-variant signed-bias diagnostics are mean per-step action biases rather than cumulative per-episode sums.
 
 ## Not Changed
 
 - Did not change the `STAGES` curriculum table or make any curriculum step easier.
 - Did not change Dogfight physics constants or integration equations in `flightlib.h`; only the reset-time random source was made env-local.
 - Did not change action scaling, continuous-action distribution code, or optimizer code.
+- Did not change curriculum promotion logic; signed bias remains diagnostic and does not gate stage advancement.
 - Did not change general PufferLib core behavior. The only non-`ocean/dogfight` edit was Dogfight-specific fallback handling in `pufferlib/pufferl.py`.
 - Did not enable self-play or anchor-rating optimization for df39 stage-climb sweeps.
 

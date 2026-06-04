@@ -191,13 +191,13 @@ static int test_mastery_stage_telemetry_accumulates_current_stage_only(void) {
     fail |= !nearly(t.env.log.base_stage_timeouts, 0.0f);
     fail |= !nearly(t.env.log.base_stage_episode_length, 20.0f);
     fail |= !nearly(t.env.log.base_stage_action_saturation, 0.1f);
-    fail |= !nearly(t.env.log.base_stage_signed_bias, 0.50f);
+    fail |= !nearly(t.env.log.base_stage_signed_bias, 0.025f);
     fail |= !nearly(t.env.log.base_stage_action_sat_elevator, 0.20f);
     fail |= !nearly(t.env.log.base_stage_action_sat_aileron, 0.10f);
     fail |= !nearly(t.env.log.base_stage_action_sat_rudder, 0.00f);
-    fail |= !nearly(t.env.log.base_stage_signed_bias_elevator, -0.50f);
-    fail |= !nearly(t.env.log.base_stage_signed_bias_aileron, 0.50f);
-    fail |= !nearly(t.env.log.base_stage_signed_bias_rudder, 0.25f);
+    fail |= !nearly(t.env.log.base_stage_signed_bias_elevator, -0.025f);
+    fail |= !nearly(t.env.log.base_stage_signed_bias_aileron, 0.025f);
+    fail |= !nearly(t.env.log.base_stage_signed_bias_rudder, 0.0125f);
 
     if (fail) {
         printf(
@@ -264,14 +264,14 @@ static int test_side_spawn_variant_telemetry_mastery_only(void) {
     fail |= !nearly(t.env.log.base_stage_side_standard_ground, 0.0f);
     fail |= !nearly(t.env.log.base_stage_side_standard_episode_length, 20.0f);
     fail |= !nearly(t.env.log.base_stage_side_standard_action_saturation, 0.1f);
-    fail |= !nearly(t.env.log.base_stage_side_standard_signed_bias, -0.25f);
+    fail |= !nearly(t.env.log.base_stage_side_standard_signed_bias, -0.0125f);
     fail |= !nearly(t.env.log.base_stage_side_standard_action_sat_elevator, 0.1f);
     fail |= !nearly(t.env.log.base_stage_side_standard_action_sat_aileron, 0.2f);
     fail |= !nearly(t.env.log.base_stage_side_standard_action_sat_rudder, 0.0f);
     fail |= !nearly(t.env.log.base_stage_side_standard_action_sat_trigger, 0.3f);
-    fail |= !nearly(t.env.log.base_stage_side_standard_signed_bias_elevator, -0.50f);
-    fail |= !nearly(t.env.log.base_stage_side_standard_signed_bias_aileron, -0.25f);
-    fail |= !nearly(t.env.log.base_stage_side_standard_signed_bias_rudder, 0.50f);
+    fail |= !nearly(t.env.log.base_stage_side_standard_signed_bias_elevator, -0.025f);
+    fail |= !nearly(t.env.log.base_stage_side_standard_signed_bias_aileron, -0.0125f);
+    fail |= !nearly(t.env.log.base_stage_side_standard_signed_bias_rudder, 0.025f);
 
     fail |= !nearly(t.env.log.base_stage_side_energy_eps, 1.0f);
     fail |= !nearly(t.env.log.base_stage_side_energy_kills, 1.0f);
@@ -279,14 +279,14 @@ static int test_side_spawn_variant_telemetry_mastery_only(void) {
     fail |= !nearly(t.env.log.base_stage_side_energy_ground, 1.0f);
     fail |= !nearly(t.env.log.base_stage_side_energy_episode_length, 40.0f);
     fail |= !nearly(t.env.log.base_stage_side_energy_action_saturation, 0.06666667f);
-    fail |= !nearly(t.env.log.base_stage_side_energy_signed_bias, 0.75f);
+    fail |= !nearly(t.env.log.base_stage_side_energy_signed_bias, 0.01875f);
     fail |= !nearly(t.env.log.base_stage_side_energy_action_sat_elevator, 0.0f);
     fail |= !nearly(t.env.log.base_stage_side_energy_action_sat_aileron, 0.1f);
     fail |= !nearly(t.env.log.base_stage_side_energy_action_sat_rudder, 0.1f);
     fail |= !nearly(t.env.log.base_stage_side_energy_action_sat_trigger, 0.2f);
-    fail |= !nearly(t.env.log.base_stage_side_energy_signed_bias_elevator, 1.25f);
-    fail |= !nearly(t.env.log.base_stage_side_energy_signed_bias_aileron, 0.75f);
-    fail |= !nearly(t.env.log.base_stage_side_energy_signed_bias_rudder, -1.50f);
+    fail |= !nearly(t.env.log.base_stage_side_energy_signed_bias_elevator, 0.03125f);
+    fail |= !nearly(t.env.log.base_stage_side_energy_signed_bias_aileron, 0.01875f);
+    fail |= !nearly(t.env.log.base_stage_side_energy_signed_bias_rudder, -0.0375f);
 
     if (fail) {
         printf(
