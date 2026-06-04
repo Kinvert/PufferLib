@@ -222,7 +222,7 @@ overrides such as `--sweep.max-runs 8 --sweep.gpus 1 --train.gpus 1`.
 Current hyperparameter search should use short sweeps. The goal is to find
 settings that clear early curriculum stages before `200M` steps, not to spend
 each trial on long `400M+` validation runs. `config/dogfight.ini` currently
-sets `sweep.train.total_timesteps` to `50M-125M` with a `75M` mean. A useful
+sets `sweep.train.total_timesteps` to `50M-100M` with a `50M` mean. A useful
 single-GPU W&B search command is:
 
 ```bash
@@ -230,11 +230,12 @@ source .venv/bin/activate
 python -m pufferlib.pufferl sweep dogfight --sweep.gpus 1 --train.gpus 1 --sweep.max-runs 20 --wandb --wandb-project df39 --wandb-group df39-stage9-short
 ```
 
-The Dogfight sweep should stay centered on the Dogfight 3-derived trainer
-profile until a normal baseline shows early-stage progress: `learning_rate =
-0.00045`, `horizon = 64`, `policy.num_layers = 1`, `ent_coef = 0.0024`, and
-`clip_coef = 0.11`. Wider or higher-learning-rate probes are only useful after a
-short run proves stage movement without action saturation.
+Plain Dogfight training should stay Dogfight 3-derived unless a concrete
+behavior mismatch is found. The sweep center is separate: after the latest
+local W&B evidence, it is centered on the best measured PufferLib 5 native
+short-run stage climber: high native action-head scale, `learning_rate =
+0.005`, `horizon = 128`, `minibatch_size = 4096`, `policy.num_layers = 2`,
+`vec.num_buffers = 3`, `replay_ratio = 0.5`, and `gamma = 0.98`.
 
 Dogfight now exposes the PufferLib 5 state-memory knobs only in the sweep
 space: `sweep.train.state_buffer_size` and `sweep.train.cl_frac`. Plain
@@ -348,11 +349,22 @@ Dogfight sweep space now includes:
 - `vec.total_agents` narrowed to `2048-4096`, default `4096`. A measured
   `8192`-agent run on `g240` was fast but trained worse, finishing around
   `base_stage_kills ~= 0.33`.
-- `vec.num_buffers` sampled as `int_uniform`.
-- `policy.action_init_scale` centered around `0.01`, but allowed up to `1.0`
-  because the Dogfight 3 recurrent wrapper made that effective scale reachable.
-- `policy.num_layers` from `1` to `3`, sampled as `int_uniform`.
-- Sweep trial length is short: `50M-125M`, centered at `75M`, so bad
+- `vec.num_buffers` sampled as `int_uniform`, centered at `3` after the best
+  measured short run used that topology.
+- `policy.action_init_scale` is centered at `1.0` for sweeps, while plain
+  training still defaults to the Dogfight 3 `0.01`. Dogfight 3's recurrent
+  wrapper made an effective `1.0` scale reachable, and the best 5.0 short run
+  used the native `1.0` action-head scale.
+- `policy.num_layers` from `1` to `3`, sampled as `int_uniform`, centered at
+  `2` for the current PufferLib 5 native sweep.
+- `train.minibatch_size` from `4096` to `16384`, centered at `4096`.
+- `train.learning_rate` from `0.00045` to `0.02`, centered at `0.005` because
+  the best local stage-climb run hit the previous high end.
+- `train.horizon` from `64` to `256`, centered at `128`.
+- `train.replay_ratio` from `0.5` to `2.0`, centered at `0.5`.
+- `train.gamma` remains sweepable but is centered at `0.98` for short-stage
+  climb.
+- Sweep trial length is short: `50M-100M`, centered at `50M`, so bad
   configurations are rejected before wasting `400M` validation-scale runs.
 - `train.state_buffer_size` from `512` to `20_000`, centered at `8192`, sampled
   as `int_uniform` so PROTEIN produces whole buffer sizes.
@@ -360,14 +372,29 @@ Dogfight sweep space now includes:
   actually enable state curriculum while staying below the 5.0 `<= 0.9`
   assertion.
 
-Do not replace this with ad hoc high-LR/tiny-run trainer CLI overrides while
-debugging training quality. First compare behavior against Dogfight 3 and port
-one concrete behavior mismatch at a time.
+Do not replace this with ad hoc tiny-run trainer CLI overrides while debugging
+training quality. If a high-learning-rate profile is worth trying, put it in
+the Dogfight sweep config as a deliberate, reviewable search-space change. For
+environment behavior changes, first compare against Dogfight 3 and port one
+concrete mismatch at a time.
 
-Latest verification after the state-memory sweep-space update:
+Latest verification after the PufferLib 5 native short-sweep center update:
 
 - `.venv/bin/python -m pytest ocean/dogfight/tests -q`:
   `57 passed, 1 skipped`.
+- Loaded `config/dogfight.ini` keeps plain `[train]` on the Dogfight 3-derived
+  baseline (`learning_rate = 0.00045`, `horizon = 64`, `minibatch_size =
+  65536`, `policy.num_layers = 1`, `policy.action_init_scale = 0.01`).
+- A direct `Protein(...).suggest(...)` from the Dogfight sweep config returns
+  the new short-stage-climb center: `learning_rate = 0.005`, `horizon = 128`,
+  `minibatch_size = 4096`, `policy.num_layers = 2`, `action_init_scale = 1.0`,
+  `vec.num_buffers = 3`, `replay_ratio = 0.5`, `gamma = 0.98`, and `50M`
+  timesteps.
+- `.venv/bin/python -m pufferlib.pufferl sweep dogfight --sweep.gpus 1
+  --train.gpus 1 --sweep.max-runs 2`: completed with exit code `0`. Trial 1
+  used the short Dogfight 3 baseline (`53.3K` params). Trial 2 used the new
+  PROTEIN sweep center (`102.4K` params), GPU active, about `1.7/8G` VRAM and
+  roughly `0.8M-1.5M` SPS through the run.
 - `source .venv/bin/activate; ./build.sh dogfight`:
   built `pufferlib/_C.cpython-312-x86_64-linux-gnu.so`.
 - `PYTHONUNBUFFERED=1 .venv/bin/python -m pufferlib.pufferl sweep dogfight --sweep.gpus 1 --train.gpus 1 --sweep.max-runs 2`:

@@ -109,6 +109,7 @@ def test_dogfight_sweep_hyperparameters_honor_configured_means(monkeypatch):
     for key in (
         "train/learning_rate",
         "train/horizon",
+        "train/minibatch_size",
         "train/clip_coef",
         "policy/num_layers",
         "train/total_timesteps",
@@ -249,10 +250,11 @@ def test_sweep_asks_protein_for_second_trial_after_one_baseline(monkeypatch):
     args["sweep"]["gpus"] = 1
     args["train"]["gpus"] = 1
     args["sweep"]["max_runs"] = 2
+    baseline_learning_rate = args["train"]["learning_rate"]
 
     pufferl.sweep("dogfight", args=args)
 
-    assert learning_rates == [0.00045, 0.123]
+    assert learning_rates == [baseline_learning_rate, 0.123]
 
 
 def test_sweep_baseline_uses_configured_total_timesteps_mean(monkeypatch):

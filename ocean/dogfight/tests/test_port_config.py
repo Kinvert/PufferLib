@@ -62,12 +62,17 @@ DOGFIGHT3_TRAIN_BASELINE = {
     "replay_ratio": 1.0,
 }
 
-DOGFIGHT3_SHORT_SWEEP_PROFILE = {
+PUFFER5_NATIVE_STAGE_CLIMB_SWEEP_PROFILE = {
     "policy.hidden_size": 128,
-    "policy.num_layers": 1,
-    "train.horizon": 64,
-    "train.learning_rate": 0.00045,
-    "train.ent_coef": 0.0024,
+    "policy.num_layers": 2,
+    "policy.action_init_scale": 1.0,
+    "vec.num_buffers": 3,
+    "train.horizon": 128,
+    "train.minibatch_size": 4096,
+    "train.learning_rate": 0.005,
+    "train.ent_coef": 0.001,
+    "train.gamma": 0.98,
+    "train.replay_ratio": 0.5,
     "train.clip_coef": 0.11,
 }
 
@@ -142,16 +147,16 @@ def test_dogfight_sweep_time_budget_targets_fast_stage_discovery():
     parser.read(repo_root / "config" / "dogfight.ini")
 
     assert parser.getint("sweep.train.total_timesteps", "min") >= 50_000_000
-    assert parser.getint("sweep.train.total_timesteps", "mean") == 75_000_000
-    assert parser.getint("sweep.train.total_timesteps", "max") <= 125_000_000
+    assert parser.getint("sweep.train.total_timesteps", "mean") == 50_000_000
+    assert parser.getint("sweep.train.total_timesteps", "max") <= 100_000_000
 
 
-def test_dogfight_sweep_space_centers_reference_short_stage_discovery_profile():
+def test_dogfight_sweep_space_centers_native_short_stage_climb_profile():
     repo_root = Path(__file__).resolve().parents[3]
     parser = ConfigParser()
     parser.read(repo_root / "config" / "dogfight.ini")
 
-    for dotted_key, expected in DOGFIGHT3_SHORT_SWEEP_PROFILE.items():
+    for dotted_key, expected in PUFFER5_NATIVE_STAGE_CLIMB_SWEEP_PROFILE.items():
         section = f"sweep.{dotted_key}"
         assert parser.getfloat(section, "min") <= expected
         assert parser.getfloat(section, "max") >= expected
@@ -232,11 +237,12 @@ def test_dogfight_train_config_ports_dogfight3_training_profile_to_puffer5_keys(
     }
 
     assert parser.getfloat("train", "replay_ratio") in allowed_replay
-    # Short sweeps stay centered on the Dogfight3 trainer profile and only
-    # broaden around it enough to find early-stage progress quickly.
+    # Plain training keeps the Dogfight3 trainer profile. Short sweeps center
+    # on the best measured PufferLib 5 native stage-climb profile so PROTEIN
+    # spends early trials near settings that have already promoted.
     short_sweep_train_keys = {
         key.split(".", 1)[1]
-        for key in DOGFIGHT3_SHORT_SWEEP_PROFILE
+        for key in PUFFER5_NATIVE_STAGE_CLIMB_SWEEP_PROFILE
         if key.startswith("train.")
     }
 
@@ -254,7 +260,8 @@ def test_dogfight_train_config_ports_dogfight3_training_profile_to_puffer5_keys(
         "prio_beta0",
         "replay_ratio",
     ):
-        assert key not in short_sweep_train_keys
+        if key in short_sweep_train_keys:
+            continue
         assert math.isclose(
             parser.getfloat(f"sweep.train.{key}", "mean"),
             parser.getfloat("train", key),
