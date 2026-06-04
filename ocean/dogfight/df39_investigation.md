@@ -101,32 +101,38 @@ Step/reward parity update:
 
 - Added a Dogfight3 numeric fixture for one nonterminal scripted `c_step` with explicit player and opponent actions.
 - `test_scripted_step_reference.c` confirms Dogfight5 matches Dogfight3 for next player/opponent plane state, reward components, terminal/death flags, and next scheme1 observations in that fixture.
-- This reduces risk in the nonterminal step/reward path. Terminal OOB/timeout/opponent-kill transitions and longer action traces still need coverage before treating the port as behavior-complete.
+- This reduces risk in the nonterminal step/reward path. Basic kill/OOB/timeout/opponent-kill terminal transitions are now covered separately; longer action traces still need coverage before treating the port as behavior-complete.
 
 Terminal kill parity update:
 
 - Added a Dogfight3 numeric fixture for a scripted player kill terminal step.
 - `test_terminal_kill_reference.c` confirms Dogfight5 matches Dogfight3 for the player kill reward, zero-sum opponent reward, terminal flag, reset-visible death/winner bookkeeping, and kill/log counters.
-- This rules out the basic player-kill terminal reward/log/reset path as the current training-quality mismatch. OOB, timeout, opponent-kill, and longer reset traces still need coverage.
+- This rules out the basic player-kill terminal reward/log/reset path as the current training-quality mismatch. Basic OOB, timeout, and opponent-kill terminal paths are now covered separately; longer reset traces still need coverage.
 
 Terminal OOB parity update:
 
 - Added a numeric fixture from the exact df36 PufferLib 3.0 commit `171482a9b9889bebaa427ab658c95c0fc391c031` for scripted player-crash and opponent-crash terminal steps.
 - `test_terminal_oob_reference.c` confirms Dogfight5 matches df36 for crasher/survivor rewards, zero-sum opponent rewards, terminal flag, reset-visible OOB bookkeeping, ground-hit counters, base-stage counters, and score/perf logs.
-- This rules out the basic player/opponent OOB terminal reward/log/reset path as the current training-quality mismatch. Timeout, opponent-kill, and longer reset traces still need coverage.
+- This rules out the basic player/opponent OOB terminal reward/log/reset path as the current training-quality mismatch. Basic timeout and opponent-kill terminal paths are now covered separately; longer reset traces still need coverage.
 
 Terminal timeout parity update:
 
 - Added a numeric fixture from the exact df36 PufferLib 3.0 commit `171482a9b9889bebaa427ab658c95c0fc391c031` for a scripted max-step timeout.
 - `test_terminal_timeout_reference.c` confirms Dogfight5 matches df36 for timeout rewards (`-0.5` for both sides), terminal flag, reset-visible timeout bookkeeping, base-stage counters, and score/perf logs.
-- This rules out the basic timeout terminal reward/log/reset path as the current training-quality mismatch. Opponent-kill and longer reset traces still need coverage.
+- This rules out the basic timeout terminal reward/log/reset path as the current training-quality mismatch. Longer reset traces still need coverage.
+
+Terminal opponent-kill parity update:
+
+- Added a numeric fixture from the exact df36 PufferLib 3.0 commit `171482a9b9889bebaa427ab658c95c0fc391c031` for a scripted self-play opponent kill.
+- `test_terminal_opponent_kill_reference.c` confirms Dogfight5 matches df36 for opponent-kill rewards (`-1.0` player, `+1.0` opponent), terminal flag, reset-visible winner bookkeeping, self-play opponent kill counters, clean-fight counters, base-stage counters, and score/perf logs.
+- This rules out the basic self-play opponent-kill terminal reward/log/reset path as the current training-quality mismatch. Longer multi-reset traces still need coverage.
 
 ## Next Tests
 
 - Run a short df40 sweep after this config/obs fix and compare against the old df39 top: target must clear 7-9 without the stage-9 ramp.
 - Run a short `max-runs 2` state-buffer sweep smoke before trusting larger state-memory sweeps.
 - Add additional parity tests against Dogfight3 for scheme 1 observations under broader scripted states.
-- Add opponent-kill reset parity probes against Dogfight3.
+- Add longer multi-reset parity traces against Dogfight3.
 - Add physics/step parity probes for neutral action traces and scripted action traces against Dogfight3.
 - Audit `flightlib.h` differences before changing physics.
 
@@ -159,6 +165,9 @@ Terminal timeout parity update:
 - `python -m pytest ocean/dogfight/tests/test_c_regressions.py::test_dogfight_c_regression -q -k terminal_kill_reference`: first failed because the new parity test file was missing, then passed after adding the fixture test.
 - `python -m pytest ocean/dogfight/tests/test_c_regressions.py -q`: `9 passed`.
 - `python -m pytest ocean/dogfight/tests -q`: `64 passed, 1 skipped, 2 warnings`.
+- `python -m pytest ocean/dogfight/tests/test_c_regressions.py::test_dogfight_c_regression -q -k terminal_opponent_kill_reference`: first failed because the new parity test file was missing, then passed after adding the fixture test.
+- `python -m pytest ocean/dogfight/tests/test_c_regressions.py -q`: `12 passed`.
+- `python -m pytest ocean/dogfight/tests -q`: `67 passed, 1 skipped, 2 warnings`.
 - `python -m pytest ocean/dogfight/tests/test_c_regressions.py::test_dogfight_c_regression -q -k terminal_oob_reference`: first failed because the new parity test file was missing, then passed after adding the fixture test.
 - `python -m pytest ocean/dogfight/tests/test_c_regressions.py -q`: `10 passed`.
 - `python -m pytest ocean/dogfight/tests -q`: `65 passed, 1 skipped, 2 warnings`.

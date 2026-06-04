@@ -64,6 +64,7 @@ def compile_and_run_c_test(repo_root: Path, test_name: str, tmp_path: Path):
         "test_terminal_kill_reference",
         "test_terminal_oob_reference",
         "test_terminal_timeout_reference",
+        "test_terminal_opponent_kill_reference",
         "test_state_roundtrip",
     ],
 )

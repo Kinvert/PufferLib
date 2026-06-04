@@ -368,6 +368,10 @@ Dogfight behavior restored from the 3.0 reference:
   PufferLib 3.0 commit `171482a9b9889bebaa427ab658c95c0fc391c031`, covering
   crasher/survivor rewards, reset-visible OOB flags, and ground-hit/base-stage
   log counters.
+- `ocean/dogfight/tests/test_terminal_opponent_kill_reference.c` compares a
+  scripted self-play opponent kill against the exact df36 commit, covering
+  player/opponent terminal rewards, reset-visible winner flags, self-play kill
+  counters, clean-fight counters, and base-stage logs.
 - Native Dogfight policy now uses a Dogfight-specific CUDA encoder matching the
   Dogfight 3 observation path shape: linear projection with bias followed by
   GELU before the recurrent core. This is wired through `create_custom_encoder`
@@ -476,6 +480,13 @@ Latest verification after restoring Dogfight3 scheme1 native observations:
   ocean/dogfight/tests/test_c_regressions.py -q` passed with `11 passed`, and
   `.venv/bin/python -m pytest ocean/dogfight/tests -q` passed with
   `66 passed, 1 skipped, 2 warnings`.
+- Follow-up terminal opponent-kill parity coverage:
+  `test_terminal_opponent_kill_reference` first failed from the regression
+  inventory because the test file was missing, then passed after adding the
+  exact df36 commit fixture. `.venv/bin/python -m pytest
+  ocean/dogfight/tests/test_c_regressions.py -q` passed with `12 passed`, and
+  `.venv/bin/python -m pytest ocean/dogfight/tests -q` passed with
+  `67 passed, 1 skipped, 2 warnings`.
 
 Latest plain local-venv GPU smoke after the env-default restore:
 
