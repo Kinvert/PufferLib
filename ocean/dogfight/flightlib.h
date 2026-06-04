@@ -42,6 +42,10 @@ static inline float rndf(float a, float b) {
     return a + ((float)rand() / (float)RAND_MAX) * (b - a);
 }
 
+static inline float rndf_state(unsigned int* rng, float a, float b) {
+    return a + ((float)rand_r(rng) / (float)RAND_MAX) * (b - a);
+}
+
 static inline Vec3 vec3(float x, float y, float z) { return (Vec3){x, y, z}; }
 static inline Vec3 add3(Vec3 a, Vec3 b) { return (Vec3){a.x + b.x, a.y + b.y, a.z + b.z}; }
 static inline Vec3 sub3(Vec3 a, Vec3 b) { return (Vec3){a.x - b.x, a.y - b.y, a.z - b.z}; }
@@ -286,6 +290,46 @@ static inline void randomize_flight_params(FlightParams* params, float dr) {
 
     params->g_limit_pos = G_LIMIT_POS * rndf(1.0f - dr, 1.0f + dr);
     params->g_limit_neg = G_LIMIT_NEG * rndf(1.0f - dr, 1.0f + dr);
+}
+
+static inline void randomize_flight_params_rng(FlightParams* params, float dr, unsigned int* rng) {
+    params->mass = MASS * rndf_state(rng, 1.0f - dr, 1.0f + dr);
+    params->inv_mass = 1.0f / params->mass;
+    params->ixx = IXX * rndf_state(rng, 1.0f - dr, 1.0f + dr);
+    params->iyy = IYY * rndf_state(rng, 1.0f - dr, 1.0f + dr);
+    params->izz = IZZ * rndf_state(rng, 1.0f - dr, 1.0f + dr);
+
+    float grav_dr = fminf(dr, 0.01f);
+    params->gravity = GRAVITY * rndf_state(rng, 1.0f - grav_dr, 1.0f + grav_dr);
+    params->inv_gravity = 1.0f / params->gravity;
+
+    float wing_scale = rndf_state(rng, 1.0f - dr, 1.0f + dr);
+    params->wingspan = WINGSPAN * wing_scale;
+    params->chord = CHORD * wing_scale;
+    params->wing_area = WING_AREA * wing_scale * wing_scale;
+
+    params->c_d0 = C_D0 * rndf_state(rng, 1.0f - dr, 1.0f + dr);
+    params->k = INDUCED_DRAG_K * rndf_state(rng, 1.0f - dr, 1.0f + dr);
+    params->c_l_alpha = C_L_ALPHA * rndf_state(rng, 1.0f - dr, 1.0f + dr);
+    params->c_l_max = C_L_MAX * rndf_state(rng, 1.0f - dr, 1.0f + dr);
+    params->rho = RHO * rndf_state(rng, 1.0f - dr, 1.0f + dr);
+
+    params->engine_power = ENGINE_POWER * rndf_state(rng, 1.0f - dr, 1.0f + dr);
+    params->eta_prop = ETA_PROP * rndf_state(rng, 1.0f - dr, 1.0f + dr);
+
+    params->cm_alpha = CM_ALPHA * rndf_state(rng, 1.0f - dr, 1.0f + dr);
+    params->cl_beta = CL_BETA * rndf_state(rng, 1.0f - dr, 1.0f + dr);
+    params->cn_beta = CN_BETA * rndf_state(rng, 1.0f - dr, 1.0f + dr);
+    params->cm_q = CM_Q * rndf_state(rng, 1.0f - dr, 1.0f + dr);
+    params->cl_p = CL_P * rndf_state(rng, 1.0f - dr, 1.0f + dr);
+    params->cn_r = CN_R * rndf_state(rng, 1.0f - dr, 1.0f + dr);
+
+    params->cm_delta_e = CM_DELTA_E * rndf_state(rng, 1.0f - dr, 1.0f + dr);
+    params->cl_delta_a = CL_DELTA_A * rndf_state(rng, 1.0f - dr, 1.0f + dr);
+    params->cn_delta_r = CN_DELTA_R * rndf_state(rng, 1.0f - dr, 1.0f + dr);
+
+    params->g_limit_pos = G_LIMIT_POS * rndf_state(rng, 1.0f - dr, 1.0f + dr);
+    params->g_limit_neg = G_LIMIT_NEG * rndf_state(rng, 1.0f - dr, 1.0f + dr);
 }
 
 typedef struct {

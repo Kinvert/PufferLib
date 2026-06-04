@@ -625,6 +625,15 @@ typedef struct Dogfight {
     State state;                 // Mirrored Puffer 5 state payload; state memory stays config-disabled until tests cover restores.
 } Dogfight;
 
+static inline float dogfight_rndf(Dogfight* env, float a, float b) {
+    return rndf_state(&env->rng, a, b);
+}
+
+static inline int dogfight_rand_int(Dogfight* env, int n) {
+    if (n <= 0) return 0;
+    return (int)(rand_r(&env->rng) % (unsigned int)n);
+}
+
 static inline void apply_runtime_config(Dogfight* env, const RuntimeConfig* cfg) {
     env->eval_spawn_mode = cfg->eval_spawn_mode;
     if (cfg->recovery_enabled) {
@@ -911,6 +920,7 @@ void init(Dogfight *env, int obs_scheme, RewardConfig *rcfg, int curriculum_enab
     env->gun_cone_angle = GUN_CONE_ANGLE;
     env->cos_gun_cone = cosf(env->gun_cone_angle);
     autopilot_init(&env->opponent_ap);
+    env->opponent_ap.rng_state = (unsigned int)rand_r(&env->rng);
     autoace_init(&env->opponent_ace);
     // Reward configuration (copy from provided config)
     env->rcfg = *rcfg;
@@ -977,7 +987,7 @@ void init(Dogfight *env, int obs_scheme, RewardConfig *rcfg, int curriculum_enab
     env->recovery_trigger_prob = 0.5f;  // 50% chance to trigger recovery (was 10%)
     env->recovery_speed_threshold = 70.0f;
     env->recovery_bank_deg = 60.0f;
-    env->recovery_rng_state = (unsigned int)rand();
+    env->recovery_rng_state = (unsigned int)rand_r(&env->rng);
     env->opponent_above_recovery_threshold = 1;  // Start assuming above threshold
 
     // Guided climb hijack: disabled by default
@@ -1352,7 +1362,7 @@ CurriculumStage get_curriculum_stage(Dogfight *env) {
     if (!env->curriculum_enabled) return CURRICULUM_FULL_RANDOM;
     if (env->curriculum_randomize) {
         // Random stage for eval mode - tests all difficulties
-        return (CurriculumStage)(rand() % CURRICULUM_COUNT);
+        return (CurriculumStage)(dogfight_rand_int(env, CURRICULUM_COUNT));
     }
 
     // Probabilistic selection based on curriculum_target
@@ -1365,7 +1375,7 @@ CurriculumStage get_curriculum_stage(Dogfight *env) {
     }
 
     // Probabilistic: if rand < frac, use base+1, else base
-    if (rndf(0, 1) < frac) {
+    if (dogfight_rndf(env, 0, 1) < frac) {
         return (CurriculumStage)(base + 1);
     }
     return (CurriculumStage)base;
@@ -1503,11 +1513,11 @@ void c_reset(Dogfight *env) {
     env->cos_gun_cone = cosf(env->gun_cone_angle);
 
     // Domain randomization: randomize physics params per-episode
-    randomize_flight_params(&env->flight_params, env->domain_randomization);
+    randomize_flight_params_rng(&env->flight_params, env->domain_randomization, &env->rng);
 
     // Spawn player at random position with base velocity
     // Use most of the sky (800-4200m) but avoid very low altitudes
-    Vec3 pos = vec3(rndf(-500, 500), rndf(-500, 500), rndf(800, 4200));
+    Vec3 pos = vec3(dogfight_rndf(env, -500, 500), dogfight_rndf(env, -500, 500), dogfight_rndf(env, 800, 4200));
     Vec3 vel = vec3(80, 0, 0);  // Base speed, will be randomized below
     reset_plane(&env->player, pos, vel);
 
@@ -1519,7 +1529,7 @@ void c_reset(Dogfight *env) {
         // Skip if vertical spawn was used (it sets specific speeds for energy state)
         if (!env->vertical_spawn_used) {
             SpawnRandomization r = get_spawn_randomization(env->stage);
-            float target_speed = rndf(r.speed_min, r.speed_max);
+            float target_speed = dogfight_rndf(env, r.speed_min, r.speed_max);
             float speed_ratio = target_speed / 80.0f;  // Scale from base speed
             env->player.vel = mul3(env->player.vel, speed_ratio);
             env->player.prev_vel = env->player.vel;  // Keep in sync
@@ -1527,8 +1537,8 @@ void c_reset(Dogfight *env) {
             env->opponent.prev_vel = env->opponent.vel;
 
             // Phase 2: Apply stage-dependent throttle randomization
-            env->player.throttle = rndf(r.throttle_min, r.throttle_max);
-            env->opponent_ap.throttle = rndf(r.throttle_min, r.throttle_max);  // Autopilot throttle
+            env->player.throttle = dogfight_rndf(env, r.throttle_min, r.throttle_max);
+            env->opponent_ap.throttle = dogfight_rndf(env, r.throttle_min, r.throttle_max);  // Autopilot throttle
         }
     } else {
         spawn_legacy(env, pos, vel);
@@ -1543,7 +1553,7 @@ void c_reset(Dogfight *env) {
 
     // Per-episode: probabilistically choose neural vs autopilot opponent
     if (env->selfplay_active) {
-        if (rndf(0, 1) < env->selfplay_prob) {
+        if (dogfight_rndf(env, 0, 1) < env->selfplay_prob) {
             env->use_opponent_override = 1;  // Neural opponent this episode
         } else {
             env->use_opponent_override = 0;  // Autopilot (autoace) this episode

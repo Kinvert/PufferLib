@@ -160,7 +160,11 @@ Current Dogfight state-memory status:
 - `ocean/dogfight/binding.c` now wires `puffer_state_refresh` to restore the
   mirrored state and recompute observations.
 - `ocean/dogfight/tests/test_state_roundtrip.c` proves a saved state restored
-  into a fresh env produces the same scripted future step.
+  into a fresh env produces the same scripted future step, including a scripted
+  terminal kill followed by reset.
+- Dogfight reset/spawn/domain-randomization draws now use the mirrored
+  `env->rng` state instead of process-global `rand()`, matching the state-buffer
+  pattern used by working 5.0 envs such as Boxoban and G2048.
 - The default Dogfight train run still leaves state curriculum disabled through
   inherited `train.state_buffer_size = 0` and `train.cl_frac = 0`. State
   curriculum is exposed only as a sweep option in `config/dogfight.ini` via
@@ -178,6 +182,9 @@ Dogfight currently keeps live rollout data directly on `Dogfight`, not inside
 `env->state`, so the current implementation mirrors the live fields into
 `env->state` after reset, nonterminal step, and forced test state. Keep extending
 roundtrip coverage before relying heavily on state curriculum for training.
+AutoAce stage-20 tactical randomness still needs a separate audit before using
+state memory for stage-20/self-play sweeps; the current stage-climb target is
+17-18.
 
 ## Useful Commands
 

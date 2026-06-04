@@ -37,11 +37,12 @@ df36 used different metric names. It logs `environment/stage` and `environment/a
 - Set Dogfight's omitted-key stage-9 defaults to Dogfight3 behavior (`30.0` bank, no substep ramp). Explicit `stage9_bank_deg = -1` still keeps the diagnostic ramp reachable, but it is no longer the default in C init, native binding fallback, or Dogfight-specific pufferl curriculum setup.
 - Changed the native Dogfight binding to advertise `OBS_SIZE 22`, matching the df36-effective scheme-0 observation count. The direct C observation regression now proves scheme 0 writes only its declared 22 values instead of clearing/writing a 26-wide tail.
 - Set Dogfight's direct native `policy.action_init_scale` default to `1.0`. Dogfight3's policy constructor used `0.01`, but `DogfightRecurrent` immediately reinitialized wrapped policy weights with orthogonal gain `1.0`, making `1.0` the effective df36 action-head scale.
+- Moved Dogfight reset/spawn/domain-randomization draws from process-global `rand()`/`rndf()` to `env->rng`, matching the PufferLib 5 state-memory pattern used by Boxoban/G2048. The added terminal roundtrip test first failed because restored pre-kill states reset into different future geometry, then passed after the local RNG fix.
 
 ## Not Changed
 
 - Did not change the `STAGES` curriculum table or make any curriculum step easier.
-- Did not change Dogfight physics in `flightlib.h`.
+- Did not change Dogfight physics constants or integration equations in `flightlib.h`; only the reset-time random source was made env-local.
 - Did not change action scaling, continuous-action distribution code, or optimizer code.
 - Did not change general PufferLib core behavior. The only non-`ocean/dogfight` edit was Dogfight-specific fallback handling in `pufferlib/pufferl.py`.
 - Did not enable self-play or anchor-rating optimization for df39 stage-climb sweeps.
@@ -52,11 +53,13 @@ df36 used different metric names. It logs `environment/stage` and `environment/a
 2. Native input width mismatch: df36-effective scheme 0 is 22 observations; the port previously gave the native policy 26 inputs. This is now fixed in the Dogfight binding.
 3. Stage-9 easing: df39 target `9.9` happened while stage 9 was easier than Dogfight3. Treat those results as not directly comparable to df36 until the fixed 30-degree stage-9 path is swept. The active config and omitted-key defaults now both use 30 degrees.
 4. Native policy architecture: commit `1f1e7a04` restored Dogfight3-style `Linear + bias + GELU` encoder behavior and df39 improved after it. Keep this under scrutiny because it lives in `src/ocean.cu`, but it uses the existing custom encoder extension point.
-5. Remaining likely areas: action scaling/logprob path, exact native encoder/recurrent weight initialization vs Dogfight3 recurrent wrapper, observation parity, step/reset semantics, reward terms, and physics parity. No curriculum step changes should be used as a fix.
+5. State-memory reset RNG: before the env-local RNG fix, a restored preterminal state could produce a different post-terminal reset because reset/spawn used process-global `rand()`. This is now fixed for the stage-climb reset/spawn path and covered by `test_state_roundtrip.c`.
+6. Remaining likely areas: action scaling/logprob path, exact native encoder/recurrent weight initialization vs Dogfight3 recurrent wrapper, observation parity, step/reset semantics, reward terms, and physics parity. AutoAce stage-20 tactical randomness still needs a separate state-memory audit if sweeps target stage 20. No curriculum step changes should be used as a fix.
 
 ## Next Tests
 
 - Run a short df39 sweep after this config/obs fix and compare against the old top: target must clear 7-9 without the stage-9 ramp.
+- Run a short `max-runs 2` state-buffer sweep smoke before trusting larger state-memory sweeps.
 - Add parity tests against Dogfight3 for scheme 0 observations under scripted states.
 - Add physics/step parity probes for neutral action traces and scripted action traces against Dogfight3.
 - Audit `flightlib.h` differences before changing physics.
@@ -72,3 +75,8 @@ df36 used different metric names. It logs `environment/stage` and `environment/a
 - `python -m pytest ocean/dogfight/tests/test_c_regressions.py ocean/dogfight/tests/test_native_policy_architecture.py ocean/dogfight/tests/test_port_build.py::test_dogfight_training_backend_builds -q`: `9 passed`.
 - `python -m pytest ocean/dogfight/tests -q`: `61 passed, 1 skipped`.
 - `python -m pytest ocean/dogfight/tests/test_policy_init.py -q`: `7 passed`.
+- `python -m pytest ocean/dogfight/tests/test_c_regressions.py::test_dogfight_c_regression -q -k state_roundtrip`: failed before the env-local RNG fix because restored terminal futures diverged in observations/plane state, then passed after the fix.
+- `python -m pytest ocean/dogfight/tests/test_c_regressions.py -q`: `6 passed`.
+- `python -m pytest ocean/dogfight/tests -q`: `61 passed, 1 skipped`.
+- `source .venv/bin/activate && ./build.sh dogfight`: built `pufferlib/_C.cpython-312-x86_64-linux-gnu.so`.
+- `python -m pufferlib.pufferl train dogfight --train.gpus 1 --train.total-timesteps 5000000`: native trainer completed, TUI showed GPU usage and normal Dogfight curriculum metrics.

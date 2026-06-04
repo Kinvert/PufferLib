@@ -107,6 +107,19 @@ static int compare_future_step(TestEnv* a, TestEnv* b) {
     return fail;
 }
 
+static int compare_terminal_reset_result(TestEnv* a, TestEnv* b) {
+    int fail = compare_future_step(a, b);
+    if (a->env.last_death_reason != b->env.last_death_reason ||
+            a->env.last_winner != b->env.last_winner ||
+            a->env.total_episodes != b->env.total_episodes) {
+        printf("state_roundtrip_terminal: last result %d/%d/%d != %d/%d/%d [FAIL]\n",
+            a->env.last_death_reason, a->env.last_winner, a->env.total_episodes,
+            b->env.last_death_reason, b->env.last_winner, b->env.total_episodes);
+        fail = 1;
+    }
+    return fail;
+}
+
 static int test_state_roundtrip_restores_future_deterministically(void) {
     TestEnv source;
     TestEnv restored;
@@ -134,6 +147,42 @@ static int test_state_roundtrip_restores_future_deterministically(void) {
     return fail;
 }
 
+static int test_state_roundtrip_restores_terminal_future_deterministically(void) {
+    TestEnv source;
+    TestEnv restored;
+    setup_env(&source, 123);
+    setup_env(&restored, 456);
+
+    force_state(
+        &source.env,
+        0.0f, 0.0f, 1000.0f,
+        150.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f, 0.0f,
+        1.0f,
+        250.0f, 0.0f, 1000.0f,
+        150.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f, 0.0f,
+        3, 0, 0);
+
+    State snapshot = source.env.state;
+
+    const float kill_action[TEST_NUM_ATNS] = {0.0f, 0.0f, 0.0f, 0.0f, 1.0f};
+    step_with_action(&source, kill_action);
+
+    restored.env.state = snapshot;
+    dogfight_state_restore(&restored.env);
+    step_with_action(&restored, kill_action);
+
+    int fail = compare_terminal_reset_result(&source, &restored);
+    if (!fail) {
+        printf("state_roundtrip_terminal: restored terminal future matches scripted kill [OK]\n");
+    }
+    return fail;
+}
+
 int main(void) {
-    return test_state_roundtrip_restores_future_deterministically();
+    int fail = 0;
+    fail |= test_state_roundtrip_restores_future_deterministically();
+    fail |= test_state_roundtrip_restores_terminal_future_deterministically();
+    return fail;
 }

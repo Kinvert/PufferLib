@@ -25,17 +25,17 @@ static void spawn_tail_chase(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
     // At 300m, 5° gun cone = ~26m radius for hits
     // Minimum 26m y-offset guarantees ~5° at 300m (more at closer range)
     // Signed offset with minimum magnitude: either [-50, -26] or [26, 50]
-    float y_sign = rndf(0, 1) > 0.5f ? 1.0f : -1.0f;
-    float y_offset = y_sign * rndf(26, 50);
+    float y_sign = dogfight_rndf(env, 0, 1) > 0.5f ? 1.0f : -1.0f;
+    float y_offset = y_sign * dogfight_rndf(env, 26, 50);
 
     // 20% chance: spawn player LOW (400m) with opponent ABOVE.
     // Teaches altitude awareness early - don't descend with target.
-    if (rndf(0, 1) < 0.2f) {
+    if (dogfight_rndf(env, 0, 1) < 0.2f) {
         env->player.pos.z = 400.0f;
         Vec3 opp_pos = vec3(
-            player_pos.x + rndf(200, 400),
+            player_pos.x + dogfight_rndf(env, 200, 400),
             player_pos.y + y_offset,
-            700.0f + rndf(0, 200)
+            700.0f + dogfight_rndf(env, 0, 200)
         );
         reset_plane(&env->opponent, opp_pos, player_vel);
         env->opponent_ap.mode = AP_STRAIGHT;
@@ -44,9 +44,9 @@ static void spawn_tail_chase(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
     }
 
     Vec3 opp_pos = vec3(
-        player_pos.x + rndf(200, 400),
+        player_pos.x + dogfight_rndf(env, 200, 400),
         player_pos.y + y_offset,        // Min 26m = ~5° at 300m
-        player_pos.z + rndf(-38, 38)    // z can still vary
+        player_pos.z + dogfight_rndf(env, -38, 38)    // z can still vary
     );
     reset_plane(&env->opponent, opp_pos, player_vel);
     env->opponent_ap.mode = AP_STRAIGHT;
@@ -56,12 +56,12 @@ static void spawn_tail_chase(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
 static void spawn_head_on(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
     // 20% chance: spawn player LOW with opponent coming from ABOVE.
     // Teaches: don't dive into head-on, maintain altitude.
-    if (rndf(0, 1) < 0.2f) {
+    if (dogfight_rndf(env, 0, 1) < 0.2f) {
         env->player.pos.z = 400.0f;
         Vec3 opp_pos = vec3(
-            player_pos.x + rndf(400, 600),
-            player_pos.y + rndf(-50, 50),
-            700.0f + rndf(0, 200)
+            player_pos.x + dogfight_rndf(env, 400, 600),
+            player_pos.y + dogfight_rndf(env, -50, 50),
+            700.0f + dogfight_rndf(env, 0, 200)
         );
         Vec3 opp_vel = vec3(-player_vel.x, -player_vel.y, player_vel.z);
         reset_plane(&env->opponent, opp_pos, opp_vel);
@@ -72,9 +72,9 @@ static void spawn_head_on(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
 
     // Opponent 400-600m ahead, facing us (opposite velocity)
     Vec3 opp_pos = vec3(
-        player_pos.x + rndf(400, 600),
-        player_pos.y + rndf(-50, 50),
-        player_pos.z + rndf(-30, 30)
+        player_pos.x + dogfight_rndf(env, 400, 600),
+        player_pos.y + dogfight_rndf(env, -50, 50),
+        player_pos.z + dogfight_rndf(env, -30, 30)
     );
     Vec3 opp_vel = vec3(-player_vel.x, -player_vel.y, player_vel.z);
     reset_plane(&env->opponent, opp_pos, opp_vel);
@@ -85,11 +85,11 @@ static void spawn_head_on(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
 // 90° deflection is historically nearly impossible; 45° is achievable with proper lead
 static void spawn_crossing(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
     // Opponent 300-500m to the side, flying at 45° angle (not perpendicular)
-    float side = rndf(0, 1) > 0.5f ? 1.0f : -1.0f;
+    float side = dogfight_rndf(env, 0, 1) > 0.5f ? 1.0f : -1.0f;
     Vec3 opp_pos = vec3(
-        player_pos.x + rndf(100, 200),
-        player_pos.y + side * rndf(300, 500),
-        player_pos.z + rndf(-50, 50)
+        player_pos.x + dogfight_rndf(env, 100, 200),
+        player_pos.y + side * dogfight_rndf(env, 300, 500),
+        player_pos.z + dogfight_rndf(env, -50, 50)
     );
     // 45° crossing velocity: opponent flies at 45° angle across player's path
     // cos(45°) ≈ 0.707, sin(45°) ≈ 0.707
@@ -106,11 +106,11 @@ static void spawn_crossing(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
 // Stage 2: VERTICAL - Above or below player
 static void spawn_vertical(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
     // Opponent 200-400m ahead, 200-400m above OR below
-    float vert = rndf(0, 1) > 0.5f ? 1.0f : -1.0f;
-    float alt_offset = vert * rndf(200, 400);
+    float vert = dogfight_rndf(env, 0, 1) > 0.5f ? 1.0f : -1.0f;
+    float alt_offset = vert * dogfight_rndf(env, 200, 400);
     Vec3 opp_pos = vec3(
-        player_pos.x + rndf(200, 400),
-        player_pos.y + rndf(-50, 50),
+        player_pos.x + dogfight_rndf(env, 200, 400),
+        player_pos.y + dogfight_rndf(env, -50, 50),
         clampf(player_pos.z + alt_offset, 300, 4700)
     );
     reset_plane(&env->opponent, opp_pos, player_vel);
@@ -126,16 +126,16 @@ static void spawn_vertical(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
 static void spawn_gentle_turns(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
     // 20% chance: spawn player LOW with opponent turning ABOVE
     // Teaches: climb while pursuing turning target
-    if (rndf(0, 1) < 0.2f) {
+    if (dogfight_rndf(env, 0, 1) < 0.2f) {
         env->low_altitude_variant = 1;
         env->player.pos.z = 400.0f;  // Just below 500m recovery threshold
         Vec3 opp_pos = vec3(
-            player_pos.x + rndf(200, 500),
-            player_pos.y + rndf(-100, 100),
-            700.0f + rndf(0, 200)  // Opponent 300-500m above
+            player_pos.x + dogfight_rndf(env, 200, 500),
+            player_pos.y + dogfight_rndf(env, -100, 100),
+            700.0f + dogfight_rndf(env, 0, 200)  // Opponent 300-500m above
         );
         reset_plane(&env->opponent, opp_pos, player_vel);
-        env->opponent_ap.mode = rndf(0, 1) > 0.5f ? AP_TURN_LEFT : AP_TURN_RIGHT;
+        env->opponent_ap.mode = dogfight_rndf(env, 0, 1) > 0.5f ? AP_TURN_LEFT : AP_TURN_RIGHT;
         env->opponent_ap.target_bank = (float)STAGES[env->stage].bank * DEG_TO_RAD;
         // More time for climb + pursuit in altitude-disadvantage variant
         env->max_steps = 2000;
@@ -144,13 +144,13 @@ static void spawn_gentle_turns(Dogfight *env, Vec3 player_pos, Vec3 player_vel) 
 
     // Random spawn position (similar to original)
     Vec3 opp_pos = vec3(
-        player_pos.x + rndf(200, 500),
-        player_pos.y + rndf(-100, 100),
-        player_pos.z + rndf(-50, 50)
+        player_pos.x + dogfight_rndf(env, 200, 500),
+        player_pos.y + dogfight_rndf(env, -100, 100),
+        player_pos.z + dogfight_rndf(env, -50, 50)
     );
     reset_plane(&env->opponent, opp_pos, player_vel);
     // Randomly choose turn direction - gentle 30° bank
-    env->opponent_ap.mode = rndf(0, 1) > 0.5f ? AP_TURN_LEFT : AP_TURN_RIGHT;
+    env->opponent_ap.mode = dogfight_rndf(env, 0, 1) > 0.5f ? AP_TURN_LEFT : AP_TURN_RIGHT;
     env->opponent_ap.target_bank = (float)STAGES[env->stage].bank * DEG_TO_RAD;
 }
 
@@ -159,12 +159,12 @@ static void spawn_gentle_turns(Dogfight *env, Vec3 player_pos, Vec3 player_vel) 
 static void spawn_offset(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
     // Opponent 150-300m ahead with LARGE lateral/vertical offset
     Vec3 opp_pos = vec3(
-        player_pos.x + rndf(150, 300),
-        player_pos.y + rndf(-200, 200),   // Large lateral - can be way to the side
-        clampf(player_pos.z + rndf(-150, 150), 300, 4700)  // Large vertical
+        player_pos.x + dogfight_rndf(env, 150, 300),
+        player_pos.y + dogfight_rndf(env, -200, 200),   // Large lateral - can be way to the side
+        clampf(player_pos.z + dogfight_rndf(env, -150, 150), 300, 4700)  // Large vertical
     );
     reset_plane(&env->opponent, opp_pos, player_vel);
-    env->opponent_ap.mode = rndf(0, 1) > 0.5f ? AP_TURN_LEFT : AP_TURN_RIGHT;
+    env->opponent_ap.mode = dogfight_rndf(env, 0, 1) > 0.5f ? AP_TURN_LEFT : AP_TURN_RIGHT;
     env->opponent_ap.target_bank = (float)STAGES[env->stage].bank * DEG_TO_RAD;
 }
 
@@ -172,13 +172,13 @@ static void spawn_offset(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
 // Teaches: Pursuit geometry when target isn't flying your direction (small angle)
 static void spawn_angled(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
     Vec3 opp_pos = vec3(
-        player_pos.x + rndf(200, 400),
-        player_pos.y + rndf(-150, 150),
-        clampf(player_pos.z + rndf(-100, 100), 300, 4700)
+        player_pos.x + dogfight_rndf(env, 200, 400),
+        player_pos.y + dogfight_rndf(env, -150, 150),
+        clampf(player_pos.z + dogfight_rndf(env, -100, 100), 300, 4700)
     );
 
     // Heading offset: ±22° from player (reduced from ±45° for smoother progression)
-    float heading_offset = rndf(-0.385f, 0.385f);  // ~22° in radians
+    float heading_offset = dogfight_rndf(env, -0.385f, 0.385f);  // ~22° in radians
     float player_heading = atan2f(player_vel.y, player_vel.x);
     float opp_heading = player_heading + heading_offset;
 
@@ -188,7 +188,7 @@ static void spawn_angled(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
     reset_plane(&env->opponent, opp_pos, opp_vel);
     env->opponent.ori = quat_from_axis_angle(vec3(0, 0, 1), opp_heading);
 
-    env->opponent_ap.mode = rndf(0, 1) > 0.5f ? AP_TURN_LEFT : AP_TURN_RIGHT;
+    env->opponent_ap.mode = dogfight_rndf(env, 0, 1) > 0.5f ? AP_TURN_LEFT : AP_TURN_RIGHT;
     env->opponent_ap.target_bank = (float)STAGES[env->stage].bank * DEG_TO_RAD;
 }
 
@@ -220,25 +220,25 @@ static void spawn_side(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
     // Opponent VERY HIGH and SLOW - player MUST build energy over time to reach them
     // Can't just zoom climb - need sustained full throttle climbing for many seconds
     // Teaches: long-term energy planning, not just immediate pursuit
-    if (rndf(0, 1) < clampf(env->side_energy_spawn_prob, 0.0f, 1.0f)) {
+    if (dogfight_rndf(env, 0, 1) < clampf(env->side_energy_spawn_prob, 0.0f, 1.0f)) {
         env->side_spawn_variant = SIDE_SPAWN_ENERGY;
         // Player at normal altitude, opponent 800-1200m ABOVE
         // This is too high to zoom climb - requires sustained energy building
-        float opp_alt = player_pos.z + rndf(800, 1200);
+        float opp_alt = player_pos.z + dogfight_rndf(env, 800, 1200);
         opp_alt = clampf(opp_alt, 1500, 4500);  // Keep in bounds
 
         // Opponent ahead and above, flying gentle turns at LOW throttle
-        float side = rndf(0, 1) > 0.5f ? 1.0f : -1.0f;
+        float side = dogfight_rndf(env, 0, 1) > 0.5f ? 1.0f : -1.0f;
         Vec3 opp_pos = vec3(
-            player_pos.x + rndf(400, 700),
-            player_pos.y + side * rndf(50, 200),
+            player_pos.x + dogfight_rndf(env, 400, 700),
+            player_pos.y + side * dogfight_rndf(env, 50, 200),
             opp_alt
         );
 
         // Opponent flying VERY SLOW (50% of player speed) - easy target IF you can reach them
         float player_speed = norm3(player_vel);
         float opp_speed = player_speed * 0.5f;
-        float opp_heading = atan2f(player_vel.y, player_vel.x) + side * rndf(0.1f, 0.3f);
+        float opp_heading = atan2f(player_vel.y, player_vel.x) + side * dogfight_rndf(env, 0.1f, 0.3f);
         Vec3 opp_vel = vec3(opp_speed * cosf(opp_heading), opp_speed * sinf(opp_heading), 0);
 
         reset_plane(&env->opponent, opp_pos, opp_vel);
@@ -246,7 +246,7 @@ static void spawn_side(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
 
         // Opponent: very gentle turns (15° bank), LOW throttle, bleeding energy
         // They're a sitting duck - the challenge is GETTING UP THERE
-        env->opponent_ap.mode = rndf(0, 1) > 0.5f ? AP_TURN_LEFT : AP_TURN_RIGHT;
+        env->opponent_ap.mode = dogfight_rndf(env, 0, 1) > 0.5f ? AP_TURN_LEFT : AP_TURN_RIGHT;
         env->opponent_ap.target_bank = 15.0f * DEG_TO_RAD;  // Gentle 15° bank - won't go OOB
         env->opponent.throttle = 0.25f;  // Very low throttle - bleeding energy fast
 
@@ -254,13 +254,13 @@ static void spawn_side(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
     }
 
     env->side_spawn_variant = SIDE_SPAWN_STANDARD;
-    float side = rndf(0, 1) > 0.5f ? 1.0f : -1.0f;
+    float side = dogfight_rndf(env, 0, 1) > 0.5f ? 1.0f : -1.0f;
     float az_min = cfg->angle_min_deg * DEG_TO_RAD;
     float az_max = cfg->angle_max_deg * DEG_TO_RAD;
-    float azimuth = side * rndf(az_min, az_max);
+    float azimuth = side * dogfight_rndf(env, az_min, az_max);
 
-    float dist = rndf(300, 500);
-    float phi = rndf(-0.2f, 0.2f);  // ±11° elevation
+    float dist = dogfight_rndf(env, 300, 500);
+    float phi = dogfight_rndf(env, -0.2f, 0.2f);  // ±11° elevation
 
     Vec3 opp_pos = vec3(
         player_pos.x + dist * cosf(azimuth),
@@ -269,7 +269,7 @@ static void spawn_side(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
     );
 
     float away_heading = azimuth;
-    float opp_heading = away_heading + rndf(-0.35f, 0.35f);  // ±20° variance
+    float opp_heading = away_heading + dogfight_rndf(env, -0.35f, 0.35f);  // ±20° variance
 
     float speed = norm3(player_vel);
     Vec3 opp_vel = vec3(speed * cosf(opp_heading), speed * sinf(opp_heading), 0);
@@ -281,7 +281,7 @@ static void spawn_side(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
     bank_deg = clampf(bank_deg, 0.0f, 90.0f);
     // AP mode based on bank field: 0 = straight, >0 = turning
     if (bank_deg > 0.0f) {
-        env->opponent_ap.mode = rndf(0, 1) > 0.5f ? AP_TURN_LEFT : AP_TURN_RIGHT;
+        env->opponent_ap.mode = dogfight_rndf(env, 0, 1) > 0.5f ? AP_TURN_LEFT : AP_TURN_RIGHT;
         env->opponent_ap.target_bank = bank_deg * DEG_TO_RAD;
     } else {
         env->opponent_ap.mode = AP_STRAIGHT;
@@ -305,26 +305,26 @@ static void spawn_dive_attack(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
     const StageConfig* cfg = &STAGES[env->stage];
 
     // Same azimuth geometry as spawn_rear (90-150° off axis)
-    float side = rndf(0, 1) > 0.5f ? 1.0f : -1.0f;
+    float side = dogfight_rndf(env, 0, 1) > 0.5f ? 1.0f : -1.0f;
     float az_min = cfg->angle_min_deg * DEG_TO_RAD;
     float az_max = cfg->angle_max_deg * DEG_TO_RAD;
-    float azimuth = side * rndf(az_min, az_max);
+    float azimuth = side * dogfight_rndf(env, az_min, az_max);
 
-    float dist = rndf(300, 500);
+    float dist = dogfight_rndf(env, 300, 500);
     // Opponent spawns 500m BELOW player (big altitude advantage)
     Vec3 opp_pos = vec3(
         player_pos.x + dist * cosf(azimuth),
         player_pos.y + dist * sinf(azimuth),
-        clampf(player_pos.z - 500 + rndf(-50, 50), 300, 4700)
+        clampf(player_pos.z - 500 + dogfight_rndf(env, -50, 50), 300, 4700)
     );
 
-    float opp_heading = azimuth + rndf(-0.35f, 0.35f);  // ±20° variance
+    float opp_heading = azimuth + dogfight_rndf(env, -0.35f, 0.35f);  // ±20° variance
     float speed = norm3(player_vel);
     Vec3 opp_vel = vec3(speed * cosf(opp_heading), speed * sinf(opp_heading), 0);
 
     reset_plane(&env->opponent, opp_pos, opp_vel);
     env->opponent.ori = quat_from_axis_angle(vec3(0, 0, 1), opp_heading);
-    env->opponent_ap.mode = rndf(0, 1) > 0.5f ? AP_STRAIGHT : AP_LEVEL;
+    env->opponent_ap.mode = dogfight_rndf(env, 0, 1) > 0.5f ? AP_STRAIGHT : AP_LEVEL;
 
     // Player starts 75° nose down (same heading, just pitched)
     // Pitch rotation is around body Y-axis (right wing)
@@ -343,26 +343,26 @@ static void spawn_zoom_attack(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
     const StageConfig* cfg = &STAGES[env->stage];
 
     // Same azimuth geometry as spawn_rear (90-150° off axis)
-    float side = rndf(0, 1) > 0.5f ? 1.0f : -1.0f;
+    float side = dogfight_rndf(env, 0, 1) > 0.5f ? 1.0f : -1.0f;
     float az_min = cfg->angle_min_deg * DEG_TO_RAD;
     float az_max = cfg->angle_max_deg * DEG_TO_RAD;
-    float azimuth = side * rndf(az_min, az_max);
+    float azimuth = side * dogfight_rndf(env, az_min, az_max);
 
-    float dist = rndf(300, 500);
+    float dist = dogfight_rndf(env, 300, 500);
     // Opponent spawns 300 ABOVE player (player zooms up)
     Vec3 opp_pos = vec3(
         player_pos.x + dist * cosf(azimuth),
         player_pos.y + dist * sinf(azimuth),
-        clampf(player_pos.z + 300 + rndf(-50, 50), 300, 4700)
+        clampf(player_pos.z + 300 + dogfight_rndf(env, -50, 50), 300, 4700)
     );
 
-    float opp_heading = azimuth + rndf(-0.35f, 0.35f);  // ±20° variance
+    float opp_heading = azimuth + dogfight_rndf(env, -0.35f, 0.35f);  // ±20° variance
     float opp_speed = norm3(player_vel);
     Vec3 opp_vel = vec3(opp_speed * cosf(opp_heading), opp_speed * sinf(opp_heading), 0);
 
     reset_plane(&env->opponent, opp_pos, opp_vel);
     env->opponent.ori = quat_from_axis_angle(vec3(0, 0, 1), opp_heading);
-    env->opponent_ap.mode = rndf(0, 1) > 0.5f ? AP_STRAIGHT : AP_LEVEL;
+    env->opponent_ap.mode = dogfight_rndf(env, 0, 1) > 0.5f ? AP_STRAIGHT : AP_LEVEL;
 
     // Player starts 75° nose UP with near-max speed (~145 m/s)
     // Pitch rotation is around body Y-axis (right wing)
@@ -372,7 +372,7 @@ static void spawn_zoom_attack(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
     env->player.ori = pitch_quat;
 
     // Set player to high speed (reduced from 140-150 due to instability at extreme pitch)
-    float zoom_speed = rndf(110, 120);
+    float zoom_speed = dogfight_rndf(env, 110, 120);
     Vec3 base_vel = vec3(zoom_speed, 0, 0);
     env->player.vel = quat_rotate(pitch_quat, base_vel);
     env->player.prev_vel = env->player.vel;
@@ -387,20 +387,20 @@ static void spawn_zoom_attack(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
 static void spawn_rear(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
     const StageConfig* cfg = &STAGES[env->stage];
 
-    float side = rndf(0, 1) > 0.5f ? 1.0f : -1.0f;
+    float side = dogfight_rndf(env, 0, 1) > 0.5f ? 1.0f : -1.0f;
     float az_min = cfg->angle_min_deg * DEG_TO_RAD;
     float az_max = cfg->angle_max_deg * DEG_TO_RAD;
-    float azimuth = side * rndf(az_min, az_max);
+    float azimuth = side * dogfight_rndf(env, az_min, az_max);
 
-    float dist = rndf(300, 500);
+    float dist = dogfight_rndf(env, 300, 500);
     // Opponent spawns ~500m below player (large altitude advantage for rear chase)
     Vec3 opp_pos = vec3(
         player_pos.x + dist * cosf(azimuth),
         player_pos.y + dist * sinf(azimuth),
-        clampf(player_pos.z - 500 + rndf(-50, 50), 300, 4700)
+        clampf(player_pos.z - 500 + dogfight_rndf(env, -50, 50), 300, 4700)
     );
 
-    float opp_heading = azimuth + rndf(-0.35f, 0.35f);  // ±20° variance
+    float opp_heading = azimuth + dogfight_rndf(env, -0.35f, 0.35f);  // ±20° variance
     float speed = norm3(player_vel);
     Vec3 opp_vel = vec3(speed * cosf(opp_heading), speed * sinf(opp_heading), 0);
 
@@ -409,10 +409,10 @@ static void spawn_rear(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
 
     // AP mode based on bank field: 0 = 50/50 straight/level, >0 = turning
     if (cfg->bank > 0) {
-        env->opponent_ap.mode = rndf(0, 1) > 0.5f ? AP_TURN_LEFT : AP_TURN_RIGHT;
+        env->opponent_ap.mode = dogfight_rndf(env, 0, 1) > 0.5f ? AP_TURN_LEFT : AP_TURN_RIGHT;
         env->opponent_ap.target_bank = (float)cfg->bank * DEG_TO_RAD;
     } else {
-        env->opponent_ap.mode = rndf(0, 1) > 0.5f ? AP_STRAIGHT : AP_LEVEL;
+        env->opponent_ap.mode = dogfight_rndf(env, 0, 1) > 0.5f ? AP_STRAIGHT : AP_LEVEL;
     }
 
     // Speed boost for rear chase - player starts faster to close the gap
@@ -424,9 +424,9 @@ static void spawn_rear(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
 // Teaches: Full sphere awareness with predictable heading
 static void spawn_full_predictable(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
     // Full 360° spawn
-    float azimuth = rndf(-M_PI, M_PI);
-    float dist = rndf(300, 600);
-    float phi = rndf(-0.3f, 0.3f);  // ±17° elevation
+    float azimuth = dogfight_rndf(env, -M_PI, M_PI);
+    float dist = dogfight_rndf(env, 300, 600);
+    float phi = dogfight_rndf(env, -0.3f, 0.3f);  // ±17° elevation
 
     Vec3 opp_pos = vec3(
         player_pos.x + dist * cosf(azimuth) * cosf(phi),
@@ -436,13 +436,13 @@ static void spawn_full_predictable(Dogfight *env, Vec3 player_pos, Vec3 player_v
 
     // KEY: Heading is CORRELATED - flying away from player
     float away_heading = azimuth;  // Same direction as spawn angle = flying away
-    float opp_heading = away_heading + rndf(-0.52f, 0.52f);  // ±30° variance
+    float opp_heading = away_heading + dogfight_rndf(env, -0.52f, 0.52f);  // ±30° variance
 
     float speed = norm3(player_vel);
     Vec3 opp_vel = vec3(speed * cosf(opp_heading), speed * sinf(opp_heading), 0);
     reset_plane(&env->opponent, opp_pos, opp_vel);
     env->opponent.ori = quat_from_axis_angle(vec3(0, 0, 1), opp_heading);
-    env->opponent_ap.mode = rndf(0, 1) > 0.5f ? AP_TURN_LEFT : AP_TURN_RIGHT;
+    env->opponent_ap.mode = dogfight_rndf(env, 0, 1) > 0.5f ? AP_TURN_LEFT : AP_TURN_RIGHT;
     env->opponent_ap.target_bank = (float)STAGES[env->stage].bank * DEG_TO_RAD;
 }
 
@@ -450,9 +450,9 @@ static void spawn_full_predictable(Dogfight *env, Vec3 player_pos, Vec3 player_v
 // Teaches: Random heading (key difficulty!) - must read observation to determine velocity
 static void spawn_full_random(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
     // Random direction in 3D sphere (300-600m from player)
-    float dist = rndf(300, 600);
-    float theta = rndf(0, 2.0f * M_PI);      // Azimuth: 0-360°
-    float phi = rndf(-0.3f, 0.3f);           // Elevation: ±17° (keep near level)
+    float dist = dogfight_rndf(env, 300, 600);
+    float theta = dogfight_rndf(env, 0, 2.0f * M_PI);      // Azimuth: 0-360°
+    float phi = dogfight_rndf(env, -0.3f, 0.3f);           // Elevation: ±17° (keep near level)
 
     Vec3 opp_pos = vec3(
         player_pos.x + dist * cosf(theta) * cosf(phi),
@@ -461,7 +461,7 @@ static void spawn_full_random(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
     );
 
     // Random velocity direction (not necessarily toward/away from player)
-    float vel_theta = rndf(0, 2.0f * M_PI);
+    float vel_theta = dogfight_rndf(env, 0, 2.0f * M_PI);
     float speed = norm3(player_vel);
     Vec3 opp_vel = vec3(speed * cosf(vel_theta), speed * sinf(vel_theta), 0);
 
@@ -471,10 +471,10 @@ static void spawn_full_random(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
     env->opponent.ori = quat_from_axis_angle(vec3(0, 0, 1), vel_theta);
 
     // 3 modes: straight, level, turns (still 30° - steeper turns come in stage 16)
-    float r = rndf(0, 1);
+    float r = dogfight_rndf(env, 0, 1);
     if (r < 0.2f) env->opponent_ap.mode = AP_STRAIGHT;
     else if (r < 0.4f) env->opponent_ap.mode = AP_LEVEL;
-    else env->opponent_ap.mode = rndf(0, 1) > 0.5f ? AP_TURN_LEFT : AP_TURN_RIGHT;
+    else env->opponent_ap.mode = dogfight_rndf(env, 0, 1) > 0.5f ? AP_TURN_LEFT : AP_TURN_RIGHT;
 
     env->opponent_ap.target_bank = (float)STAGES[env->stage].bank * DEG_TO_RAD;
 }
@@ -483,9 +483,9 @@ static void spawn_full_random(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
 // Teaches: Steeper 45° turns (first introduction of harder turns)
 static void spawn_medium_turns(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
     // Same geometry as FULL_RANDOM
-    float dist = rndf(300, 600);
-    float theta = rndf(0, 2.0f * M_PI);      // Azimuth: 0-360°
-    float phi = rndf(-0.3f, 0.3f);           // Elevation: ±17° (keep near level)
+    float dist = dogfight_rndf(env, 300, 600);
+    float theta = dogfight_rndf(env, 0, 2.0f * M_PI);      // Azimuth: 0-360°
+    float phi = dogfight_rndf(env, -0.3f, 0.3f);           // Elevation: ±17° (keep near level)
 
     Vec3 opp_pos = vec3(
         player_pos.x + dist * cosf(theta) * cosf(phi),
@@ -494,7 +494,7 @@ static void spawn_medium_turns(Dogfight *env, Vec3 player_pos, Vec3 player_vel) 
     );
 
     // Random velocity direction (uncorrelated with position)
-    float vel_theta = rndf(0, 2.0f * M_PI);
+    float vel_theta = dogfight_rndf(env, 0, 2.0f * M_PI);
     float speed = norm3(player_vel);
     Vec3 opp_vel = vec3(speed * cosf(vel_theta), speed * sinf(vel_theta), 0);
 
@@ -502,7 +502,7 @@ static void spawn_medium_turns(Dogfight *env, Vec3 player_pos, Vec3 player_vel) 
     env->opponent.ori = quat_from_axis_angle(vec3(0, 0, 1), vel_theta);
 
     // 5 modes with 45° turns
-    float r = rndf(0, 1);
+    float r = dogfight_rndf(env, 0, 1);
     if (r < 0.2f) env->opponent_ap.mode = AP_STRAIGHT;
     else if (r < 0.4f) env->opponent_ap.mode = AP_LEVEL;
     else if (r < 0.6f) env->opponent_ap.mode = AP_TURN_LEFT;
@@ -515,34 +515,34 @@ static void spawn_medium_turns(Dogfight *env, Vec3 player_pos, Vec3 player_vel) 
 // Stage 17: HARD_MANEUVERING - Hard turns (60°) and weave patterns
 static void spawn_hard_maneuvering(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
     Vec3 opp_pos = vec3(
-        player_pos.x + rndf(200, 400),
-        player_pos.y + rndf(-100, 100),
-        player_pos.z + rndf(-50, 50)
+        player_pos.x + dogfight_rndf(env, 200, 400),
+        player_pos.y + dogfight_rndf(env, -100, 100),
+        player_pos.z + dogfight_rndf(env, -50, 50)
     );
     reset_plane(&env->opponent, opp_pos, player_vel);
 
     // Pick from hard maneuver modes
-    float r = rndf(0, 1);
+    float r = dogfight_rndf(env, 0, 1);
     if (r < 0.3f) {
         env->opponent_ap.mode = AP_HARD_TURN_LEFT;
     } else if (r < 0.6f) {
         env->opponent_ap.mode = AP_HARD_TURN_RIGHT;
     } else {
         env->opponent_ap.mode = AP_WEAVE;
-        env->opponent_ap.phase = rndf(0, 2.0f * M_PI);  // Random start phase
+        env->opponent_ap.phase = dogfight_rndf(env, 0, 2.0f * M_PI);  // Random start phase
     }
 }
 
 // Stage 19: EVASIVE - Opponent reacts to player position (hardest)
 static void spawn_evasive(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
     // Override player altitude to near max (3500-4500m) for high-altitude combat
-    env->player.pos.z = rndf(3500, 4500);
+    env->player.pos.z = dogfight_rndf(env, 3500, 4500);
     player_pos.z = env->player.pos.z;  // Update local copy for opponent spawn
 
     // Spawn in various positions (like FULL_RANDOM)
-    float dist = rndf(300, 500);
-    float theta = rndf(0, 2.0f * M_PI);
-    float phi = rndf(-0.3f, 0.3f);
+    float dist = dogfight_rndf(env, 300, 500);
+    float theta = dogfight_rndf(env, 0, 2.0f * M_PI);
+    float phi = dogfight_rndf(env, -0.3f, 0.3f);
 
     Vec3 opp_pos = vec3(
         player_pos.x + dist * cosf(theta) * cosf(phi),
@@ -550,7 +550,7 @@ static void spawn_evasive(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
         clampf(player_pos.z + dist * sinf(phi), 2500, 4800)
     );
 
-    float vel_theta = rndf(0, 2.0f * M_PI);
+    float vel_theta = dogfight_rndf(env, 0, 2.0f * M_PI);
     float speed = norm3(player_vel);
     Vec3 opp_vel = vec3(speed * cosf(vel_theta), speed * sinf(vel_theta), 0);
 
@@ -558,7 +558,7 @@ static void spawn_evasive(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
     env->opponent.ori = quat_from_axis_angle(vec3(0, 0, 1), vel_theta);
 
     // Mix of hard modes with AP_EVASIVE dominant
-    float r = rndf(0, 1);
+    float r = dogfight_rndf(env, 0, 1);
     if (r < 0.4f) {
         env->opponent_ap.mode = AP_EVASIVE;
     } else if (r < 0.55f) {
@@ -567,10 +567,10 @@ static void spawn_evasive(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
         env->opponent_ap.mode = AP_HARD_TURN_RIGHT;
     } else if (r < 0.85f) {
         env->opponent_ap.mode = AP_WEAVE;
-        env->opponent_ap.phase = rndf(0, 2.0f * M_PI);
+        env->opponent_ap.phase = dogfight_rndf(env, 0, 2.0f * M_PI);
     } else {
         // 15% chance of regular turn modes (still steep 60°)
-        env->opponent_ap.mode = rndf(0,1) > 0.5f ? AP_TURN_LEFT : AP_TURN_RIGHT;
+        env->opponent_ap.mode = dogfight_rndf(env, 0,1) > 0.5f ? AP_TURN_LEFT : AP_TURN_RIGHT;
         env->opponent_ap.target_bank = (float)STAGES[env->stage].bank * DEG_TO_RAD;
     }
 }
@@ -578,13 +578,13 @@ static void spawn_evasive(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
 // Stage 20: AUTOACE - Intelligent adversarial opponent (two-way combat)
 static void spawn_autoace(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
     // Override player altitude to mid-high (2500-4000m)
-    env->player.pos.z = rndf(2500, 4000);
+    env->player.pos.z = dogfight_rndf(env, 2500, 4000);
     player_pos.z = env->player.pos.z;
 
     // Spawn opponent in various positions (360 degree, varied distance)
-    float dist = rndf(400, 700);
-    float theta = rndf(0, 2.0f * M_PI);
-    float phi = rndf(-0.25f, 0.25f);
+    float dist = dogfight_rndf(env, 400, 700);
+    float theta = dogfight_rndf(env, 0, 2.0f * M_PI);
+    float phi = dogfight_rndf(env, -0.25f, 0.25f);
 
     Vec3 opp_pos = vec3(
         player_pos.x + dist * cosf(theta) * cosf(phi),
@@ -592,7 +592,7 @@ static void spawn_autoace(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
         clampf(player_pos.z + dist * sinf(phi), 2000, 4500)
     );
 
-    float vel_theta = rndf(0, 2.0f * M_PI);
+    float vel_theta = dogfight_rndf(env, 0, 2.0f * M_PI);
     float speed = norm3(player_vel);
     Vec3 opp_vel = vec3(speed * cosf(vel_theta), speed * sinf(vel_theta), 0);
 
@@ -614,16 +614,16 @@ static void spawn_autoace(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
 // Player at top of climb, inverted (belly up), ~60 m/s, 750m above opponent.
 // Opponent below in a flat turn at combat speed. Agent rolls over and dives to attack.
 static void spawn_vertical_apex(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
-    float merge_alt = rndf(2000, 2500);
-    float heading = rndf(0, 2.0f * (float)M_PI);
+    float merge_alt = dogfight_rndf(env, 2000, 2500);
+    float heading = dogfight_rndf(env, 0, 2.0f * (float)M_PI);
 
     // Player: inverted at apex, 750m above, slow
-    float player_speed = rndf(55, 65);
+    float player_speed = dogfight_rndf(env, 55, 65);
     float player_alt = merge_alt + 750.0f;
     env->player.pos = vec3(player_pos.x, player_pos.y, player_alt);
 
     // Orientation: heading + slight nose-down (5-15°) + inverted (180° roll)
-    float nose_down = rndf(5, 15) * DEG_TO_RAD;
+    float nose_down = dogfight_rndf(env, 5, 15) * DEG_TO_RAD;
     Quat p_ori = quat_mul(quat_from_axis_angle(vec3(0, 0, 1), heading),
                  quat_mul(quat_from_axis_angle(vec3(0, 1, 0), nose_down),
                           quat_from_axis_angle(vec3(1, 0, 0), (float)M_PI)));
@@ -633,10 +633,10 @@ static void spawn_vertical_apex(Dogfight *env, Vec3 player_pos, Vec3 player_vel)
 
     // Opponent: at merge alt, in flat turn, 90-100 m/s
     // 270° into their turn — they've been turning for ~15s, bled energy
-    float opp_speed = rndf(90, 100);
-    float opp_heading = heading + rndf(3.5f, 5.5f);  // opponent flew past in heading dir, turned ~200-315°
-    float opp_bank = rndf(45, 60) * DEG_TO_RAD;
-    float horiz_offset = rndf(200, 400);
+    float opp_speed = dogfight_rndf(env, 90, 100);
+    float opp_heading = heading + dogfight_rndf(env, 3.5f, 5.5f);  // opponent flew past in heading dir, turned ~200-315°
+    float opp_bank = dogfight_rndf(env, 45, 60) * DEG_TO_RAD;
+    float horiz_offset = dogfight_rndf(env, 200, 400);
 
     Vec3 opp_pos = vec3(
         player_pos.x + horiz_offset * cosf(heading),
@@ -658,18 +658,18 @@ static void spawn_vertical_apex(Dogfight *env, Vec3 player_pos, Vec3 player_vel)
 // Player past 90° pitch (100-120° from level), ~70 m/s decelerating, 400-500m above.
 // Opponent at merge alt, 120-150° into flat turn, bleeding energy.
 static void spawn_vertical_past(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
-    float merge_alt = rndf(2000, 2500);
-    float heading = rndf(0, 2.0f * (float)M_PI);
+    float merge_alt = dogfight_rndf(env, 2000, 2500);
+    float heading = dogfight_rndf(env, 0, 2.0f * (float)M_PI);
 
     // Player: past vertical (100-120° pitch from level = 10-30° past straight up)
-    float player_speed = rndf(65, 75);
-    float alt_above = rndf(400, 500);
+    float player_speed = dogfight_rndf(env, 65, 75);
+    float alt_above = dogfight_rndf(env, 400, 500);
     float player_alt = merge_alt + alt_above;
     env->player.pos = vec3(player_pos.x, player_pos.y, player_alt);
 
     // Pitch: -100 to -120° (negative = nose up, past vertical)
     // This means the plane is 10-30° past straight up, going over the top
-    float pitch_deg = -rndf(100, 120);
+    float pitch_deg = -dogfight_rndf(env, 100, 120);
     float pitch = pitch_deg * DEG_TO_RAD;
     Quat p_ori = quat_mul(quat_from_axis_angle(vec3(0, 0, 1), heading),
                           quat_from_axis_angle(vec3(0, 1, 0), pitch));
@@ -678,8 +678,8 @@ static void spawn_vertical_past(Dogfight *env, Vec3 player_pos, Vec3 player_vel)
     env->player.prev_vel = env->player.vel;
 
     // Opponent: at merge alt, 700m ahead, flying away turned 45° left or right
-    float opp_speed = rndf(85, 95);
-    float turn_sign = (rand() % 2) ? 1.0f : -1.0f;
+    float opp_speed = dogfight_rndf(env, 85, 95);
+    float turn_sign = (dogfight_rand_int(env, 2)) ? 1.0f : -1.0f;
     float opp_heading = heading + (float)M_PI + turn_sign * 45.0f * DEG_TO_RAD;
     float opp_bank = turn_sign * 45.0f * DEG_TO_RAD;
     float horiz_offset = 700.0f;
@@ -704,17 +704,17 @@ static void spawn_vertical_past(Dogfight *env, Vec3 player_pos, Vec3 player_vel)
 // Player at 55-65° nose-up, 85-95 m/s, 100-200m above merge alt.
 // Opponent at merge alt, just 30-60° into flat turn, starting to bleed speed.
 static void spawn_vertical_midclimb(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
-    float merge_alt = rndf(2000, 2500);
-    float heading = rndf(0, 2.0f * (float)M_PI);
+    float merge_alt = dogfight_rndf(env, 2000, 2500);
+    float heading = dogfight_rndf(env, 0, 2.0f * (float)M_PI);
 
     // Player: mid-climb, 55-65° nose-up
-    float player_speed = rndf(85, 95);
-    float alt_above = rndf(100, 200);
+    float player_speed = dogfight_rndf(env, 85, 95);
+    float alt_above = dogfight_rndf(env, 100, 200);
     float player_alt = merge_alt + alt_above;
     env->player.pos = vec3(player_pos.x, player_pos.y, player_alt);
 
     // Pitch: -55 to -65° (negative = nose up)
-    float pitch_deg = -rndf(55, 65);
+    float pitch_deg = -dogfight_rndf(env, 55, 65);
     float pitch = pitch_deg * DEG_TO_RAD;
     Quat p_ori = quat_mul(quat_from_axis_angle(vec3(0, 0, 1), heading),
                           quat_from_axis_angle(vec3(0, 1, 0), pitch));
@@ -723,8 +723,8 @@ static void spawn_vertical_midclimb(Dogfight *env, Vec3 player_pos, Vec3 player_
     env->player.prev_vel = env->player.vel;
 
     // Opponent: at merge alt, 700m ahead, flying away turned 45° left or right
-    float opp_speed = rndf(95, 105);
-    float turn_sign = (rand() % 2) ? 1.0f : -1.0f;
+    float opp_speed = dogfight_rndf(env, 95, 105);
+    float turn_sign = (dogfight_rand_int(env, 2)) ? 1.0f : -1.0f;
     float opp_heading = heading + (float)M_PI + turn_sign * 45.0f * DEG_TO_RAD;
     float opp_bank = turn_sign * 45.0f * DEG_TO_RAD;
     float horiz_offset = 700.0f;
@@ -749,12 +749,12 @@ static void spawn_vertical_midclimb(Dogfight *env, Vec3 player_pos, Vec3 player_
 // Both nose-on, co-altitude, 400-600m apart, closing fast.
 // Player has 5-15 m/s speed advantage. Agent must discover vertical pull beats flat turn.
 static void spawn_vertical_merge(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
-    float merge_alt = rndf(2500, 3500);
-    float heading = rndf(0, 2.0f * (float)M_PI);
-    float dist = rndf(400, 600);
+    float merge_alt = dogfight_rndf(env, 2500, 3500);
+    float heading = dogfight_rndf(env, 0, 2.0f * (float)M_PI);
+    float dist = dogfight_rndf(env, 400, 600);
 
     // Player: heading toward opponent, speed advantage
-    float player_speed = rndf(100, 110);
+    float player_speed = dogfight_rndf(env, 100, 110);
     env->player.pos = vec3(player_pos.x, player_pos.y, merge_alt);
     Quat p_ori = quat_from_axis_angle(vec3(0, 0, 1), heading);
     env->player.ori = p_ori;
@@ -762,12 +762,12 @@ static void spawn_vertical_merge(Dogfight *env, Vec3 player_pos, Vec3 player_vel
     env->player.prev_vel = env->player.vel;
 
     // Opponent: heading toward player (opposite heading), slightly slower
-    float opp_speed = player_speed - rndf(5, 15);
+    float opp_speed = player_speed - dogfight_rndf(env, 5, 15);
     float opp_heading = heading + (float)M_PI;
     Vec3 opp_pos = vec3(
         player_pos.x + dist * cosf(heading),
         player_pos.y + dist * sinf(heading),
-        merge_alt + rndf(-20, 20)  // Near co-altitude
+        merge_alt + dogfight_rndf(env, -20, 20)  // Near co-altitude
     );
 
     Quat o_ori = quat_from_axis_angle(vec3(0, 0, 1), opp_heading);
@@ -788,13 +788,13 @@ static void spawn_vertical_merge(Dogfight *env, Vec3 player_pos, Vec3 player_vel
 // 800-1200m apart, approaching. Player has 100-200m altitude advantage.
 // Agent must plan the vertical pull from further out.
 static void spawn_vertical_premerge(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
-    float base_alt = rndf(2500, 3500);
-    float heading = rndf(0, 2.0f * (float)M_PI);
-    float dist = rndf(800, 1200);
-    float alt_adv = rndf(100, 200);
+    float base_alt = dogfight_rndf(env, 2500, 3500);
+    float heading = dogfight_rndf(env, 0, 2.0f * (float)M_PI);
+    float dist = dogfight_rndf(env, 800, 1200);
+    float alt_adv = dogfight_rndf(env, 100, 200);
 
     // Player: heading toward opponent, slight altitude advantage
-    float player_speed = rndf(95, 110);
+    float player_speed = dogfight_rndf(env, 95, 110);
     env->player.pos = vec3(player_pos.x, player_pos.y, base_alt + alt_adv);
     Quat p_ori = quat_from_axis_angle(vec3(0, 0, 1), heading);
     env->player.ori = p_ori;
@@ -802,7 +802,7 @@ static void spawn_vertical_premerge(Dogfight *env, Vec3 player_pos, Vec3 player_
     env->player.prev_vel = env->player.vel;
 
     // Opponent: heading toward player, at base altitude
-    float opp_speed = rndf(90, 105);
+    float opp_speed = dogfight_rndf(env, 90, 105);
     float opp_heading = heading + (float)M_PI;
     Vec3 opp_pos = vec3(
         player_pos.x + dist * cosf(heading),
@@ -839,27 +839,27 @@ static void spawn_eval_random(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
     // 30% - neutral (both at angles, neither clearly advantaged)
     // 20% - energy (altitude/speed difference)
     // 10% - head-on (with gun lockout until pass)
-    float spawn_roll = rndf(0, 1);
+    float spawn_roll = dogfight_rndf(env, 0, 1);
 
     // Base altitude for combat (mid-altitude)
-    float base_alt = rndf(2000, 3500);
+    float base_alt = dogfight_rndf(env, 2000, 3500);
     env->player.pos.z = base_alt;
     player_pos.z = base_alt;
     float speed = norm3(player_vel);
 
     if (spawn_roll < 0.40f) {
         // TACTICAL: One plane behind/side of other (clear advantage)
-        float dist = rndf(300, 600);
-        float angle_off = rndf(120, 180) * DEG_TO_RAD;  // Behind (120-180° off nose)
-        float side = rndf(0, 1) > 0.5f ? 1.0f : -1.0f;
+        float dist = dogfight_rndf(env, 300, 600);
+        float angle_off = dogfight_rndf(env, 120, 180) * DEG_TO_RAD;  // Behind (120-180° off nose)
+        float side = dogfight_rndf(env, 0, 1) > 0.5f ? 1.0f : -1.0f;
 
         if (player_advantage) {
             // Player behind opponent - player has advantage
-            float opp_heading = rndf(0, 2.0f * M_PI);
+            float opp_heading = dogfight_rndf(env, 0, 2.0f * M_PI);
             Vec3 opp_pos = vec3(
-                player_pos.x + rndf(300, 500),
-                player_pos.y + side * rndf(50, 150),
-                clampf(player_pos.z + rndf(-100, 100), 500, 4500)
+                player_pos.x + dogfight_rndf(env, 300, 500),
+                player_pos.y + side * dogfight_rndf(env, 50, 150),
+                clampf(player_pos.z + dogfight_rndf(env, -100, 100), 500, 4500)
             );
             Vec3 opp_vel = vec3(speed * cosf(opp_heading), speed * sinf(opp_heading), 0);
             reset_plane(&env->opponent, opp_pos, opp_vel);
@@ -871,14 +871,14 @@ static void spawn_eval_random(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
             env->player.ori = quat_from_axis_angle(vec3(0, 0, 1), player_heading);
         } else {
             // Opponent behind player - opponent has advantage
-            float player_heading = rndf(0, 2.0f * M_PI);
+            float player_heading = dogfight_rndf(env, 0, 2.0f * M_PI);
             env->player.vel = vec3(speed * cosf(player_heading), speed * sinf(player_heading), 0);
             env->player.ori = quat_from_axis_angle(vec3(0, 0, 1), player_heading);
             // Opponent behind
             Vec3 opp_pos = vec3(
-                player_pos.x - cosf(player_heading) * dist + side * sinf(player_heading) * rndf(50, 150),
-                player_pos.y - sinf(player_heading) * dist - side * cosf(player_heading) * rndf(50, 150),
-                clampf(player_pos.z + rndf(-100, 100), 500, 4500)
+                player_pos.x - cosf(player_heading) * dist + side * sinf(player_heading) * dogfight_rndf(env, 50, 150),
+                player_pos.y - sinf(player_heading) * dist - side * cosf(player_heading) * dogfight_rndf(env, 50, 150),
+                clampf(player_pos.z + dogfight_rndf(env, -100, 100), 500, 4500)
             );
             Vec3 to_player = sub3(player_pos, opp_pos);
             float opp_heading = atan2f(to_player.y, to_player.x);
@@ -886,39 +886,39 @@ static void spawn_eval_random(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
             reset_plane(&env->opponent, opp_pos, opp_vel);
             env->opponent.ori = quat_from_axis_angle(vec3(0, 0, 1), opp_heading);
         }
-        env->opponent_ap.mode = rndf(0, 1) > 0.5f ? AP_TURN_LEFT : AP_TURN_RIGHT;
-        env->opponent_ap.target_bank = rndf(30, 60) * DEG_TO_RAD;
+        env->opponent_ap.mode = dogfight_rndf(env, 0, 1) > 0.5f ? AP_TURN_LEFT : AP_TURN_RIGHT;
+        env->opponent_ap.target_bank = dogfight_rndf(env, 30, 60) * DEG_TO_RAD;
 
     } else if (spawn_roll < 0.70f) {
         // NEUTRAL: Both at angles, converging - fair fight
-        float dist = rndf(400, 700);
-        float theta = rndf(0, 2.0f * M_PI);
+        float dist = dogfight_rndf(env, 400, 700);
+        float theta = dogfight_rndf(env, 0, 2.0f * M_PI);
         Vec3 opp_pos = vec3(
             player_pos.x + dist * cosf(theta),
             player_pos.y + dist * sinf(theta),
-            clampf(player_pos.z + rndf(-200, 200), 500, 4500)
+            clampf(player_pos.z + dogfight_rndf(env, -200, 200), 500, 4500)
         );
         // Both heading toward a point between them (converging)
         Vec3 midpoint = mul3(add3(player_pos, opp_pos), 0.5f);
         Vec3 player_to_mid = sub3(midpoint, player_pos);
         Vec3 opp_to_mid = sub3(midpoint, opp_pos);
         // Add some angle offset so they're not perfectly converging
-        float player_heading = atan2f(player_to_mid.y, player_to_mid.x) + rndf(-0.5f, 0.5f);
-        float opp_heading = atan2f(opp_to_mid.y, opp_to_mid.x) + rndf(-0.5f, 0.5f);
+        float player_heading = atan2f(player_to_mid.y, player_to_mid.x) + dogfight_rndf(env, -0.5f, 0.5f);
+        float opp_heading = atan2f(opp_to_mid.y, opp_to_mid.x) + dogfight_rndf(env, -0.5f, 0.5f);
 
         env->player.vel = vec3(speed * cosf(player_heading), speed * sinf(player_heading), 0);
         env->player.ori = quat_from_axis_angle(vec3(0, 0, 1), player_heading);
         Vec3 opp_vel = vec3(speed * cosf(opp_heading), speed * sinf(opp_heading), 0);
         reset_plane(&env->opponent, opp_pos, opp_vel);
         env->opponent.ori = quat_from_axis_angle(vec3(0, 0, 1), opp_heading);
-        env->opponent_ap.mode = rndf(0, 1) > 0.5f ? AP_TURN_LEFT : AP_TURN_RIGHT;
-        env->opponent_ap.target_bank = rndf(30, 45) * DEG_TO_RAD;
+        env->opponent_ap.mode = dogfight_rndf(env, 0, 1) > 0.5f ? AP_TURN_LEFT : AP_TURN_RIGHT;
+        env->opponent_ap.target_bank = dogfight_rndf(env, 30, 45) * DEG_TO_RAD;
 
     } else if (spawn_roll < 0.90f) {
         // ENERGY: Altitude or speed advantage
-        float dist = rndf(400, 600);
-        float theta = rndf(0, 2.0f * M_PI);
-        float alt_diff = rndf(300, 600);  // Significant altitude difference
+        float dist = dogfight_rndf(env, 400, 600);
+        float theta = dogfight_rndf(env, 0, 2.0f * M_PI);
+        float alt_diff = dogfight_rndf(env, 300, 600);  // Significant altitude difference
 
         Vec3 opp_pos;
         if (player_advantage) {
@@ -939,8 +939,8 @@ static void spawn_eval_random(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
             );
         }
         // Random headings
-        float player_heading = rndf(0, 2.0f * M_PI);
-        float opp_heading = rndf(0, 2.0f * M_PI);
+        float player_heading = dogfight_rndf(env, 0, 2.0f * M_PI);
+        float opp_heading = dogfight_rndf(env, 0, 2.0f * M_PI);
         env->player.vel = vec3(speed * cosf(player_heading), speed * sinf(player_heading), 0);
         env->player.ori = quat_from_axis_angle(vec3(0, 0, 1), player_heading);
         Vec3 opp_vel = vec3(speed * cosf(opp_heading), speed * sinf(opp_heading), 0);
@@ -950,13 +950,13 @@ static void spawn_eval_random(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
 
     } else {
         // HEAD-ON: Facing each other (rare, 10%) - guns locked until they pass
-        float dist = rndf(600, 900);  // Start further apart
-        float theta = rndf(0, 2.0f * M_PI);
+        float dist = dogfight_rndf(env, 600, 900);  // Start further apart
+        float theta = dogfight_rndf(env, 0, 2.0f * M_PI);
 
         Vec3 opp_pos = vec3(
             player_pos.x + dist * cosf(theta),
             player_pos.y + dist * sinf(theta),
-            clampf(player_pos.z + rndf(-100, 100), 500, 4500)
+            clampf(player_pos.z + dogfight_rndf(env, -100, 100), 500, 4500)
         );
         // Player faces opponent
         Vec3 to_opp = sub3(opp_pos, player_pos);
@@ -1052,21 +1052,21 @@ static void spawn_eval_merge(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
     if (speed < 70.0f) speed = 80.0f;
 
     // Shared: random center altitude and merge axis
-    float base_alt = rndf(2500, 3500);
-    float theta = rndf(0, 2.0f * M_PI);  // merge axis heading
+    float base_alt = dogfight_rndf(env, 2500, 3500);
+    float theta = dogfight_rndf(env, 0, 2.0f * M_PI);  // merge axis heading
 
     // Tiny asymmetric perturbations (break identical obs, no real advantage)
-    float pos_jitter = rndf(-5, 5);
-    float alt_jitter = rndf(-5, 5);
-    float speed_jitter = rndf(-3, 3);
-    float angle_jitter = rndf(-0.035f, 0.035f);  // ~±2°
+    float pos_jitter = dogfight_rndf(env, -5, 5);
+    float alt_jitter = dogfight_rndf(env, -5, 5);
+    float speed_jitter = dogfight_rndf(env, -3, 3);
+    float angle_jitter = dogfight_rndf(env, -0.035f, 0.035f);  // ~±2°
 
-    int scenario = (int)(rndf(0, 2.999f));  // 0, 1, or 2
+    int scenario = (int)(dogfight_rndf(env, 0, 2.999f));  // 0, 1, or 2
 
     if (scenario == 0) {
         // === Scenario 1: Head-On Merge ===
         // Classic merge. Both approaching, guns locked until pass.
-        float half_dist = rndf(300, 450);
+        float half_dist = dogfight_rndf(env, 300, 450);
         float p_speed = speed + speed_jitter;
         float o_speed = speed - speed_jitter;
 
@@ -1110,9 +1110,9 @@ static void spawn_eval_merge(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
         // === Scenario 2: Post-Merge Zoom ===
         // Both just passed and pulled up. Who manages energy better?
         // Flying AWAY from each other, both climbing nose-up.
-        float half_dist = rndf(100, 200);
-        float pitch_angle = rndf(30, 50) * DEG_TO_RAD;
-        float zoom_speed = rndf(70, 90);
+        float half_dist = dogfight_rndf(env, 100, 200);
+        float pitch_angle = dogfight_rndf(env, 30, 50) * DEG_TO_RAD;
+        float zoom_speed = dogfight_rndf(env, 70, 90);
         float p_speed = zoom_speed + speed_jitter;
         float o_speed = zoom_speed - speed_jitter;
 
@@ -1166,10 +1166,10 @@ static void spawn_eval_merge(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
     } else {
         // === Scenario 3: Turning Fight ===
         // Engaged in a turning fight. Both banked, pulling toward each other.
-        float half_dist = rndf(150, 250);
-        float bank_angle = rndf(45, 60) * DEG_TO_RAD;
-        float pitch_angle = rndf(5, 10) * DEG_TO_RAD;
-        float turn_speed = rndf(70, 85);
+        float half_dist = dogfight_rndf(env, 150, 250);
+        float bank_angle = dogfight_rndf(env, 45, 60) * DEG_TO_RAD;
+        float pitch_angle = dogfight_rndf(env, 5, 10) * DEG_TO_RAD;
+        float turn_speed = dogfight_rndf(env, 70, 85);
         float p_speed = turn_speed + speed_jitter;
         float o_speed = turn_speed - speed_jitter;
 
@@ -1185,7 +1185,7 @@ static void spawn_eval_merge(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
         );
 
         // Both heading roughly toward each other, but offset ~45° to simulate a turn
-        float turn_offset = rndf(30, 60) * DEG_TO_RAD;
+        float turn_offset = dogfight_rndf(env, 30, 60) * DEG_TO_RAD;
         float p_heading = theta + turn_offset + angle_jitter;
         float o_heading = theta + (float)M_PI - turn_offset - angle_jitter;
 
@@ -1225,32 +1225,32 @@ static void spawn_eval_midfight(Dogfight *env, Vec3 player_pos, Vec3 player_vel)
     float speed = norm3(player_vel);
     if (speed < 70.0f) speed = 80.0f;
 
-    float base_alt = rndf(2500, 3500);
-    float theta = rndf(0, 2.0f * M_PI);  // merge axis heading
+    float base_alt = dogfight_rndf(env, 2500, 3500);
+    float theta = dogfight_rndf(env, 0, 2.0f * M_PI);  // merge axis heading
 
     // Tiny asymmetric perturbations
-    float pos_jitter = rndf(-5, 5);
-    float alt_jitter = rndf(-5, 5);
-    float speed_jitter = rndf(-3, 3);
-    float angle_jitter = rndf(-0.035f, 0.035f);  // ~±2°
+    float pos_jitter = dogfight_rndf(env, -5, 5);
+    float alt_jitter = dogfight_rndf(env, -5, 5);
+    float speed_jitter = dogfight_rndf(env, -3, 3);
+    float angle_jitter = dogfight_rndf(env, -0.035f, 0.035f);  // ~±2°
 
     // Alternate who gets which role
     int swap_roles = (env->total_episodes % 2);
 
-    int scenario = (int)(rndf(0, 4.999f));  // 0-4
+    int scenario = (int)(dogfight_rndf(env, 0, 4.999f));  // 0-4
 
     if (scenario == 0) {
         // === Rolling Scissors ===
         // Crossing paths, hard banks opposite directions, both pulling up
-        float half_dist = rndf(75, 125);
-        float bank = rndf(60, 80) * DEG_TO_RAD;
-        float pitch = rndf(15, 25) * DEG_TO_RAD;
-        float scr_speed = rndf(65, 75);
+        float half_dist = dogfight_rndf(env, 75, 125);
+        float bank = dogfight_rndf(env, 60, 80) * DEG_TO_RAD;
+        float pitch = dogfight_rndf(env, 15, 25) * DEG_TO_RAD;
+        float scr_speed = dogfight_rndf(env, 65, 75);
         float p_speed = scr_speed + speed_jitter;
         float o_speed = scr_speed - speed_jitter;
 
         // Crossing angle: ~60-90° off from head-on
-        float cross_offset = rndf(30, 45) * DEG_TO_RAD;
+        float cross_offset = dogfight_rndf(env, 30, 45) * DEG_TO_RAD;
         float p_heading = theta + cross_offset + angle_jitter;
         float o_heading = theta + (float)M_PI - cross_offset - angle_jitter;
 
@@ -1295,13 +1295,13 @@ static void spawn_eval_midfight(Dogfight *env, Vec3 player_pos, Vec3 player_vel)
     } else if (scenario == 1) {
         // === High Yo-Yo ===
         // Attacker above pulling down, defender turning hard below
-        float alt_sep = rndf(300, 500);
-        float horiz_dist = rndf(200, 400);
-        float atk_pitch = -rndf(25, 35) * DEG_TO_RAD;  // nose down
-        float atk_bank = rndf(30, 50) * DEG_TO_RAD;
-        float def_bank = rndf(50, 65) * DEG_TO_RAD;
-        float atk_speed = rndf(85, 95);
-        float def_speed = rndf(70, 80);
+        float alt_sep = dogfight_rndf(env, 300, 500);
+        float horiz_dist = dogfight_rndf(env, 200, 400);
+        float atk_pitch = -dogfight_rndf(env, 25, 35) * DEG_TO_RAD;  // nose down
+        float atk_bank = dogfight_rndf(env, 30, 50) * DEG_TO_RAD;
+        float def_bank = dogfight_rndf(env, 50, 65) * DEG_TO_RAD;
+        float atk_speed = dogfight_rndf(env, 85, 95);
+        float def_speed = dogfight_rndf(env, 70, 80);
 
         Vec3 hi_pos = vec3(
             player_pos.x - horiz_dist * cosf(theta) + pos_jitter,
@@ -1355,11 +1355,11 @@ static void spawn_eval_midfight(Dogfight *env, Vec3 player_pos, Vec3 player_vel)
     } else if (scenario == 2) {
         // === Overshoot ===
         // One just overshot, scrambling to re-engage. Other reversing behind.
-        float along_dist = rndf(150, 250);  // how far ahead the overshooting plane is
-        float behind_dist = rndf(100, 200);
-        float overshoot_speed = rndf(95, 110);
-        float reversal_speed = rndf(70, 80);
-        float reversal_bank = rndf(55, 70) * DEG_TO_RAD;
+        float along_dist = dogfight_rndf(env, 150, 250);  // how far ahead the overshooting plane is
+        float behind_dist = dogfight_rndf(env, 100, 200);
+        float overshoot_speed = dogfight_rndf(env, 95, 110);
+        float reversal_speed = dogfight_rndf(env, 70, 80);
+        float reversal_bank = dogfight_rndf(env, 55, 70) * DEG_TO_RAD;
 
         // Overshooting plane: flying straight past, wings level
         float fwd_heading = theta + angle_jitter;
@@ -1372,7 +1372,7 @@ static void spawn_eval_midfight(Dogfight *env, Vec3 player_pos, Vec3 player_vel)
         Vec3 fwd_vel = vec3(overshoot_speed * cosf(fwd_heading), overshoot_speed * sinf(fwd_heading), 0);
 
         // Reversing plane: behind, in hard bank reversal turn
-        float rev_heading = theta + rndf(0.35f, 0.70f);  // ~20-40° off from straight chase
+        float rev_heading = theta + dogfight_rndf(env, 0.35f, 0.70f);  // ~20-40° off from straight chase
         Vec3 rev_pos = vec3(
             player_pos.x - behind_dist * cosf(theta) - pos_jitter,
             player_pos.y - behind_dist * sinf(theta),
@@ -1406,10 +1406,10 @@ static void spawn_eval_midfight(Dogfight *env, Vec3 player_pos, Vec3 player_vel)
     } else if (scenario == 3) {
         // === Vertical Fight ===
         // Both climbing in a vertical rolling engagement
-        float half_dist = rndf(100, 150);
-        float pitch = rndf(50, 70) * DEG_TO_RAD;
-        float bank = rndf(25, 35) * DEG_TO_RAD;
-        float climb_speed = rndf(75, 85);
+        float half_dist = dogfight_rndf(env, 100, 150);
+        float pitch = dogfight_rndf(env, 50, 70) * DEG_TO_RAD;
+        float bank = dogfight_rndf(env, 25, 35) * DEG_TO_RAD;
+        float climb_speed = dogfight_rndf(env, 75, 85);
         float p_speed = climb_speed + speed_jitter;
         float o_speed = climb_speed - speed_jitter;
 
@@ -1425,8 +1425,8 @@ static void spawn_eval_midfight(Dogfight *env, Vec3 player_pos, Vec3 player_vel)
         );
 
         // Both climbing, banked opposite directions
-        float p_heading = theta + rndf(-0.17f, 0.17f) + angle_jitter;  // ~±10° heading spread
-        float o_heading = theta + (float)M_PI + rndf(-0.17f, 0.17f) - angle_jitter;
+        float p_heading = theta + dogfight_rndf(env, -0.17f, 0.17f) + angle_jitter;  // ~±10° heading spread
+        float o_heading = theta + (float)M_PI + dogfight_rndf(env, -0.17f, 0.17f) - angle_jitter;
 
         float p_bank = swap_roles ? bank : -bank;
         float o_bank = swap_roles ? -bank : bank;
@@ -1457,11 +1457,11 @@ static void spawn_eval_midfight(Dogfight *env, Vec3 player_pos, Vec3 player_vel)
     } else {
         // === Split-S Entry ===
         // One inverted pulling through, other pursuing
-        float sep_dist = rndf(300, 400);
-        float inv_speed = rndf(80, 90);
-        float pursue_speed = rndf(75, 85);
-        float inv_pitch = rndf(5, 15) * DEG_TO_RAD;  // slightly nose-down
-        float pursue_bank = rndf(25, 35) * DEG_TO_RAD;
+        float sep_dist = dogfight_rndf(env, 300, 400);
+        float inv_speed = dogfight_rndf(env, 80, 90);
+        float pursue_speed = dogfight_rndf(env, 75, 85);
+        float inv_pitch = dogfight_rndf(env, 5, 15) * DEG_TO_RAD;  // slightly nose-down
+        float pursue_bank = dogfight_rndf(env, 25, 35) * DEG_TO_RAD;
 
         // Inverted plane: ahead, upside down, slightly nose-down
         float inv_heading = theta + angle_jitter;
@@ -1546,7 +1546,7 @@ void spawn_by_curriculum(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
     // Forced vertical merge: during self-play, chance to override spawn geometry
     if (env->selfplay_active && env->vertical_spawn_prob > 0.0f
         && env->stage == CURRICULUM_AUTOACE) {
-        if (rndf(0, 1) < env->vertical_spawn_prob) {
+        if (dogfight_rndf(env, 0, 1) < env->vertical_spawn_prob) {
             switch (env->vertical_level) {
                 case 0: spawn_vertical_apex(env, player_pos, player_vel); break;
                 case 1: spawn_vertical_past(env, player_pos, player_vel); break;
@@ -1587,9 +1587,9 @@ void spawn_by_curriculum(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
 // Legacy spawn (for curriculum_enabled=0)
 void spawn_legacy(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
     Vec3 opp_pos = vec3(
-        player_pos.x + rndf(200, 500),
-        player_pos.y + rndf(-100, 100),
-        player_pos.z + rndf(-50, 50)
+        player_pos.x + dogfight_rndf(env, 200, 500),
+        player_pos.y + dogfight_rndf(env, -100, 100),
+        player_pos.z + dogfight_rndf(env, -50, 50)
     );
     reset_plane(&env->opponent, opp_pos, player_vel);
 
