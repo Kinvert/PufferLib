@@ -6,6 +6,7 @@ import os
 import glob
 import time
 import ctypes
+import importlib
 from collections import defaultdict
 
 import numpy as np
@@ -112,6 +113,22 @@ def _cpu_tensor(ptr, shape, dtype):
         n *= s
     arr = (ctype * n).from_address(ptr)
     return torch.frombuffer(arr, dtype=dtype).reshape(shape)
+
+def _resolve_model_component(args, name):
+    env_name = args.get('env_name')
+    if env_name:
+        module_name = f"ocean.{args['env_name']}.torch"
+        try:
+            env_torch = importlib.import_module(module_name)
+        except ModuleNotFoundError as exc:
+            if exc.name != module_name:
+                raise
+        else:
+            if hasattr(env_torch, name):
+                return getattr(env_torch, name)
+
+    import pufferlib.models
+    return getattr(pufferlib.models, name)
 
 class PuffeRL:
     def __init__(self, args, vec, policy, verbose=True):
@@ -475,9 +492,9 @@ class Profile:
 def load_policy(args, vec):
     import pufferlib.models
     policy_kwargs = args['policy']
-    network_cls = getattr(pufferlib.models, args['torch']['network'])
-    encoder_cls = getattr(pufferlib.models, args['torch']['encoder'])
-    decoder_cls = getattr(pufferlib.models, args['torch']['decoder'])
+    network_cls = _resolve_model_component(args, args['torch']['network'])
+    encoder_cls = _resolve_model_component(args, args['torch']['encoder'])
+    decoder_cls = _resolve_model_component(args, args['torch']['decoder'])
 
     network = network_cls(**policy_kwargs)
     encoder = encoder_cls(vec.obs_size, policy_kwargs['hidden_size'])

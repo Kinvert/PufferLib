@@ -6,6 +6,8 @@ from pathlib import Path
 DOGFIGHT3_RECURRENT_EFFECTIVE_ACTION_INIT_SCALE = 1.0
 DOGFIGHT3_VALUE_INIT_SCALE = 1.0
 PUFFER5_STAGE_CLIMB_ACTION_INIT_SCALE = 1.0
+PUFFER5_MIN_STAGE_CLIMB_ACTION_INIT_SCALE = 0.2
+LOW_INIT_SATURATED_SMOKE_ACTION_INIT_SCALE = 0.006234637065258806
 
 
 def repo_root():
@@ -32,8 +34,10 @@ def test_dogfight_policy_config_starts_from_dogfight3_recurrent_depth():
 
     assert parser.getint("policy", "hidden_size") == 128
     assert parser.getint("policy", "num_layers") == 1
-    assert parser.getint("sweep.policy.num_layers", "min") == 1
-    assert parser.getint("sweep.policy.num_layers", "mean") == 2
+    # Plain training stays on the df36 one-layer baseline. Short sweeps are
+    # centered on the stopped-df40 cluster that actually reached target 9.9+.
+    assert parser.getint("sweep.policy.num_layers", "min") == 2
+    assert parser.getint("sweep.policy.num_layers", "mean") == 3
     assert parser.getint("sweep.policy.num_layers", "max") >= 3
 
 
@@ -42,12 +46,24 @@ def test_dogfight_sweep_centers_on_measured_native_action_head_init_scale():
     parser.read(repo_root() / "config" / "dogfight.ini")
 
     assert parser.get("sweep.policy.action_init_scale", "distribution") == "log_normal"
-    assert parser.getfloat("sweep.policy.action_init_scale", "min") <= DOGFIGHT3_RECURRENT_EFFECTIVE_ACTION_INIT_SCALE
+    assert parser.getfloat("sweep.policy.action_init_scale", "min") >= PUFFER5_MIN_STAGE_CLIMB_ACTION_INIT_SCALE
     assert math.isclose(
         parser.getfloat("sweep.policy.action_init_scale", "mean"),
         PUFFER5_STAGE_CLIMB_ACTION_INIT_SCALE,
     )
     assert parser.getfloat("sweep.policy.action_init_scale", "max") >= PUFFER5_STAGE_CLIMB_ACTION_INIT_SCALE
+
+
+def test_dogfight_short_sweep_avoids_low_action_init_saturated_corner():
+    parser = ConfigParser()
+    parser.read(repo_root() / "config" / "dogfight.ini")
+
+    # The recentered max-runs-2 smoke sampled a 0.006 action-head scale and
+    # ended with severe base-stage action saturation without promotion. That is
+    # not the df36 effective init, and short stage-climb sweeps should not spend
+    # trials there.
+    assert parser.getfloat("sweep.policy.action_init_scale", "min") > LOW_INIT_SATURATED_SMOKE_ACTION_INIT_SCALE
+    assert parser.getfloat("sweep.policy.action_init_scale", "min") >= PUFFER5_MIN_STAGE_CLIMB_ACTION_INIT_SCALE
 
 
 def test_dogfight_sweep_keeps_dogfight3_action_init_reachable():

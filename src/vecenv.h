@@ -101,6 +101,7 @@ typedef struct StaticVec {
     // 0 = aggregate logs from all envs. Curriculum sets this to the fresh-env
     // prefix count so sampled curriculum envs do not report training logs.
     int log_env_limit;
+    long global_step;
 } StaticVec;
 
 // Callback types
@@ -126,6 +127,7 @@ void static_vec_omp_step(StaticVec* vec);
 void static_vec_seq_step(StaticVec* vec);
 void static_vec_render(StaticVec* vec, int env_id);
 void static_vec_read_profile(StaticVec* vec, float out[NUM_EVAL_PROF]);
+void static_vec_set_global_step(StaticVec* vec, long global_step);
 
 // Env info
 int get_obs_size(void);
@@ -216,6 +218,33 @@ void my_setup_perm(StaticVec* vec, Env* env, int slot_base);
 void my_set_curriculum_target(Env* env, float target);
 #endif
 
+#ifdef MY_GLOBAL_STEP
+void my_set_global_step(Env* env, long global_step);
+#else
+static inline void my_set_global_step(Env* env, long global_step) {
+    (void)env;
+    (void)global_step;
+}
+#endif
+
+static inline void static_vec_set_global_step_range(
+        StaticVec* vec, int env_start, int env_count, long step_global) {
+#ifdef MY_GLOBAL_STEP
+    Env* envs = vec->envs;
+    for (int i = env_start; i < env_start + env_count; i++) {
+        my_set_global_step(&envs[i], step_global);
+    }
+#else
+    (void)vec;
+    (void)env_start;
+    (void)env_count;
+    (void)step_global;
+#endif
+}
+
+void static_vec_set_global_step(StaticVec* vec, long global_step) {
+    vec->global_step = global_step;
+}
 
 struct StaticThreading {
     atomic_int* buffer_states;
@@ -273,6 +302,9 @@ static void* static_omp_threadmanager(void* arg) {
         struct timespec t0, t1;
 
         for (int t = 0; t < horizon; t++) {
+            long step_global = vec->global_step + (long)t * vec->total_agents;
+            static_vec_set_global_step_range(vec, env_start, env_count, step_global);
+
             clock_gettime(CLOCK_MONOTONIC, &t0);
             net_callback(ctx, buf, t);
 
@@ -764,6 +796,7 @@ static inline void _static_vec_env_step(StaticVec* vec) {
     memset(vec->rewards, 0, vec->total_agents * sizeof(float));
     memset(vec->terminals, 0, vec->total_agents * sizeof(float));
     Env* envs = vec->envs;
+    static_vec_set_global_step_range(vec, 0, vec->size, vec->global_step);
     #pragma omp parallel for schedule(static)
     for (int i = 0; i < vec->size; i++) {
         c_step(&envs[i]);

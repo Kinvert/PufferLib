@@ -6,6 +6,7 @@
 #define OBS_TENSOR_T FloatTensor
 #define MY_DOGFIGHT
 #define MY_CURRICULUM
+#define MY_GLOBAL_STEP
 
 #define Env Dogfight
 static inline void puffer_state_refresh(Dogfight* env) {
@@ -15,6 +16,11 @@ static inline void puffer_state_refresh(Dogfight* env) {
 
 void my_set_curriculum_target(Env* env, float target) {
     set_curriculum_target(env, target);
+}
+
+void my_set_global_step(Env* env, long global_step) {
+    env->global_step = global_step;
+    dogfight_state_capture(env);
 }
 
 static inline double dict_get_default(Dict* kwargs, const char* key, double fallback) {

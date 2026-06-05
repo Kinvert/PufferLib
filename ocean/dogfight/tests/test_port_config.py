@@ -64,17 +64,27 @@ DOGFIGHT3_TRAIN_BASELINE = {
 
 PUFFER5_NATIVE_STAGE_CLIMB_SWEEP_PROFILE = {
     "policy.hidden_size": 128,
-    "policy.num_layers": 2,
+    "policy.num_layers": 3,
     "policy.action_init_scale": 1.0,
-    "vec.num_buffers": 3,
-    "train.horizon": 128,
+    "vec.num_buffers": 4,
+    "train.horizon": 64,
     "train.minibatch_size": 4096,
-    "train.learning_rate": 0.005,
-    "train.ent_coef": 0.001,
-    "train.gamma": 0.98,
-    "train.replay_ratio": 0.5,
-    "train.clip_coef": 0.11,
+    "train.learning_rate": 0.0025,
+    "train.ent_coef": 0.012,
+    "train.gamma": 0.996,
+    "train.replay_ratio": 0.95,
+    "train.clip_coef": 0.06,
+    "train.vf_coef": 4.6,
+    "train.max_grad_norm": 3.4,
+    "train.vtrace_rho_clip": 0.1,
+    "train.vtrace_c_clip": 2.5,
+    "train.prio_alpha": 0.4,
+    "train.prio_beta0": 0.82,
+    "train.state_buffer_size": 4096,
+    "train.cl_frac": 0.77,
 }
+
+DF40_CLEAN_STAGE8_LEARNING_RATE = 0.007004927620127303
 
 
 def load_sweep_hypers():
@@ -115,10 +125,21 @@ def test_dogfight_config_matches_dogfight3_env_config_baseline():
     parser.read(repo_root / "config" / "dogfight.ini")
     dogfight3 = ConfigParser()
     dogfight3.read("/home/claude/dogfight3/pufferlib/config/ocean/dogfight.ini")
+    obs_compat = importlib.util.spec_from_file_location(
+        "dogfight_obs_compat_for_config",
+        repo_root / "ocean" / "dogfight" / "obs_compat.py",
+    )
+    obs_module = importlib.util.module_from_spec(obs_compat)
+    assert obs_compat.loader is not None
+    obs_compat.loader.exec_module(obs_module)
 
     assert parser.getint("env", "max_steps") == 300
+    # The checked-in Dogfight3 config is not the df36 W&B run contract. The
+    # known-good df36 run used old scheme 2, which maps to current scheme 1.
     assert dogfight3.getint("env", "obs_scheme") == 1
-    assert parser.getint("env", "obs_scheme") == dogfight3.getint("env", "obs_scheme")
+    assert obs_module.DF36_KNOWN_GOOD_OBS_SCHEME == 2
+    assert parser.getint("env", "obs_scheme") == obs_module.DOGFIGHT5_DEFAULT_OBS_SCHEME
+    assert obs_module.dogfight5_scheme_for_df36_scheme(2) == parser.getint("env", "obs_scheme")
     assert parser.getfloat("env", "reward_aim_scale") == 0.001695
     assert parser.getfloat("env", "reward_closing_scale") == 0.0001
     assert parser.getfloat("env", "penalty_neg_g") == 0.035
@@ -168,6 +189,18 @@ def test_dogfight_sweep_space_centers_native_short_stage_climb_profile():
         assert math.isclose(parser.getfloat(section, "mean"), expected)
 
 
+def test_dogfight_sweep_learning_rate_keeps_recent_clean_stage8_climber_reachable():
+    repo_root = Path(__file__).resolve().parents[3]
+    parser = ConfigParser()
+    parser.read(repo_root / "config" / "dogfight.ini")
+
+    # df40 h5qvaso2 reached target 8.9 with current-stage kill rate near 1.0,
+    # no ground crashes, and a real update signal. Keep that region reachable
+    # for df41 while leaving the search center unchanged.
+    assert parser.getfloat("sweep.train.learning_rate", "max") >= DF40_CLEAN_STAGE8_LEARNING_RATE
+    assert math.isclose(parser.getfloat("sweep.train.learning_rate", "mean"), 0.0025)
+
+
 def test_dogfight_train_keeps_state_memory_disabled_by_default():
     repo_root = Path(__file__).resolve().parents[3]
     parser = ConfigParser()
@@ -184,12 +217,12 @@ def test_dogfight_sweep_can_search_state_curriculum_knobs():
 
     assert parser.get("sweep.train.state_buffer_size", "distribution") == "int_uniform"
     assert parser.getint("sweep.train.state_buffer_size", "min") >= 512
-    assert parser.getint("sweep.train.state_buffer_size", "mean") == 8192
-    assert parser.getint("sweep.train.state_buffer_size", "max") <= 20_000
+    assert parser.getint("sweep.train.state_buffer_size", "mean") == 4096
+    assert parser.getint("sweep.train.state_buffer_size", "max") <= 10_000
 
     assert parser.get("sweep.train.cl_frac", "distribution") == "uniform"
-    assert 0.0 < parser.getfloat("sweep.train.cl_frac", "min") <= 0.1
-    assert math.isclose(parser.getfloat("sweep.train.cl_frac", "mean"), 0.35)
+    assert 0.5 <= parser.getfloat("sweep.train.cl_frac", "min") < 0.8
+    assert math.isclose(parser.getfloat("sweep.train.cl_frac", "mean"), 0.77)
     assert parser.getfloat("sweep.train.cl_frac", "max") <= 0.8
 
 
@@ -207,9 +240,9 @@ def test_dogfight_state_curriculum_sweep_space_roundtrips_through_protein(monkey
     sweep.suggest(args)
     pufferl.validate_config(args)
 
-    assert args["train"]["state_buffer_size"] == 8192
+    assert args["train"]["state_buffer_size"] == 4096
     assert isinstance(args["train"]["state_buffer_size"], int)
-    assert math.isclose(args["train"]["cl_frac"], 0.35)
+    assert math.isclose(args["train"]["cl_frac"], 0.77)
     assert args["train"]["state_buffer_size"] > args["train"]["warmup_states"]
 
 

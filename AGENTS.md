@@ -241,22 +241,33 @@ single-GPU W&B search command is:
 
 ```bash
 source .venv/bin/activate
-python -m pufferlib.pufferl sweep dogfight --sweep.gpus 1 --train.gpus 1 --sweep.max-runs 20 --wandb --wandb-project df40 --wandb-group df40-scheme1-short
+python -m pufferlib.pufferl sweep dogfight --sweep.gpus 1 --train.gpus 1 --sweep.max-runs 20 --wandb --wandb-project df41 --wandb-group df41-stage17-short
 ```
 
 Plain Dogfight training should stay Dogfight 3-derived unless a concrete
 behavior mismatch is found. The sweep center is separate: after the latest
-local W&B evidence, it is centered on the best measured PufferLib 5 native
-short-run stage climber: high native action-head scale, `learning_rate =
-0.005`, `horizon = 128`, `minibatch_size = 4096`, `policy.num_layers = 2`,
-`vec.num_buffers = 3`, `replay_ratio = 0.5`, and `gamma = 0.98`.
+stopped df40 W&B evidence, it is centered on the only local cluster that reached
+target `9.9-10.9`: high native action-head scale, `policy.num_layers = 3`,
+`vec.num_buffers = 4`, `horizon = 64`, `minibatch_size = 4096`,
+`learning_rate = 0.0025`, `ent_coef = 0.012`, `replay_ratio = 0.95`,
+`gamma = 0.996`, `cl_frac = 0.77`, and `state_buffer_size = 4096`.
+The short sweep keeps `policy.action_init_scale` high enough to avoid wasting
+df41 trials in the low-init corner; Dogfight3's recurrent wrapper made the
+effective df36 action-head init scale `1.0`, and the latest low-init smoke
+sample saturated controls without promotion.
+The learning-rate max is widened to `0.01` while keeping the center at
+`0.0025`, so df41 can still sample the latest clean df40 target-8.9 climber
+region (`h5qvaso2`, learning rate about `0.0070`) without moving the search
+center.
 
 Dogfight now exposes the PufferLib 5 state-memory knobs only in the sweep
 space: `sweep.train.state_buffer_size` and `sweep.train.cl_frac`. Plain
-training remains state-memory-off through inherited defaults. Before trusting a
-large W&B state-memory sweep, run a short `max-runs 2` state-buffer smoke and
-check that both trials launch, use GPU, keep expected SPS, and emit normal
-curriculum metrics.
+training remains state-memory-off through inherited defaults. The recentered
+short `max-runs 2` state-buffer smoke has launched and exited cleanly with GPU
+using the local Dogfight5 venv. Treat that as a sweep-machinery check only: the
+sampled state-curriculum run did not promote and showed severe control
+saturation, so a larger df41 W&B sweep is still a search for better settings,
+not a validated training recipe.
 
 Keep architecture/topology-like sweep parameters discrete. Dogfight's
 `sweep.policy.num_layers` and `sweep.vec.num_buffers` use `int_uniform` so
@@ -363,6 +374,20 @@ Dogfight behavior restored from the 3.0 reference:
   nonterminal scripted player/opponent action trace against the exact df36
   commit, covering per-step rewards, final player/opponent physics state,
   reward accumulators, previous-action state, and final scheme1 observations.
+- `ocean/dogfight/tests/test_reward_shaping_decay_reference.c` checks the same
+  class of nonterminal scripted state before, midway through, and after the
+  df36 shaping-decay window. It verifies that only `r_closing` and `r_aim`
+  anneal with `global_step`, while nonshaping terms remain fixed.
+- `ocean/dogfight/tests/test_flightlib_source_compat.py` compares the full
+  Dogfight flight library against the exact df36 commit after normalizing only
+  the intentional `K` -> `INDUCED_DRAG_K` macro rename and the env-local
+  state-RNG helper used for deterministic 5.0 state restore.
+- `ocean/dogfight/tests/test_stage_spawn_source_compat.py` compares the full
+  df36 `STAGES` table, early stage spawners 0-5, side-stage spawner 6-9, and
+  advanced spawners 10-17 against the exact df36 commit. It normalizes only the
+  env-local RNG helper plus documented Dogfight5 config/telemetry wrappers for
+  side-energy probability, side-spawn telemetry, stage-9 bank, and
+  low-altitude variant telemetry.
 - `ocean/dogfight/tests/test_terminal_kill_reference.c` compares a scripted
   player kill terminal transition against `/home/claude/dogfight3`, covering
   player/opponent terminal rewards, reset-visible death/winner flags, and
@@ -382,7 +407,10 @@ Dogfight behavior restored from the 3.0 reference:
   for `env_name == "dogfight"` in `src/ocean.cu`; other envs keep their
   existing native encoder paths.
 - Flight physics differs only by a macro rename from `K` to
-  `INDUCED_DRAG_K`.
+  `INDUCED_DRAG_K` plus env-local deterministic RNG helpers for state restore;
+  this is now covered by `test_flightlib_source_compat.py`.
+- Stage 0-17 spawn geometry is source-parity guarded against exact df36 after
+  normalizing only documented 5.0 RNG/config/telemetry wrappers.
 - Stage 10 dive attack uses the Dogfight 3 angle window `120-175` degrees.
 - Signed-bias telemetry now logs mean signed action per step, not cumulative
   signed action per episode. Older df39 runs before this fix can show large
@@ -400,25 +428,34 @@ Dogfight sweep space now includes:
 - `vec.total_agents` narrowed to `2048-4096`, default `4096`. A measured
   `8192`-agent run on `g240` was fast but trained worse, finishing around
   `base_stage_kills ~= 0.33`.
-- `vec.num_buffers` sampled as `int_uniform`, centered at `3` after the best
-  measured short run used that topology.
-- `policy.action_init_scale` is centered at `1.0` for sweeps, matching the
-  plain Dogfight5 default and the effective Dogfight3 recurrent wrapper scale.
-- `policy.num_layers` from `1` to `3`, sampled as `int_uniform`, centered at
-  `2` for the current PufferLib 5 native sweep.
-- `train.minibatch_size` from `4096` to `16384`, centered at `4096`.
-- `train.learning_rate` from `0.00045` to `0.02`, centered at `0.005` because
-  the best local stage-climb run hit the previous high end.
-- `train.horizon` from `64` to `256`, centered at `128`.
-- `train.replay_ratio` from `0.5` to `2.0`, centered at `0.5`.
-- `train.gamma` remains sweepable but is centered at `0.98` for short-stage
-  climb.
+- `vec.num_buffers` sampled as `int_uniform`, narrowed to `3-6` and centered
+  at `4`; both stopped-df40 target `10.9` runs used `4`.
+- `policy.action_init_scale` is narrowed to `0.2-1.0` and centered at `1.0` for
+  sweeps, matching the plain Dogfight5 default and the effective Dogfight3
+  recurrent wrapper scale while avoiding the `0.006` low-init saturated smoke
+  corner.
+- `policy.num_layers` from `2` to `3`, sampled as `int_uniform`, centered at
+  `3`; all stopped-df40 runs at target `>= 6.9` used `3`.
+- `train.minibatch_size` from `4096` to `8192`, centered at `4096`.
+- `train.learning_rate` from `0.0008` to `0.01`, centered at `0.0025`.
+- `train.ent_coef` from `0.005` to `0.03`, centered at `0.012`.
+- `train.horizon` from `64` to `128`, centered at `64`.
+- `train.replay_ratio` from `0.7` to `1.1`, centered at `0.95`.
+- `train.gamma` remains sweepable but is narrowed to `0.99-0.9999` and centered
+  at `0.996` for short-stage climb.
+- `train.clip_coef` is narrowed to `0.04-0.14`, centered at `0.06`.
+- `train.vf_coef` is narrowed to `2.5-5.0`, centered at `4.6`, and
+  `train.max_grad_norm` is narrowed to `2.0-5.0`, centered at `3.4`.
+- `train.vtrace_rho_clip` is narrowed to `0.1-1.0`, centered at `0.1`, and
+  `train.vtrace_c_clip` is narrowed to `1.5-3.0`, centered at `2.5`.
+- `train.prio_alpha` is centered at `0.4`, and `train.prio_beta0` is narrowed
+  to `0.5-1.0`, centered at `0.82`.
 - Sweep trial length is short: `50M-100M`, centered at `50M`, so bad
   configurations are rejected before wasting `400M` validation-scale runs.
-- `train.state_buffer_size` from `512` to `20_000`, centered at `8192`, sampled
+- `train.state_buffer_size` from `512` to `10_000`, centered at `4096`, sampled
   as `int_uniform` so PROTEIN produces whole buffer sizes.
-- `train.cl_frac` from `0.05` to `0.8`, centered at `0.35`, so sampled trials
-  actually enable state curriculum while staying below the 5.0 `<= 0.9`
+- `train.cl_frac` from `0.55` to `0.8`, centered at `0.77`, matching the
+  stopped-df40 high-stage cluster while staying below the 5.0 `<= 0.9`
   assertion.
 
 Do not replace this with ad hoc tiny-run trainer CLI overrides while debugging
@@ -516,3 +553,31 @@ Latest plain local-venv GPU smoke after the env-default restore:
 
 That means environment setup and GPU execution are working, but the 5.0 port
 still has a Dogfight behavior/training mismatch to find against Dogfight 3.
+
+Latest recentered local sweep smoke:
+
+- Command: `source .venv/bin/activate && python -m pufferlib.pufferl sweep
+  dogfight --sweep.gpus 1 --train.gpus 1 --sweep.max-runs 2`
+- Wrapper only: `timeout 300s bash -lc 'source .venv/bin/activate && python -m
+  pufferlib.pufferl sweep dogfight --sweep.gpus 1 --train.gpus 1
+  --sweep.max-runs 2'`
+- Result: completed with exit code `0` when run unsandboxed for GPU access.
+- GPU: active; no `--cpu` and no tiny timestep override.
+- Local logs: `logs/dogfight/1780614612769.json` and
+  `logs/dogfight/1780614644488.json`.
+- Training quality: still not acceptable. The sampled state-curriculum run
+  ended at `curriculum_target = 0.9`, with final base-stage kill/ground/timeout
+  rates around `0.434/0.205/0.361`, action saturation around `0.996`, and
+  `curriculum_soft_quality ~= 0.0251`. This confirms the recentered sweep path
+  runs, not that it solves the stage climb.
+- Post-action-init-tightening smoke: the same `max-runs 2` command completed
+  with exit code `0`, GPU active, no `--cpu`, and no tiny timestep override.
+  Relevant local logs were `logs/dogfight/1780615251554.json` and
+  `logs/dogfight/1780615288647.json`. The sampled state-curriculum run used
+  `action_init_scale ~= 0.251`, `256` hidden, `3` layers, `4096` agents,
+  `vec.num_buffers = 4`, `horizon = 128`, `learning_rate ~= 0.00614`,
+  `state_buffer_size = 3017`, and `cl_frac ~= 0.605`. It still ended at
+  `curriculum_target = 0.9`, but final base-stage kill/ground/timeout rates
+  were about `0.634/0.000/0.366`, action saturation was about `0.409`, and
+  `curriculum_soft_quality ~= 0.0395`. This supports the tighter action-init
+  lower bound; it does not prove the current sweep space can reach stage 17.

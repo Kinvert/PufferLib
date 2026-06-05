@@ -49,6 +49,7 @@ typedef struct {
 // Data collected by parallel environment workers. Each worker handles
 // a constant subset of agents 
 struct RolloutBuf {
+    PrecisionTensor states;        // (num_layers, agents, hidden_size)
     PrecisionTensor observations;  // (horizon, agents, input_size)
     PrecisionTensor actions;       // (horizon, agents, num_atns)
     PrecisionTensor values;        // (horizon, agents)
@@ -62,9 +63,11 @@ struct RolloutBuf {
 
 // Buffers are initialized as raw structs with only shape information. alloc_register
 // stores the shape and data pointer. Memory is only allocated after all buffers are registered.
-void register_rollout_buffers(RolloutBuf& bufs, Allocator* alloc, int T, int B, int input_size,
-        int num_atns, int mask_size) {
+void register_rollout_buffers(RolloutBuf& bufs, Allocator* alloc, int T, int B,
+        int state_rows, int input_size, int hidden_size, int num_atns,
+        int num_layers, int mask_size) {
     bufs = (RolloutBuf){
+        .states       = {.shape = {num_layers, state_rows, hidden_size}},
         .observations = {.shape = {T, B, input_size}},
         .actions      = {.shape = {T, B, num_atns}},
         .values       = {.shape = {T, B}},
@@ -75,6 +78,7 @@ void register_rollout_buffers(RolloutBuf& bufs, Allocator* alloc, int T, int B, 
         .importance   = {.shape = {T, B}},
         .action_mask  = {},
     };
+    alloc_register(alloc, &bufs.states);
     alloc_register(alloc, &bufs.observations);
     alloc_register(alloc, &bufs.actions);
     alloc_register(alloc, &bufs.values);
@@ -136,6 +140,11 @@ void register_train_buffers(TrainGraph& bufs, Allocator* alloc, int B, int T, in
         alloc_register(alloc, &bufs.mb_action_mask);
     }
 }
+
+__global__ void copy_state_rows(precision_t* __restrict__ dst,
+        const precision_t* __restrict__ src, int num_layers,
+        int dst_rows, int src_rows, int hidden_size, int dst_start,
+        int src_start, int count);
 
 // PPO buffers + args are quite complex. We do the entire
 // forward + backwards pass for the full loss function in one kernel
@@ -668,6 +677,17 @@ extern "C" void net_callback_wrapper(void* ctx, int buf, int t) {
         if (rollouts.action_mask.data != nullptr) {
             mask_b = puf_slice(rollouts.action_mask, t, sub_start, bank_size);
             mask_stride_b = mask_stride;
+        }
+
+        if (t == 0) {
+            int num_layers = s_bank->shape[0];
+            int state_rows = s_bank->shape[1];
+            int hidden_size = s_bank->shape[2];
+            copy_state_rows<<<grid_size(num_layers * bank_size * hidden_size),
+                BLOCK_SIZE, 0, stream>>>(
+                rollouts.states.data, s_bank->data, num_layers,
+                rollouts.states.shape[1], state_rows, hidden_size,
+                sub_start, bank_off, bank_size);
         }
 
         PrecisionTensor dec_puf = policy_forward(p_bank, *w_bank, *a_bank, obs_b, *s_bank, stream);
@@ -1245,6 +1265,23 @@ void zero_frozen_advantages_cuda(PrecisionTensor& advantages,
         advantages.data, agents_per_buffer, primary_per_buffer, total_rows, horizon);
 }
 
+__global__ void copy_state_rows(precision_t* __restrict__ dst,
+        const precision_t* __restrict__ src, int num_layers,
+        int dst_rows, int src_rows, int hidden_size, int dst_start,
+        int src_start, int count) {
+    int idx = blockIdx.x * blockDim.x + threadIdx.x;
+    int total = num_layers * count * hidden_size;
+    if (idx >= total) return;
+
+    int h = idx % hidden_size;
+    int tmp = idx / hidden_size;
+    int row = tmp % count;
+    int layer = tmp / count;
+    int dst_idx = (layer * dst_rows + dst_start + row) * hidden_size + h;
+    int src_idx = (layer * src_rows + src_start + row) * hidden_size + h;
+    dst[dst_idx] = src[src_idx];
+}
+
 // Minor copy bandwidth optimizations
 __global__ void index_copy(char* __restrict__ dst, const int* __restrict__ idx,
         const char* __restrict__ src, int num_idx, int row_bytes) {
@@ -1252,6 +1289,20 @@ __global__ void index_copy(char* __restrict__ dst, const int* __restrict__ idx,
     if (i < num_idx) {
         int dst_row = idx[i];
         memcpy(dst + (int64_t)dst_row * row_bytes, src + (int64_t)i * row_bytes, row_bytes);
+    }
+}
+
+__device__ __forceinline__ void copy_state_row(
+        const precision_t* __restrict__ src, precision_t* __restrict__ dst,
+        int src_row, int dst_row, int num_layers, int src_rows,
+        int dst_rows, int hidden_size) {
+    int total = num_layers * hidden_size;
+    for (int i = threadIdx.x; i < total; i += blockDim.x) {
+        int layer = i / hidden_size;
+        int h = i % hidden_size;
+        int src_idx = (layer * src_rows + src_row) * hidden_size + h;
+        int dst_idx = (layer * dst_rows + dst_row) * hidden_size + h;
+        dst[dst_idx] = src[src_idx];
     }
 }
 
@@ -1289,6 +1340,10 @@ __global__ void select_copy(RolloutBuf rollouts, TrainGraph graph,
     int act_row_bytes = (numel(rollouts.actions.shape) / rollouts.actions.shape[0]) * sizeof(precision_t);
     int lp_row_bytes = (numel(rollouts.logprobs.shape) / rollouts.logprobs.shape[0]) * sizeof(precision_t);
     int horizon = rollouts.values.shape[1];
+    int state_layers = graph.mb_state.shape[0];
+    int state_rows = rollouts.states.shape[1];
+    int mb_state_rows = graph.mb_state.shape[1];
+    int hidden_size = graph.mb_state.shape[2];
 
     switch (ch) {
     case 0:
@@ -1315,6 +1370,10 @@ __global__ void select_copy(RolloutBuf rollouts, TrainGraph graph,
         }
         break;
     case 5:
+        copy_state_row(rollouts.states.data, graph.mb_state.data, src_row, mb,
+            state_layers, state_rows, mb_state_rows, hidden_size);
+        break;
+    case 6:
         if (graph.mb_action_mask.data != nullptr) {
             int mask_row_bytes = (numel(rollouts.action_mask.shape)
                 / rollouts.action_mask.shape[0]) * sizeof(precision_t);
@@ -1348,6 +1407,7 @@ void train_impl(PuffeRL& pufferl) {
     int obs_size = (ndim(src.observations.shape) >= 3) ? src.observations.shape[2] : 1;
     int num_atns = (ndim(src.actions.shape) >= 3) ? src.actions.shape[2] : 1;
 
+    puf_copy(&rollouts.states, &src.states, train_stream);
     transpose_102<<<grid_size(T*B*obs_size), BLOCK_SIZE, 0, train_stream>>>(
         rollouts.observations.data, src.observations.data, T, B, obs_size);
     transpose_102<<<grid_size(T*B*num_atns), BLOCK_SIZE, 0, train_stream>>>(
@@ -1447,7 +1507,7 @@ void train_impl(PuffeRL& pufferl) {
             RolloutBuf sel_src = rollouts;
             sel_src.values = rollouts.values;
             int mb_segs = pufferl.prio_bufs.idx.shape[0];
-            int channels = (graph.mb_action_mask.data != nullptr) ? 6 : 5;
+            int channels = (graph.mb_action_mask.data != nullptr) ? 7 : 6;
             const precision_t* row_importance = pufferl.curriculum_enabled
                 ? pufferl.state_buf.importance.data : nullptr;
             select_copy<<<dim3(mb_segs, channels), SELECT_COPY_THREADS, 0, train_stream>>>(
@@ -1914,12 +1974,14 @@ std::unique_ptr<PuffeRL> create_pufferl_impl(HypersT& hypers,
     }
     int mask_size = pufferl->vec->action_mask_size;
     register_rollout_buffers(pufferl->rollouts,
-        acts, horizon, total_agents, input_size, num_action_heads, mask_size);
+        acts, horizon, total_agents, total_agents, input_size, hidden_size,
+        num_action_heads, num_layers, mask_size);
     register_train_buffers(pufferl->train_buf,
         acts, minibatch_segments, horizon, input_size,
         hidden_size, num_action_heads, num_layers, mask_size);
     register_rollout_buffers(pufferl->train_rollouts,
-        acts, total_agents, horizon, input_size, num_action_heads, mask_size);
+        acts, total_agents, horizon, total_agents, input_size, hidden_size,
+        num_action_heads, num_layers, mask_size);
     register_ppo_buffers(pufferl->ppo_bufs_puf,
         acts, minibatch_segments, hypers.horizon, decoder_output_size, is_continuous);
     register_prio_buffers(pufferl->prio_bufs,
