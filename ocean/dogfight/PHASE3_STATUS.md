@@ -6,10 +6,9 @@ Pinned PufferLib 5c base:
 `ebf5ed03cc3524076b6c1a4033bd69cec0b3db22`
 
 Phase 3 implementation and runtime evidence are complete. The checkpoint
-manifest publisher is implemented and tested. Publishing the accepted
-checkpoint sidecars is intentionally the final post-commit action because
-`dogfight_behavior_version` must name the full commit containing the Phase 3
-behavior.
+manifest publisher is implemented and tested. The accepted checkpoint
+sidecars were published and validated against Phase 3 behavior commit
+`a3d7ab3b715348bc65d8280f3bcd0915a14710ae`.
 
 The release artifact selected by the final build-test-train-eval loop is:
 
@@ -380,11 +379,10 @@ The tool validates:
 - full commit-shaped behavior version;
 - explicit learning-rate schedule decision.
 
-Do not replace `PHASE3_COMMIT` below with a pre-Phase-3 commit. After the Phase
-3 behavior is committed, publish and validate the lineage in order:
+The lineage was published and validated in order with these commands:
 
 ```bash
-PHASE3_COMMIT=FULL_PHASE3_COMMIT_SHA
+PHASE3_COMMIT=a3d7ab3b715348bc65d8280f3bcd0915a14710ae
 PUFFERLIB_COMMIT=ebf5ed03cc3524076b6c1a4033bd69cec0b3db22
 
 python ocean/dogfight/checkpoint_manifest.py publish \
@@ -407,7 +405,7 @@ python ocean/dogfight/checkpoint_manifest.py publish \
   --hidden-size 64 \
   --num-layers 3 \
   --lr-schedule-decision "fixed 0.00025 for 4194304 warm-start steps" \
-  --parent checkpoints/dogfight/phase3_encoder_baseline/0000000057671680.bin.manifest.json
+  --parent checkpoints/dogfight/phase3_encoder_baseline/0000000057671680.bin
 
 python ocean/dogfight/checkpoint_manifest.py publish \
   checkpoints/dogfight/phase3_stage13_segment_c/0000000008388608.bin \
@@ -418,7 +416,7 @@ python ocean/dogfight/checkpoint_manifest.py publish \
   --hidden-size 64 \
   --num-layers 3 \
   --lr-schedule-decision "fixed 0.0001 for 8388608 warm-start steps" \
-  --parent checkpoints/dogfight/phase3_stage13_segment_a/0000000004194304.bin.manifest.json
+  --parent checkpoints/dogfight/phase3_stage13_segment_a/0000000004194304.bin
 
 python ocean/dogfight/checkpoint_manifest.py publish \
   checkpoints/dogfight/phase3_release_gate_20260728_a/0000000016777216.bin \
@@ -429,7 +427,7 @@ python ocean/dogfight/checkpoint_manifest.py publish \
   --hidden-size 64 \
   --num-layers 3 \
   --lr-schedule-decision "fixed 0.00005 for 16777216 warm-start steps; stage 11 rehearsal stride 8" \
-  --parent checkpoints/dogfight/phase3_stage13_segment_c/0000000008388608.bin.manifest.json
+  --parent checkpoints/dogfight/phase3_stage13_segment_c/0000000008388608.bin
 
 python ocean/dogfight/checkpoint_manifest.py validate \
   checkpoints/dogfight/phase3_encoder_baseline/0000000057671680.bin
@@ -460,7 +458,7 @@ upstream CLI changes.
 | Local, float, and native builds pass | PASS |
 | Full Dogfight regression suite passes | PASS |
 | Human-visible advanced-stage flight gate | CONDITIONAL PASS: winning but twitchy |
-| Accepted manifests published against Phase 3 commit | POST-COMMIT ACTION |
+| Accepted manifests published against Phase 3 commit | PASS |
 
 No Phase 4 two-agent or Phase 5 self-play environment behavior was pulled
 forward into this phase.
