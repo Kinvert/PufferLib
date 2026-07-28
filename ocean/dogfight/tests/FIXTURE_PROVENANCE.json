@@ -1,0 +1,162 @@
+{
+  "schema_version": 1,
+  "target_5c_base": "ebf5ed03cc3524076b6c1a4033bd69cec0b3db22",
+  "dogfight3_behavior_head": "5a3effce470ce19fd6c4c6385a515853a4bfc0cb",
+  "dogfight3_comparison_oracle": "171482a9b9889bebaa427ab658c95c0fc391c031",
+  "dogfight5_fixture_donor": "10da7b5abac0f67f69f302c85511baf99a22446c",
+  "golden_update_policy": {
+    "approval_required": true,
+    "generator_revision_required": true,
+    "regeneration_command_required": true,
+    "silent_updates_forbidden": true
+  },
+  "source_compatibility_evidence": [
+    "ocean/dogfight/tests/test_flightlib_source_compat.py",
+    "ocean/dogfight/tests/test_observation_source_compat.py",
+    "ocean/dogfight/tests/test_stage_spawn_source_compat.py"
+  ],
+  "fixtures": [
+    {
+      "id": "opponent_aware_26_fixed_states",
+      "category": "observation",
+      "target_path": "ocean/dogfight/tests/test_observation_scheme1_reference.c",
+      "source_path": "ocean/dogfight/tests/test_observation_scheme1_reference.c",
+      "source_test": "test_scheme1_observations_match_dogfight3_fixtures",
+      "source_commit": "10da7b5abac0f67f69f302c85511baf99a22446c",
+      "behavior_oracle_commit": null,
+      "provenance_status": "quarantined_unpinned_oracle",
+      "quarantine_reason": "Embedded arrays name Dogfight3 but do not record the generating revision.",
+      "tolerances": {
+        "observation_absolute": 0.00001
+      }
+    },
+    {
+      "id": "scripted_one_step",
+      "category": "physics_reward",
+      "target_path": "ocean/dogfight/tests/test_scripted_step_reference.c",
+      "source_path": "ocean/dogfight/tests/test_scripted_step_reference.c",
+      "source_test": "test_scripted_step_matches_dogfight3_fixture",
+      "source_commit": "10da7b5abac0f67f69f302c85511baf99a22446c",
+      "behavior_oracle_commit": null,
+      "provenance_status": "quarantined_unpinned_oracle",
+      "quarantine_reason": "Embedded state and reward values do not record the generating revision.",
+      "tolerances": {
+        "physics_absolute": 0.0001,
+        "observation_absolute": 0.00001,
+        "reward_absolute": 0.000001
+      }
+    },
+    {
+      "id": "scripted_twelve_step",
+      "category": "physics_reward",
+      "target_path": "ocean/dogfight/tests/test_scripted_trace_reference.c",
+      "source_path": "ocean/dogfight/tests/test_scripted_trace_reference.c",
+      "source_test": "test_scripted_trace_matches_df36_fixture",
+      "source_commit": "10da7b5abac0f67f69f302c85511baf99a22446c",
+      "behavior_oracle_commit": null,
+      "provenance_status": "quarantined_unpinned_oracle",
+      "quarantine_reason": "The df36 label is not an exact source revision.",
+      "tolerances": {
+        "definition": "Embedded in donor C source; must be normalized after provenance is recovered."
+      }
+    },
+    {
+      "id": "terminal_slot0_kill",
+      "category": "terminal_reset",
+      "target_path": "ocean/dogfight/tests/test_terminal_kill_reference.c",
+      "source_path": "ocean/dogfight/tests/test_terminal_kill_reference.c",
+      "source_test": "test_terminal_player_kill_matches_dogfight3_fixture",
+      "source_commit": "10da7b5abac0f67f69f302c85511baf99a22446c",
+      "behavior_oracle_commit": null,
+      "provenance_status": "quarantined_unpinned_oracle",
+      "quarantine_reason": "Expected telemetry does not record the generating revision."
+    },
+    {
+      "id": "terminal_slot1_kill",
+      "category": "terminal_reset",
+      "target_path": "ocean/dogfight/tests/test_terminal_opponent_kill_reference.c",
+      "source_path": "ocean/dogfight/tests/test_terminal_opponent_kill_reference.c",
+      "source_test": "test_terminal_opponent_kill_matches_df36_fixture",
+      "source_commit": "10da7b5abac0f67f69f302c85511baf99a22446c",
+      "behavior_oracle_commit": null,
+      "provenance_status": "quarantined_unpinned_oracle",
+      "quarantine_reason": "The df36 label is not an exact source revision."
+    },
+    {
+      "id": "terminal_vertical_bounds",
+      "category": "terminal_reset",
+      "target_path": "ocean/dogfight/tests/test_terminal_oob_reference.c",
+      "source_path": "ocean/dogfight/tests/test_terminal_oob_reference.c",
+      "source_test": "test_terminal_oob_matches_dogfight3_fixture",
+      "source_commit": "10da7b5abac0f67f69f302c85511baf99a22446c",
+      "behavior_oracle_commit": null,
+      "provenance_status": "quarantined_unpinned_oracle",
+      "quarantine_reason": "Expected returns and telemetry do not record the generating revision."
+    },
+    {
+      "id": "terminal_timeout",
+      "category": "terminal_reset",
+      "target_path": "ocean/dogfight/tests/test_terminal_timeout_reference.c",
+      "source_path": "ocean/dogfight/tests/test_terminal_timeout_reference.c",
+      "source_test": "test_terminal_timeout_matches_df36_fixture",
+      "source_commit": "10da7b5abac0f67f69f302c85511baf99a22446c",
+      "behavior_oracle_commit": null,
+      "provenance_status": "quarantined_unpinned_oracle",
+      "quarantine_reason": "The df36 label is not an exact source revision."
+    },
+    {
+      "id": "multi_episode_reset",
+      "category": "reset_logging",
+      "target_path": "ocean/dogfight/tests/test_multi_episode_reset_reference.c",
+      "source_path": "ocean/dogfight/tests/test_multi_episode_reset_reference.c",
+      "source_test": "test_multi_episode_reset_and_logs_match_df36_fixtures",
+      "source_commit": "10da7b5abac0f67f69f302c85511baf99a22446c",
+      "behavior_oracle_commit": null,
+      "provenance_status": "quarantined_unpinned_oracle",
+      "quarantine_reason": "Aggregate expected values do not record the generating revision."
+    },
+    {
+      "id": "unbounded_action_clamp",
+      "category": "action",
+      "target_path": "ocean/dogfight/tests/test_action_bounds.c",
+      "source_path": "ocean/dogfight/tests/test_action_bounds.c",
+      "source_test": "test_unbounded_native_actions_are_clamped",
+      "source_commit": "10da7b5abac0f67f69f302c85511baf99a22446c",
+      "behavior_oracle_commit": null,
+      "provenance_status": "invariant_source_pinned"
+    },
+    {
+      "id": "state_roundtrip_determinism",
+      "category": "determinism",
+      "target_path": "ocean/dogfight/tests/test_state_roundtrip.c",
+      "source_path": "ocean/dogfight/tests/test_state_roundtrip.c",
+      "source_test": "state_roundtrip_test_group",
+      "source_commit": "10da7b5abac0f67f69f302c85511baf99a22446c",
+      "behavior_oracle_commit": null,
+      "provenance_status": "invariant_source_pinned"
+    },
+    {
+      "id": "curriculum_max_steps",
+      "category": "curriculum",
+      "target_path": "ocean/dogfight/tests/test_curriculum_max_steps.c",
+      "source_path": "ocean/dogfight/tests/test_curriculum_max_steps.c",
+      "source_test": "curriculum_max_steps_test_group",
+      "source_commit": "10da7b5abac0f67f69f302c85511baf99a22446c",
+      "behavior_oracle_commit": null,
+      "provenance_status": "quarantined_unpinned_oracle",
+      "quarantine_reason": "Stage limits are embedded without the generating Dogfight3 revision."
+    },
+    {
+      "id": "curriculum_stage_geometry",
+      "category": "curriculum",
+      "target_path": "ocean/dogfight/tests/test_curriculum_stage_geometry.c",
+      "source_path": "ocean/dogfight/tests/test_curriculum_stage_geometry.c",
+      "source_test": "curriculum_stage_geometry_test_group",
+      "source_commit": "10da7b5abac0f67f69f302c85511baf99a22446c",
+      "behavior_oracle_commit": null,
+      "provenance_status": "quarantined_unpinned_oracle",
+      "quarantine_reason": "Stage geometry values are embedded without the generating Dogfight3 revision."
+    }
+  ]
+}
+
