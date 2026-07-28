@@ -3171,8 +3171,39 @@ EvalResult run_eval(Ini* ini, TrainContext* ctx, int mode, int verbose) {
     return result;
 }
 
+static void validate_native_selfplay_config(Ini* ini, int use_selfplay) {
+    if (!use_selfplay) {
+        return;
+    }
+
+    int async = puf_ini_get_int(ini, "base", "async");
+    if (async != 0) {
+        fprintf(stderr,
+            "native self-play requires base.async=0 until the generation barrier is implemented\n");
+        exit(1);
+    }
+
+    int num_frozen_banks = puf_ini_get_int(ini, "vec", "num_frozen_banks");
+    if (num_frozen_banks <= 0) {
+        return;
+    }
+
+    int primary_hidden = puf_ini_get_int(ini, "policy", "hidden_size");
+    int primary_layers = puf_ini_get_int(ini, "policy", "num_layers");
+    int frozen_hidden = puf_ini_get_int(ini, "vec", "frozen_bank_hidden_size");
+    int frozen_layers = puf_ini_get_int(ini, "vec", "frozen_bank_num_layers");
+    if (primary_hidden != frozen_hidden || primary_layers != frozen_layers) {
+        fprintf(stderr,
+            "native self-play frozen-bank topology must match the primary policy: "
+            "primary=%dx%d frozen=%dx%d\n",
+            primary_hidden, primary_layers, frozen_hidden, frozen_layers);
+        exit(1);
+    }
+}
+
 TrainResult run_train(Ini* ini, TrainContext* ctx) {
     int use_selfplay = puf_ini_get(ini, "selfplay", "enabled");
+    validate_native_selfplay_config(ini, use_selfplay);
 #ifdef PUFFER_GPU_ENV
     // GPU Env has no tag/boundary_reached; selfplay opponent rotation is CPU-only for now.
     assert(!use_selfplay && "selfplay not supported with --gpu (PUFFER_GPU_ENV)");
