@@ -1,298 +1,365 @@
-#include <math.h>
-#include <stdio.h>
-#include <string.h>
+#include "test_common.h"
 
-#include "dogfight.h"
+#include <stdarg.h>
 
-#define TEST_OBS_SIZE 26
-#define TEST_NUM_ATNS 5
-#define TEST_RAD_TO_DEG 57.29577951308232f
-
-typedef struct TestEnv {
-    Dogfight env;
-    float observations[TEST_OBS_SIZE];
-    float actions[TEST_NUM_ATNS];
-    float rewards[1];
-    float terminals[1];
-} TestEnv;
-
-static RewardConfig test_default_rcfg(void) {
-    RewardConfig r = {0};
-    r.speed_min = 50.0f;
-    r.low_altitude_threshold = 1500.0f;
-    return r;
+static int failf(const char* format, ...) {
+    va_list args;
+    va_start(args, format);
+    vfprintf(stderr, format, args);
+    va_end(args);
+    fputc('\n', stderr);
+    return 1;
 }
 
-static void setup_curriculum_env(TestEnv* t, int stage) {
-    memset(t, 0, sizeof(*t));
-    t->env.num_agents = 1;
-    t->env.max_steps = 300;
-    t->env.rng = 42;
-    t->env.observations = t->observations;
-    t->env.actions = t->actions;
-    t->env.rewards = t->rewards;
-    t->env.terminals = t->terminals;
-
-    RewardConfig rcfg = test_default_rcfg();
-    init(&t->env, 1, &rcfg, 1, 0, 0);
-    set_curriculum_stage(&t->env, stage);
+static int nearly_equal(float a, float b, float tolerance) {
+    return fabsf(a - b) <= tolerance;
 }
 
-static int altitude_in_bounds(float alt) {
-    return alt >= 300.0f && alt <= 4700.0f;
+static float horizontal_heading_deg(Vec3 velocity) {
+    return atan2f(velocity.y, velocity.x) * RAD;
 }
 
-static int test_stage_8_17_spawn_safety_and_caps(void) {
-    TestEnv t;
-    for (int stage = CURRICULUM_SIDE_FAR; stage <= CURRICULUM_HARD_MANEUVERING; stage++) {
-        setup_curriculum_env(&t, stage);
+static int reset_at_stage(TestEnv* test, int stage, unsigned int seed) {
+    test->env.rng = seed;
+    test->env.curriculum_enabled = 1;
+    test->env.curriculum_randomize = 0;
+    test->env.configured_max_steps = 777;
+    test->env.max_steps = 777;
+    set_curriculum_stage(&test->env, stage);
+    c_reset(&test->env);
 
-        for (int i = 0; i < 64; i++) {
-            c_reset(&t.env);
-            if (t.env.stage != stage || t.env.max_steps != STAGES[stage].max_steps) {
-                printf(
-                    "stage%d_spawn_caps: stage=%d max_steps=%d expected=%d [FAIL]\n",
-                    stage, t.env.stage, t.env.max_steps, STAGES[stage].max_steps);
-                return 1;
+    if (test->env.stage != stage) {
+        return failf(
+            "fixed stage changed during reset: requested=%d actual=%d",
+            stage,
+            test->env.stage
+        );
+    }
+    return 0;
+}
+
+static int test_stage_table_contract(void) {
+    if (CURRICULUM_COUNT != 21) {
+        return failf("expected 21 curriculum stages, got %d", CURRICULUM_COUNT);
+    }
+
+    for (int stage = 0; stage < CURRICULUM_COUNT; stage++) {
+        const StageConfig* config = &STAGES[stage];
+        if (config->n != stage) {
+            return failf("stage table index mismatch: index=%d n=%d", stage, config->n);
+        }
+        if (config->spawn == NULL || config->description == NULL) {
+            return failf("stage %d has an incomplete table entry", stage);
+        }
+        if (config->weight < 0.0f || config->weight > 1.0f) {
+            return failf("stage %d weight is outside [0, 1]: %.6f", stage, config->weight);
+        }
+        if (config->max_steps <= 0) {
+            return failf("stage %d max_steps must be positive", stage);
+        }
+        if (stage > 0 && config->weight < STAGES[stage - 1].weight) {
+            return failf("stage weights decrease at stage %d", stage);
+        }
+    }
+
+    const StageConfig* hard = &STAGES[CURRICULUM_HARD_MANEUVERING];
+    const StageConfig* crossing = &STAGES[CURRICULUM_CROSSING];
+    const StageConfig* evasive = &STAGES[CURRICULUM_EVASIVE];
+    const StageConfig* autoace = &STAGES[CURRICULUM_AUTOACE];
+
+    if (!nearly_equal(hard->weight, 0.90f, 1e-6f)
+            || hard->max_steps != 4000
+            || hard->angle_min_deg != 0.0f
+            || hard->angle_max_deg != 360.0f
+            || hard->bank != 60) {
+        return failf("stage 17 metadata drifted");
+    }
+    if (!nearly_equal(crossing->weight, 0.95f, 1e-6f)
+            || crossing->max_steps != 4000
+            || crossing->angle_min_deg != 45.0f
+            || crossing->angle_max_deg != 45.0f
+            || crossing->bank != 0) {
+        return failf("stage 18 metadata drifted");
+    }
+    if (!nearly_equal(evasive->weight, 1.0f, 1e-6f)
+            || evasive->max_steps != 4000
+            || evasive->angle_min_deg != 0.0f
+            || evasive->angle_max_deg != 360.0f
+            || evasive->bank != 60) {
+        return failf("stage 19 metadata drifted");
+    }
+    if (!nearly_equal(autoace->weight, 1.0f, 1e-6f)
+            || autoace->max_steps != 6000
+            || autoace->angle_min_deg != 0.0f
+            || autoace->angle_max_deg != 360.0f
+            || autoace->bank != 0) {
+        return failf("stage 20 metadata drifted");
+    }
+
+    return 0;
+}
+
+static int test_episode_length_boundary(void) {
+    TestEnv test;
+    setup_env(&test, 0);
+
+    if (reset_at_stage(&test, CURRICULUM_SIDE_MID, 7001) != 0) {
+        return 1;
+    }
+    if (test.env.max_steps != 777) {
+        return failf(
+            "stage 7 must preserve configured max_steps: expected=777 actual=%d",
+            test.env.max_steps
+        );
+    }
+
+    if (reset_at_stage(&test, CURRICULUM_SIDE_FAR, 7002) != 0) {
+        return 1;
+    }
+    if (test.env.max_steps != STAGES[CURRICULUM_SIDE_FAR].max_steps) {
+        return failf(
+            "stage 8 must use stage max_steps: expected=%d actual=%d",
+            STAGES[CURRICULUM_SIDE_FAR].max_steps,
+            test.env.max_steps
+        );
+    }
+
+    return 0;
+}
+
+static int test_stage_17_hard_maneuvering(void) {
+    TestEnv test;
+    setup_env(&test, 0);
+
+    int saw_left = 0;
+    int saw_right = 0;
+    int saw_weave = 0;
+    for (int sample = 0; sample < 256; sample++) {
+        if (reset_at_stage(&test, CURRICULUM_HARD_MANEUVERING, 17000 + sample) != 0) {
+            return 1;
+        }
+
+        Vec3 relative = sub3(test.env.opponent.pos, test.env.player.pos);
+        if (relative.x < 200.0f || relative.x > 400.0f
+                || fabsf(relative.y) > 100.0f
+                || fabsf(relative.z) > 50.0f) {
+            return failf(
+                "stage 17 spawn escaped geometry: relative=(%.3f, %.3f, %.3f)",
+                relative.x,
+                relative.y,
+                relative.z
+            );
+        }
+        if (test.env.max_steps != 4000) {
+            return failf("stage 17 max_steps drifted: %d", test.env.max_steps);
+        }
+
+        switch (test.env.opponent_ap.mode) {
+            case AP_HARD_TURN_LEFT: saw_left = 1; break;
+            case AP_HARD_TURN_RIGHT: saw_right = 1; break;
+            case AP_WEAVE: saw_weave = 1; break;
+            default:
+                return failf(
+                    "stage 17 selected invalid autopilot mode %d",
+                    test.env.opponent_ap.mode
+                );
+        }
+    }
+
+    if (!saw_left || !saw_right || !saw_weave) {
+        return failf(
+            "stage 17 sampling missed a hard mode: left=%d right=%d weave=%d",
+            saw_left,
+            saw_right,
+            saw_weave
+        );
+    }
+    return 0;
+}
+
+static int test_stage_18_crossing(void) {
+    TestEnv test;
+    setup_env(&test, 0);
+
+    int saw_left = 0;
+    int saw_right = 0;
+    for (int sample = 0; sample < 128; sample++) {
+        if (reset_at_stage(&test, CURRICULUM_CROSSING, 18000 + sample) != 0) {
+            return 1;
+        }
+
+        Vec3 relative = sub3(test.env.opponent.pos, test.env.player.pos);
+        float heading = horizontal_heading_deg(test.env.opponent.vel);
+        if (relative.x < 100.0f || relative.x > 200.0f
+                || fabsf(relative.y) < 300.0f
+                || fabsf(relative.y) > 500.0f
+                || fabsf(relative.z) > 50.0f) {
+            return failf(
+                "stage 18 spawn escaped geometry: relative=(%.3f, %.3f, %.3f)",
+                relative.x,
+                relative.y,
+                relative.z
+            );
+        }
+        if (!nearly_equal(fabsf(heading), 45.0f, 0.02f)) {
+            return failf("stage 18 heading is not 45 degrees: %.6f", heading);
+        }
+        if (relative.y * test.env.opponent.vel.y >= 0.0f) {
+            return failf("stage 18 opponent is flying away from the crossing");
+        }
+        if (test.env.opponent_ap.mode != AP_STRAIGHT || test.env.max_steps != 4000) {
+            return failf(
+                "stage 18 behavior drifted: mode=%d max_steps=%d",
+                test.env.opponent_ap.mode,
+                test.env.max_steps
+            );
+        }
+
+        saw_left |= relative.y < 0.0f;
+        saw_right |= relative.y > 0.0f;
+    }
+
+    if (!saw_left || !saw_right) {
+        return failf("stage 18 did not sample both crossing sides");
+    }
+    return 0;
+}
+
+static int test_stage_19_evasive(void) {
+    TestEnv test;
+    setup_env(&test, 0);
+
+    int saw_evasive = 0;
+    int saw_other_hard_mode = 0;
+    for (int sample = 0; sample < 256; sample++) {
+        if (reset_at_stage(&test, CURRICULUM_EVASIVE, 19000 + sample) != 0) {
+            return 1;
+        }
+
+        Vec3 relative = sub3(test.env.opponent.pos, test.env.player.pos);
+        float distance = norm3(relative);
+        if (test.env.player.pos.z < 3500.0f || test.env.player.pos.z > 4500.0f
+                || test.env.opponent.pos.z < 2500.0f
+                || test.env.opponent.pos.z > 4800.0f
+                || distance < 300.0f
+                || distance > 500.0f) {
+            return failf(
+                "stage 19 spawn escaped geometry: player_z=%.3f opponent_z=%.3f distance=%.3f",
+                test.env.player.pos.z,
+                test.env.opponent.pos.z,
+                distance
+            );
+        }
+        if (test.env.max_steps != 4000) {
+            return failf("stage 19 max_steps drifted: %d", test.env.max_steps);
+        }
+
+        switch (test.env.opponent_ap.mode) {
+            case AP_EVASIVE:
+                saw_evasive = 1;
+                break;
+            case AP_HARD_TURN_LEFT:
+            case AP_HARD_TURN_RIGHT:
+            case AP_WEAVE:
+            case AP_TURN_LEFT:
+            case AP_TURN_RIGHT:
+                saw_other_hard_mode = 1;
+                break;
+            default:
+                return failf(
+                    "stage 19 selected invalid autopilot mode %d",
+                    test.env.opponent_ap.mode
+                );
+        }
+    }
+
+    if (!saw_evasive || !saw_other_hard_mode) {
+        return failf(
+            "stage 19 sampling missed expected mode classes: evasive=%d other=%d",
+            saw_evasive,
+            saw_other_hard_mode
+        );
+    }
+    return 0;
+}
+
+static int test_stage_20_autoace(void) {
+    TestEnv test;
+    setup_env(&test, 0);
+
+    for (int sample = 0; sample < 128; sample++) {
+        if (reset_at_stage(&test, CURRICULUM_AUTOACE, 20000 + sample) != 0) {
+            return 1;
+        }
+
+        Vec3 relative = sub3(test.env.opponent.pos, test.env.player.pos);
+        float distance = norm3(relative);
+        if (test.env.player.pos.z < 2500.0f || test.env.player.pos.z > 4000.0f
+                || test.env.opponent.pos.z < 2000.0f
+                || test.env.opponent.pos.z > 4500.0f
+                || distance < 400.0f
+                || distance > 700.0f) {
+            return failf(
+                "stage 20 spawn escaped geometry: player_z=%.3f opponent_z=%.3f distance=%.3f",
+                test.env.player.pos.z,
+                test.env.opponent.pos.z,
+                distance
+            );
+        }
+        if (test.env.opponent_ap.mode != AP_PURSUIT_LAG || test.env.max_steps != 6000) {
+            return failf(
+                "stage 20 behavior drifted: mode=%d max_steps=%d",
+                test.env.opponent_ap.mode,
+                test.env.max_steps
+            );
+        }
+    }
+
+    if (reset_at_stage(&test, CURRICULUM_AUTOACE, 20999) != 0) {
+        return 1;
+    }
+    memset(test.actions, 0, sizeof(test.actions));
+    for (int step = 0; step < 250; step++) {
+        t_step(&test);
+        if (!isfinite(test.env.player.pos.x)
+                || !isfinite(test.env.player.pos.y)
+                || !isfinite(test.env.player.pos.z)
+                || !isfinite(test.env.player.vel.x)
+                || !isfinite(test.env.player.vel.y)
+                || !isfinite(test.env.player.vel.z)
+                || !isfinite(test.env.opponent.pos.x)
+                || !isfinite(test.env.opponent.pos.y)
+                || !isfinite(test.env.opponent.pos.z)
+                || !isfinite(test.env.opponent.vel.x)
+                || !isfinite(test.env.opponent.vel.y)
+                || !isfinite(test.env.opponent.vel.z)) {
+            return failf("stage 20 produced non-finite flight state at step %d", step);
+        }
+        for (int observation = 0; observation < TEST_OBS_SIZE; observation++) {
+            if (!isfinite(test.observations[observation])) {
+                return failf(
+                    "stage 20 produced non-finite observation %d at step %d",
+                    observation,
+                    step
+                );
             }
-            if (!altitude_in_bounds(t.env.player.pos.z)
-                    || !altitude_in_bounds(t.env.opponent.pos.z)) {
-                printf(
-                    "stage%d_spawn_alt: player=%.1f opponent=%.1f [FAIL]\n",
-                    stage, t.env.player.pos.z, t.env.opponent.pos.z);
-                return 1;
-            }
-
-            const float neutral[TEST_NUM_ATNS] = {0.5f, 0.0f, 0.0f, 0.0f, -1.0f};
-            for (int step = 0; step < 50; step++) {
-                memcpy(t.env.actions, neutral, sizeof(neutral));
-                c_step(&t.env);
-                if (t.env.terminals[0] != 0.0f || t.env.death_reason != DEATH_NONE) {
-                    printf(
-                        "stage%d_neutral_trace: terminal=%.0f reason=%d step=%d [FAIL]\n",
-                        stage, t.env.terminals[0], t.env.death_reason, step);
-                    return 1;
-                }
-                if (t.env.player.pos.z < 100.0f || t.env.opponent.pos.z < 100.0f) {
-                    printf(
-                        "stage%d_neutral_ground: player=%.1f opponent=%.1f step=%d [FAIL]\n",
-                        stage, t.env.player.pos.z, t.env.opponent.pos.z, step);
-                    return 1;
-                }
-            }
         }
     }
 
-    printf("stage8_17_spawn_safety: caps, altitude, short neutral traces [OK]\n");
-    return 0;
-}
-
-static void count_side_variants(int stage, const RuntimeConfig* cfg, int* standard, int* energy) {
-    TestEnv t;
-    setup_curriculum_env(&t, stage);
-    apply_runtime_config(&t.env, cfg);
-
-    *standard = 0;
-    *energy = 0;
-    for (int i = 0; i < 200; i++) {
-        c_reset(&t.env);
-        if (t.env.side_spawn_variant == SIDE_SPAWN_STANDARD) {
-            (*standard)++;
-        } else if (t.env.side_spawn_variant == SIDE_SPAWN_ENERGY) {
-            (*energy)++;
-        }
-    }
-}
-
-static int test_side_energy_spawn_probability_override(void) {
-    RuntimeConfig defaults = default_runtime_config();
-    if (fabsf(defaults.side_energy_spawn_prob - 0.2f) > 1e-4f) {
-        printf("side_energy_prob_default: got %.2f expected 0.20 [FAIL]\n",
-            defaults.side_energy_spawn_prob);
-        return 1;
-    }
-
-    RuntimeConfig cfg = default_runtime_config();
-    int standard = 0;
-    int energy = 0;
-
-    cfg.side_energy_spawn_prob = 0.0f;
-    count_side_variants(CURRICULUM_SIDE_MANEUVERING, &cfg, &standard, &energy);
-    if (standard == 0 || energy != 0) {
-        printf("side_energy_prob_zero: standard=%d energy=%d [FAIL]\n", standard, energy);
-        return 1;
-    }
-
-    cfg.side_energy_spawn_prob = 1.0f;
-    count_side_variants(CURRICULUM_SIDE_MANEUVERING, &cfg, &standard, &energy);
-    if (standard != 0 || energy == 0) {
-        printf("side_energy_prob_one: standard=%d energy=%d [FAIL]\n", standard, energy);
-        return 1;
-    }
-
-    printf("side_energy_spawn_prob: default and forced variants [OK]\n");
-    return 0;
-}
-
-static int sample_stage9_standard_bank(float target, const RuntimeConfig* cfg, float* bank_deg, int* mode) {
-    TestEnv t;
-    setup_curriculum_env(&t, CURRICULUM_SIDE_MANEUVERING);
-    apply_runtime_config(&t.env, cfg);
-    set_curriculum_target(&t.env, target);
-
-    for (int i = 0; i < 500; i++) {
-        c_reset(&t.env);
-        if (t.env.stage != CURRICULUM_SIDE_MANEUVERING) continue;
-        if (t.env.side_spawn_variant != SIDE_SPAWN_STANDARD) continue;
-        *bank_deg = t.env.opponent_ap.target_bank * TEST_RAD_TO_DEG;
-        *mode = t.env.opponent_ap.mode;
-        return 1;
-    }
-    return 0;
-}
-
-static int sample_stage9_standard_bank_after_init(float target, float* bank_deg, int* mode) {
-    TestEnv t;
-    setup_curriculum_env(&t, CURRICULUM_SIDE_MANEUVERING);
-    set_curriculum_target(&t.env, target);
-
-    for (int i = 0; i < 500; i++) {
-        c_reset(&t.env);
-        if (t.env.stage != CURRICULUM_SIDE_MANEUVERING) continue;
-        if (t.env.side_spawn_variant != SIDE_SPAWN_STANDARD) continue;
-        *bank_deg = t.env.opponent_ap.target_bank * TEST_RAD_TO_DEG;
-        *mode = t.env.opponent_ap.mode;
-        return 1;
-    }
-    return 0;
-}
-
-static int test_stage9_bank_curriculum_and_override_scope(void) {
-    RuntimeConfig defaults = default_runtime_config();
-    if (fabsf(defaults.stage9_bank_deg - 30.0f) > 1e-4f) {
-        printf("stage9_bank_default: got %.1f expected Dogfight3 30 [FAIL]\n",
-            defaults.stage9_bank_deg);
-        return 1;
-    }
-
-    float default_bank_deg = -999.0f;
-    int default_mode = -1;
-    if (!sample_stage9_standard_bank(8.5f, &defaults, &default_bank_deg, &default_mode)) {
-        printf("stage9_bank_default: no standard stage-9 side spawn sampled [FAIL]\n");
-        return 1;
-    }
-    if (fabsf(default_bank_deg - 30.0f) > 1e-3f || default_mode == AP_STRAIGHT) {
-        printf("stage9_bank_default: got %.1f mode=%d expected Dogfight3 30 turning [FAIL]\n",
-            default_bank_deg, default_mode);
-        return 1;
-    }
-
-    float init_bank_deg = -999.0f;
-    int init_mode = -1;
-    if (!sample_stage9_standard_bank_after_init(8.5f, &init_bank_deg, &init_mode)) {
-        printf("stage9_bank_init_default: no standard stage-9 side spawn sampled [FAIL]\n");
-        return 1;
-    }
-    if (fabsf(init_bank_deg - 30.0f) > 1e-3f || init_mode == AP_STRAIGHT) {
-        printf("stage9_bank_init_default: got %.1f mode=%d expected Dogfight3 30 turning [FAIL]\n",
-            init_bank_deg, init_mode);
-        return 1;
-    }
-
-    RuntimeConfig cfg = default_runtime_config();
-    cfg.stage9_bank_deg = -1.0f;
-    const float targets[] = {8.5f, 8.6f, 8.7f, 8.8f, 8.9f, 9.0f};
-    const float expected[] = {0.0f, 5.0f, 10.0f, 15.0f, 30.0f, 30.0f};
-    for (int i = 0; i < 6; i++) {
-        float bank_deg = -999.0f;
-        int mode = -1;
-        if (!sample_stage9_standard_bank(targets[i], &cfg, &bank_deg, &mode)) {
-            printf("stage9_bank_auto: no stage-9 standard sample for target %.1f [FAIL]\n",
-                targets[i]);
-            return 1;
-        }
-        if (fabsf(bank_deg - expected[i]) > 1e-3f) {
-            printf("stage9_bank_auto: target %.1f got %.1f expected %.1f [FAIL]\n",
-                targets[i], bank_deg, expected[i]);
-            return 1;
-        }
-        if ((expected[i] == 0.0f && mode != AP_STRAIGHT)
-                || (expected[i] > 0.0f && mode == AP_STRAIGHT)) {
-            printf("stage9_bank_auto: target %.1f bank %.1f mode=%d [FAIL]\n",
-                targets[i], bank_deg, mode);
-            return 1;
-        }
-    }
-
-    cfg.stage9_bank_deg = 10.0f;
-    float bank_deg = -999.0f;
-    int mode = -1;
-    if (!sample_stage9_standard_bank(8.5f, &cfg, &bank_deg, &mode)) {
-        printf("stage9_bank_override: no standard stage-9 side spawn sampled [FAIL]\n");
-        return 1;
-    }
-    if (fabsf(bank_deg - 10.0f) > 1e-3f || mode == AP_STRAIGHT) {
-        printf("stage9_bank_override: got %.1f mode=%d expected 10 turning [FAIL]\n",
-            bank_deg, mode);
-        return 1;
-    }
-
-    printf("stage9_bank_curriculum: auto schedule and override [OK]\n");
-    return 0;
-}
-
-static int test_stage10_12_vertical_advantage_geometry(void) {
-    TestEnv t;
-
-    if (STAGES[CURRICULUM_DIVE_ATTACK].angle_min_deg != 120.0f
-            || STAGES[CURRICULUM_DIVE_ATTACK].angle_max_deg != 175.0f) {
-        printf(
-            "stage10_dive_angles: expected Dogfight3 [120,175], got [%.0f,%.0f] [FAIL]\n",
-            STAGES[CURRICULUM_DIVE_ATTACK].angle_min_deg,
-            STAGES[CURRICULUM_DIVE_ATTACK].angle_max_deg);
-        return 1;
-    }
-
-    setup_curriculum_env(&t, CURRICULUM_DIVE_ATTACK);
-    for (int i = 0; i < 100; i++) {
-        c_reset(&t.env);
-        float alt_delta = t.env.player.pos.z - t.env.opponent.pos.z;
-        if (alt_delta < 430.0f || alt_delta > 570.0f) {
-            printf("stage10_dive_alt_delta: %.1f [FAIL]\n", alt_delta);
-            return 1;
-        }
-    }
-
-    setup_curriculum_env(&t, CURRICULUM_ZOOM_ATTACK);
-    for (int i = 0; i < 100; i++) {
-        c_reset(&t.env);
-        float alt_delta = t.env.opponent.pos.z - t.env.player.pos.z;
-        if (alt_delta < 250.0f || alt_delta > 350.0f) {
-            printf("stage11_zoom_alt_delta: %.1f [FAIL]\n", alt_delta);
-            return 1;
-        }
-    }
-
-    setup_curriculum_env(&t, CURRICULUM_REAR_CHASE);
-    for (int i = 0; i < 100; i++) {
-        c_reset(&t.env);
-        float alt_delta = t.env.player.pos.z - t.env.opponent.pos.z;
-        if (alt_delta < 430.0f || alt_delta > 570.0f) {
-            printf("stage12_rear_alt_delta: %.1f [FAIL]\n", alt_delta);
-            return 1;
-        }
-    }
-
-    printf("stage10_12_vertical_geometry: altitude-advantage spawns [OK]\n");
     return 0;
 }
 
 int main(void) {
-    srand(42);
-    int fails = 0;
-    fails += test_stage_8_17_spawn_safety_and_caps();
-    fails += test_side_energy_spawn_probability_override();
-    fails += test_stage9_bank_curriculum_and_override_scope();
-    fails += test_stage10_12_vertical_advantage_geometry();
-    return fails;
+    int failures = 0;
+    failures += test_stage_table_contract();
+    failures += test_episode_length_boundary();
+    failures += test_stage_17_hard_maneuvering();
+    failures += test_stage_18_crossing();
+    failures += test_stage_19_evasive();
+    failures += test_stage_20_autoace();
+
+    if (failures == 0) {
+        printf("curriculum stage geometry: PASS\n");
+    }
+    return failures;
 }

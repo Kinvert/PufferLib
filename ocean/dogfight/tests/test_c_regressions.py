@@ -20,6 +20,7 @@ TESTS = [
     "test_action_bounds",
     "test_rng_isolation",
     "test_curriculum_controller",
+    "test_curriculum_stage_mix",
     "test_flight_autoace",
     "test_flight_energy",
     "test_flight_obs_dynamic",
@@ -36,10 +37,7 @@ TESTS = [
         "test_curriculum_max_steps",
         marks=pytest.mark.skip(reason="Phase 2 curriculum contract"),
     ),
-    pytest.param(
-        "test_curriculum_stage_geometry",
-        marks=pytest.mark.skip(reason="Phase 2 curriculum geometry"),
-    ),
+    "test_curriculum_stage_geometry",
 ]
 
 

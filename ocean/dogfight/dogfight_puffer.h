@@ -1,6 +1,9 @@
 #pragma once
 
 #include <assert.h>
+#include <stdint.h>
+
+#include "curriculum_mix.h"
 
 #define PUFFER_ENV_GLOBAL_STEP
 #define PUFFER_ENV_CURRICULUM
@@ -77,7 +80,19 @@ void puf_init(Env* env, Dict* kwargs) {
     float curriculum_target = (float)dogfight_dict_get(
         kwargs, "curriculum_target", 0.9);
     int fixed_stage = (int)dogfight_dict_get(kwargs, "fixed_stage", -1);
+    int rehearsal_stage = (int)dogfight_dict_get(
+        kwargs, "rehearsal_stage", -1);
+    int rehearsal_stride = (int)dogfight_dict_get(
+        kwargs, "rehearsal_stride", 0);
+    assert(fixed_stage < CURRICULUM_COUNT);
+    assert(rehearsal_stage < CURRICULUM_COUNT);
+    assert(rehearsal_stride >= 0);
     if (fixed_stage >= 0) {
+        fixed_stage = dogfight_select_fixed_stage(
+            (uint32_t)env->rng,
+            fixed_stage,
+            rehearsal_stage,
+            rehearsal_stride);
         curriculum_target = (float)fixed_stage;
     }
     set_curriculum_target(env, curriculum_target);

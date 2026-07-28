@@ -338,9 +338,19 @@ Deliver:
 
 - fixed/segmented curriculum control;
 - stage geometry tests, including stages 17–20;
-- Dogfight linear+bias+GELU encoder registered through current `src/ocean.cu`, after an A/B baseline;
+- Dogfight linear+bias+GELU encoder registered through current `src/ocean.cu`, after an A/B baseline **(deferred for now; preserve the work item, but do not implement it without the evidence described below)**;
 - generic training warm-start fix;
 - manifest-last checkpoint publication with exact byte count, schema, and payload hash.
+
+Encoder decision record (2026-07-28): the stock current-5c encoder with
+`policy.hidden_size=64` and `policy.num_layers=3` mastered stages 0 through 11
+under the pinned 57.7M-step baseline. That satisfies the early-learning gate
+without changing PufferLib policy topology. Keep the proposed A/B experiment
+available, but prioritize environment and flight fidelity and keep nearly all
+port changes in `ocean/dogfight`. Reopen the encoder work only after a
+reproducible later-stage learning plateau indicates that the stock policy,
+rather than the environment or curriculum, is limiting progress. Record the
+new evidence before implementation.
 
 Gate:
 

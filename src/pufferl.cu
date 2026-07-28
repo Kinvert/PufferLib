@@ -1626,6 +1626,21 @@ void puf_load_weights_into(FloatTensor dst, PrecisionTensor params,
         fprintf(stderr, "failed to open %s for reading\n", path);
         exit(1);
     }
+    struct stat checkpoint_stat;
+    if (fstat(fileno(fp), &checkpoint_stat) != 0) {
+        fprintf(stderr, "failed to stat checkpoint %s: %s\n", path, strerror(errno));
+        fclose(fp);
+        exit(1);
+    }
+    if ((int64_t)checkpoint_stat.st_size != nbytes) {
+        fprintf(stderr,
+            "checkpoint size mismatch for %s: expected=%lld actual=%lld\n",
+            path,
+            (long long)nbytes,
+            (long long)checkpoint_stat.st_size);
+        fclose(fp);
+        exit(1);
+    }
     char* buf = (char*)malloc(nbytes);
     size_t nread = fread(buf, 1, nbytes, fp);
     fclose(fp);
@@ -1640,6 +1655,16 @@ void puf_load_weights_into(FloatTensor dst, PrecisionTensor params,
         int n = numel(params.shape);
         cast<<<grid_size(n), BLOCK_SIZE, 0, stream>>>(params.data, dst.data, n);
     }
+}
+
+void pufferl_load_primary_weights(PuffeRL* pufferl, const char* path) {
+    puf_load_weights_into(pufferl->master_weights, pufferl->param_puf,
+        pufferl->default_stream, path);
+    if (pufferl->hypers.async) {
+        puf_copy(&pufferl->actor_param_puf, &pufferl->param_puf,
+            pufferl->default_stream);
+    }
+    cudaStreamSynchronize(pufferl->default_stream);
 }
 
 void pufferl_load_frozen_bank(PuffeRL* pufferl, int bank_idx, const char* path) {
@@ -3064,16 +3089,14 @@ EvalResult run_eval(Ini* ini, TrainContext* ctx, int mode, int verbose) {
             fprintf(stderr, "match requires base.load_model_path and base.load_enemy_model_path\n");
             exit(1);
         }
-        puf_load_weights_into(pufferl->master_weights,
-            pufferl->param_puf, pufferl->default_stream, a_path);
+        pufferl_load_primary_weights(pufferl, a_path);
         pufferl_load_frozen_bank(pufferl, 0, b_path);
     } else {
         char resolved_path[4096];
         const char* load_path = puf_checkpoint_path_key(ini,
             "load_model_path", resolved_path, sizeof(resolved_path));
         if (load_path) {
-            puf_load_weights_into(pufferl->master_weights, pufferl->param_puf,
-                pufferl->default_stream, load_path);
+            pufferl_load_primary_weights(pufferl, load_path);
             printf("Loaded weights from %s\n", load_path);
         }
     }
@@ -3182,6 +3205,16 @@ TrainResult run_train(Ini* ini, TrainContext* ctx) {
     }
 
     PuffeRL* pufferl = create_pufferl(ini, ctx);
+    char resolved_load_path[4096];
+    const char* load_path = puf_checkpoint_path_key(ini,
+        "load_model_path", resolved_load_path, sizeof(resolved_load_path));
+    if (load_path) {
+        pufferl_load_primary_weights(pufferl, load_path);
+        if (ctx->artifact_owner) {
+            printf("Warm-started training weights from %s\n", load_path);
+        }
+    }
+
     Selfplay selfplay = {0};
     if (use_selfplay) {
         char initial_checkpoint[4096];

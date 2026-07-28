@@ -1151,6 +1151,19 @@ Deliverables:
 - segmented/fixed-stage curriculum runner or configuration protocol;
 - stage geometry and progress tests.
 
+> **Current project decision (2026-07-28): encoder A/B deferred for now.**
+> Preserve the encoder experiment as a valid research recommendation, but do
+> not implement it during the current Phase 3 work. The stock current-5c
+> encoder with `policy.hidden_size=64` and `policy.num_layers=3` mastered
+> stages 0 through 11 under the pinned 57.7M-step baseline, so the phase's
+> early-learning gate no longer justifies changing policy topology. A custom
+> encoder would also require PufferLib-core registration and create a distinct
+> checkpoint topology, while this port intends to keep nearly all changes
+> inside `ocean/dogfight`. Revisit the A/B only after environment and flight
+> fidelity are established and a reproducible later-curriculum learning
+> plateau shows that the stock policy is the limiting factor. Do not silently
+> delete this work item or implement it without recording that new evidence.
+
 Exit gate:
 
 - reproduce an early learning milestone such as stage 10/11 under a pinned step and LR schedule budget;
@@ -1462,6 +1475,10 @@ Recommendation: segmented fixed-stage/mastery runs first. Add a generic native l
 ### Encoder
 
 Recommendation: port the small linear+bias+GELU encoder and A/B it against the current native default. Do not assume the older May result transfers unchanged.
+
+Current project decision (2026-07-28): retain this recommendation for
+provenance, but defer it under the Phase 3 decision note above. The current
+native default has already satisfied the pinned stage-10/11 learning gate.
 
 ### Old anchors
 
