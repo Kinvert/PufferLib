@@ -3034,7 +3034,9 @@ EvalResult run_eval(Ini* ini, TrainContext* ctx, int mode, int verbose) {
         puf_ini_put(ini, "env.num_bots", "0");
     }
     puf_ini_put(ini, "base.reset_every_horizon", "0");
-    puf_ini_put(ini, "train.horizon", "1");
+    char eval_horizon[16];
+    snprintf(eval_horizon, sizeof(eval_horizon), "%d", ADV_VEC_WIDTH);
+    puf_ini_put(ini, "train.horizon", eval_horizon);
 
     PuffeRL* pufferl = create_pufferl(ini, ctx);
     if (match) {
@@ -3656,7 +3658,7 @@ int main(int argc, char** argv) {
     setbuf(stdout, NULL);
     setbuf(stderr, NULL);
     if (argc < 3) {
-        fprintf(stderr, "usage: %s train|eval|eval_bot|match|sweep ENV [section.key=value ...]\n", argv[0]);
+        fprintf(stderr, "usage: %s train|eval|eval_bot|render|match|sweep ENV [section.key=value ...]\n", argv[0]);
         exit(1);
     }
 
@@ -3669,6 +3671,8 @@ int main(int argc, char** argv) {
         launch_train(&ini);
     } else if (strcmp(mode, "sweep") == 0) {
         run_sweep(&ini, argv[0]);
+    } else if (strcmp(mode, "render") == 0) {
+        run_eval(&ini, &ctx, EVAL_RENDER, 1);
     } else if (strcmp(mode, "eval") == 0 || strcmp(mode, "eval_bot") == 0) {
         if (strcmp(mode, "eval_bot") == 0) {
             puf_ini_put(&ini, "vec.num_frozen_banks", "0");
@@ -3692,4 +3696,3 @@ int main(int argc, char** argv) {
 }
 
 #endif
-

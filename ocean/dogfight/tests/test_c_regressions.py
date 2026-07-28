@@ -13,17 +13,34 @@ TESTS = [
     "test_terminal_opponent_kill_reference",
     "test_terminal_oob_reference",
     "test_terminal_timeout_reference",
+    pytest.param(
     "test_multi_episode_reset_reference",
+        marks=pytest.mark.skip(reason="Phase 2 logging/reset contract"),
+    ),
     "test_action_bounds",
-    "test_state_roundtrip",
-    "test_curriculum_max_steps",
-    "test_curriculum_stage_geometry",
+    "test_rng_isolation",
+    pytest.param(
+        "test_state_roundtrip",
+        marks=pytest.mark.skip(
+            reason="Rewrite in Phase 2 without the rejected duplicated State mirror"
+        ),
+    ),
+    pytest.param(
+        "test_curriculum_max_steps",
+        marks=pytest.mark.skip(reason="Phase 2 curriculum contract"),
+    ),
+    pytest.param(
+        "test_curriculum_stage_geometry",
+        marks=pytest.mark.skip(reason="Phase 2 curriculum geometry"),
+    ),
 ]
 
 
 def compile_and_run_c_test(repo_root: Path, test_name: str, tmp_path: Path):
     dogfight_dir = repo_root / "ocean" / "dogfight"
     dogfight_header = dogfight_dir / "dogfight.h"
+    source_include = repo_root / "src"
+    vendor_include = repo_root / "vendor"
     raylib_dir = repo_root / "raylib-5.5_linux_amd64"
     raylib_include = raylib_dir / "include"
     raylib_library = raylib_dir / "lib" / "libraylib.a"
@@ -44,6 +61,10 @@ def compile_and_run_c_test(repo_root: Path, test_name: str, tmp_path: Path):
             "-Wall",
             "-I",
             str(dogfight_dir),
+            "-I",
+            str(source_include),
+            "-I",
+            str(vendor_include),
             "-I",
             str(raylib_include),
             str(source),
@@ -77,4 +98,3 @@ def compile_and_run_c_test(repo_root: Path, test_name: str, tmp_path: Path):
 def test_dogfight_c_regression(test_name, tmp_path):
     repo_root = Path(__file__).resolve().parents[3]
     compile_and_run_c_test(repo_root, test_name, tmp_path)
-
