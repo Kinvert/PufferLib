@@ -19,6 +19,13 @@ TESTS = [
     ),
     "test_action_bounds",
     "test_rng_isolation",
+    "test_curriculum_controller",
+    "test_flight_autoace",
+    "test_flight_energy",
+    "test_flight_obs_dynamic",
+    "test_flight_obs_static",
+    "test_flight_physics",
+    "test_flight_recovery",
     pytest.param(
         "test_state_roundtrip",
         marks=pytest.mark.skip(

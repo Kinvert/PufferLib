@@ -2,6 +2,9 @@
 
 #include <assert.h>
 
+#define PUFFER_ENV_GLOBAL_STEP
+#define PUFFER_ENV_CURRICULUM
+
 static inline double dogfight_dict_get(
         Dict* kwargs, const char* key, double fallback) {
     for (int i = 0; i < kwargs->size; i++) {
@@ -71,6 +74,14 @@ void puf_init(Env* env, Dict* kwargs) {
     init(env, obs_scheme, &reward_config, curriculum_enabled,
         curriculum_randomize, (int)env->rng);
 
+    float curriculum_target = (float)dogfight_dict_get(
+        kwargs, "curriculum_target", 0.9);
+    int fixed_stage = (int)dogfight_dict_get(kwargs, "fixed_stage", -1);
+    if (fixed_stage >= 0) {
+        curriculum_target = (float)fixed_stage;
+    }
+    set_curriculum_target(env, curriculum_target);
+
     env->eval_spawn_mode = (int)dogfight_dict_get(
         kwargs, "eval_spawn_mode", 0);
     env->domain_randomization = (float)dogfight_dict_get(
@@ -96,6 +107,189 @@ void puf_init(Env* env, Dict* kwargs) {
     env->use_opponent_override = 0;
     env->opponent_observations = NULL;
     env->opponent_rewards = NULL;
+}
+
+typedef struct {
+    int enabled;
+    int fixed_stage;
+    int max_stage;
+    int mastered_stage;
+    int min_eval_episodes;
+    long warmup_steps;
+    long eval_interval;
+    long last_eval_step;
+    long finalize_at_steps;
+    float target;
+    float mastery_threshold;
+    float last_base_stage_perf;
+    double base_stage_kills;
+    double base_stage_eps;
+    double last_base_stage_eps;
+    double observed_base_stage_kills;
+    double observed_base_stage_eps;
+} PufCurriculumState;
+
+static inline void puf_set_global_step(Env* env, long global_step) {
+    env->global_step = global_step;
+}
+
+static inline void puf_curriculum_init(
+        PufCurriculumState* state, Dict* kwargs, long total_timesteps) {
+    memset(state, 0, sizeof(*state));
+    state->enabled = (int)dogfight_dict_get(
+        kwargs, "curriculum_enabled", 1);
+    state->fixed_stage = (int)dogfight_dict_get(
+        kwargs, "fixed_stage", -1);
+    state->max_stage = (int)dogfight_dict_get(
+        kwargs, "max_stage", CURRICULUM_COUNT - 1);
+    if (state->max_stage < 0) {
+        state->max_stage = 0;
+    } else if (state->max_stage >= CURRICULUM_COUNT) {
+        state->max_stage = CURRICULUM_COUNT - 1;
+    }
+
+    state->target = (float)dogfight_dict_get(
+        kwargs, "curriculum_target", 0.9);
+    if (state->fixed_stage >= 0) {
+        state->target = (float)state->fixed_stage;
+    }
+    state->target = fminf(
+        fmaxf(state->target, 0.0f), (float)state->max_stage);
+    state->mastered_stage = -1;
+    state->min_eval_episodes = (int)dogfight_dict_get(
+        kwargs, "min_eval_episodes", 50);
+    state->warmup_steps = (long)dogfight_dict_get(
+        kwargs, "warmup_steps", 3000000);
+    state->eval_interval = (long)dogfight_dict_get(
+        kwargs, "eval_interval", 2500000);
+    if (state->eval_interval < 1) {
+        state->eval_interval = 1;
+    }
+    state->last_eval_step = state->warmup_steps;
+    state->mastery_threshold = (float)dogfight_dict_get(
+        kwargs, "mastery_threshold", 0.90);
+
+    long finalize_margin = (long)dogfight_dict_get(
+        kwargs, "finalize_margin", 0);
+    state->finalize_at_steps = finalize_margin > 0
+        ? total_timesteps - finalize_margin
+        : -1;
+}
+
+static inline int puf_curriculum_observe(
+        PufCurriculumState* state, long global_step,
+        double base_stage_kills, double base_stage_eps) {
+    if (!state->enabled || state->fixed_stage >= 0 ||
+            global_step < state->warmup_steps) {
+        return 0;
+    }
+
+    state->base_stage_kills += base_stage_kills;
+    state->base_stage_eps += base_stage_eps;
+    if (global_step - state->last_eval_step < state->eval_interval) {
+        return 0;
+    }
+    state->last_eval_step = global_step;
+
+    float base_stage_perf = state->base_stage_eps > 0.0
+        ? (float)(state->base_stage_kills / state->base_stage_eps)
+        : 0.0f;
+    state->last_base_stage_perf = base_stage_perf;
+    state->last_base_stage_eps = state->base_stage_eps;
+
+    int mastery_stage = (int)(state->target + 0.5f);
+    if (base_stage_perf >= state->mastery_threshold &&
+            state->base_stage_eps >= state->min_eval_episodes &&
+            mastery_stage > state->mastered_stage) {
+        state->mastered_stage = mastery_stage;
+        state->base_stage_kills = 0.0;
+        state->base_stage_eps = 0.0;
+    }
+
+    int in_finalization = state->finalize_at_steps >= 0 &&
+        global_step >= state->finalize_at_steps;
+    float new_target;
+    if (in_finalization) {
+        new_target = state->mastered_stage >= 19
+            ? 20.0f
+            : (float)state->mastered_stage + 0.01f;
+    } else {
+        new_target = (float)state->mastered_stage + 0.9f;
+    }
+    if (state->mastered_stage >= 19) {
+        new_target = fmaxf(new_target, 19.0f);
+    }
+    new_target = fminf(new_target, (float)state->max_stage);
+    if (fabsf(state->target - new_target) > 0.01f) {
+        state->target = new_target;
+    }
+
+    state->base_stage_kills *= 0.9;
+    state->base_stage_eps *= 0.9;
+    return 1;
+}
+
+static inline void puf_curriculum_apply(
+        PufCurriculumState* state, Env* envs, int num_envs) {
+    for (int i = 0; i < num_envs; i++) {
+        set_curriculum_target(&envs[i], state->target);
+    }
+}
+
+static inline double puf_curriculum_delta(
+        double current, double* observed) {
+    double tolerance = 1.0e-4 * fmax(1.0, fabs(*observed));
+    double delta = current > *observed + tolerance
+        ? current - *observed
+        : 0.0;
+    *observed = fmax(*observed, current);
+    return delta;
+}
+
+static inline void puf_curriculum_counters_cleared(
+        PufCurriculumState* state) {
+    state->observed_base_stage_kills = 0.0;
+    state->observed_base_stage_eps = 0.0;
+}
+
+static inline void puf_curriculum_update(
+        PufCurriculumState* state, Env* envs, int num_envs,
+        long global_step, Dict* log) {
+    double n = dogfight_dict_get(log, "env/n", 0.0);
+    double raw_base_stage_kills = dogfight_dict_get(
+        log, "env/base_stage_kills", 0.0) * n;
+    double raw_base_stage_eps = dogfight_dict_get(
+        log, "env/base_stage_eps", 0.0) * n;
+    double base_stage_kills = puf_curriculum_delta(
+        raw_base_stage_kills, &state->observed_base_stage_kills);
+    double base_stage_eps = puf_curriculum_delta(
+        raw_base_stage_eps, &state->observed_base_stage_eps);
+    int previous_mastered = state->mastered_stage;
+    float previous_target = state->target;
+
+    int evaluated = puf_curriculum_observe(
+        state, global_step, base_stage_kills, base_stage_eps);
+    if (evaluated && state->mastered_stage != previous_mastered) {
+        fprintf(stderr,
+            "[CURRICULUM] event=mastered stage=%d perf=%.3f eps=%.0f\n",
+            state->mastered_stage, state->last_base_stage_perf,
+            state->last_base_stage_eps);
+    }
+    if (evaluated && fabsf(state->target - previous_target) > 0.01f) {
+        fprintf(stderr,
+            "[CURRICULUM] event=target old=%.2f new=%.2f mastered=%d\n",
+            previous_target, state->target, state->mastered_stage);
+        puf_curriculum_apply(state, envs, num_envs);
+    }
+    if (evaluated) {
+        fprintf(stderr,
+            "[CURRICULUM] step=%ld stage=%.2f base=%.3f(%.0feps) mastered=%d\n",
+            global_step, state->target, state->last_base_stage_perf,
+            state->last_base_stage_eps, state->mastered_stage);
+    }
+
+    dict_set(log, "env/curriculum_target", state->target);
+    dict_set(log, "env/mastered_stage", state->mastered_stage);
 }
 
 void puf_reset(Env* env) {

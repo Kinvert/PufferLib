@@ -458,6 +458,7 @@ struct VecEnv {
     int action_mask_size;
     int num_banks;
     int* bank_layout;  // per-buffer agent offsets; sole owner (not mirrored on PuffeRL)
+    long rollout_global_step;
 };
 
 struct EnvBuf {
@@ -561,6 +562,9 @@ typedef struct PuffeRL {
     // Optional frozen weight banks for match / selfplay opponents.
     WeightBank* frozen_banks;  // [num_frozen_banks]
     int num_frozen_banks;
+#ifdef PUFFER_ENV_CURRICULUM
+    PufCurriculumState curriculum;
+#endif
     char env_name[64];  // For frozen-bank policy rebuild at create.
 } PuffeRL;
 
@@ -972,6 +976,11 @@ static void* vec_thread_main(void* arg) {
             clock_gettime(CLOCK_MONOTONIC, &t0);
             #pragma omp parallel for schedule(static) num_threads(vec->num_workers)
             for (int i = env_start; i < env_start + env_count; i++) {
+#ifdef PUFFER_ENV_GLOBAL_STEP
+                long step_global = vec->rollout_global_step +
+                    (long)t * pufferl->hypers.total_agents;
+                puf_set_global_step(&envs[i], step_global);
+#endif
                 puf_step(&envs[i]);
             }
             clock_gettime(CLOCK_MONOTONIC, &t1);
@@ -1717,6 +1726,10 @@ PuffeRL* create_pufferl(Ini* ini, TrainContext* ctx) {
 
     PuffeRL* pufferl = (PuffeRL*)calloc(1, sizeof(PuffeRL));
     pufferl->hypers = hypers;
+#ifdef PUFFER_ENV_CURRICULUM
+    puf_curriculum_init(
+        &pufferl->curriculum, env_kwargs, hypers.total_timesteps);
+#endif
     snprintf(pufferl->env_name, sizeof(pufferl->env_name), "%s", PUFFER_ENV_NAME);
 
     cudaSetDevice(hypers.gpu_id);
@@ -2539,8 +2552,9 @@ void puf_log_history_add(PufLogHistory* history, Dict* log) {
     history->size++;
 }
 
-double rollout_start(PuffeRL* p, int slot) {
+double rollout_start(PuffeRL* p, int slot, long global_step) {
     p->rollout_write_slot = slot;
+    p->vec->rollout_global_step = global_step;
     if (p->hypers.async) {
         int64_t n = numel(p->param_puf.shape);
         cudaMemcpyAsync(p->actor_param_puf.data, p->param_puf.data,
@@ -2623,7 +2637,7 @@ void rollout_finish(PuffeRL* p, double t0) {
 }
 
 void rollouts(PuffeRL* p) {
-    double t0 = rollout_start(p, 0);
+    double t0 = rollout_start(p, 0, p->global_step);
     rollout_finish(p, t0);
     p->global_step += p->hypers.horizon * p->hypers.total_agents;
 }
@@ -3235,7 +3249,8 @@ TrainResult run_train(Ini* ini, TrainContext* ctx) {
         if (epoch < train_epochs && pufferl->hypers.async) {
             int prefetch_next = epoch + 1 < train_epochs;
             if (!pufferl->async_bootstrapped) {
-                double t0 = rollout_start(pufferl, 0);
+                double t0 = rollout_start(
+                    pufferl, 0, pufferl->global_step);
                 rollout_finish(pufferl, t0);
                 pufferl->async_ready_slot = 0;
                 pufferl->async_next_slot = 1;
@@ -3246,7 +3261,10 @@ TrainResult run_train(Ini* ini, TrainContext* ctx) {
             int next_slot = pufferl->async_next_slot;
             double t0 = 0.0;
             if (prefetch_next) {
-                t0 = rollout_start(pufferl, next_slot);
+                long next_global_step = pufferl->global_step +
+                    pufferl->hypers.horizon * pufferl->hypers.total_agents;
+                t0 = rollout_start(
+                    pufferl, next_slot, next_global_step);
             }
 
             pufferl->global_step += pufferl->hypers.horizon * pufferl->hypers.total_agents;
@@ -3285,6 +3303,19 @@ TrainResult run_train(Ini* ini, TrainContext* ctx) {
         }
 
         int is_eval = epoch >= train_epochs;
+#ifdef PUFFER_ENV_CURRICULUM
+        if (!is_eval) {
+            Dict curriculum_log = {0};
+            vec_log(pufferl->vec, &curriculum_log, 0);
+            puf_curriculum_update(
+                &pufferl->curriculum,
+                pufferl->vec->envs,
+                pufferl->vec->size,
+                pufferl->global_step,
+                &curriculum_log);
+            dict_clear(&curriculum_log);
+        }
+#endif
         if (!is_eval && last_log.size &&
                 wall_clock() < pufferl->last_log_time + 0.6 && epoch < train_epochs - 1) {
             continue;
@@ -3309,6 +3340,15 @@ TrainResult run_train(Ini* ini, TrainContext* ctx) {
             dict_set(&new_log, "epoch", (double)pufferl->epoch);
 
             vec_log(pufferl->vec, &new_log, 1);
+#ifdef PUFFER_ENV_CURRICULUM
+            puf_curriculum_update(
+                &pufferl->curriculum,
+                pufferl->vec->envs,
+                pufferl->vec->size,
+                global_step,
+                &new_log);
+            puf_curriculum_counters_cleared(&pufferl->curriculum);
+#endif
 
             float losses_host[NUM_LOSSES];
             cudaMemcpy(losses_host, pufferl->losses_puf.data, sizeof(losses_host),
