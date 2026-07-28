@@ -1101,6 +1101,7 @@ struct TrainGraph {
     PrecisionTensor mb_ratio;
     PrecisionTensor mb_newvalue;
     PrecisionTensor mb_prio;        // (B,)
+    PrecisionTensor mb_trainable_mask; // (B,), defense-in-depth loss mask
     PrecisionTensor mb_action_mask; // (B, T, mask_size); always allocated
 };
 
@@ -1118,6 +1119,7 @@ void register_train_buffers(TrainGraph& bufs, Allocator* alloc, int B, int T, in
         .mb_ratio =         {.shape = {B, T}},
         .mb_newvalue =      {.shape = {B, T}},
         .mb_prio =          {.shape = {B}},
+        .mb_trainable_mask = {.shape = {B}},
         .mb_action_mask =   {.shape = {B, T, mask_size}},
     };
     alloc_register(alloc, &bufs.mb_obs);
@@ -1127,6 +1129,7 @@ void register_train_buffers(TrainGraph& bufs, Allocator* alloc, int B, int T, in
     alloc_register(alloc, &bufs.mb_terminals);
     alloc_register(alloc, &bufs.mb_advantages);
     alloc_register(alloc, &bufs.mb_prio);
+    alloc_register(alloc, &bufs.mb_trainable_mask);
     alloc_register(alloc, &bufs.mb_values);
     alloc_register(alloc, &bufs.mb_returns);
     alloc_register(alloc, &bufs.mb_ratio);
@@ -1180,6 +1183,36 @@ __global__ void compute_prio_adv_reduction(
             pw = 0.0f;
         }
         prio_weights[row] = pw;
+    }
+}
+
+// Reduce only an explicit prefix of rows within each rollout-buffer group.
+// The resulting priority domain is compact and contains no frozen trajectory.
+__global__ void compute_grouped_prio_adv_reduction(
+        const precision_t* __restrict__ advantages,
+        float* prio_weights, float prio_alpha, int stride,
+        int rows_per_group, int selected_per_group) {
+    int compact_row = blockIdx.x;
+    int group = compact_row / selected_per_group;
+    int relative_row = compact_row % selected_per_group;
+    int physical_row = group * rows_per_group + relative_row;
+    int tx = threadIdx.x;
+    int offset = physical_row * stride;
+
+    float local_sum = 0.0f;
+    for (int t = tx; t < stride; t += blockDim.x) {
+        local_sum += fabsf(to_float(advantages[offset + t]));
+    }
+
+    for (int s = PRIO_WARP_SIZE / 2; s >= 1; s /= 2) {
+        local_sum += __shfl_down_sync(PRIO_FULL_MASK, local_sum, s);
+    }
+    if (tx == 0) {
+        float pw = __powf(local_sum, prio_alpha);
+        if (isnan(pw) || isinf(pw)) {
+            pw = 0.0f;
+        }
+        prio_weights[compact_row] = pw;
     }
 }
 
@@ -1308,6 +1341,25 @@ void prio_build_cdf_cuda(PrecisionTensor& advantages, float prio_alpha,
     build_cdf<<<1, PRIO_BLOCK_SIZE, 0, stream>>>(bufs.cdf.data, bufs.prio_probs.data, B);
 }
 
+void prio_build_grouped_cdf_cuda(PrecisionTensor& advantages, float prio_alpha,
+        PrioBuffers& bufs, int rows_per_group, int selected_per_group,
+        cudaStream_t stream) {
+    int rows = advantages.shape[0];
+    int T = advantages.shape[1];
+    assert(rows_per_group > 0);
+    assert(selected_per_group > 0 && selected_per_group <= rows_per_group);
+    assert(rows % rows_per_group == 0);
+    int B = (rows / rows_per_group) * selected_per_group;
+    assert(bufs.prio_probs.shape[0] == B && bufs.cdf.shape[0] == B);
+    compute_grouped_prio_adv_reduction<<<B, PRIO_WARP_SIZE, 0, stream>>>(
+        advantages.data, bufs.prio_probs.data, prio_alpha, T,
+        rows_per_group, selected_per_group);
+    compute_prio_normalize<<<1, PRIO_BLOCK_SIZE, 0, stream>>>(
+        bufs.prio_probs.data, B);
+    build_cdf<<<1, PRIO_BLOCK_SIZE, 0, stream>>>(
+        bufs.cdf.data, bufs.prio_probs.data, B);
+}
+
 // Draw a minibatch index set from a prebuilt CDF and importance weights.
 void prio_sample_cuda(float anneal_beta, PrioBuffers& bufs, ulong seed,
         long* offset_ptr, cudaStream_t stream) {
@@ -1320,6 +1372,40 @@ void prio_sample_cuda(float anneal_beta, PrioBuffers& bufs, ulong seed,
     compute_prio_imp_weights<<<blocks, PRIO_BLOCK_SIZE, 0, stream>>>(
         bufs.idx.data, bufs.prio_probs.data,
         bufs.mb_prio.data, B, anneal_beta, N);
+}
+
+__global__ void map_grouped_prio_indices_and_mask(
+        int* indices, precision_t* trainable_mask, int count,
+        int compact_rows, int rows_per_group, int selected_per_group) {
+    int tid = threadIdx.x + blockIdx.x * blockDim.x;
+    if (tid >= count) {
+        return;
+    }
+
+    int compact_row = indices[tid];
+    bool valid = compact_row >= 0 && compact_row < compact_rows;
+    if (valid) {
+        int group = compact_row / selected_per_group;
+        int relative_row = compact_row % selected_per_group;
+        indices[tid] = group * rows_per_group + relative_row;
+    } else {
+        indices[tid] = 0;
+    }
+    trainable_mask[tid] = from_float(valid ? 1.0f : 0.0f);
+}
+
+// Importance weights use compact priority indices. Map to physical rollout
+// rows only after their computation, and publish an all-loss safety mask.
+void prio_sample_grouped_cuda(float anneal_beta, PrioBuffers& bufs, ulong seed,
+        long* offset_ptr, precision_t* trainable_mask,
+        int rows_per_group, int selected_per_group, cudaStream_t stream) {
+    prio_sample_cuda(anneal_beta, bufs, seed, offset_ptr, stream);
+    int compact_rows = (int)bufs.cdf.shape[0];
+    int count = (int)bufs.idx.shape[0];
+    int blocks = (count + PRIO_BLOCK_SIZE - 1) / PRIO_BLOCK_SIZE;
+    map_grouped_prio_indices_and_mask<<<blocks, PRIO_BLOCK_SIZE, 0, stream>>>(
+        bufs.idx.data, trainable_mask, count, compact_rows,
+        rows_per_group, selected_per_group);
 }
 
 // TODO: test whether these finite/clamp guards improve continuous-control stability
@@ -1361,6 +1447,7 @@ struct PPOGraphArgs {
     const precision_t* old_logprobs;
     const precision_t* advantages;
     const precision_t* prio;
+    const precision_t* trainable_mask;
     const precision_t* values;
     const precision_t* returns;
 };
@@ -1541,6 +1628,7 @@ __global__ void ppo_loss_compute(
     float old_logp = to_float(g.old_logprobs[nt]);
     float adv = to_float(g.advantages[nt]);
     float w = to_float(g.prio[n]);
+    float trainable = to_float(g.trainable_mask[n]);
     float val = to_float(g.values[nt]);
     float ret = to_float(g.returns[nt]);
     float val_pred = to_float(a.values_pred[logits_base]);
@@ -1549,7 +1637,7 @@ __global__ void ppo_loss_compute(
     float adv_std = sqrtf(float(a.adv_var[0]));
     float adv_normalized = (adv - float(a.adv_mean[0])) / (adv_std + 1e-8f);
 
-    float dL = inv_NT;
+    float dL = inv_NT * trainable;
     float ent_coef = *a.ent_coef;
     float d_entropy_term = dL * (-ent_coef);
 
@@ -1679,14 +1767,18 @@ __global__ void ppo_loss_compute(
     }
 
     // Forward: loss partials
-    float thread_loss = (pg_loss + a.vf_coef * v_loss - ent_coef * total_entropy) * inv_NT;
-    block_losses[LOSS_PG][tid] = pg_loss * inv_NT;
-    block_losses[LOSS_VF][tid] = v_loss * inv_NT;
-    block_losses[LOSS_ENT][tid] = total_entropy * inv_NT;
+    float thread_loss = (pg_loss + a.vf_coef * v_loss - ent_coef * total_entropy)
+        * inv_NT * trainable;
+    block_losses[LOSS_PG][tid] = pg_loss * inv_NT * trainable;
+    block_losses[LOSS_VF][tid] = v_loss * inv_NT * trainable;
+    block_losses[LOSS_ENT][tid] = total_entropy * inv_NT * trainable;
     block_losses[LOSS_TOTAL][tid] = thread_loss;
-    block_losses[LOSS_OLD_APPROX_KL][tid] = (-logratio) * inv_NT;
-    block_losses[LOSS_APPROX_KL][tid] = ((ratio - 1.0f) - logratio) * inv_NT;
-    block_losses[LOSS_CLIPFRAC][tid] = (fabsf(ratio - 1.0f) > a.clip_coef ? 1.0f : 0.0f) * inv_NT;
+    block_losses[LOSS_OLD_APPROX_KL][tid] = (-logratio) * inv_NT * trainable;
+    block_losses[LOSS_APPROX_KL][tid] = ((ratio - 1.0f) - logratio)
+        * inv_NT * trainable;
+    block_losses[LOSS_CLIPFRAC][tid] =
+        (fabsf(ratio - 1.0f) > a.clip_coef ? 1.0f : 0.0f)
+        * inv_NT * trainable;
     } // end if (idx < total_elements)
 
 // Deterministic aggregation
@@ -1823,6 +1915,7 @@ void ppo_loss_fwd_bwd(
         .old_logprobs = graph.mb_logprobs.data,
         .advantages = graph.mb_advantages.data,
         .prio = graph.mb_prio.data,
+        .trainable_mask = graph.mb_trainable_mask.data,
         .values = graph.mb_values.data,
         .returns = graph.mb_returns.data,
     };

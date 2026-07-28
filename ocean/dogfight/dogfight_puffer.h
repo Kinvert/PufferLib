@@ -81,7 +81,9 @@ void puf_init(Env* env, Dict* kwargs) {
 
     env->agents[0].policy = 0;
     env->agents[0].action_mask = NULL;
-    env->agents[1].policy = 0;
+    // The vectorizer forces ordinary battles to bank 0 and honors this bank-1
+    // assignment only for the configured frozen-opponent suffix.
+    env->agents[1].policy = 1;
     env->agents[1].action_mask = NULL;
 
     init(env, obs_scheme, &reward_config, curriculum_enabled,

@@ -1118,23 +1118,6 @@ void vec_log(VecEnv* vec, Dict* out, int clear) {
     dict_clear(&env_out);
 }
 
-// Zero advantages on frozen-bank rows so prio_replay never samples them. Frozen
-// rollout rows hold actions/logprobs from the frozen policy; training the
-// primary's PPO on them produces garbage ratios and poisoned gradients.
-__global__ void zero_frozen_advantages_kernel(precision_t* advantages,
-        int agents_per_buffer, int primary_per_buffer, int total_rows, int horizon) {
-    int idx = blockIdx.x * blockDim.x + threadIdx.x;
-    int total = total_rows * horizon;
-    if (idx >= total) {
-        return;
-    }
-    int row = idx / horizon;
-    int rel = row % agents_per_buffer;
-    if (rel >= primary_per_buffer) {
-        advantages[idx] = from_float(0.0f);
-    }
-}
-
 // Cooperative row copy (int4 when 16-byte aligned).
 __device__ void copy_bytes(
         const char* src, char* dst,
@@ -1360,18 +1343,13 @@ void train_impl(PuffeRL& pufferl, RolloutBuf* src_arg) {
     puff_advantage_cuda(rollouts.values, rollouts.rewards, rollouts.terminals,
         rollouts.ratio, advantages_puf, hypers.gamma, hypers.gae_lambda,
         hypers.vtrace_rho_clip, hypers.vtrace_c_clip, train_stream);
-    if (pufferl.num_frozen_banks > 0) {
-        int apb = hypers.total_agents / hypers.num_buffers;
-        int rows = advantages_puf.shape[0];
-        int horizon = advantages_puf.shape[1];
-        int total = rows * horizon;
-        zero_frozen_advantages_kernel<<<grid_size(total), BLOCK_SIZE, 0, train_stream>>>(
-            advantages_puf.data, apb, pufferl.vec->bank_layout[1], rows, horizon);
-    }
     profile_end(hypers.profile);
 
     profile_begin("compute_prio", hypers.profile);
-    prio_build_cdf_cuda(advantages_puf, prio_alpha, pufferl.prio_bufs, train_stream);
+    int prio_agents_per_buffer = hypers.total_agents / hypers.num_buffers;
+    int prio_primary_per_buffer = pufferl.vec->bank_layout[1];
+    prio_build_grouped_cdf_cuda(advantages_puf, prio_alpha, pufferl.prio_bufs,
+        prio_agents_per_buffer, prio_primary_per_buffer, train_stream);
     profile_end(hypers.profile);
 
     long* train_rng_offset = pufferl.rng_offset_puf.data + hypers.num_buffers;
@@ -1380,8 +1358,9 @@ void train_impl(PuffeRL& pufferl, RolloutBuf* src_arg) {
         cudaEventRecord(pufferl.profile.events[2], train_stream);  // start of misc (overwritten each iter)
 
         profile_begin("compute_prio", hypers.profile);
-        prio_sample_cuda(anneal_beta, pufferl.prio_bufs, pufferl.seed,
-            train_rng_offset, train_stream);
+        prio_sample_grouped_cuda(anneal_beta, pufferl.prio_bufs, pufferl.seed,
+            train_rng_offset, graph.mb_trainable_mask.data,
+            prio_agents_per_buffer, prio_primary_per_buffer, train_stream);
         profile_end(hypers.profile);
 
         profile_begin("train_select_and_copy", hypers.profile);
@@ -1671,6 +1650,11 @@ void pufferl_load_frozen_bank(PuffeRL* pufferl, int bank_idx, const char* path) 
     WeightBank* bank = &pufferl->frozen_banks[bank_idx];
     puf_load_weights_into(bank->master_weights, bank->param_puf,
         pufferl->default_stream, path);
+    for (int i = 0; i < pufferl->hypers.num_buffers; i++) {
+        PrecisionTensor* state = &bank->buffer_states[i];
+        cudaMemsetAsync(state->data, 0,
+            numel(state->shape) * sizeof(precision_t), pufferl->default_stream);
+    }
     cudaDeviceSynchronize();
 }
 
@@ -2039,8 +2023,13 @@ PuffeRL* create_pufferl(Ini* ini, TrainContext* ctx) {
         acts, total_agents, horizon, input_size, num_action_heads, mask_size);
     register_ppo_buffers(pufferl->ppo_bufs_puf,
         acts, minibatch_segments, hypers.horizon, decoder_output_size, is_continuous);
+    int prio_agents_per_buffer = total_agents / num_buffers;
+    int prio_primary_per_buffer = pufferl->vec->bank_layout[1];
+    assert(prio_primary_per_buffer > 0
+        && prio_primary_per_buffer <= prio_agents_per_buffer);
+    int prio_trainable_rows = prio_primary_per_buffer * num_buffers;
     register_prio_buffers(pufferl->prio_bufs,
-        acts, hypers.total_agents, minibatch_segments);
+        acts, prio_trainable_rows, minibatch_segments);
 
     // Extra cuda buffers just reuse activ allocator
     pufferl->rng_offset_puf = {.shape = {num_buffers + 1}};
@@ -2695,8 +2684,10 @@ EvalResult run_eval(Ini* ini, TrainContext* ctx, int mode, int verbose);
 #define SELFPLAY_PATH_MAX 4096
 
 typedef struct {
-    char pending_path[SELFPLAY_PATH_MAX];
+    char current_path[SELFPLAY_PATH_MAX];
     long opp_started_step;
+    long generation;
+    long swap_truncations;
     int num_envs;
 } SelfplayBank;
 
@@ -2727,6 +2718,90 @@ const char* selfplay_sample(Selfplay* sp) {
     int idx = (int)(rand_r(&sp->rng) % (unsigned int)sp->pool_size);
     return sp->pool[idx];
 }
+
+#ifndef PUFFER_GPU_ENV
+static void clear_primary_recurrent_row(PuffeRL* pufferl, int physical_row) {
+    int agents_per_buffer = pufferl->vec->agents_per_buffer;
+    int buf = physical_row / agents_per_buffer;
+    int relative_row = physical_row % agents_per_buffer;
+    PrecisionTensor* state = &pufferl->buffer_states[buf];
+    assert(relative_row < state->shape[1]);
+    int layers = state->shape[0];
+    int rows = state->shape[1];
+    int hidden = state->shape[2];
+    for (int layer = 0; layer < layers; layer++) {
+        precision_t* row = state->data
+            + ((long)layer * rows + relative_row) * hidden;
+        cudaMemsetAsync(row, 0, (size_t)hidden * sizeof(precision_t),
+            pufferl->default_stream);
+    }
+}
+
+// Synchronous generation barrier. Workers are idle between completed rollouts:
+// truncate/reset affected fights, load and clear the frozen bank, clear affected
+// primary recurrent rows, then publish fresh observations before inference.
+static long selfplay_atomic_rotate(
+        PuffeRL* pufferl, int bank_idx, const char* checkpoint_path) {
+    VecEnv* vec = pufferl->vec;
+    int tag = bank_idx + 1;
+    for (int buf = 0; buf < vec->buffers; buf++) {
+        assert(__atomic_load_n(&vec->worker_state[buf], __ATOMIC_SEQ_CST)
+            == BUF_WAITING && "self-play rotation requires idle rollout workers");
+    }
+
+    long truncations = 0;
+    for (int i = 0; i < vec->size; i++) {
+        Env* env = &vec->envs[i];
+        if (env->tag != tag) {
+            continue;
+        }
+        puf_reset(env);
+        env->boundary_reached = 0;
+        truncations++;
+    }
+
+    pufferl_load_frozen_bank(pufferl, bank_idx, checkpoint_path);
+
+    for (int i = 0; i < vec->size; i++) {
+        Env* env = &vec->envs[i];
+        if (env->tag != tag) {
+            continue;
+        }
+        for (int s = 0; s < env->num_agents; s++) {
+            auto* agent = &env->agents[s];
+            obs_t* agent_observations = (obs_t*)agent->observations;
+            ptrdiff_t obs_offset = agent_observations - vec->observations;
+            assert(obs_offset >= 0 && obs_offset % OBS_SIZE == 0);
+            int physical_row = (int)(obs_offset / OBS_SIZE);
+            assert(physical_row >= 0 && physical_row < vec->total_agents);
+            int relative_row = physical_row % vec->agents_per_buffer;
+            if (relative_row < vec->bank_layout[1]) {
+                clear_primary_recurrent_row(pufferl, physical_row);
+            }
+
+            *agent->rewards = 0.0f;
+            *agent->terminals = 0.0f;
+            cudaMemcpyAsync(
+                vec->gpu_observations + (size_t)physical_row * OBS_SIZE,
+                agent->observations, OBS_SIZE * sizeof(obs_t),
+                cudaMemcpyHostToDevice, pufferl->default_stream);
+            cudaMemcpyAsync(vec->gpu_rewards + physical_row,
+                agent->rewards, sizeof(float),
+                cudaMemcpyHostToDevice, pufferl->default_stream);
+            cudaMemcpyAsync(vec->gpu_terminals + physical_row,
+                agent->terminals, sizeof(float),
+                cudaMemcpyHostToDevice, pufferl->default_stream);
+            cudaMemcpyAsync(
+                vec->gpu_action_mask
+                    + (size_t)physical_row * vec->action_mask_size,
+                agent->action_mask, (size_t)vec->action_mask_size,
+                cudaMemcpyHostToDevice, pufferl->default_stream);
+        }
+    }
+    cudaStreamSynchronize(pufferl->default_stream);
+    return truncations;
+}
+#endif
 
 typedef struct {
     char section[64];
@@ -3171,9 +3246,15 @@ EvalResult run_eval(Ini* ini, TrainContext* ctx, int mode, int verbose) {
     return result;
 }
 
-static void validate_native_selfplay_config(Ini* ini, int use_selfplay) {
+static void validate_native_selfplay_config(
+        Ini* ini, int use_selfplay, int world_size) {
     if (!use_selfplay) {
         return;
+    }
+
+    if (world_size != 1) {
+        fprintf(stderr, "native self-play requires exactly one GPU/process\n");
+        exit(1);
     }
 
     int async = puf_ini_get_int(ini, "base", "async");
@@ -3184,8 +3265,15 @@ static void validate_native_selfplay_config(Ini* ini, int use_selfplay) {
     }
 
     int num_frozen_banks = puf_ini_get_int(ini, "vec", "num_frozen_banks");
-    if (num_frozen_banks <= 0) {
-        return;
+    if (num_frozen_banks != 1) {
+        fprintf(stderr, "native self-play currently requires exactly one frozen bank\n");
+        exit(1);
+    }
+
+    int eval_games = puf_ini_get_int(ini, "selfplay", "eval_games");
+    if (eval_games != 0) {
+        fprintf(stderr, "native self-play requires selfplay.eval_games=0 during Phase 5\n");
+        exit(1);
     }
 
     int primary_hidden = puf_ini_get_int(ini, "policy", "hidden_size");
@@ -3203,7 +3291,7 @@ static void validate_native_selfplay_config(Ini* ini, int use_selfplay) {
 
 TrainResult run_train(Ini* ini, TrainContext* ctx) {
     int use_selfplay = puf_ini_get(ini, "selfplay", "enabled");
-    validate_native_selfplay_config(ini, use_selfplay);
+    validate_native_selfplay_config(ini, use_selfplay, ctx->world_size);
 #ifdef PUFFER_GPU_ENV
     // GPU Env has no tag/boundary_reached; selfplay opponent rotation is CPU-only for now.
     assert(!use_selfplay && "selfplay not supported with --gpu (PUFFER_GPU_ENV)");
@@ -3280,7 +3368,10 @@ TrainResult run_train(Ini* ini, TrainContext* ctx) {
 
         selfplay_add_checkpoint(&selfplay, initial_checkpoint);
         for (int b = 0; b < selfplay.num_banks; b++) {
-            pufferl_load_frozen_bank(pufferl, b, selfplay_sample(&selfplay));
+            const char* initial_opponent = selfplay_sample(&selfplay);
+            pufferl_load_frozen_bank(pufferl, b, initial_opponent);
+            snprintf(selfplay.banks[b].current_path,
+                sizeof(selfplay.banks[b].current_path), "%s", initial_opponent);
             selfplay.banks[b].opp_started_step = current_step;
         }
     }
@@ -3380,6 +3471,41 @@ TrainResult run_train(Ini* ini, TrainContext* ctx) {
             dict_clear(&curriculum_log);
         }
 #endif
+ #ifndef PUFFER_GPU_ENV
+        if (use_selfplay && !is_eval) {
+            long current_step =
+                pufferl->global_step * pufferl->hypers.world_size;
+            long total_swap_truncations = 0;
+            for (int b = 0; b < selfplay.num_banks; b++) {
+                SelfplayBank* bank = &selfplay.banks[b];
+                if (selfplay.opp_timeout_steps > 0 &&
+                        current_step - bank->opp_started_step
+                            >= selfplay.opp_timeout_steps) {
+                    const char* next_opponent = selfplay_sample(&selfplay);
+                    long truncated = selfplay_atomic_rotate(
+                        pufferl, b, next_opponent);
+                    bank->swap_truncations += truncated;
+                    bank->generation++;
+                    bank->opp_started_step = current_step;
+                    snprintf(bank->current_path, sizeof(bank->current_path),
+                        "%s", next_opponent);
+                    printf(
+                        "selfplay/swap bank=%d generation=%ld "
+                        "truncations=%ld checkpoint=%s\n",
+                        b, bank->generation, truncated, bank->current_path);
+                }
+                total_swap_truncations += bank->swap_truncations;
+                char generation_key[64];
+                snprintf(generation_key, sizeof(generation_key),
+                    "pool/generation_%d", b);
+                dict_set(&last_log, generation_key, bank->generation);
+            }
+            dict_set(&last_log, "pool/size", selfplay.pool_size);
+            dict_set(&last_log, "pool/num_banks", selfplay.num_banks);
+            dict_set(&last_log, "pool/swap_truncations",
+                total_swap_truncations);
+        }
+#endif
         if (!is_eval && last_log.size &&
                 wall_clock() < pufferl->last_log_time + 0.6 && epoch < train_epochs - 1) {
             continue;
@@ -3449,39 +3575,6 @@ TrainResult run_train(Ini* ini, TrainContext* ctx) {
             dict_set(&last_log, item->key, item->value);
         }
         dict_clear(&new_log);
-#ifndef PUFFER_GPU_ENV
-        if (use_selfplay && !is_eval) {
-            long current_step = pufferl->global_step * pufferl->hypers.world_size;
-            Env* envs = pufferl->vec->envs;
-            for (int b = 0; b < selfplay.num_banks; b++) {
-                SelfplayBank* bank = &selfplay.banks[b];
-                int tag = b + 1;
-                if (bank->pending_path[0]) {
-                    int aligned = 0;
-                    for (int i = 0; i < pufferl->vec->size; i++) {
-                        if (envs[i].tag == tag && envs[i].boundary_reached) aligned++;
-                    }
-                    if (aligned >= bank->num_envs) {
-                        pufferl_load_frozen_bank(pufferl, b, bank->pending_path);
-                        for (int i = 0; i < pufferl->vec->size; i++) {
-                            if (envs[i].tag == tag) envs[i].boundary_reached = 0;
-                        }
-                        bank->pending_path[0] = 0;
-                        bank->opp_started_step = current_step;
-                    }
-                } else if (selfplay.opp_timeout_steps > 0 &&
-                        current_step - bank->opp_started_step >= selfplay.opp_timeout_steps) {
-                    snprintf(bank->pending_path, sizeof(bank->pending_path), "%s", selfplay_sample(&selfplay));
-                    for (int i = 0; i < pufferl->vec->size; i++) {
-                        if (envs[i].tag == tag) envs[i].boundary_reached = 0;
-                    }
-                }
-            }
-            dict_set(&last_log, "pool/size", selfplay.pool_size);
-            dict_set(&last_log, "pool/num_banks", selfplay.num_banks);
-        }
-#endif
-
         int eval_done = is_eval && dict_get(&last_log, "env/n") > eval_episodes;
         int loop_done = epoch == train_epochs + eval_epochs - 1;
         double now = wall_clock();
