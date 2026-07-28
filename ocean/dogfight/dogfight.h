@@ -169,6 +169,8 @@ typedef struct Log {
     float slot_0_score;    // Logical slot 0: win=1, draw=0.5, loss=0
     float slot_1_score;    // Logical slot 1: win=1, draw=0.5, loss=0
     float draw_rate;       // Raw draw count; vec log normalization makes a rate
+    float slot_0_gun_kills; // Logical slot 0 decisive gun kills only
+    float slot_1_gun_kills; // Logical slot 1 decisive gun kills only
     float shots_fired;
     float accuracy;
     float stage;

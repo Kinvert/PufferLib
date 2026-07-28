@@ -375,6 +375,8 @@ void puf_log(Log* log, Dict* out) {
     dict_set(out, "slot_0_score", log->slot_0_score);
     dict_set(out, "slot_1_score", log->slot_1_score);
     dict_set(out, "draw_rate", log->draw_rate);
+    dict_set(out, "slot_0_gun_kills", log->slot_0_gun_kills);
+    dict_set(out, "slot_1_gun_kills", log->slot_1_gun_kills);
     dict_set(out, "episode_return", log->episode_return);
     dict_set(out, "episode_length", log->episode_length);
     dict_set(out, "shots_fired", log->shots_fired);

@@ -216,6 +216,11 @@ static int test_simultaneous_hits_are_an_order_invariant_draw(void) {
         fprintf(stderr, "mutual-hit draw metrics were not symmetric\n");
         return 1;
     }
+    if (!closef(t.env.log.slot_0_gun_kills, 0.0f)
+            || !closef(t.env.log.slot_1_gun_kills, 0.0f)) {
+        fprintf(stderr, "mutual hit was incorrectly counted as decisive\n");
+        return 1;
+    }
     return 0;
 }
 
@@ -367,6 +372,11 @@ static int test_logical_slot_scores_follow_role_assignment(void) {
     if (!closef(t.env.log.shots_fired, 1.0f)
             || !closef(t.env.log.accuracy, 100.0f)) {
         fprintf(stderr, "physical-player shot accounting failed\n");
+        return 1;
+    }
+    if (!closef(t.env.log.slot_0_gun_kills, 0.0f)
+            || !closef(t.env.log.slot_1_gun_kills, 1.0f)) {
+        fprintf(stderr, "logical slot gun-kill routing failed\n");
         return 1;
     }
     return 0;

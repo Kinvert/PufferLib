@@ -473,6 +473,43 @@ Only after Phase 6:
 
 Do not fork or copy PPO to implement these. Build a coordinator around native checkpoints, match operations, and explicit metadata.
 
+### Runtime self-play choice
+
+Keep both implementations. They solve different layers of the problem, and the
+Dogfight coordinator must not replace or fork PufferLib's trainer.
+
+`config/dogfight.ini` uses `selfplay.mode` as the authoritative switch:
+
+| Mode | Owner and behavior |
+|---|---|
+| `off` | Disable frozen banks for ordinary curriculum or fixed-opponent work. |
+| `native` | Use PufferLib's official in-process self-play: current-v-current battles, one frozen FIFO bank, checkpoint insertion, uniform historical-opponent sampling, synchronous rotation, and optional final pool evaluation. This is the Dogfight default. |
+| `coordinator` | Use the persistent Dogfight manifest/PFSP/promotion system around native training and `match` operations. The coordinator must select `base.load_enemy_model_path`; the runtime pins that opponent with `opp_timeout_steps=0`, and `selfplay.eval_games` must remain zero because the coordinator owns both-seat evaluation. |
+
+Retain `selfplay.enabled` for compatibility with upstream-style configs.
+When `selfplay.mode` is absent, `enabled=1` resolves to `native` and
+`enabled=0` resolves to `off`. When an explicit mode is present, the mode wins.
+Standard `eval` and `render` disable training-only frozen banks; `match`
+constructs its opponent bank explicitly.
+
+The pinned 5c native references work as follows:
+
+| Environment | Native self-play behavior at the audited revision |
+|---|---|
+| Robocode | Two policy slots per battle; ordinary battles are current-v-current and tagged battles put the current policy in slot 0 and a historical FIFO policy in slot 1. Frozen rows are excluded from PPO. Its INI enables one 10% frozen bank, a size-100 FIFO, 100M-step opponent timeout, and final evaluation against up to eight pool entries. |
+| Chess | The same native memory-only FIFO mechanism, with randomized colors, one 10% frozen bank, a size-500 pool, and a 4B-step opponent timeout. |
+| G2048 | Thin native adapter reference only, not a self-play policy reference. |
+
+PufferLib's native pool is deliberately simple and process-local. It does not
+persist a manifest, Elo, PFSP evidence, fixed anchors, both-seat promotion
+records, or atomic league promotion. Those remain the coordinator's Phase 7
+responsibility. The coordinator should launch bounded native training segments;
+it should not duplicate PPO, checkpoint loading, inference, or match execution.
+
+See `ocean/dogfight/PHASE7_STATUS.md` for dated commands that worked on this
+branch. They are evidence to retry, not commands to accept as gospel after 5c
+changes.
+
 ### Phase 8 — Scaling and optimization
 
 After correctness:

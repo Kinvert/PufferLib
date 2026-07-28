@@ -120,6 +120,13 @@ static inline void dogfight_two_agent_finish(
         : (winner == 1
             ? env->two_agent_player_slot
             : 1 - env->two_agent_player_slot);
+    if (reason == DEATH_KILL && logical_winner >= 0) {
+        if (logical_winner == 0) {
+            env->log.slot_0_gun_kills += 1.0f;
+        } else {
+            env->log.slot_1_gun_kills += 1.0f;
+        }
+    }
     env->log.slot_0_score += winner == 0
         ? 0.5f
         : (logical_winner == 0 ? 1.0f : 0.0f);

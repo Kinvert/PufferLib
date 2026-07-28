@@ -2771,9 +2771,31 @@ void selfplay_add_checkpoint(Selfplay* sp, const char* path) {
     snprintf(sp->pool[sp->pool_size++], sizeof(sp->pool[0]), "%s", path);
 }
 
-const char* selfplay_sample(Selfplay* sp) {
-    int idx = (int)(rand_r(&sp->rng) % (unsigned int)sp->pool_size);
-    return sp->pool[idx];
+const char* selfplay_sample(Selfplay* sp, const char* exclude) {
+    assert(sp->pool_size > 0);
+    int eligible = sp->pool_size;
+    if (exclude) {
+        for (int i = 0; i < sp->pool_size; i++) {
+            if (strcmp(sp->pool[i], exclude) == 0) {
+                eligible--;
+                break;
+            }
+        }
+    }
+    if (eligible == 0) {
+        return sp->pool[0];
+    }
+    int selected = (int)(rand_r(&sp->rng) % (unsigned int)eligible);
+    for (int i = 0; i < sp->pool_size; i++) {
+        if (exclude && strcmp(sp->pool[i], exclude) == 0) {
+            continue;
+        }
+        if (selected-- == 0) {
+            return sp->pool[i];
+        }
+    }
+    assert(false && "selfplay opponent selection exhausted eligible pool");
+    return sp->pool[0];
 }
 
 #ifndef PUFFER_GPU_ENV
@@ -3147,9 +3169,18 @@ void run_sweep(Ini* ini, const char* exe_path) {
     sweep_space_destroy(space);
 }
 
+static void disable_selfplay_for_standard_eval(Ini* ini) {
+    puf_ini_put(ini, "vec.num_frozen_banks", "0");
+    puf_ini_put(ini, "vec.frozen_bank_pct", "0");
+    puf_ini_put(ini, "selfplay.enabled", "0");
+}
+
 EvalResult run_eval(Ini* ini, TrainContext* ctx, int mode, int verbose) {
     int render = mode == EVAL_RENDER;
     int match = mode == EVAL_MATCH;
+    if (!match) {
+        disable_selfplay_for_standard_eval(ini);
+    }
     EvalResult result = {0};
     long num_games = puf_ini_get(ini, "base", "num_games");
     if (!num_games) {
@@ -3262,6 +3293,32 @@ EvalResult run_eval(Ini* ini, TrainContext* ctx, int mode, int verbose) {
             result.score = (float)dict_get(&log, "env/slot_0_score");
             result.draw = (float)dict_get(&log, "env/draw_rate");
             result.games = (int)n;
+            DictItem* slot_0_kills = dict_find(
+                &log, "env/slot_0_gun_kills");
+            DictItem* slot_1_kills = dict_find(
+                &log, "env/slot_1_gun_kills");
+            DictItem* clean_fights = dict_find(
+                &log, "env/clean_fights");
+            if (verbose && slot_0_kills && slot_1_kills && clean_fights) {
+                double slot_0_score = dict_get(
+                    &log, "env/slot_0_score");
+                double slot_1_score = dict_get(
+                    &log, "env/slot_1_score");
+                double draw_rate = dict_get(&log, "env/draw_rate");
+                long draws = lround(draw_rate * n);
+                long slot_0_wins = lround(
+                    (slot_0_score - 0.5 * draw_rate) * n);
+                long slot_1_wins = lround(
+                    (slot_1_score - 0.5 * draw_rate) * n);
+                printf(
+                    "\nmatch/evidence games=%ld slot0_wins=%ld "
+                    "slot1_wins=%ld draws=%ld slot0_gun_kills=%ld "
+                    "slot1_gun_kills=%ld clean_fights=%ld\n",
+                    n, slot_0_wins, slot_1_wins, draws,
+                    lround(slot_0_kills->value * n),
+                    lround(slot_1_kills->value * n),
+                    lround(clean_fights->value * n));
+            }
             break;
         }
         if (n == 0) {
@@ -3303,8 +3360,29 @@ EvalResult run_eval(Ini* ini, TrainContext* ctx, int mode, int verbose) {
     return result;
 }
 
+static const char* resolve_selfplay_mode(Ini* ini) {
+    const char* mode = puf_ini_get_str(ini, "selfplay", "mode");
+    if (!mode[0] || strcmp(mode, "None") == 0) {
+        return puf_ini_get(ini, "selfplay", "enabled") ? "native" : "off";
+    }
+    if (strcmp(mode, "off") == 0) {
+        return "off";
+    }
+    if (strcmp(mode, "native") == 0) {
+        return "native";
+    }
+    if (strcmp(mode, "coordinator") == 0) {
+        return "coordinator";
+    }
+    fprintf(stderr,
+        "Unknown selfplay.mode '%s'; expected off, native, or coordinator\n",
+        mode);
+    exit(1);
+}
+
 static void validate_native_selfplay_config(
         Ini* ini, int use_selfplay, int world_size) {
+    const char* mode = resolve_selfplay_mode(ini);
     if (!use_selfplay) {
         return;
     }
@@ -3328,9 +3406,22 @@ static void validate_native_selfplay_config(
     }
 
     int eval_games = puf_ini_get_int(ini, "selfplay", "eval_games");
-    if (eval_games != 0) {
-        fprintf(stderr, "native self-play requires selfplay.eval_games=0 during Phase 5\n");
+    if (strcmp(mode, "coordinator") == 0 && eval_games != 0) {
+        fprintf(stderr,
+            "native self-play requires selfplay.eval_games=0 in coordinator mode; "
+            "the coordinator owns both-seat evaluation\n");
         exit(1);
+    }
+
+    if (strcmp(mode, "coordinator") == 0) {
+        const char* opponent = puf_ini_get_str(
+            ini, "base", "load_enemy_model_path");
+        if (!opponent[0] || strcmp(opponent, "None") == 0) {
+            fprintf(stderr,
+                "coordinator mode requires base.load_enemy_model_path\n");
+            exit(1);
+        }
+        puf_ini_put(ini, "selfplay.opp_timeout_steps", "0");
     }
 
     int primary_hidden = puf_ini_get_int(ini, "policy", "hidden_size");
@@ -3347,8 +3438,13 @@ static void validate_native_selfplay_config(
 }
 
 TrainResult run_train(Ini* ini, TrainContext* ctx) {
-    int use_selfplay = puf_ini_get(ini, "selfplay", "enabled");
+    const char* selfplay_mode = resolve_selfplay_mode(ini);
+    int use_selfplay = strcmp(selfplay_mode, "off") != 0;
+    puf_ini_put(ini, "selfplay.enabled", use_selfplay ? "1" : "0");
     validate_native_selfplay_config(ini, use_selfplay, ctx->world_size);
+    if (ctx->artifact_owner) {
+        printf("selfplay/mode=%s\n", selfplay_mode);
+    }
 #ifdef PUFFER_GPU_ENV
     // GPU Env has no tag/boundary_reached; selfplay opponent rotation is CPU-only for now.
     assert(!use_selfplay && "selfplay not supported with --gpu (PUFFER_GPU_ENV)");
@@ -3426,12 +3522,24 @@ TrainResult run_train(Ini* ini, TrainContext* ctx) {
 #endif
 
         selfplay_add_checkpoint(&selfplay, initial_checkpoint);
+        char initial_opponent_buf[4096];
+        const char* configured_opponent = puf_checkpoint_path_key(ini,
+            "load_enemy_model_path", initial_opponent_buf,
+            sizeof(initial_opponent_buf));
+        if (configured_opponent) {
+            selfplay_add_checkpoint(&selfplay, configured_opponent);
+        }
         for (int b = 0; b < selfplay.num_banks; b++) {
-            const char* initial_opponent = selfplay_sample(&selfplay);
+            const char* initial_opponent = configured_opponent ? configured_opponent
+                : selfplay_sample(&selfplay, NULL);
             pufferl_load_frozen_bank(pufferl, b, initial_opponent);
             snprintf(selfplay.banks[b].current_path,
                 sizeof(selfplay.banks[b].current_path), "%s", initial_opponent);
             selfplay.banks[b].opp_started_step = current_step;
+            if (ctx->artifact_owner) {
+                printf("selfplay/seed bank=%d external=%d checkpoint=%s\n",
+                    b, configured_opponent != NULL, initial_opponent);
+            }
         }
     }
 
@@ -3540,7 +3648,7 @@ TrainResult run_train(Ini* ini, TrainContext* ctx) {
                 if (selfplay.opp_timeout_steps > 0 &&
                         current_step - bank->opp_started_step
                             >= selfplay.opp_timeout_steps) {
-                    const char* next_opponent = selfplay_sample(&selfplay);
+                    const char* next_opponent = selfplay_sample(&selfplay, bank->current_path);
                     long truncated = selfplay_atomic_rotate(
                         pufferl, b, next_opponent);
                     bank->swap_truncations += truncated;
