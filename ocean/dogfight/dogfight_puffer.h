@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #include "curriculum_mix.h"
+#include "dogfight_two_agent.h"
 
 #define PUFFER_ENV_GLOBAL_STEP
 #define PUFFER_ENV_CURRICULUM
@@ -22,6 +23,14 @@ static inline void dogfight_sync_agent_buffers(Env* env) {
     if (env->agents[0].observations == NULL) {
         return;
     }
+    if (env->num_agents == 2) {
+        assert(env->agents[1].observations != NULL);
+        assert(env->agents[1].actions != NULL);
+        assert(env->agents[1].rewards != NULL);
+        assert(env->agents[1].terminals != NULL);
+        dogfight_two_agent_bind_slots(env);
+        return;
+    }
     env->observations = (float*)env->agents[0].observations;
     env->actions = env->agents[0].actions;
     env->rewards = env->agents[0].rewards;
@@ -30,8 +39,9 @@ static inline void dogfight_sync_agent_buffers(Env* env) {
 
 void puf_init(Env* env, Dict* kwargs) {
     dogfight_bind_rng(&env->rng);
-    env->num_agents = (int)dogfight_dict_get(kwargs, "num_agents", 1);
-    assert(env->num_agents == 1 && "Phase 1 Dogfight supports num_agents=1");
+    env->num_agents = (int)dogfight_dict_get(kwargs, "num_agents", 2);
+    assert((env->num_agents == 1 || env->num_agents == 2)
+        && "Dogfight supports one legacy slot or two direct slots");
 
     env->max_steps = (int)dogfight_dict_get(kwargs, "max_steps", 300);
     env->configured_max_steps = env->max_steps;
@@ -71,7 +81,7 @@ void puf_init(Env* env, Dict* kwargs) {
 
     env->agents[0].policy = 0;
     env->agents[0].action_mask = NULL;
-    env->agents[1].policy = 1;
+    env->agents[1].policy = 0;
     env->agents[1].action_mask = NULL;
 
     init(env, obs_scheme, &reward_config, curriculum_enabled,
@@ -103,6 +113,13 @@ void puf_init(Env* env, Dict* kwargs) {
         kwargs, "domain_randomization", 0.0);
     env->vertical_spawn_prob = (float)dogfight_dict_get(
         kwargs, "vertical_spawn_prob", 0.0);
+    env->two_agent_reward_version = (int)dogfight_dict_get(
+        kwargs, "reward_version", 1);
+    assert(env->two_agent_reward_version == 1
+        && "Unsupported Dogfight two-agent reward version");
+    env->two_agent_role_randomization = (int)dogfight_dict_get(
+        kwargs, "role_randomization", 1);
+    env->two_agent_player_slot = 0;
 
     int recovery_enabled = (int)dogfight_dict_get(
         kwargs, "recovery_enabled", 1);
@@ -117,9 +134,10 @@ void puf_init(Env* env, Dict* kwargs) {
     env->recovery_bank_deg = (float)dogfight_dict_get(
         kwargs, "recovery_bank_deg", 60.0);
 
-    // Phase 1 always uses the internal scripted opponent.
+    // Phase 4 binds slot 1 directly. Explicit one-slot runs retain the
+    // internal scripted opponent for curriculum and regression compatibility.
     env->selfplay_active = 0;
-    env->use_opponent_override = 0;
+    env->use_opponent_override = env->num_agents == 2;
     env->opponent_observations = NULL;
     env->opponent_rewards = NULL;
 }
@@ -309,16 +327,35 @@ static inline void puf_curriculum_update(
 
 void puf_reset(Env* env) {
     dogfight_bind_rng(&env->rng);
-    dogfight_sync_agent_buffers(env);
+    if (env->num_agents == 2) {
+        dogfight_two_agent_select_roles(env);
+    } else {
+        dogfight_sync_agent_buffers(env);
+    }
     c_reset(env);
+    if (env->num_agents == 2) {
+        compute_opponent_observations(env, env->opponent_observations);
+    }
 }
 
 void puf_step(Env* env) {
     dogfight_bind_rng(&env->rng);
     dogfight_sync_agent_buffers(env);
-    env->rewards[0] = 0.0f;
-    env->terminals[0] = 0.0f;
-    c_step(env);
+    for (int i = 0; i < env->num_agents; i++) {
+        *env->agents[i].rewards = 0.0f;
+        *env->agents[i].terminals = 0.0f;
+    }
+    if (env->num_agents == 2) {
+        c_step_two_agent(env);
+    } else {
+        c_step(env);
+    }
+    if (env->num_agents == 2) {
+        if (*env->agents[0].terminals != 0.0f) {
+            *env->agents[1].terminals = *env->agents[0].terminals;
+        }
+        compute_opponent_observations(env, env->opponent_observations);
+    }
 }
 
 void puf_render(Env* env) {
@@ -333,6 +370,9 @@ void puf_close(Env* env) {
 void puf_log(Log* log, Dict* out) {
     dict_set(out, "perf", log->perf);
     dict_set(out, "score", log->score);
+    dict_set(out, "slot_0_score", log->slot_0_score);
+    dict_set(out, "slot_1_score", log->slot_1_score);
+    dict_set(out, "draw_rate", log->draw_rate);
     dict_set(out, "episode_return", log->episode_return);
     dict_set(out, "episode_length", log->episode_length);
     dict_set(out, "shots_fired", log->shots_fired);

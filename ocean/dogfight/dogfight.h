@@ -166,6 +166,9 @@ typedef struct Log {
     float perf;            // Raw kills (becomes kill_rate after vec_log divides by n)
     float sp_player_kills; // Self-play only: player kills (TUI shows P:## O:##)
     float sp_opp_kills;    // Self-play only: opponent kills
+    float slot_0_score;    // Logical slot 0: win=1, draw=0.5, loss=0
+    float slot_1_score;    // Logical slot 1: win=1, draw=0.5, loss=0
+    float draw_rate;       // Raw draw count; vec log normalization makes a rate
     float shots_fired;
     float accuracy;
     float stage;
@@ -376,6 +379,14 @@ typedef struct Env {
     float prev_elevator;  // Previous elevator for rate penalty
     float prev_aileron;   // Previous aileron for rate penalty
     float prev_rudder;    // Previous rudder for rate penalty
+    // Phase 4 direct two-agent reward state. Kept separate so the proven
+    // one-agent curriculum path retains its exact legacy reward behavior.
+    int two_agent_reward_version;
+    int two_agent_role_randomization;
+    int two_agent_player_slot;
+    float two_agent_prev_controls[2][3];
+    float two_agent_episode_returns[2];
+    float two_agent_episode_shots[2];
     // Late-training debug logging (activated when global_step >= debug_trigger_step)
     long global_step;           // Current training step (set by Python each tick)
     long debug_trigger_step;    // Start logging when global_step >= this value

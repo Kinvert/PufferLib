@@ -38,6 +38,7 @@ TESTS = [
         marks=pytest.mark.skip(reason="Phase 2 curriculum contract"),
     ),
     "test_curriculum_stage_geometry",
+    "test_two_agent_adapter",
 ]
 
 
