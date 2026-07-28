@@ -1118,6 +1118,62 @@ void vec_log(VecEnv* vec, Dict* out, int clear) {
     dict_clear(&env_out);
 }
 
+#ifndef PUFFER_GPU_ENV
+// Aggregate one self-play cohort without clearing the underlying environment
+// logs. Call this before the main vec_log(..., clear=1) aggregation.
+void vec_log_tagged(VecEnv* vec, Dict* out, int tag, const char* prefix) {
+    Log aggregate = {0};
+    int num_keys = (int)(sizeof(Log) / sizeof(float));
+    float* acc = (float*)&aggregate;
+    for (int i = 0; i < vec->size; i++) {
+        Env* env = &vec->envs[i];
+        if (env->tag != tag || env->log.n == 0.0f) {
+            continue;
+        }
+        float* values = (float*)&env->log;
+        for (int j = 0; j < num_keys; j++) {
+            acc[j] += values[j];
+        }
+    }
+
+    float n = aggregate.n;
+    Dict cohort = {0};
+    if (n > 0.0f) {
+        for (int j = 0; j < num_keys; j++) {
+            acc[j] /= n;
+        }
+        puf_log(&aggregate, &cohort);
+    }
+    dict_set(&cohort, "n", n);
+    for (int i = 0; i < cohort.size; i++) {
+        char key[256];
+        snprintf(key, sizeof(key), "%s/%s", prefix, cohort.items[i].key);
+        dict_set(out, key, cohort.items[i].value);
+    }
+    dict_clear(&cohort);
+}
+
+static double selfplay_metric_or_zero(Dict* log, const char* key) {
+    DictItem* item = dict_find(log, key);
+    return item ? item->value : 0.0;
+}
+
+void print_selfplay_cohort_metrics(Dict* log) {
+    printf(
+        "selfplay/metrics "
+        "current_n=%.0f current_slot0=%.3f current_slot1=%.3f current_draw=%.3f "
+        "history_n=%.0f learner_slot0=%.3f history_slot1=%.3f history_draw=%.3f\n",
+        selfplay_metric_or_zero(log, "selfplay/current_vs_current/n"),
+        selfplay_metric_or_zero(log, "selfplay/current_vs_current/slot_0_score"),
+        selfplay_metric_or_zero(log, "selfplay/current_vs_current/slot_1_score"),
+        selfplay_metric_or_zero(log, "selfplay/current_vs_current/draw_rate"),
+        selfplay_metric_or_zero(log, "selfplay/current_vs_history/n"),
+        selfplay_metric_or_zero(log, "selfplay/current_vs_history/slot_0_score"),
+        selfplay_metric_or_zero(log, "selfplay/current_vs_history/slot_1_score"),
+        selfplay_metric_or_zero(log, "selfplay/current_vs_history/draw_rate"));
+}
+#endif
+
 // Cooperative row copy (int4 when 16-byte aligned).
 __device__ void copy_bytes(
         const char* src, char* dst,
@@ -2698,6 +2754,7 @@ typedef struct {
     unsigned int rng;
     char (*pool)[SELFPLAY_PATH_MAX];
     int pool_size;
+    int current_envs;
     SelfplayBank banks[SELFPLAY_MAX_BANKS];
 } Selfplay;
 
@@ -3362,6 +3419,8 @@ TrainResult run_train(Ini* ini, TrainContext* ctx) {
             int tag = envs[i].tag;
             if (tag > 0 && tag <= selfplay.num_banks) {
                 selfplay.banks[tag - 1].num_envs++;
+            } else {
+                selfplay.current_envs++;
             }
         }
 #endif
@@ -3504,6 +3563,15 @@ TrainResult run_train(Ini* ini, TrainContext* ctx) {
             dict_set(&last_log, "pool/num_banks", selfplay.num_banks);
             dict_set(&last_log, "pool/swap_truncations",
                 total_swap_truncations);
+            dict_set(&last_log, "pool/current_vs_current_battles",
+                selfplay.current_envs);
+            dict_set(&last_log, "pool/current_vs_history_battles",
+                selfplay.banks[0].num_envs);
+            int current_rows = pufferl->vec->bank_layout[1]
+                * pufferl->vec->buffers;
+            dict_set(&last_log, "pool/current_trainable_rows", current_rows);
+            dict_set(&last_log, "pool/frozen_rows",
+                pufferl->vec->total_agents - current_rows);
         }
 #endif
         if (!is_eval && last_log.size &&
@@ -3529,6 +3597,17 @@ TrainResult run_train(Ini* ini, TrainContext* ctx) {
             dict_set(&new_log, "uptime", now - pufferl->start_time);
             dict_set(&new_log, "epoch", (double)pufferl->epoch);
 
+#ifndef PUFFER_GPU_ENV
+            if (use_selfplay) {
+                vec_log_tagged(pufferl->vec, &new_log, 0,
+                    "selfplay/current_vs_current");
+                vec_log_tagged(pufferl->vec, &new_log, 1,
+                    "selfplay/current_vs_history");
+                if (ctx->artifact_owner) {
+                    print_selfplay_cohort_metrics(&new_log);
+                }
+            }
+#endif
             vec_log(pufferl->vec, &new_log, 1);
 #ifdef PUFFER_ENV_CURRICULUM
             puf_curriculum_update(
