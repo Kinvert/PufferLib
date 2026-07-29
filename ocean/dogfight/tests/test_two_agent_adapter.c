@@ -188,7 +188,7 @@ static int test_terminal_pulse_and_reset_observations_cover_both_slots(void) {
         fprintf(stderr, "terminal pulse did not cover both slots\n");
         return 1;
     }
-    if (!closef(t.rewards[0], -1.0f) || !closef(t.rewards[1], 0.25f)) {
+    if (!closef(t.rewards[0], -1.0f) || !closef(t.rewards[1], 1.0f)) {
         fprintf(stderr, "two-slot crash reward mismatch: %.3f %.3f\n",
             t.rewards[0], t.rewards[1]);
         return 1;
@@ -269,10 +269,42 @@ static int test_simultaneous_crashes_are_an_order_invariant_draw(void) {
         fprintf(stderr, "simultaneous crash did not terminate both slots\n");
         return 1;
     }
-    if (!closef(t.rewards[0], -1.0f)
-            || !closef(t.rewards[1], -1.0f)) {
+    if (!closef(t.rewards[0], 0.0f)
+            || !closef(t.rewards[1], 0.0f)) {
         fprintf(stderr, "simultaneous crash was order-biased: %.3f %.3f\n",
             t.rewards[0], t.rewards[1]);
+        return 1;
+    }
+    return 0;
+}
+
+static int test_timeout_is_a_zero_reward_draw(void) {
+    DualEnv t;
+    setup_dual(&t);
+    t.env.tick = t.env.max_steps - 1;
+    t.actions[0][4] = -1.0f;
+    t.actions[1][4] = -1.0f;
+
+    puf_step(&t.env);
+
+    if (t.terminals[0] != 1.0f || t.terminals[1] != 1.0f
+            || !closef(t.rewards[0], 0.0f)
+            || !closef(t.rewards[1], 0.0f)) {
+        fprintf(stderr,
+            "timeout was not a joint zero-reward terminal: "
+            "term=%.1f/%.1f reward=%.3f/%.3f\n",
+            t.terminals[0], t.terminals[1],
+            t.rewards[0], t.rewards[1]);
+        return 1;
+    }
+    if (!closef(t.env.log.slot_0_score, 0.5f)
+            || !closef(t.env.log.slot_1_score, 0.5f)
+            || !closef(t.env.log.draw_rate, 1.0f)
+            || !closef(t.env.log.timeouts, 1.0f)
+            || !closef(
+                t.env.log.slot_0_score + t.env.log.slot_1_score, 1.0f)) {
+        fprintf(stderr,
+            "timeout score did not conserve one match credit\n");
         return 1;
     }
     return 0;
@@ -396,6 +428,8 @@ static int test_logical_slot_scores_follow_role_assignment(void) {
     }
     if (!closef(t.env.log.slot_0_score, 0.0f)
             || !closef(t.env.log.slot_1_score, 1.0f)
+            || !closef(
+                t.env.log.slot_0_score + t.env.log.slot_1_score, 1.0f)
             || !closef(t.env.log.draw_rate, 0.0f)) {
         fprintf(stderr, "logical slot score routing failed\n");
         return 1;
@@ -489,6 +523,7 @@ int main(void) {
     failures += test_terminal_pulse_and_reset_observations_cover_both_slots();
     failures += test_simultaneous_hits_are_an_order_invariant_draw();
     failures += test_simultaneous_crashes_are_an_order_invariant_draw();
+    failures += test_timeout_is_a_zero_reward_draw();
     failures += test_fire_cooldowns_are_identical();
     failures += test_swapping_roles_swaps_dense_rewards();
     failures += test_logical_role_assignment_routes_observations_and_actions();

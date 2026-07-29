@@ -133,6 +133,7 @@ static int test_terminal_timeout_matches_df36_fixture(void) {
             !nearly(t.env.log.base_stage_eps, 1.0f, 1e-6f) ||
             !nearly(t.env.log.player_ground_hits, 0.0f, 1e-6f) ||
             !nearly(t.env.log.opponent_ground_hits, 0.0f, 1e-6f) ||
+            !nearly(t.env.log.timeouts, 1.0f, 1e-6f) ||
             !nearly(t.env.log.clean_fights, 0.0f, 1e-6f) ||
             !nearly(t.env.log.n, 1.0f, 1e-6f) ||
             !nearly(t.env.log.kill_rate, 0.0f, 1e-6f) ||

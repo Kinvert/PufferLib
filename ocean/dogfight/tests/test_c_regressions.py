@@ -39,11 +39,13 @@ TESTS = [
     ),
     "test_curriculum_stage_geometry",
     "test_curriculum_reset_selection",
+    "test_native_selfplay_spawn",
     "test_two_agent_adapter",
     "test_two_agent_aileron_penalty",
     "test_two_agent_competitive_reward",
     "test_two_agent_bootstrap",
     "test_two_agent_lateral_symmetry",
+    "test_fixed_eval_mirror",
 ]
 
 

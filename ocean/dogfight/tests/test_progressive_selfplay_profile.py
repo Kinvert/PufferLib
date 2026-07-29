@@ -1,3 +1,4 @@
+import configparser
 from pathlib import Path
 import subprocess
 
@@ -21,24 +22,36 @@ def test_progressive_profile_composes_native_selfplay_defaults():
 
     assert result.returncode == 0, result.stderr
     command = result.stdout
-    tokens = command.split()
-    assert "selfplay.mode=vanilla" in command
-    assert "selfplay.enabled=1" in command
+    assert "--wandb --wandb-project=df42" in command
     assert "vec.total_agents=16384" in command
-    assert "vec.frozen_bank_pct=0.1" in command
-    assert "env.num_agents=2" in command
-    assert "env.curriculum_enabled=1" in command
-    assert "env.curriculum_randomize=0" in command
-    assert "env.curriculum_target=0.9" in command
-    assert "env.fixed_stage=-1" in command
-    assert "env.max_stage=20" in command
     assert "env.global_step_stride=16384" in command
     assert "env.curriculum_total_steps=134217728" in command
+    assert len(command.split()) <= 13
 
-    assert "env.curriculum_enabled=0" not in tokens
-    assert "env.curriculum_target=0" not in tokens
-    assert "env.fixed_stage=0" not in tokens
-    assert "env.max_stage=0" not in tokens
+    config = configparser.ConfigParser()
+    config.read(DOGFIGHT_DIR.parents[1] / "config" / "dogfight.ini")
+    assert config["base"]["wandb_project"] == "df42"
+    assert config["selfplay"]["mode"] == "vanilla"
+    assert config["selfplay"]["enabled"] == "1"
+    assert config["vec"]["frozen_bank_pct"] == "0.1"
+    assert config["env"]["num_agents"] == "2"
+    assert config["env"]["curriculum_enabled"] == "1"
+    assert config["env"]["curriculum_randomize"] == "0"
+    assert config["env"]["curriculum_target"] == "0"
+    assert config["env"]["fixed_stage"] == "0"
+    assert config["env"]["max_stage"] == "10"
+    assert config["env"]["native_spawn_curriculum"] == "1"
+    assert config["env"]["native_acquisition_steps"] == "134217728"
+    assert config["env"]["native_acquisition_reward_scale"] == "1.0"
+    assert config["env"]["native_acquisition_neutral_scale"] == "0.1"
+    assert config["env"]["native_acquisition_rehearsal_cycle_steps"] == "134217728"
+    assert config["env"]["native_acquisition_rehearsal_steps"] == "0"
+    assert config["env"]["native_spawn_total_steps"] == "12_079_595_520"
+    assert config["env"]["native_frontier_fraction"] == "0.50"
+    assert config["train"]["total_timesteps"] == "12_079_595_520"
+    assert len(config["sweep"]["sweep_only"].split(",")) <= 31
+    assert config["env"]["steering_alignment_scale"] == "0.01"
+    assert config["train"]["ent_coef"] == "0.0001"
 
 
 def test_progressive_profile_preserves_base_validation():

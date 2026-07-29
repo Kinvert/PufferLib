@@ -193,6 +193,7 @@ typedef struct Log {
     float opponent_ground_hits;     // Opponent crashed into ground
     float recovery_triggers;        // Recovery hijacking activated
     float clean_fights;             // Episodes ending in kills or timeouts (not crashes)
+    float timeouts;                 // Episodes ending at the time limit
     float altitude_kills;           // Kills from forcing opponent crash at safe altitude
 
     // PER-ENV RATIOS - for C debugging only, NOT exported (garbage after vec_log aggregation)
@@ -410,6 +411,8 @@ typedef struct Env {
     float prev_rel_dot;                  // Previous dot(rel_pos, rel_vel) for detecting pass
     // Eval spawn mode: 0 = random (default), 1 = opponent_advantage (for testing opponent kill)
     int eval_spawn_mode;
+    // Exact fixed-stage lateral reflection for paired evaluation (0/1).
+    int eval_lateral_mirror;
     // Previous actions for control rate penalty
     float prev_elevator;  // Previous elevator for rate penalty
     float prev_aileron;   // Previous aileron for rate penalty
@@ -417,11 +420,20 @@ typedef struct Env {
     // Phase 4 direct two-agent reward state. Kept separate so the proven
     // one-agent curriculum path retains its exact legacy reward behavior.
     int two_agent_reward_version;
+    float two_agent_steering_alignment_scale;
     int two_agent_role_randomization;
     int two_agent_player_slot;
     long two_agent_bootstrap_steps;
     float two_agent_bootstrap_imitation_scale;
     int two_agent_scripted_episode;
+    int native_spawn_curriculum;
+    long native_acquisition_steps;
+    float native_acquisition_reward_scale;
+    float native_acquisition_neutral_scale;
+    long native_acquisition_rehearsal_cycle_steps;
+    long native_acquisition_rehearsal_steps;
+    long native_spawn_total_steps;
+    float native_frontier_fraction;
     float two_agent_prev_controls[2][3];
     float two_agent_episode_returns[2];
     float two_agent_episode_shots[2];
@@ -535,9 +547,18 @@ void init(Dogfight *env, int obs_scheme, RewardConfig *rcfg, int curriculum_enab
 
     // Eval spawn mode: 0 = random (default)
     env->eval_spawn_mode = 0;
+    env->eval_lateral_mirror = 0;
 
     // Late-training debug logging: disabled by default
     env->global_step = 0;
+    env->native_spawn_curriculum = 0;
+    env->native_acquisition_steps = 0;
+    env->native_acquisition_reward_scale = 1.0f;
+    env->native_acquisition_neutral_scale = 0.1f;
+    env->native_acquisition_rehearsal_cycle_steps = 0;
+    env->native_acquisition_rehearsal_steps = 0;
+    env->native_spawn_total_steps = 536870912;
+    env->native_frontier_fraction = 0.75f;
     env->debug_trigger_step = 0;
     env->debug_log_file = NULL;
     env->debug_log_initialized = 0;
@@ -797,6 +818,7 @@ void add_log(Dogfight *env) {
         env->log.clean_fights += is_clean ? 1.0f : 0.0f;
     }
     // During curriculum: clean_fights stays at 0, so ultimate2 = 0
+    env->log.timeouts += env->death_reason == DEATH_TIMEOUT ? 1.0f : 0.0f;
 
     env->log.n += 1.0f;
     env->log.kill_rate = env->log.perf / fmaxf(env->log.n, 1.0f);
@@ -1001,6 +1023,8 @@ void c_reset(Dogfight *env) {
     } else {
         spawn_legacy(env, pos, vel);
     }
+
+    dogfight_apply_fixed_eval_mirror(env);
 
     if (DEBUG >= 10) printf("=== RESET ===\n");
     if (DEBUG >= 10) printf("kill=%d, episode_shots_fired=%.0f (now cleared)\n", env->kill, env->episode_shots_fired);

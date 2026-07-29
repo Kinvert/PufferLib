@@ -1485,6 +1485,100 @@ static void spawn_eval_midfight(Dogfight *env, Vec3 player_pos, Vec3 player_vel)
     }
 }
 
+// Training-only spawn progression for native two-agent self-play. Fixed-stage
+// one-agent evaluation intentionally continues through the legacy curriculum
+// spawners below, so training geometry cannot redefine the acceptance oracle.
+static void spawn_native_selfplay_progressive(
+        Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
+    long selfplay_step = env->global_step - env->native_acquisition_steps;
+    if (selfplay_step < 0) {
+        selfplay_step = 0;
+    }
+    double progress = (double)selfplay_step
+        / (double)env->native_spawn_total_steps;
+    progress = fmax(0.0, fmin(1.0, progress));
+
+    int frontier = (int)floor(progress * 11.0);
+    if (frontier > 10) {
+        frontier = 10;
+    }
+
+    // Keep the configured fraction of matches at the frontier and rehearse
+    // an earlier level in the remainder while the frontier advances. Once the
+    // configured
+    // progression is complete, use a uniform stage mixture to consolidate
+    // fixed-scenario mastery instead of overtraining only stage 10.
+    int level;
+    if (selfplay_step >= env->native_spawn_total_steps) {
+        level = (int)(dogfight_rand() % 11U);
+    } else {
+        level = frontier;
+        if (frontier > 0) {
+            double frontier_draw = (double)dogfight_rand()
+                / ((double)RAND_MAX + 1.0);
+            if (frontier_draw >= env->native_frontier_fraction) {
+                level = (int)(dogfight_rand() % (uint32_t)frontier);
+            }
+        }
+    }
+    env->stage = (CurriculumStage)level;
+
+    // Reuse the exact fixed-curriculum spawn distributions so native training
+    // cannot silently optimize for geometry absent from the acceptance oracle.
+    // Both aircraft remain policy-controlled: the two-agent step path ignores
+    // the legacy spawners' opponent autopilot metadata.
+    STAGES[level].spawn(env, player_pos, player_vel);
+    if (level >= CURRICULUM_SIDE_FAR) {
+        env->max_steps = STAGES[level].max_steps;
+    }
+    env->head_on_lockout = 0;
+    env->prev_rel_dot = 0.0f;
+}
+
+static inline Vec3 dogfight_lateral_mirror_vec(Vec3 value) {
+    return vec3(value.x, -value.y, value.z);
+}
+
+static inline Quat dogfight_lateral_mirror_quat(Quat value) {
+    return (Quat){
+        .w = value.w,
+        .x = -value.x,
+        .y = value.y,
+        .z = -value.z,
+    };
+}
+
+static inline void dogfight_lateral_mirror_plane(Plane* plane) {
+    plane->pos = dogfight_lateral_mirror_vec(plane->pos);
+    plane->vel = dogfight_lateral_mirror_vec(plane->vel);
+    plane->prev_vel = dogfight_lateral_mirror_vec(plane->prev_vel);
+    plane->ori = dogfight_lateral_mirror_quat(plane->ori);
+    plane->omega = vec3(-plane->omega.x, plane->omega.y, -plane->omega.z);
+}
+
+static inline AutopilotMode dogfight_lateral_mirror_ap_mode(
+        AutopilotMode mode) {
+    if (mode == AP_TURN_LEFT) return AP_TURN_RIGHT;
+    if (mode == AP_TURN_RIGHT) return AP_TURN_LEFT;
+    if (mode == AP_HARD_TURN_LEFT) return AP_HARD_TURN_RIGHT;
+    if (mode == AP_HARD_TURN_RIGHT) return AP_HARD_TURN_LEFT;
+    return mode;
+}
+
+static inline void dogfight_apply_fixed_eval_mirror(Dogfight* env) {
+    if (!env->eval_lateral_mirror
+            || env->curriculum_randomize
+            || env->local_curriculum.fixed_stage < 0
+            || env->stage < CURRICULUM_TAIL_CHASE
+            || env->stage > CURRICULUM_DIVE_ATTACK) {
+        return;
+    }
+    dogfight_lateral_mirror_plane(&env->player);
+    dogfight_lateral_mirror_plane(&env->opponent);
+    env->opponent_ap.mode =
+        dogfight_lateral_mirror_ap_mode(env->opponent_ap.mode);
+}
+
 // Master spawn function: dispatches to stage-specific spawner
 void spawn_by_curriculum(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
     env->vertical_spawn_used = 0;  // Clear flag (set by vertical spawn intercept)
@@ -1506,6 +1600,11 @@ void spawn_by_curriculum(Dogfight *env, Vec3 player_pos, Vec3 player_vel) {
         }
         // Eval mode uses stage 20 (AutoAce) max_steps for fair combat duration
         env->max_steps = STAGES[CURRICULUM_AUTOACE].max_steps;  // 6000
+        return;
+    }
+
+    if (env->num_agents == 2 && env->native_spawn_curriculum) {
+        spawn_native_selfplay_progressive(env, player_pos, player_vel);
         return;
     }
 

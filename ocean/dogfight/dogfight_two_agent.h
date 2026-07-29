@@ -99,6 +99,88 @@ static inline float dogfight_two_agent_flight_school_reward(
         -1.0f, 1.0f);
 }
 
+static inline float dogfight_two_agent_steering_alignment_reward(
+        float observed_target_azimuth,
+        float aileron,
+        float scale) {
+    float desired_aileron = observed_target_azimuth < -1.0e-4f
+        ? 1.0f
+        : (observed_target_azimuth > 1.0e-4f ? -1.0f : 0.0f);
+    return scale * desired_aileron * clampf(aileron, -1.0f, 1.0f);
+}
+
+static inline float dogfight_two_agent_steering_scale_for_stage(
+        float configured_scale, int stage) {
+    float difficulty = clampf((float)stage / 10.0f, 0.0f, 1.0f);
+    return configured_scale * (1.0f - difficulty);
+}
+
+static inline float dogfight_two_agent_publish_steering_reward(
+        float competitive_reward,
+        float observed_target_azimuth,
+        float aileron,
+        float steering_scale) {
+    return clampf(
+        competitive_reward + dogfight_two_agent_steering_alignment_reward(
+            observed_target_azimuth, aileron, steering_scale),
+        -1.0f,
+        1.0f);
+}
+
+static inline bool dogfight_two_agent_in_native_acquisition(
+        const Dogfight* env) {
+    if (!env->native_spawn_curriculum) {
+        return false;
+    }
+    if (env->native_acquisition_steps > 0
+            && env->global_step < env->native_acquisition_steps) {
+        return true;
+    }
+    if (env->native_acquisition_rehearsal_cycle_steps <= 0
+            || env->native_acquisition_rehearsal_steps <= 0
+            || env->native_acquisition_rehearsal_steps
+                >= env->native_acquisition_rehearsal_cycle_steps) {
+        return false;
+    }
+    long selfplay_step = env->global_step - env->native_acquisition_steps;
+    if (selfplay_step < 0) {
+        return false;
+    }
+    long cycle_step =
+        selfplay_step % env->native_acquisition_rehearsal_cycle_steps;
+    return cycle_step >= env->native_acquisition_rehearsal_cycle_steps
+        - env->native_acquisition_rehearsal_steps;
+}
+
+static inline float dogfight_two_agent_native_acquisition_reward(
+        float observed_target_azimuth,
+        const float actions[NUM_ATNS],
+        float scale,
+        float neutral_control_scale) {
+    // This is an environment reward, not imitation: no policy, controller,
+    // trajectory, or action label is queried. Mirrored target geometry defines
+    // the control objective directly. One-decision episodes make its credit
+    // causal before normal competitive self-play starts. Aileron remains the
+    // dominant contextual target, while neutral throttle/elevator/rudder raw
+    // inputs anchor the other control means to stable half-throttle flight.
+    float desired_aileron = observed_target_azimuth < -1.0e-4f
+        ? 1.0f
+        : (observed_target_azimuth > 1.0e-4f ? -1.0f : 0.0f);
+    float aileron_error =
+        clampf(actions[2], -1.0f, 1.0f) - desired_aileron;
+    float neutral_control_penalty =
+        actions[0] * actions[0]
+        + actions[1] * actions[1]
+        + actions[3] * actions[3];
+    return clampf(
+        scale * (
+            1.0f
+            - 0.5f * aileron_error * aileron_error
+            - neutral_control_scale * neutral_control_penalty),
+        -1.0f,
+        1.0f);
+}
+
 static inline float dogfight_two_agent_dense_reward(
         Dogfight* env,
         const Plane* self,
@@ -246,6 +328,47 @@ static inline void c_step_two_agent(Dogfight* env) {
         }
     }
 
+    if (dogfight_two_agent_in_native_acquisition(env)) {
+        float neutral_control_scale =
+            env->global_step < env->native_acquisition_steps
+            ? env->native_acquisition_neutral_scale
+            : 0.0f;
+        float acquisition_rewards[2] = {
+            dogfight_two_agent_native_acquisition_reward(
+                env->observations[13],
+                actions[0],
+                env->native_acquisition_reward_scale,
+                neutral_control_scale),
+            dogfight_two_agent_native_acquisition_reward(
+                env->opponent_observations[13],
+                actions[1],
+                env->native_acquisition_reward_scale,
+                neutral_control_scale),
+        };
+        env->total_aileron_usage += fabsf(actions[0][2]);
+        env->aileron_bias += actions[0][2];
+        if (env->observations[13] < -1.0e-4f) {
+            env->target_az_neg_aileron_sum += actions[0][2];
+            env->target_az_neg_steps++;
+        } else if (env->observations[13] > 1.0e-4f) {
+            env->target_az_pos_aileron_sum += actions[0][2];
+            env->target_az_pos_steps++;
+        }
+        memcpy(
+            env->last_opp_actions,
+            actions[1],
+            NUM_ATNS * sizeof(float));
+        env->tick++;
+        dogfight_two_agent_finish(
+            env,
+            acquisition_rewards[0],
+            acquisition_rewards[1],
+            DEATH_TIMEOUT,
+            0,
+            1);
+        return;
+    }
+
     if (env->two_agent_scripted_episode) {
         dogfight_two_agent_pursuit_teacher_actions(
             env, planes[0], planes[1], teacher_actions[0]);
@@ -371,16 +494,13 @@ static inline void c_step_two_agent(Dogfight* env) {
         int winner = dead[0] == dead[1] ? 0 : (dead[1] ? 1 : -1);
         float terminal_rewards[2];
         if (dead[0] && dead[1]) {
-            bool clean_mutual_kill = hit[0] && hit[1]
-                && !crashed[0] && !crashed[1]
-                && !supersonic[0] && !supersonic[1];
-            terminal_rewards[0] = clean_mutual_kill ? 0.0f : -1.0f;
-            terminal_rewards[1] = clean_mutual_kill ? 0.0f : -1.0f;
+            terminal_rewards[0] = 0.0f;
+            terminal_rewards[1] = 0.0f;
         } else if (dead[0]) {
             terminal_rewards[0] = -1.0f;
-            terminal_rewards[1] = hit[1] ? 1.0f : 0.25f;
+            terminal_rewards[1] = 1.0f;
         } else {
-            terminal_rewards[0] = hit[0] ? 1.0f : 0.25f;
+            terminal_rewards[0] = 1.0f;
             terminal_rewards[1] = -1.0f;
         }
         dogfight_two_agent_finish(
@@ -395,7 +515,7 @@ static inline void c_step_two_agent(Dogfight* env) {
 
     if (env->tick >= env->max_steps) {
         dogfight_two_agent_finish(
-            env, -0.5f, -0.5f, DEATH_TIMEOUT, 0, 1);
+            env, 0.0f, 0.0f, DEATH_TIMEOUT, 0, 1);
         return;
     }
 
@@ -418,6 +538,19 @@ static inline void c_step_two_agent(Dogfight* env) {
         env->two_agent_reward_version,
         dense_rewards,
         published_rewards);
+    float steering_scale = dogfight_two_agent_steering_scale_for_stage(
+        env->two_agent_steering_alignment_scale,
+        env->stage);
+    published_rewards[0] = dogfight_two_agent_publish_steering_reward(
+        published_rewards[0],
+        env->observations[13],
+        actions[0][2],
+        steering_scale);
+    published_rewards[1] = dogfight_two_agent_publish_steering_reward(
+        published_rewards[1],
+        env->opponent_observations[13],
+        actions[1][2],
+        steering_scale);
     env->rewards[0] = published_rewards[0];
     env->opponent_rewards[0] = published_rewards[1];
     env->two_agent_episode_returns[0] += published_rewards[0];

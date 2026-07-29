@@ -82,6 +82,31 @@ Do not accept a phase when flight tests regress, an aircraft develops a stuck or
 biased control, deterministic behavior changes without explanation, or visible
 flight becomes materially worse.
 
+## Unattended Execution Contract
+
+Overnight or otherwise unattended work must remain independent and must not
+depend on the user approving new commands:
+
+- Put stable experiment settings in `config/dogfight.ini`. Do not encode the
+  experiment as a fragile command containing dozens or hundreds of overrides.
+- Keep launch scripts short and auditable. Command-line arguments should be
+  limited to genuinely run-specific values such as run ID, seed, duration, and
+  checkpoint path.
+- Prefer existing local scripts and already approved command forms. Before
+  beginning a long unattended loop, arrange the commands so that builds, tests,
+  training, and headless evaluation can proceed without further approval.
+- Do not require network access, dependency installation, writes outside the
+  workspace, or GUI access during an unattended run.
+- Do not run `DISPLAY=:0` while the user is unavailable. Prepare and document the
+  exact visible-evaluation command, then defer the human flight gate until the
+  user can watch it.
+- If an optional diagnostic would require approval, skip it and continue with
+  the strongest approved local evidence. Do not let an avoidable approval prompt
+  stall the entire experiment.
+- Preserve reproducibility despite short commands: retain the resolved INI,
+  exact seed, run ID, checkpoint, source commit, and measured results for every
+  accepted run.
+
 ## Measurement Contract
 
 - Report PufferLib's end-to-end `agent SPS` after warm-up.

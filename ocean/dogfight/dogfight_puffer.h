@@ -134,6 +134,10 @@ void puf_init(Env* env, Dict* kwargs) {
 
     env->eval_spawn_mode = (int)dogfight_dict_get(
         kwargs, "eval_spawn_mode", 0);
+    env->eval_lateral_mirror = (int)dogfight_dict_get(
+        kwargs, "eval_lateral_mirror", 0);
+    assert((env->eval_lateral_mirror == 0 || env->eval_lateral_mirror == 1)
+        && "eval_lateral_mirror must be 0 or 1");
     env->domain_randomization = (float)dogfight_dict_get(
         kwargs, "domain_randomization", 0.0);
     env->vertical_spawn_prob = (float)dogfight_dict_get(
@@ -143,6 +147,9 @@ void puf_init(Env* env, Dict* kwargs) {
     assert((env->two_agent_reward_version == 1
             || env->two_agent_reward_version == 2)
         && "Unsupported Dogfight two-agent reward version");
+    env->two_agent_steering_alignment_scale = (float)dogfight_dict_get(
+        kwargs, "steering_alignment_scale", 0.0);
+    assert(env->two_agent_steering_alignment_scale >= 0.0f);
     env->two_agent_role_randomization = (int)dogfight_dict_get(
         kwargs, "role_randomization", 1);
     env->two_agent_player_slot = 0;
@@ -153,6 +160,35 @@ void puf_init(Env* env, Dict* kwargs) {
         kwargs, "selfplay_bootstrap_imitation_scale", 0);
     assert(env->two_agent_bootstrap_imitation_scale >= 0.0f);
     env->two_agent_scripted_episode = 0;
+    env->native_spawn_curriculum = (int)dogfight_dict_get(
+        kwargs, "native_spawn_curriculum", 0);
+    env->native_acquisition_steps = (long)dogfight_dict_get(
+        kwargs, "native_acquisition_steps", 0);
+    assert(env->native_acquisition_steps >= 0);
+    env->native_acquisition_reward_scale = (float)dogfight_dict_get(
+        kwargs, "native_acquisition_reward_scale", 1.0);
+    assert(env->native_acquisition_reward_scale >= 0.0f);
+    env->native_acquisition_neutral_scale = (float)dogfight_dict_get(
+        kwargs, "native_acquisition_neutral_scale", 0.1);
+    assert(env->native_acquisition_neutral_scale >= 0.0f);
+    env->native_acquisition_rehearsal_cycle_steps = (long)dogfight_dict_get(
+        kwargs, "native_acquisition_rehearsal_cycle_steps", 0);
+    env->native_acquisition_rehearsal_steps = (long)dogfight_dict_get(
+        kwargs, "native_acquisition_rehearsal_steps", 0);
+    assert(env->native_acquisition_rehearsal_cycle_steps >= 0);
+    assert(env->native_acquisition_rehearsal_steps >= 0);
+    assert(env->native_acquisition_rehearsal_steps == 0
+        || env->native_acquisition_rehearsal_steps
+            < env->native_acquisition_rehearsal_cycle_steps);
+    env->native_spawn_total_steps = (long)dogfight_dict_get(
+        kwargs, "native_spawn_total_steps", 536870912);
+    if (env->native_spawn_total_steps < 1) {
+        env->native_spawn_total_steps = 1;
+    }
+    env->native_frontier_fraction = (float)dogfight_dict_get(
+        kwargs, "native_frontier_fraction", 0.75);
+    assert(env->native_frontier_fraction >= 0.0f);
+    assert(env->native_frontier_fraction <= 1.0f);
 
     int recovery_enabled = (int)dogfight_dict_get(
         kwargs, "recovery_enabled", 1);
@@ -447,6 +483,7 @@ void puf_log(Log* log, Dict* out) {
     dict_set(out, "opponent_ground", log->opponent_ground_hits);
     dict_set(out, "recovery_triggers", log->recovery_triggers);
     dict_set(out, "clean_fights", log->clean_fights);
+    dict_set(out, "timeouts", log->timeouts);
     dict_set(out, "altitude_kills", log->altitude_kills);
     dict_set(out, "n", log->n);
 }

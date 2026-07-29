@@ -80,6 +80,12 @@ prepare_source() {
             print "                az_neg_steps > 0.0 ? az_neg_sum / az_neg_steps : 0.0,"
             print "                az_pos_steps > 0.0 ? az_pos_sum / az_pos_steps : 0.0,"
             print "                az_neg_steps, az_pos_steps);"
+            print "            printf(\"dogfight_eval_outcomes perf=%.6f score=%.6f timeouts=%.6f player_ground_hits=%.6f opponent_ground_hits=%.6f\\n\","
+            print "                dict_get(&log, \"env/perf\"),"
+            print "                dict_get(&log, \"env/score\"),"
+            print "                dict_get(&log, \"env/timeouts\"),"
+            print "                dict_get(&log, \"env/player_ground\"),"
+            print "                dict_get(&log, \"env/opponent_ground\"));"
             next
         }
         { print }

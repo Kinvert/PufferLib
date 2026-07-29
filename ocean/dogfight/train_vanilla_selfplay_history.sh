@@ -44,28 +44,10 @@ base_command="$(
 )"
 read -r -a command <<< "$base_command"
 
-replace_exact() {
-    local from="$1"
-    local to="$2"
-    local found=0
-    local i
-
-    for i in "${!command[@]}"; do
-        if [[ "${command[$i]}" == "$from" ]]; then
-            command[$i]="$to"
-            found=1
-        fi
-    done
-
-    if (( found == 0 )); then
-        echo "expected base profile token not found: $from" >&2
-        exit 1
-    fi
-}
-
-replace_exact "vec.frozen_bank_pct=0.1" \
+command+=(
     "vec.frozen_bank_pct=$frozen_fraction"
-replace_exact "selfplay.max_size=8" "selfplay.max_size=$pool_size"
+    "selfplay.max_size=$pool_size"
+)
 
 printf '%q ' "${command[@]}"
 printf '\n'
