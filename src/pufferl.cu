@@ -458,7 +458,6 @@ struct VecEnv {
     int action_mask_size;
     int num_banks;
     int* bank_layout;  // per-buffer agent offsets; sole owner (not mirrored on PuffeRL)
-    long rollout_global_step;
 };
 
 struct EnvBuf {
@@ -562,9 +561,6 @@ typedef struct PuffeRL {
     // Optional frozen weight banks for match / selfplay opponents.
     WeightBank* frozen_banks;  // [num_frozen_banks]
     int num_frozen_banks;
-#ifdef PUFFER_ENV_CURRICULUM
-    PufCurriculumState curriculum;
-#endif
     char env_name[64];  // For frozen-bank policy rebuild at create.
 } PuffeRL;
 
@@ -976,11 +972,6 @@ static void* vec_thread_main(void* arg) {
             clock_gettime(CLOCK_MONOTONIC, &t0);
             #pragma omp parallel for schedule(static) num_threads(vec->num_workers)
             for (int i = env_start; i < env_start + env_count; i++) {
-#ifdef PUFFER_ENV_GLOBAL_STEP
-                long step_global = vec->rollout_global_step +
-                    (long)t * pufferl->hypers.total_agents;
-                puf_set_global_step(&envs[i], step_global);
-#endif
                 puf_step(&envs[i]);
             }
             clock_gettime(CLOCK_MONOTONIC, &t1);
@@ -1118,61 +1109,22 @@ void vec_log(VecEnv* vec, Dict* out, int clear) {
     dict_clear(&env_out);
 }
 
-#ifndef PUFFER_GPU_ENV
-// Aggregate one self-play cohort without clearing the underlying environment
-// logs. Call this before the main vec_log(..., clear=1) aggregation.
-void vec_log_tagged(VecEnv* vec, Dict* out, int tag, const char* prefix) {
-    Log aggregate = {0};
-    int num_keys = (int)(sizeof(Log) / sizeof(float));
-    float* acc = (float*)&aggregate;
-    for (int i = 0; i < vec->size; i++) {
-        Env* env = &vec->envs[i];
-        if (env->tag != tag || env->log.n == 0.0f) {
-            continue;
-        }
-        float* values = (float*)&env->log;
-        for (int j = 0; j < num_keys; j++) {
-            acc[j] += values[j];
-        }
+// Zero advantages on frozen-bank rows so prio_replay never samples them. Frozen
+// rollout rows hold actions/logprobs from the frozen policy; training the
+// primary's PPO on them produces garbage ratios and poisoned gradients.
+__global__ void zero_frozen_advantages_kernel(precision_t* advantages,
+        int agents_per_buffer, int primary_per_buffer, int total_rows, int horizon) {
+    int idx = blockIdx.x * blockDim.x + threadIdx.x;
+    int total = total_rows * horizon;
+    if (idx >= total) {
+        return;
     }
-
-    float n = aggregate.n;
-    Dict cohort = {0};
-    if (n > 0.0f) {
-        for (int j = 0; j < num_keys; j++) {
-            acc[j] /= n;
-        }
-        puf_log(&aggregate, &cohort);
+    int row = idx / horizon;
+    int rel = row % agents_per_buffer;
+    if (rel >= primary_per_buffer) {
+        advantages[idx] = from_float(0.0f);
     }
-    dict_set(&cohort, "n", n);
-    for (int i = 0; i < cohort.size; i++) {
-        char key[256];
-        snprintf(key, sizeof(key), "%s/%s", prefix, cohort.items[i].key);
-        dict_set(out, key, cohort.items[i].value);
-    }
-    dict_clear(&cohort);
 }
-
-static double selfplay_metric_or_zero(Dict* log, const char* key) {
-    DictItem* item = dict_find(log, key);
-    return item ? item->value : 0.0;
-}
-
-void print_selfplay_cohort_metrics(Dict* log) {
-    printf(
-        "selfplay/metrics "
-        "current_n=%.0f current_slot0=%.3f current_slot1=%.3f current_draw=%.3f "
-        "history_n=%.0f learner_slot0=%.3f history_slot1=%.3f history_draw=%.3f\n",
-        selfplay_metric_or_zero(log, "selfplay/current_vs_current/n"),
-        selfplay_metric_or_zero(log, "selfplay/current_vs_current/slot_0_score"),
-        selfplay_metric_or_zero(log, "selfplay/current_vs_current/slot_1_score"),
-        selfplay_metric_or_zero(log, "selfplay/current_vs_current/draw_rate"),
-        selfplay_metric_or_zero(log, "selfplay/current_vs_history/n"),
-        selfplay_metric_or_zero(log, "selfplay/current_vs_history/slot_0_score"),
-        selfplay_metric_or_zero(log, "selfplay/current_vs_history/slot_1_score"),
-        selfplay_metric_or_zero(log, "selfplay/current_vs_history/draw_rate"));
-}
-#endif
 
 // Cooperative row copy (int4 when 16-byte aligned).
 __device__ void copy_bytes(
@@ -1399,13 +1351,18 @@ void train_impl(PuffeRL& pufferl, RolloutBuf* src_arg) {
     puff_advantage_cuda(rollouts.values, rollouts.rewards, rollouts.terminals,
         rollouts.ratio, advantages_puf, hypers.gamma, hypers.gae_lambda,
         hypers.vtrace_rho_clip, hypers.vtrace_c_clip, train_stream);
+    if (pufferl.num_frozen_banks > 0) {
+        int apb = hypers.total_agents / hypers.num_buffers;
+        int rows = advantages_puf.shape[0];
+        int horizon = advantages_puf.shape[1];
+        int total = rows * horizon;
+        zero_frozen_advantages_kernel<<<grid_size(total), BLOCK_SIZE, 0, train_stream>>>(
+            advantages_puf.data, apb, pufferl.vec->bank_layout[1], rows, horizon);
+    }
     profile_end(hypers.profile);
 
     profile_begin("compute_prio", hypers.profile);
-    int prio_agents_per_buffer = hypers.total_agents / hypers.num_buffers;
-    int prio_primary_per_buffer = pufferl.vec->bank_layout[1];
-    prio_build_grouped_cdf_cuda(advantages_puf, prio_alpha, pufferl.prio_bufs,
-        prio_agents_per_buffer, prio_primary_per_buffer, train_stream);
+    prio_build_cdf_cuda(advantages_puf, prio_alpha, pufferl.prio_bufs, train_stream);
     profile_end(hypers.profile);
 
     long* train_rng_offset = pufferl.rng_offset_puf.data + hypers.num_buffers;
@@ -1414,9 +1371,8 @@ void train_impl(PuffeRL& pufferl, RolloutBuf* src_arg) {
         cudaEventRecord(pufferl.profile.events[2], train_stream);  // start of misc (overwritten each iter)
 
         profile_begin("compute_prio", hypers.profile);
-        prio_sample_grouped_cuda(anneal_beta, pufferl.prio_bufs, pufferl.seed,
-            train_rng_offset, graph.mb_trainable_mask.data,
-            prio_agents_per_buffer, prio_primary_per_buffer, train_stream);
+        prio_sample_cuda(anneal_beta, pufferl.prio_bufs, pufferl.seed,
+            train_rng_offset, train_stream);
         profile_end(hypers.profile);
 
         profile_begin("train_select_and_copy", hypers.profile);
@@ -1661,21 +1617,6 @@ void puf_load_weights_into(FloatTensor dst, PrecisionTensor params,
         fprintf(stderr, "failed to open %s for reading\n", path);
         exit(1);
     }
-    struct stat checkpoint_stat;
-    if (fstat(fileno(fp), &checkpoint_stat) != 0) {
-        fprintf(stderr, "failed to stat checkpoint %s: %s\n", path, strerror(errno));
-        fclose(fp);
-        exit(1);
-    }
-    if ((int64_t)checkpoint_stat.st_size != nbytes) {
-        fprintf(stderr,
-            "checkpoint size mismatch for %s: expected=%lld actual=%lld\n",
-            path,
-            (long long)nbytes,
-            (long long)checkpoint_stat.st_size);
-        fclose(fp);
-        exit(1);
-    }
     char* buf = (char*)malloc(nbytes);
     size_t nread = fread(buf, 1, nbytes, fp);
     fclose(fp);
@@ -1692,25 +1633,10 @@ void puf_load_weights_into(FloatTensor dst, PrecisionTensor params,
     }
 }
 
-void pufferl_load_primary_weights(PuffeRL* pufferl, const char* path) {
-    puf_load_weights_into(pufferl->master_weights, pufferl->param_puf,
-        pufferl->default_stream, path);
-    if (pufferl->hypers.async) {
-        puf_copy(&pufferl->actor_param_puf, &pufferl->param_puf,
-            pufferl->default_stream);
-    }
-    cudaStreamSynchronize(pufferl->default_stream);
-}
-
 void pufferl_load_frozen_bank(PuffeRL* pufferl, int bank_idx, const char* path) {
     WeightBank* bank = &pufferl->frozen_banks[bank_idx];
     puf_load_weights_into(bank->master_weights, bank->param_puf,
         pufferl->default_stream, path);
-    for (int i = 0; i < pufferl->hypers.num_buffers; i++) {
-        PrecisionTensor* state = &bank->buffer_states[i];
-        cudaMemsetAsync(state->data, 0,
-            numel(state->shape) * sizeof(precision_t), pufferl->default_stream);
-    }
     cudaDeviceSynchronize();
 }
 
@@ -1791,10 +1717,6 @@ PuffeRL* create_pufferl(Ini* ini, TrainContext* ctx) {
 
     PuffeRL* pufferl = (PuffeRL*)calloc(1, sizeof(PuffeRL));
     pufferl->hypers = hypers;
-#ifdef PUFFER_ENV_CURRICULUM
-    puf_curriculum_init(
-        &pufferl->curriculum, env_kwargs, hypers.total_timesteps);
-#endif
     snprintf(pufferl->env_name, sizeof(pufferl->env_name), "%s", PUFFER_ENV_NAME);
 
     cudaSetDevice(hypers.gpu_id);
@@ -2079,13 +2001,8 @@ PuffeRL* create_pufferl(Ini* ini, TrainContext* ctx) {
         acts, total_agents, horizon, input_size, num_action_heads, mask_size);
     register_ppo_buffers(pufferl->ppo_bufs_puf,
         acts, minibatch_segments, hypers.horizon, decoder_output_size, is_continuous);
-    int prio_agents_per_buffer = total_agents / num_buffers;
-    int prio_primary_per_buffer = pufferl->vec->bank_layout[1];
-    assert(prio_primary_per_buffer > 0
-        && prio_primary_per_buffer <= prio_agents_per_buffer);
-    int prio_trainable_rows = prio_primary_per_buffer * num_buffers;
     register_prio_buffers(pufferl->prio_bufs,
-        acts, prio_trainable_rows, minibatch_segments);
+        acts, hypers.total_agents, minibatch_segments);
 
     // Extra cuda buffers just reuse activ allocator
     pufferl->rng_offset_puf = {.shape = {num_buffers + 1}};
@@ -2622,9 +2539,8 @@ void puf_log_history_add(PufLogHistory* history, Dict* log) {
     history->size++;
 }
 
-double rollout_start(PuffeRL* p, int slot, long global_step) {
+double rollout_start(PuffeRL* p, int slot) {
     p->rollout_write_slot = slot;
-    p->vec->rollout_global_step = global_step;
     if (p->hypers.async) {
         int64_t n = numel(p->param_puf.shape);
         cudaMemcpyAsync(p->actor_param_puf.data, p->param_puf.data,
@@ -2707,7 +2623,7 @@ void rollout_finish(PuffeRL* p, double t0) {
 }
 
 void rollouts(PuffeRL* p) {
-    double t0 = rollout_start(p, 0, p->global_step);
+    double t0 = rollout_start(p, 0);
     rollout_finish(p, t0);
     p->global_step += p->hypers.horizon * p->hypers.total_agents;
 }
@@ -2740,10 +2656,8 @@ EvalResult run_eval(Ini* ini, TrainContext* ctx, int mode, int verbose);
 #define SELFPLAY_PATH_MAX 4096
 
 typedef struct {
-    char current_path[SELFPLAY_PATH_MAX];
+    char pending_path[SELFPLAY_PATH_MAX];
     long opp_started_step;
-    long generation;
-    long swap_truncations;
     int num_envs;
 } SelfplayBank;
 
@@ -2754,7 +2668,6 @@ typedef struct {
     unsigned int rng;
     char (*pool)[SELFPLAY_PATH_MAX];
     int pool_size;
-    int current_envs;
     SelfplayBank banks[SELFPLAY_MAX_BANKS];
 } Selfplay;
 
@@ -2771,116 +2684,10 @@ void selfplay_add_checkpoint(Selfplay* sp, const char* path) {
     snprintf(sp->pool[sp->pool_size++], sizeof(sp->pool[0]), "%s", path);
 }
 
-const char* selfplay_sample(Selfplay* sp, const char* exclude) {
-    assert(sp->pool_size > 0);
-    int eligible = sp->pool_size;
-    if (exclude) {
-        for (int i = 0; i < sp->pool_size; i++) {
-            if (strcmp(sp->pool[i], exclude) == 0) {
-                eligible--;
-                break;
-            }
-        }
-    }
-    if (eligible == 0) {
-        return sp->pool[0];
-    }
-    int selected = (int)(rand_r(&sp->rng) % (unsigned int)eligible);
-    for (int i = 0; i < sp->pool_size; i++) {
-        if (exclude && strcmp(sp->pool[i], exclude) == 0) {
-            continue;
-        }
-        if (selected-- == 0) {
-            return sp->pool[i];
-        }
-    }
-    assert(false && "selfplay opponent selection exhausted eligible pool");
-    return sp->pool[0];
+const char* selfplay_sample(Selfplay* sp) {
+    int idx = (int)(rand_r(&sp->rng) % (unsigned int)sp->pool_size);
+    return sp->pool[idx];
 }
-
-#ifndef PUFFER_GPU_ENV
-static void clear_primary_recurrent_row(PuffeRL* pufferl, int physical_row) {
-    int agents_per_buffer = pufferl->vec->agents_per_buffer;
-    int buf = physical_row / agents_per_buffer;
-    int relative_row = physical_row % agents_per_buffer;
-    PrecisionTensor* state = &pufferl->buffer_states[buf];
-    assert(relative_row < state->shape[1]);
-    int layers = state->shape[0];
-    int rows = state->shape[1];
-    int hidden = state->shape[2];
-    for (int layer = 0; layer < layers; layer++) {
-        precision_t* row = state->data
-            + ((long)layer * rows + relative_row) * hidden;
-        cudaMemsetAsync(row, 0, (size_t)hidden * sizeof(precision_t),
-            pufferl->default_stream);
-    }
-}
-
-// Synchronous generation barrier. Workers are idle between completed rollouts:
-// truncate/reset affected fights, load and clear the frozen bank, clear affected
-// primary recurrent rows, then publish fresh observations before inference.
-static long selfplay_atomic_rotate(
-        PuffeRL* pufferl, int bank_idx, const char* checkpoint_path) {
-    VecEnv* vec = pufferl->vec;
-    int tag = bank_idx + 1;
-    for (int buf = 0; buf < vec->buffers; buf++) {
-        assert(__atomic_load_n(&vec->worker_state[buf], __ATOMIC_SEQ_CST)
-            == BUF_WAITING && "self-play rotation requires idle rollout workers");
-    }
-
-    long truncations = 0;
-    for (int i = 0; i < vec->size; i++) {
-        Env* env = &vec->envs[i];
-        if (env->tag != tag) {
-            continue;
-        }
-        puf_reset(env);
-        env->boundary_reached = 0;
-        truncations++;
-    }
-
-    pufferl_load_frozen_bank(pufferl, bank_idx, checkpoint_path);
-
-    for (int i = 0; i < vec->size; i++) {
-        Env* env = &vec->envs[i];
-        if (env->tag != tag) {
-            continue;
-        }
-        for (int s = 0; s < env->num_agents; s++) {
-            auto* agent = &env->agents[s];
-            obs_t* agent_observations = (obs_t*)agent->observations;
-            ptrdiff_t obs_offset = agent_observations - vec->observations;
-            assert(obs_offset >= 0 && obs_offset % OBS_SIZE == 0);
-            int physical_row = (int)(obs_offset / OBS_SIZE);
-            assert(physical_row >= 0 && physical_row < vec->total_agents);
-            int relative_row = physical_row % vec->agents_per_buffer;
-            if (relative_row < vec->bank_layout[1]) {
-                clear_primary_recurrent_row(pufferl, physical_row);
-            }
-
-            *agent->rewards = 0.0f;
-            *agent->terminals = 0.0f;
-            cudaMemcpyAsync(
-                vec->gpu_observations + (size_t)physical_row * OBS_SIZE,
-                agent->observations, OBS_SIZE * sizeof(obs_t),
-                cudaMemcpyHostToDevice, pufferl->default_stream);
-            cudaMemcpyAsync(vec->gpu_rewards + physical_row,
-                agent->rewards, sizeof(float),
-                cudaMemcpyHostToDevice, pufferl->default_stream);
-            cudaMemcpyAsync(vec->gpu_terminals + physical_row,
-                agent->terminals, sizeof(float),
-                cudaMemcpyHostToDevice, pufferl->default_stream);
-            cudaMemcpyAsync(
-                vec->gpu_action_mask
-                    + (size_t)physical_row * vec->action_mask_size,
-                agent->action_mask, (size_t)vec->action_mask_size,
-                cudaMemcpyHostToDevice, pufferl->default_stream);
-        }
-    }
-    cudaStreamSynchronize(pufferl->default_stream);
-    return truncations;
-}
-#endif
 
 typedef struct {
     char section[64];
@@ -3169,18 +2976,9 @@ void run_sweep(Ini* ini, const char* exe_path) {
     sweep_space_destroy(space);
 }
 
-static void disable_selfplay_for_standard_eval(Ini* ini) {
-    puf_ini_put(ini, "vec.num_frozen_banks", "0");
-    puf_ini_put(ini, "vec.frozen_bank_pct", "0");
-    puf_ini_put(ini, "selfplay.enabled", "0");
-}
-
 EvalResult run_eval(Ini* ini, TrainContext* ctx, int mode, int verbose) {
     int render = mode == EVAL_RENDER;
     int match = mode == EVAL_MATCH;
-    if (!match) {
-        disable_selfplay_for_standard_eval(ini);
-    }
     EvalResult result = {0};
     long num_games = puf_ini_get(ini, "base", "num_games");
     if (!num_games) {
@@ -3236,9 +3034,7 @@ EvalResult run_eval(Ini* ini, TrainContext* ctx, int mode, int verbose) {
         puf_ini_put(ini, "env.num_bots", "0");
     }
     puf_ini_put(ini, "base.reset_every_horizon", "0");
-    char eval_horizon[16];
-    snprintf(eval_horizon, sizeof(eval_horizon), "%d", ADV_VEC_WIDTH);
-    puf_ini_put(ini, "train.horizon", eval_horizon);
+    puf_ini_put(ini, "train.horizon", "1");
 
     PuffeRL* pufferl = create_pufferl(ini, ctx);
     if (match) {
@@ -3252,14 +3048,16 @@ EvalResult run_eval(Ini* ini, TrainContext* ctx, int mode, int verbose) {
             fprintf(stderr, "match requires base.load_model_path and base.load_enemy_model_path\n");
             exit(1);
         }
-        pufferl_load_primary_weights(pufferl, a_path);
+        puf_load_weights_into(pufferl->master_weights,
+            pufferl->param_puf, pufferl->default_stream, a_path);
         pufferl_load_frozen_bank(pufferl, 0, b_path);
     } else {
         char resolved_path[4096];
         const char* load_path = puf_checkpoint_path_key(ini,
             "load_model_path", resolved_path, sizeof(resolved_path));
         if (load_path) {
-            pufferl_load_primary_weights(pufferl, load_path);
+            puf_load_weights_into(pufferl->master_weights, pufferl->param_puf,
+                pufferl->default_stream, load_path);
             printf("Loaded weights from %s\n", load_path);
         }
     }
@@ -3293,32 +3091,6 @@ EvalResult run_eval(Ini* ini, TrainContext* ctx, int mode, int verbose) {
             result.score = (float)dict_get(&log, "env/slot_0_score");
             result.draw = (float)dict_get(&log, "env/draw_rate");
             result.games = (int)n;
-            DictItem* slot_0_kills = dict_find(
-                &log, "env/slot_0_gun_kills");
-            DictItem* slot_1_kills = dict_find(
-                &log, "env/slot_1_gun_kills");
-            DictItem* clean_fights = dict_find(
-                &log, "env/clean_fights");
-            if (verbose && slot_0_kills && slot_1_kills && clean_fights) {
-                double slot_0_score = dict_get(
-                    &log, "env/slot_0_score");
-                double slot_1_score = dict_get(
-                    &log, "env/slot_1_score");
-                double draw_rate = dict_get(&log, "env/draw_rate");
-                long draws = lround(draw_rate * n);
-                long slot_0_wins = lround(
-                    (slot_0_score - 0.5 * draw_rate) * n);
-                long slot_1_wins = lround(
-                    (slot_1_score - 0.5 * draw_rate) * n);
-                printf(
-                    "\nmatch/evidence games=%ld slot0_wins=%ld "
-                    "slot1_wins=%ld draws=%ld slot0_gun_kills=%ld "
-                    "slot1_gun_kills=%ld clean_fights=%ld\n",
-                    n, slot_0_wins, slot_1_wins, draws,
-                    lround(slot_0_kills->value * n),
-                    lround(slot_1_kills->value * n),
-                    lround(clean_fights->value * n));
-            }
             break;
         }
         if (n == 0) {
@@ -3360,91 +3132,8 @@ EvalResult run_eval(Ini* ini, TrainContext* ctx, int mode, int verbose) {
     return result;
 }
 
-static const char* resolve_selfplay_mode(Ini* ini) {
-    const char* mode = puf_ini_get_str(ini, "selfplay", "mode");
-    if (!mode[0] || strcmp(mode, "None") == 0) {
-        return puf_ini_get(ini, "selfplay", "enabled") ? "native" : "off";
-    }
-    if (strcmp(mode, "off") == 0) {
-        return "off";
-    }
-    if (strcmp(mode, "native") == 0) {
-        return "native";
-    }
-    if (strcmp(mode, "coordinator") == 0) {
-        return "coordinator";
-    }
-    fprintf(stderr,
-        "Unknown selfplay.mode '%s'; expected off, native, or coordinator\n",
-        mode);
-    exit(1);
-}
-
-static void validate_native_selfplay_config(
-        Ini* ini, int use_selfplay, int world_size) {
-    const char* mode = resolve_selfplay_mode(ini);
-    if (!use_selfplay) {
-        return;
-    }
-
-    if (world_size != 1) {
-        fprintf(stderr, "native self-play requires exactly one GPU/process\n");
-        exit(1);
-    }
-
-    int async = puf_ini_get_int(ini, "base", "async");
-    if (async != 0) {
-        fprintf(stderr,
-            "native self-play requires base.async=0 until the generation barrier is implemented\n");
-        exit(1);
-    }
-
-    int num_frozen_banks = puf_ini_get_int(ini, "vec", "num_frozen_banks");
-    if (num_frozen_banks != 1) {
-        fprintf(stderr, "native self-play currently requires exactly one frozen bank\n");
-        exit(1);
-    }
-
-    int eval_games = puf_ini_get_int(ini, "selfplay", "eval_games");
-    if (strcmp(mode, "coordinator") == 0 && eval_games != 0) {
-        fprintf(stderr,
-            "native self-play requires selfplay.eval_games=0 in coordinator mode; "
-            "the coordinator owns both-seat evaluation\n");
-        exit(1);
-    }
-
-    if (strcmp(mode, "coordinator") == 0) {
-        const char* opponent = puf_ini_get_str(
-            ini, "base", "load_enemy_model_path");
-        if (!opponent[0] || strcmp(opponent, "None") == 0) {
-            fprintf(stderr,
-                "coordinator mode requires base.load_enemy_model_path\n");
-            exit(1);
-        }
-        puf_ini_put(ini, "selfplay.opp_timeout_steps", "0");
-    }
-
-    int primary_hidden = puf_ini_get_int(ini, "policy", "hidden_size");
-    int primary_layers = puf_ini_get_int(ini, "policy", "num_layers");
-    int frozen_hidden = puf_ini_get_int(ini, "vec", "frozen_bank_hidden_size");
-    int frozen_layers = puf_ini_get_int(ini, "vec", "frozen_bank_num_layers");
-    if (primary_hidden != frozen_hidden || primary_layers != frozen_layers) {
-        fprintf(stderr,
-            "native self-play frozen-bank topology must match the primary policy: "
-            "primary=%dx%d frozen=%dx%d\n",
-            primary_hidden, primary_layers, frozen_hidden, frozen_layers);
-        exit(1);
-    }
-}
-
 TrainResult run_train(Ini* ini, TrainContext* ctx) {
-    const char* selfplay_mode = resolve_selfplay_mode(ini);
-    int use_selfplay = strcmp(selfplay_mode, "off") != 0;
-    puf_ini_put(ini, "selfplay.enabled", use_selfplay ? "1" : "0");
-    validate_native_selfplay_config(ini, use_selfplay, ctx->world_size);
-    if (ctx->artifact_owner) {
-        printf("selfplay/mode=%s\n", selfplay_mode);
-    }
+    int use_selfplay = puf_ini_get(ini, "selfplay", "enabled");
 #ifdef PUFFER_GPU_ENV
     // GPU Env has no tag/boundary_reached; selfplay opponent rotation is CPU-only for now.
     assert(!use_selfplay && "selfplay not supported with --gpu (PUFFER_GPU_ENV)");
@@ -3477,16 +3166,6 @@ TrainResult run_train(Ini* ini, TrainContext* ctx) {
     }
 
     PuffeRL* pufferl = create_pufferl(ini, ctx);
-    char resolved_load_path[4096];
-    const char* load_path = puf_checkpoint_path_key(ini,
-        "load_model_path", resolved_load_path, sizeof(resolved_load_path));
-    if (load_path) {
-        pufferl_load_primary_weights(pufferl, load_path);
-        if (ctx->artifact_owner) {
-            printf("Warm-started training weights from %s\n", load_path);
-        }
-    }
-
     Selfplay selfplay = {0};
     if (use_selfplay) {
         char initial_checkpoint[4096];
@@ -3515,31 +3194,14 @@ TrainResult run_train(Ini* ini, TrainContext* ctx) {
             int tag = envs[i].tag;
             if (tag > 0 && tag <= selfplay.num_banks) {
                 selfplay.banks[tag - 1].num_envs++;
-            } else {
-                selfplay.current_envs++;
             }
         }
 #endif
 
         selfplay_add_checkpoint(&selfplay, initial_checkpoint);
-        char initial_opponent_buf[4096];
-        const char* configured_opponent = puf_checkpoint_path_key(ini,
-            "load_enemy_model_path", initial_opponent_buf,
-            sizeof(initial_opponent_buf));
-        if (configured_opponent) {
-            selfplay_add_checkpoint(&selfplay, configured_opponent);
-        }
         for (int b = 0; b < selfplay.num_banks; b++) {
-            const char* initial_opponent = configured_opponent ? configured_opponent
-                : selfplay_sample(&selfplay, NULL);
-            pufferl_load_frozen_bank(pufferl, b, initial_opponent);
-            snprintf(selfplay.banks[b].current_path,
-                sizeof(selfplay.banks[b].current_path), "%s", initial_opponent);
+            pufferl_load_frozen_bank(pufferl, b, selfplay_sample(&selfplay));
             selfplay.banks[b].opp_started_step = current_step;
-            if (ctx->artifact_owner) {
-                printf("selfplay/seed bank=%d external=%d checkpoint=%s\n",
-                    b, configured_opponent != NULL, initial_opponent);
-            }
         }
     }
 
@@ -3571,8 +3233,7 @@ TrainResult run_train(Ini* ini, TrainContext* ctx) {
         if (epoch < train_epochs && pufferl->hypers.async) {
             int prefetch_next = epoch + 1 < train_epochs;
             if (!pufferl->async_bootstrapped) {
-                double t0 = rollout_start(
-                    pufferl, 0, pufferl->global_step);
+                double t0 = rollout_start(pufferl, 0);
                 rollout_finish(pufferl, t0);
                 pufferl->async_ready_slot = 0;
                 pufferl->async_next_slot = 1;
@@ -3583,10 +3244,7 @@ TrainResult run_train(Ini* ini, TrainContext* ctx) {
             int next_slot = pufferl->async_next_slot;
             double t0 = 0.0;
             if (prefetch_next) {
-                long next_global_step = pufferl->global_step +
-                    pufferl->hypers.horizon * pufferl->hypers.total_agents;
-                t0 = rollout_start(
-                    pufferl, next_slot, next_global_step);
+                t0 = rollout_start(pufferl, next_slot);
             }
 
             pufferl->global_step += pufferl->hypers.horizon * pufferl->hypers.total_agents;
@@ -3625,63 +3283,6 @@ TrainResult run_train(Ini* ini, TrainContext* ctx) {
         }
 
         int is_eval = epoch >= train_epochs;
-#ifdef PUFFER_ENV_CURRICULUM
-        if (!is_eval) {
-            Dict curriculum_log = {0};
-            vec_log(pufferl->vec, &curriculum_log, 0);
-            puf_curriculum_update(
-                &pufferl->curriculum,
-                pufferl->vec->envs,
-                pufferl->vec->size,
-                pufferl->global_step,
-                &curriculum_log);
-            dict_clear(&curriculum_log);
-        }
-#endif
- #ifndef PUFFER_GPU_ENV
-        if (use_selfplay && !is_eval) {
-            long current_step =
-                pufferl->global_step * pufferl->hypers.world_size;
-            long total_swap_truncations = 0;
-            for (int b = 0; b < selfplay.num_banks; b++) {
-                SelfplayBank* bank = &selfplay.banks[b];
-                if (selfplay.opp_timeout_steps > 0 &&
-                        current_step - bank->opp_started_step
-                            >= selfplay.opp_timeout_steps) {
-                    const char* next_opponent = selfplay_sample(&selfplay, bank->current_path);
-                    long truncated = selfplay_atomic_rotate(
-                        pufferl, b, next_opponent);
-                    bank->swap_truncations += truncated;
-                    bank->generation++;
-                    bank->opp_started_step = current_step;
-                    snprintf(bank->current_path, sizeof(bank->current_path),
-                        "%s", next_opponent);
-                    printf(
-                        "selfplay/swap bank=%d generation=%ld "
-                        "truncations=%ld checkpoint=%s\n",
-                        b, bank->generation, truncated, bank->current_path);
-                }
-                total_swap_truncations += bank->swap_truncations;
-                char generation_key[64];
-                snprintf(generation_key, sizeof(generation_key),
-                    "pool/generation_%d", b);
-                dict_set(&last_log, generation_key, bank->generation);
-            }
-            dict_set(&last_log, "pool/size", selfplay.pool_size);
-            dict_set(&last_log, "pool/num_banks", selfplay.num_banks);
-            dict_set(&last_log, "pool/swap_truncations",
-                total_swap_truncations);
-            dict_set(&last_log, "pool/current_vs_current_battles",
-                selfplay.current_envs);
-            dict_set(&last_log, "pool/current_vs_history_battles",
-                selfplay.banks[0].num_envs);
-            int current_rows = pufferl->vec->bank_layout[1]
-                * pufferl->vec->buffers;
-            dict_set(&last_log, "pool/current_trainable_rows", current_rows);
-            dict_set(&last_log, "pool/frozen_rows",
-                pufferl->vec->total_agents - current_rows);
-        }
-#endif
         if (!is_eval && last_log.size &&
                 wall_clock() < pufferl->last_log_time + 0.6 && epoch < train_epochs - 1) {
             continue;
@@ -3705,27 +3306,7 @@ TrainResult run_train(Ini* ini, TrainContext* ctx) {
             dict_set(&new_log, "uptime", now - pufferl->start_time);
             dict_set(&new_log, "epoch", (double)pufferl->epoch);
 
-#ifndef PUFFER_GPU_ENV
-            if (use_selfplay) {
-                vec_log_tagged(pufferl->vec, &new_log, 0,
-                    "selfplay/current_vs_current");
-                vec_log_tagged(pufferl->vec, &new_log, 1,
-                    "selfplay/current_vs_history");
-                if (ctx->artifact_owner) {
-                    print_selfplay_cohort_metrics(&new_log);
-                }
-            }
-#endif
             vec_log(pufferl->vec, &new_log, 1);
-#ifdef PUFFER_ENV_CURRICULUM
-            puf_curriculum_update(
-                &pufferl->curriculum,
-                pufferl->vec->envs,
-                pufferl->vec->size,
-                global_step,
-                &new_log);
-            puf_curriculum_counters_cleared(&pufferl->curriculum);
-#endif
 
             float losses_host[NUM_LOSSES];
             cudaMemcpy(losses_host, pufferl->losses_puf.data, sizeof(losses_host),
@@ -3762,6 +3343,39 @@ TrainResult run_train(Ini* ini, TrainContext* ctx) {
             dict_set(&last_log, item->key, item->value);
         }
         dict_clear(&new_log);
+#ifndef PUFFER_GPU_ENV
+        if (use_selfplay && !is_eval) {
+            long current_step = pufferl->global_step * pufferl->hypers.world_size;
+            Env* envs = pufferl->vec->envs;
+            for (int b = 0; b < selfplay.num_banks; b++) {
+                SelfplayBank* bank = &selfplay.banks[b];
+                int tag = b + 1;
+                if (bank->pending_path[0]) {
+                    int aligned = 0;
+                    for (int i = 0; i < pufferl->vec->size; i++) {
+                        if (envs[i].tag == tag && envs[i].boundary_reached) aligned++;
+                    }
+                    if (aligned >= bank->num_envs) {
+                        pufferl_load_frozen_bank(pufferl, b, bank->pending_path);
+                        for (int i = 0; i < pufferl->vec->size; i++) {
+                            if (envs[i].tag == tag) envs[i].boundary_reached = 0;
+                        }
+                        bank->pending_path[0] = 0;
+                        bank->opp_started_step = current_step;
+                    }
+                } else if (selfplay.opp_timeout_steps > 0 &&
+                        current_step - bank->opp_started_step >= selfplay.opp_timeout_steps) {
+                    snprintf(bank->pending_path, sizeof(bank->pending_path), "%s", selfplay_sample(&selfplay));
+                    for (int i = 0; i < pufferl->vec->size; i++) {
+                        if (envs[i].tag == tag) envs[i].boundary_reached = 0;
+                    }
+                }
+            }
+            dict_set(&last_log, "pool/size", selfplay.pool_size);
+            dict_set(&last_log, "pool/num_banks", selfplay.num_banks);
+        }
+#endif
+
         int eval_done = is_eval && dict_get(&last_log, "env/n") > eval_episodes;
         int loop_done = epoch == train_epochs + eval_epochs - 1;
         double now = wall_clock();
@@ -4042,7 +3656,7 @@ int main(int argc, char** argv) {
     setbuf(stdout, NULL);
     setbuf(stderr, NULL);
     if (argc < 3) {
-        fprintf(stderr, "usage: %s train|eval|eval_bot|render|match|sweep ENV [section.key=value ...]\n", argv[0]);
+        fprintf(stderr, "usage: %s train|eval|eval_bot|match|sweep ENV [section.key=value ...]\n", argv[0]);
         exit(1);
     }
 
@@ -4055,8 +3669,6 @@ int main(int argc, char** argv) {
         launch_train(&ini);
     } else if (strcmp(mode, "sweep") == 0) {
         run_sweep(&ini, argv[0]);
-    } else if (strcmp(mode, "render") == 0) {
-        run_eval(&ini, &ctx, EVAL_RENDER, 1);
     } else if (strcmp(mode, "eval") == 0 || strcmp(mode, "eval_bot") == 0) {
         if (strcmp(mode, "eval_bot") == 0) {
             puf_ini_put(&ini, "vec.num_frozen_banks", "0");
@@ -4080,3 +3692,4 @@ int main(int argc, char** argv) {
 }
 
 #endif
+

@@ -91,3 +91,64 @@ DISPLAY=:0 timeout 20s ./puffer eval dogfight --load-model-path=latest
 
 An explicit checkpoint path is preferred over `latest` for recorded gates.
 
+## Verified stock-core TDD loop (2026-07-28)
+
+The commands below were executed successfully in `/home/claude/5c-research`.
+They are evidence for the pinned 5c checkout, not promises about future
+PufferLib CLI compatibility. Future agents must rerun the tests and use each
+script's `--dry-run` output before starting an expensive job.
+
+Activate the established environment:
+
+```bash
+source /home/claude/PufferLib/.venv/bin/activate
+export CUDA_HOME=/usr/local/cuda-12.8
+export LD_LIBRARY_PATH=/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl/lib:${LD_LIBRARY_PATH:-}
+```
+
+Build and test:
+
+```bash
+./build.sh dogfight
+bash ocean/dogfight/build_eval.sh
+python -m pytest ocean/dogfight/tests -q
+```
+
+Verified result:
+
+```text
+46 passed, 3 skipped
+```
+
+Print or run the proven stock-core Phase 2 profile:
+
+```bash
+bash ocean/dogfight/train_reproduction.sh --dry-run RUN_ID 1048576 0
+bash ocean/dogfight/train_reproduction.sh RUN_ID 1048576 0
+```
+
+`FIXED_STAGE` defaults to `0`; pass `-1` only when intentionally testing the
+environment-managed curriculum. The script's `ent_coef=0.02` reproduces the
+known profile and is not yet an accepted long-run production value.
+
+Run matched headless and human-visible evaluation:
+
+```bash
+bash ocean/dogfight/eval_checkpoint.sh headless CHECKPOINT 2 64 42
+DISPLAY=:0 bash ocean/dogfight/eval_checkpoint.sh visible CHECKPOINT 2 64 42
+```
+
+Both modes deliberately use:
+
+- two evaluation environments and two vector buffers;
+- one trainable-policy slot against the scripted opponent;
+- the same explicit seed, stage, and episode target;
+- disabled self-play and frozen banks;
+- disabled role, domain, vertical, and rehearsal randomization.
+
+The visible command terminates after the requested completed-episode count.
+It is therefore a numerical evaluation with human observation, not an
+unbounded render session.
+
+Full evidence and the explanation of the former false stage-2 result are in
+`ocean/dogfight/EVAL_CONTRACT_EVIDENCE_20260728.md`.

@@ -231,6 +231,26 @@ typedef struct RewardConfig {
     float energy_advantage_scale;  // Zero-sum energy advantage scale (default 0.004)
 } RewardConfig;
 
+typedef struct {
+    int enabled;
+    int fixed_stage;
+    int max_stage;
+    int mastered_stage;
+    int min_eval_episodes;
+    long warmup_steps;
+    long eval_interval;
+    long last_eval_step;
+    long finalize_at_steps;
+    float target;
+    float mastery_threshold;
+    float last_base_stage_perf;
+    double base_stage_kills;
+    double base_stage_eps;
+    double last_base_stage_eps;
+    double observed_base_stage_kills;
+    double observed_base_stage_eps;
+} PufCurriculumState;
+
 // Calculate shaping decay multiplier based on global training step
 // Returns 1.0 before decay_start, 0.0 after decay_end, linear interpolation between
 static inline float calc_shaping_decay(long global_step, long decay_start, long decay_end) {
@@ -316,6 +336,8 @@ typedef struct Env {
     int total_episodes;         // Cumulative episodes (persists across resets)
     CurriculumStage stage;      // Current difficulty stage (set globally by Python)
     float curriculum_target;    // Float 0.0-15.0 for probabilistic stage assignment
+    PufCurriculumState local_curriculum;
+    long global_step_stride;
     int is_initialized;         // Flag to preserve curriculum state across re-init (for Multiprocessing)
     // Anti-spinning
     float total_aileron_usage;  // Accumulated |aileron| input (for spin death)

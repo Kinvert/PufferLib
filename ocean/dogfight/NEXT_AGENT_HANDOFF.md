@@ -4,6 +4,13 @@ Read this file first, then read [`PUFFERLIB_5C_PORT_RESEARCH.md`](PUFFERLIB_5C_P
 
 This repository is the implementation target. The purpose of this handoff is to let a new agent continue without rediscovering the repository history, accidentally reviving obsolete PufferLib 3/4 APIs, or trusting the work-in-progress 5c self-play path before its correctness problems are fixed.
 
+The current clean-core decision, the capabilities lost when the research core
+patch was removed, benchmarking recovery options, and the merge-ready roadmap
+are documented in
+[`CLEAN_CORE_GAPS_AND_MERGE_PATH.md`](CLEAN_CORE_GAPS_AND_MERGE_PATH.md).
+Read that document before restoring or proposing any `src/algo.cu` or
+`src/pufferl.cu` change.
+
 ## Mission
 
 Port the proven Dogfight 3 simulation and training behavior onto a clean, pinned PufferLib 5c base, then implement trustworthy native two-agent self-play without restoring the old opponent shared-memory or copied-PPO hacks.

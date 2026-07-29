@@ -56,17 +56,28 @@ int main(void) {
     CHECK(close_enough(state.target, 2.0f),
         "target must respect the configured stage cap");
 
+    PufCurriculumState sparse;
+    puf_curriculum_init(&sparse, &kwargs, 1000);
+    CHECK(!puf_curriculum_observe(&sparse, 150, 4.0, 4.0),
+        "an interval with too few episodes must wait for evidence");
+    CHECK(close_enough(sparse.target, 0.9f),
+        "insufficient evidence must not retreat the curriculum");
+    CHECK(puf_curriculum_observe(&sparse, 151, 1.0, 1.0),
+        "evaluation must run as soon as the evidence floor is reached");
+    CHECK(sparse.mastered_stage == 1,
+        "the completed sparse window must still master its stage");
+
     PufCurriculumState fallback;
     puf_curriculum_init(&fallback, &kwargs, 1000);
     CHECK(puf_curriculum_observe(&fallback, 150, 0.0, 5.0),
         "failed initial window must evaluate");
-    CHECK(close_enough(fallback.target, -0.1f),
-        "unmastered donor controller must retreat toward stage 0");
+    CHECK(close_enough(fallback.target, 0.9f),
+        "failed local mastery must retain the current target");
     puf_curriculum_apply(&fallback, envs, 2);
-    CHECK(close_enough(envs[0].curriculum_target, 0.0f),
-        "environment must clamp a retreat to stage 0");
-    CHECK(close_enough(envs[1].curriculum_target, 0.0f),
-        "curriculum target must be global across environments");
+    CHECK(close_enough(envs[0].curriculum_target, 0.9f),
+        "failed local mastery must not lower future spawn difficulty");
+    CHECK(close_enough(envs[1].curriculum_target, 0.9f),
+        "retained curriculum target must apply consistently");
 
     double observed = 0.0;
     CHECK(puf_curriculum_delta(5.0, &observed) == 5.0,
@@ -92,6 +103,36 @@ int main(void) {
     CHECK(!puf_curriculum_observe(&fixed, 1000, 100.0, 100.0),
         "fixed-stage eval must not run mastery progression");
 
+    Dict local_kwargs = {0};
+    dict_set(&local_kwargs, "curriculum_enabled", 1.0);
+    dict_set(&local_kwargs, "curriculum_target", 0.9);
+    dict_set(&local_kwargs, "warmup_steps", 100.0);
+    dict_set(&local_kwargs, "eval_interval", 50.0);
+    dict_set(&local_kwargs, "min_eval_episodes", 5.0);
+    dict_set(&local_kwargs, "mastery_threshold", 0.60);
+    dict_set(&local_kwargs, "max_stage", 2.0);
+
+    Env local = {0};
+    local.curriculum_enabled = 1;
+    local.curriculum_target = 0.9f;
+    local.global_step_stride = 1024;
+    puf_curriculum_init(&local.local_curriculum, &local_kwargs, 1000);
+
+    dogfight_advance_local_global_step(&local);
+    CHECK(local.global_step == 1024,
+        "Dogfight-local clock must replace the removed runner callback");
+
+    local.global_step = 100;
+    for (int episode = 1; episode <= 5; episode++) {
+        local.global_step = 100 + episode * 10;
+        dogfight_local_curriculum_episode(&local, 1, episode <= 3);
+    }
+    CHECK(local.local_curriculum.mastered_stage == 1,
+        "local 60 percent mastery window must advance stage 1");
+    CHECK(close_enough(local.curriculum_target, 1.9f),
+        "local mastery must immediately update future spawn targets");
+
+    dict_clear(&local_kwargs);
     dict_clear(&kwargs);
     return 0;
 }
