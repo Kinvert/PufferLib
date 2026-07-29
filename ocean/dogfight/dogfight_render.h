@@ -359,7 +359,20 @@ void c_render(Dogfight *env) {
 
     }
 
-    WaitTime(0.02);  // Sync with sim DT (50 FPS) for proper GIF frame timing
+    // The native evaluator can advance multiple simulation steps per render
+    // callback. Allow human-in-the-loop gates to slow playback without
+    // changing simulation DT or the default capture behavior.
+    float render_delay = 0.02f;
+    const char* render_delay_env =
+        getenv("DOGFIGHT_RENDER_DELAY_SECONDS");
+    if (render_delay_env != NULL) {
+        char* end = NULL;
+        float requested_delay = strtof(render_delay_env, &end);
+        if (end != render_delay_env && requested_delay >= 0.0f) {
+            render_delay = fminf(requested_delay, 1.0f);
+        }
+    }
+    WaitTime(render_delay);
     env->client->width = GetScreenWidth();
     env->client->height = GetScreenHeight();
 

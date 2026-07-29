@@ -1,7 +1,24 @@
 #pragma once
 
-// Phase 4 direct two-agent dynamics. This path intentionally does not call the
+// Native direct two-agent dynamics. This path intentionally does not call the
 // scripted-opponent, recovery, or legacy self-play branches in c_step().
+
+static inline void dogfight_two_agent_combine_dense_rewards(
+        int reward_version,
+        const float perspective_rewards[2],
+        float published_rewards[2]) {
+    if (reward_version == 0 || reward_version == 1) {
+        published_rewards[0] = perspective_rewards[0];
+        published_rewards[1] = perspective_rewards[1];
+        return;
+    }
+    assert(reward_version == 2);
+    float advantage = clampf(
+        0.5f * (perspective_rewards[0] - perspective_rewards[1]),
+        -1.0f, 1.0f);
+    published_rewards[0] = advantage;
+    published_rewards[1] = -advantage;
+}
 
 static inline void dogfight_two_agent_bind_slots(Dogfight* env) {
     int player_slot = env->two_agent_player_slot;
@@ -20,10 +37,66 @@ static inline void dogfight_two_agent_bind_slots(Dogfight* env) {
 }
 
 static inline void dogfight_two_agent_select_roles(Dogfight* env) {
-    env->two_agent_player_slot = env->two_agent_role_randomization
+    env->two_agent_scripted_episode =
+        env->two_agent_bootstrap_steps > 0
+        && env->global_step < env->two_agent_bootstrap_steps;
+    env->two_agent_player_slot = env->two_agent_scripted_episode
+        ? 0
+        : (env->two_agent_role_randomization
         ? (int)(dogfight_rand() & 1U)
-        : 0;
+        : 0);
     dogfight_two_agent_bind_slots(env);
+}
+
+static inline void dogfight_two_agent_pursuit_teacher_actions(
+        Dogfight* env,
+        Plane* self,
+        Plane* target,
+        float actions[NUM_ATNS]) {
+    // Bootstrap must teach the policy how to fly toward its observation
+    // target. The curriculum opponent's stage behavior is not a valid teacher:
+    // at stage 0 it only flies straight, so its controls contain no
+    // target-conditioned left/right signal.
+    execute_pursuit_pure(
+        &env->opponent_ap,
+        &env->opponent_ace,
+        self,
+        target,
+        actions);
+}
+
+static inline void dogfight_two_agent_scripted_actions(
+        Dogfight* env, float actions[NUM_ATNS]) {
+    dogfight_two_agent_pursuit_teacher_actions(
+        env, &env->opponent, &env->player, actions);
+}
+
+static inline float dogfight_two_agent_imitation_reward(
+        const float policy_actions[NUM_ATNS],
+        const float teacher_actions[NUM_ATNS],
+        float scale) {
+    // Teach flight controls, not weapons policy. Pure pursuit intentionally
+    // leaves the trigger off, and imitating that would fight the kill reward.
+    const int num_flight_controls = 4;
+    float mse = 0.0f;
+    for (int action = 0; action < num_flight_controls; action++) {
+        float error = policy_actions[action] - teacher_actions[action];
+        mse += error * error;
+    }
+    return -scale * mse / (float)num_flight_controls;
+}
+
+static inline float dogfight_two_agent_flight_school_reward(
+        const float policy_actions[NUM_ATNS],
+        const float teacher_actions[NUM_ATNS],
+        float scale) {
+    // Teach one contextual control at a time. Averaging all four controls let
+    // the policy improve its score through easy throttle/elevator imitation
+    // while retaining the target-independent aileron bias visible in flight.
+    float aileron_error = policy_actions[2] - teacher_actions[2];
+    return clampf(
+        scale * (1.0f - 0.5f * aileron_error * aileron_error),
+        -1.0f, 1.0f);
 }
 
 static inline float dogfight_two_agent_dense_reward(
@@ -62,6 +135,7 @@ static inline float dogfight_two_agent_dense_reward(
         reward -= (env->rcfg.speed_min - speed) * PENALTY_STALL;
     }
     reward -= fabsf(actions[3]) * PENALTY_RUDDER;
+    reward -= fabsf(actions[2]) * env->rcfg.aileron_magnitude_penalty;
 
     float d_e = actions[1] - env->two_agent_prev_controls[slot][0];
     float d_a = actions[2] - env->two_agent_prev_controls[slot][1];
@@ -100,6 +174,12 @@ static inline void dogfight_two_agent_finish(
         DeathReason reason,
         int winner,
         int clean_fight) {
+    // Match Robocode's native self-play contract. Only tagged historical
+    // matches participate in frozen-opponent alignment, and the trainer owns
+    // clearing this signal after it has processed the boundary.
+    if (env->tag > 0) {
+        env->boundary_reached = 1;
+    }
     env->rewards[0] = reward_0;
     env->opponent_rewards[0] = reward_1;
     *env->agents[0].terminals = 1.0f;
@@ -140,6 +220,7 @@ static inline void dogfight_two_agent_finish(
 }
 
 static inline void c_step_two_agent(Dogfight* env) {
+    float teacher_actions[2][NUM_ATNS];
     float* actions[2] = {
         env->actions,
         env->opponent_actions_override,
@@ -161,8 +242,57 @@ static inline void c_step_two_agent(Dogfight* env) {
     for (int slot = 0; slot < 2; slot++) {
         for (int action = 0; action < NUM_ATNS; action++) {
             actions[slot][action] = clampf(
-                actions[slot][action], -1.0f, 1.0f);
+            actions[slot][action], -1.0f, 1.0f);
         }
+    }
+
+    if (env->two_agent_scripted_episode) {
+        dogfight_two_agent_pursuit_teacher_actions(
+            env, planes[0], planes[1], teacher_actions[0]);
+        dogfight_two_agent_pursuit_teacher_actions(
+            env, planes[1], planes[0], teacher_actions[1]);
+        float flight_school_rewards[2] = {
+            dogfight_two_agent_flight_school_reward(
+                actions[0],
+                teacher_actions[0],
+                env->two_agent_bootstrap_imitation_scale),
+            dogfight_two_agent_flight_school_reward(
+                actions[1],
+                teacher_actions[1],
+                env->two_agent_bootstrap_imitation_scale),
+        };
+        env->total_aileron_usage += fabsf(actions[0][2]);
+        env->aileron_bias += actions[0][2];
+        if (env->observations[13] < -1.0e-4f) {
+            env->target_az_neg_aileron_sum += actions[0][2];
+            env->target_az_neg_steps++;
+        } else if (env->observations[13] > 1.0e-4f) {
+            env->target_az_pos_aileron_sum += actions[0][2];
+            env->target_az_pos_steps++;
+        }
+        memcpy(
+            env->last_opp_actions,
+            actions[1],
+            NUM_ATNS * sizeof(float));
+        env->tick++;
+        dogfight_two_agent_finish(
+            env,
+            flight_school_rewards[0],
+            flight_school_rewards[1],
+            DEATH_TIMEOUT,
+            0,
+            1);
+        return;
+    }
+
+    env->total_aileron_usage += fabsf(actions[0][2]);
+    env->aileron_bias += actions[0][2];
+    if (env->observations[13] < -1.0e-4f) {
+        env->target_az_neg_aileron_sum += actions[0][2];
+        env->target_az_neg_steps++;
+    } else if (env->observations[13] > 1.0e-4f) {
+        env->target_az_pos_aileron_sum += actions[0][2];
+        env->target_az_pos_steps++;
     }
 
     env->tick++;
@@ -283,10 +413,15 @@ static inline void c_step_two_agent(Dogfight* env) {
     };
     planes[0]->prev_energy = energy[0];
     planes[1]->prev_energy = energy[1];
-    env->rewards[0] = dense_rewards[0];
-    env->opponent_rewards[0] = dense_rewards[1];
-    env->two_agent_episode_returns[0] += dense_rewards[0];
-    env->two_agent_episode_returns[1] += dense_rewards[1];
+    float published_rewards[2];
+    dogfight_two_agent_combine_dense_rewards(
+        env->two_agent_reward_version,
+        dense_rewards,
+        published_rewards);
+    env->rewards[0] = published_rewards[0];
+    env->opponent_rewards[0] = published_rewards[1];
+    env->two_agent_episode_returns[0] += published_rewards[0];
+    env->two_agent_episode_returns[1] += published_rewards[1];
     env->episode_return = env->two_agent_episode_returns[0];
     compute_observations(env);
 }

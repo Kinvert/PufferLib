@@ -54,6 +54,9 @@ def test_headless_and_visible_eval_use_the_same_dogfight_contract(tmp_path):
     ) >= 2
     assert 'puf_ini_put(&ini, "env.dr", "0");' not in generated
     assert "if (num_games <= 0) {" in generated
+    assert "dogfight_eval_controls avg_abs_bias=" in generated
+    assert "env/target_az_neg_aileron_sum" in generated
+    assert "env/target_az_pos_aileron_sum" in generated
 
 
 def test_checkpoint_eval_script_builds_matching_commands(tmp_path):

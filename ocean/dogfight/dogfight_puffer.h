@@ -68,6 +68,8 @@ void puf_init(Env* env, Dict* kwargs) {
         .neg_g = (float)dogfight_dict_get(kwargs, "penalty_neg_g", 0.035),
         .control_rate_penalty = (float)dogfight_dict_get(
             kwargs, "control_rate_penalty", 0.002),
+        .aileron_magnitude_penalty = (float)dogfight_dict_get(
+            kwargs, "aileron_magnitude_penalty", 0.0),
         .low_altitude_threshold = (float)dogfight_dict_get(
             kwargs, "low_altitude_threshold", 1200.0),
         .low_altitude_penalty = (float)dogfight_dict_get(
@@ -138,11 +140,19 @@ void puf_init(Env* env, Dict* kwargs) {
         kwargs, "vertical_spawn_prob", 0.0);
     env->two_agent_reward_version = (int)dogfight_dict_get(
         kwargs, "reward_version", 1);
-    assert(env->two_agent_reward_version == 1
+    assert((env->two_agent_reward_version == 1
+            || env->two_agent_reward_version == 2)
         && "Unsupported Dogfight two-agent reward version");
     env->two_agent_role_randomization = (int)dogfight_dict_get(
         kwargs, "role_randomization", 1);
     env->two_agent_player_slot = 0;
+    env->two_agent_bootstrap_steps = (long)dogfight_dict_get(
+        kwargs, "selfplay_bootstrap_steps", 0);
+    assert(env->two_agent_bootstrap_steps >= 0);
+    env->two_agent_bootstrap_imitation_scale = (float)dogfight_dict_get(
+        kwargs, "selfplay_bootstrap_imitation_scale", 0);
+    assert(env->two_agent_bootstrap_imitation_scale >= 0.0f);
+    env->two_agent_scripted_episode = 0;
 
     int recovery_enabled = (int)dogfight_dict_get(
         kwargs, "recovery_enabled", 1);
@@ -157,8 +167,9 @@ void puf_init(Env* env, Dict* kwargs) {
     env->recovery_bank_deg = (float)dogfight_dict_get(
         kwargs, "recovery_bank_deg", 60.0);
 
-    // Phase 4 binds slot 1 directly. Explicit one-slot runs retain the
-    // internal scripted opponent for curriculum and regression compatibility.
+    // Native two-agent mode binds slot 1 directly. Explicit one-slot runs
+    // retain the internal scripted opponent for curriculum and regression
+    // compatibility.
     env->selfplay_active = 0;
     env->use_opponent_override = env->num_agents == 2;
     env->opponent_observations = NULL;
@@ -378,12 +389,14 @@ void puf_step(Env* env) {
         *env->agents[i].terminals = 0.0f;
     }
     int completed_stage = env->stage;
+    int completed_flight_school =
+        env->num_agents == 2 && env->two_agent_scripted_episode;
     if (env->num_agents == 2) {
         c_step_two_agent(env);
     } else {
         c_step(env);
     }
-    if (*env->agents[0].terminals != 0.0f) {
+    if (*env->agents[0].terminals != 0.0f && !completed_flight_school) {
         dogfight_local_curriculum_episode(
             env, completed_stage, env->last_winner == 1);
     }
@@ -419,6 +432,13 @@ void puf_log(Log* log, Dict* out) {
     dict_set(out, "stage", log->stage);
     dict_set(out, "avg_stage_weight", log->total_stage_weight);
     dict_set(out, "avg_abs_bias", log->total_abs_bias);
+    dict_set(out, "avg_signed_bias", log->total_signed_bias);
+    dict_set(out, "target_az_neg_aileron_sum",
+        log->target_az_neg_aileron_sum);
+    dict_set(out, "target_az_pos_aileron_sum",
+        log->target_az_pos_aileron_sum);
+    dict_set(out, "target_az_neg_steps", log->target_az_neg_steps);
+    dict_set(out, "target_az_pos_steps", log->target_az_pos_steps);
     dict_set(out, "avg_stage", log->stage_sum);
     dict_set(out, "avg_control_rate", log->total_control_rate);
     dict_set(out, "base_stage_kills", log->base_stage_kills);

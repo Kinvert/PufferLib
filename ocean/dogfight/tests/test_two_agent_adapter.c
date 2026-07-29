@@ -62,6 +62,37 @@ static void setup_dual(DualEnv* t) {
     puf_reset(&t->env);
 }
 
+static int test_init_declares_robocode_policy_rows(void) {
+    Env env = {0};
+    DictItem num_agents = {0};
+    snprintf(num_agents.key, sizeof(num_agents.key), "%s", "num_agents");
+    num_agents.value = 2.0;
+    Dict kwargs = {
+        .name = "env",
+        .items = &num_agents,
+        .size = 1,
+        .cap = 1,
+    };
+    env.rng = 42;
+
+    puf_init(&env, &kwargs);
+
+    if (env.num_agents != 2
+            || env.agents[0].policy != 0
+            || env.agents[1].policy != 1) {
+        fprintf(stderr,
+            "native policy rows mismatch: agents=%d policies=%d/%d\n",
+            env.num_agents, env.agents[0].policy, env.agents[1].policy);
+        return 1;
+    }
+    if (env.agents[0].observations != NULL
+            || env.agents[1].observations != NULL) {
+        fprintf(stderr, "puf_init touched agent buffers before vector binding\n");
+        return 1;
+    }
+    return 0;
+}
+
 static int test_reset_observations_are_both_fresh(void) {
     DualEnv t;
     setup_dual(&t);
@@ -409,8 +440,49 @@ static int test_role_randomization_is_seed_deterministic(void) {
     return 0;
 }
 
+static int test_historical_boundary_signal_matches_robocode(void) {
+    DualEnv historical;
+    setup_dual(&historical);
+    historical.env.tag = 1;
+    historical.env.boundary_reached = 0;
+    historical.env.player.pos.z = -10.0f;
+    historical.actions[0][4] = -1.0f;
+    historical.actions[1][4] = -1.0f;
+
+    puf_step(&historical.env);
+
+    if (historical.env.boundary_reached != 1) {
+        fprintf(stderr,
+            "tagged historical match did not signal episode boundary\n");
+        return 1;
+    }
+    puf_reset(&historical.env);
+    if (historical.env.boundary_reached != 1) {
+        fprintf(stderr,
+            "environment reset cleared trainer-owned boundary signal\n");
+        return 1;
+    }
+
+    DualEnv pure;
+    setup_dual(&pure);
+    pure.env.tag = 0;
+    pure.env.boundary_reached = 0;
+    pure.env.player.pos.z = -10.0f;
+    pure.actions[0][4] = -1.0f;
+    pure.actions[1][4] = -1.0f;
+
+    puf_step(&pure.env);
+
+    if (pure.env.boundary_reached != 0) {
+        fprintf(stderr, "pure current-current match signaled pool boundary\n");
+        return 1;
+    }
+    return 0;
+}
+
 int main(void) {
     int failures = 0;
+    failures += test_init_declares_robocode_policy_rows();
     failures += test_reset_observations_are_both_fresh();
     failures += test_swapped_planes_swap_observations();
     failures += test_slot_actions_control_their_own_planes();
@@ -422,6 +494,7 @@ int main(void) {
     failures += test_logical_role_assignment_routes_observations_and_actions();
     failures += test_logical_slot_scores_follow_role_assignment();
     failures += test_role_randomization_is_seed_deterministic();
+    failures += test_historical_boundary_signal_matches_robocode();
     if (failures == 0) {
         puts("two-agent adapter: ok");
     }

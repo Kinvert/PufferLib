@@ -178,6 +178,11 @@ typedef struct Log {
     // RAW SUMS - exported to Python, become correct averages after vec_log divides by n
     float total_stage_weight;       // Sum of stage weights (exported as avg_stage_weight)
     float total_abs_bias;           // Sum of |aileron_bias| (exported as avg_abs_bias)
+    float total_signed_bias;        // Sum of signed per-episode aileron bias
+    float target_az_neg_aileron_sum;
+    float target_az_pos_aileron_sum;
+    float target_az_neg_steps;
+    float target_az_pos_steps;
     float stage_sum;                // Sum of stages (exported as avg_stage)
     float total_control_rate;       // Sum of per-episode mean squared deltas (exported as avg_control_rate)
     float base_stage_kills;         // Kills at int(curriculum_target) - for per-stage gating
@@ -215,6 +220,7 @@ typedef struct RewardConfig {
     // Penalties
     float neg_g;             // -N per unit G below 0.5 (default 0.02) - enforces "pull to turn"
     float control_rate_penalty;  // Penalty for (action - prev_action)^2 (default 0, sweepable)
+    float aileron_magnitude_penalty;  // Penalty for sustained roll-control deflection
     // Low altitude penalty (discourages death spirals)
     float low_altitude_threshold;  // Altitude below which penalty applies (default 1500.0)
     float low_altitude_penalty;    // Penalty scale at ground level (default 0.01)
@@ -284,7 +290,8 @@ typedef struct Client {
 } Client;
 
 typedef struct Env {
-    // Current PufferLib 5c native ABI. Only slot 0 is bound in Phase 1.
+    // Current PufferLib 5c native ABI. One-agent curriculum mode binds slot 0;
+    // native self-play mode binds both slots independently.
     Agent agents[2];
     int num_agents;
     int tag;
@@ -342,6 +349,10 @@ typedef struct Env {
     // Anti-spinning
     float total_aileron_usage;  // Accumulated |aileron| input (for spin death)
     float aileron_bias;         // Cumulative signed aileron (for directional penalty)
+    float target_az_neg_aileron_sum;
+    float target_az_pos_aileron_sum;
+    int target_az_neg_steps;
+    int target_az_pos_steps;
     float episode_control_rate; // Sum of squared control deltas this episode
     // Episode reward accumulators (for DEBUG summaries)
     float sum_r_closing;
@@ -408,6 +419,9 @@ typedef struct Env {
     int two_agent_reward_version;
     int two_agent_role_randomization;
     int two_agent_player_slot;
+    long two_agent_bootstrap_steps;
+    float two_agent_bootstrap_imitation_scale;
+    int two_agent_scripted_episode;
     float two_agent_prev_controls[2][3];
     float two_agent_episode_returns[2];
     float two_agent_episode_shots[2];
@@ -757,6 +771,11 @@ void add_log(Dogfight *env) {
 
     env->log.total_stage_weight += STAGES[env->stage].weight; // coeffs to scale metrics based on difficulty
     env->log.total_abs_bias += fabsf(env->aileron_bias);
+    env->log.total_signed_bias += env->aileron_bias;
+    env->log.target_az_neg_aileron_sum += env->target_az_neg_aileron_sum;
+    env->log.target_az_pos_aileron_sum += env->target_az_pos_aileron_sum;
+    env->log.target_az_neg_steps += (float)env->target_az_neg_steps;
+    env->log.target_az_pos_steps += (float)env->target_az_pos_steps;
     env->log.stage_sum += (float)env->stage;  // Accumulate for avg_stage
     // Mean squared control delta per step this episode (lower = smoother control)
     env->log.total_control_rate += env->episode_control_rate / fmaxf((float)env->tick, 1.0f);
@@ -860,8 +879,9 @@ void c_reset(Dogfight *env) {
         env->last_winner = 0;   // Draw/timeout/OOB
     }
 
-    // Curriculum stage is now managed globally by Python based on aggregate kill_rate
-    // (see set_curriculum_stage() called from training loop)
+    // Sample this episode's stage from the configured fixed/probabilistic
+    // target. Local native curriculum updates curriculum_target between resets.
+    env->stage = get_curriculum_stage(env);
 
     env->total_episodes++;
 
@@ -874,6 +894,10 @@ void c_reset(Dogfight *env) {
     env->episode_shots_fired = 0.0f;
     env->total_aileron_usage = 0.0f;
     env->aileron_bias = 0.0f;
+    env->target_az_neg_aileron_sum = 0.0f;
+    env->target_az_pos_aileron_sum = 0.0f;
+    env->target_az_neg_steps = 0;
+    env->target_az_pos_steps = 0;
     env->episode_control_rate = 0.0f;
 
     // Reset reward accumulators
@@ -1178,6 +1202,13 @@ void c_step(Dogfight *env) {
     // Track aileron usage for monitoring (no death penalty - see BISECTION.md)
     env->total_aileron_usage += fabsf(env->actions[2]);
     env->aileron_bias += env->actions[2];
+    if (env->observations[13] < -1.0e-4f) {
+        env->target_az_neg_aileron_sum += env->actions[2];
+        env->target_az_neg_steps++;
+    } else if (env->observations[13] > 1.0e-4f) {
+        env->target_az_pos_aileron_sum += env->actions[2];
+        env->target_az_pos_steps++;
+    }
 
 #if DEBUG >= 3
     // Track flight envelope diagnostics (only when debugging - expensive)
@@ -1309,6 +1340,12 @@ void c_step(Dogfight *env) {
     // 5. Rudder penalty: prevent knife-edge climbing (small)
     float r_rudder = -fabsf(env->actions[3]) * PENALTY_RUDDER;
     reward += r_rudder;
+
+    // Sustained aileron deflection causes continuous rolling. A real pilot
+    // recenters the stick after establishing bank, so penalize deflection
+    // without penalizing bank angle or legitimate turning.
+    reward -= fabsf(env->actions[2])
+        * env->rcfg.aileron_magnitude_penalty;
 
     // 5b. Control rate penalty: penalize rapid control changes
     // Sweepable coefficient - find max value that still allows good training

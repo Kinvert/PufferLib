@@ -68,6 +68,20 @@ prepare_source() {
             print "            puf_ini_put(&ini, \"env.role_randomization\", \"0\");"
             next
         }
+        $0 == "            result.games = (int)scored_n;" {
+            print
+            print "            double az_neg_sum = dict_get(&log, \"env/target_az_neg_aileron_sum\");"
+            print "            double az_pos_sum = dict_get(&log, \"env/target_az_pos_aileron_sum\");"
+            print "            double az_neg_steps = dict_get(&log, \"env/target_az_neg_steps\");"
+            print "            double az_pos_steps = dict_get(&log, \"env/target_az_pos_steps\");"
+            print "            printf(\"dogfight_eval_controls avg_abs_bias=%.6f avg_signed_bias=%.6f az_neg_mean_aileron=%.6f az_pos_mean_aileron=%.6f az_neg_steps=%.1f az_pos_steps=%.1f\\n\","
+            print "                dict_get(&log, \"env/avg_abs_bias\"),"
+            print "                dict_get(&log, \"env/avg_signed_bias\"),"
+            print "                az_neg_steps > 0.0 ? az_neg_sum / az_neg_steps : 0.0,"
+            print "                az_pos_steps > 0.0 ? az_pos_sum / az_pos_steps : 0.0,"
+            print "                az_neg_steps, az_pos_steps);"
+            next
+        }
         { print }
     ' "$destination" > "$destination.tmp"
     mv "$destination.tmp" "$destination"
