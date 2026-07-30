@@ -24,6 +24,18 @@ class EvalSample(NamedTuple):
     opponent_ground_hits: float
     avg_abs_bias: float
     avg_signed_bias: float
+    avg_roll_rotations: float
+    az_neg_mean_aileron: float
+    az_pos_mean_aileron: float
+    az_neg_steps: float
+    az_pos_steps: float
+
+
+ROLL_DIRECTION_EPSILON = 0.02
+ROLL_COMMON_MODE_LIMIT = 0.05
+ROLL_MIN_STEPS = 32.0
+ROLL_ROTATION_LIMIT_EARLY = 1.0
+ROLL_ROTATION_LIMIT_MIDDLE = 2.0
 
 
 Runner = Callable[[int, int, int, int], str]
@@ -82,7 +94,47 @@ def parse_eval_output(
         opponent_ground_hits=outcomes["opponent_ground_hits"],
         avg_abs_bias=controls["avg_abs_bias"],
         avg_signed_bias=controls["avg_signed_bias"],
+        avg_roll_rotations=controls["avg_roll_rotations"],
+        az_neg_mean_aileron=controls["az_neg_mean_aileron"],
+        az_pos_mean_aileron=controls["az_pos_mean_aileron"],
+        az_neg_steps=controls["az_neg_steps"],
+        az_pos_steps=controls["az_pos_steps"],
     )
+
+
+def roll_quality(sample: EvalSample) -> dict[str, float | bool]:
+    common_mode = 0.5 * (
+        sample.az_neg_mean_aileron + sample.az_pos_mean_aileron
+    )
+    directional = 0.5 * (
+        sample.az_neg_mean_aileron - sample.az_pos_mean_aileron
+    )
+    rotation_limit = (
+        ROLL_ROTATION_LIMIT_EARLY
+        if sample.stage <= 2
+        else (
+            ROLL_ROTATION_LIMIT_MIDDLE
+            if sample.stage <= 5
+            else float("inf")
+        )
+    )
+    passed = (
+        sample.az_neg_steps >= ROLL_MIN_STEPS
+        and sample.az_pos_steps >= ROLL_MIN_STEPS
+        and sample.az_neg_mean_aileron > ROLL_DIRECTION_EPSILON
+        and sample.az_pos_mean_aileron < -ROLL_DIRECTION_EPSILON
+        and directional > ROLL_DIRECTION_EPSILON
+        and abs(common_mode) < ROLL_COMMON_MODE_LIMIT
+        and sample.avg_roll_rotations <= rotation_limit
+    )
+    return {
+        "passed": passed,
+        "common_mode": common_mode,
+        "directional": directional,
+        "min_samples": min(sample.az_neg_steps, sample.az_pos_steps),
+        "avg_roll_rotations": sample.avg_roll_rotations,
+        "rotation_limit": rotation_limit,
+    }
 
 
 def summarize(
@@ -95,8 +147,15 @@ def summarize(
     for stage in stages:
         stage_samples = [sample for sample in samples if sample.stage == stage]
         perfs = [sample.perf for sample in stage_samples]
+        roll_results = [roll_quality(sample) for sample in stage_samples]
         stage_summaries[str(stage)] = {
-            "mastered": bool(perfs) and min(perfs) >= threshold,
+            "mastered": (
+                bool(perfs)
+                and min(perfs) >= threshold
+                and all(result["passed"] for result in roll_results)
+            ),
+            "roll_gate_passed": bool(roll_results)
+            and all(result["passed"] for result in roll_results),
             "cells": len(stage_samples),
             "episodes": sum(sample.episodes for sample in stage_samples),
             "min_perf": min(perfs) if perfs else None,
@@ -104,6 +163,26 @@ def summarize(
             "max_abs_signed_bias": (
                 max(abs(sample.avg_signed_bias) for sample in stage_samples)
                 if stage_samples
+                else None
+            ),
+            "max_abs_roll_common_mode": (
+                max(abs(result["common_mode"]) for result in roll_results)
+                if roll_results
+                else None
+            ),
+            "max_avg_roll_rotations": (
+                max(sample.avg_roll_rotations for sample in stage_samples)
+                if stage_samples
+                else None
+            ),
+            "min_roll_directional_response": (
+                min(result["directional"] for result in roll_results)
+                if roll_results
+                else None
+            ),
+            "min_roll_samples": (
+                min(result["min_samples"] for result in roll_results)
+                if roll_results
                 else None
             ),
         }
@@ -115,6 +194,7 @@ def summarize(
         highest_contiguous_stage = stage
 
     all_perfs = [sample.perf for sample in samples]
+    all_roll_results = [roll_quality(sample) for sample in samples]
     return {
         "threshold": threshold,
         "highest_contiguous_stage": highest_contiguous_stage,
@@ -126,6 +206,23 @@ def summarize(
         "max_abs_signed_bias": (
             max(abs(sample.avg_signed_bias) for sample in samples)
             if samples
+            else None
+        ),
+        "roll_gate_passed": bool(all_roll_results)
+        and all(result["passed"] for result in all_roll_results),
+        "max_abs_roll_common_mode": (
+            max(abs(result["common_mode"]) for result in all_roll_results)
+            if all_roll_results
+            else None
+        ),
+        "max_avg_roll_rotations": (
+            max(sample.avg_roll_rotations for sample in samples)
+            if samples
+            else None
+        ),
+        "min_roll_directional_response": (
+            min(result["directional"] for result in all_roll_results)
+            if all_roll_results
             else None
         ),
         "stages": stage_summaries,
@@ -166,7 +263,10 @@ def evaluate_checkpoint(
                     ) from error
                 samples.append(sample)
                 stage_samples.append(sample)
-        if min(sample.perf for sample in stage_samples) < threshold:
+        if (
+            min(sample.perf for sample in stage_samples) < threshold
+            or not all(roll_quality(sample)["passed"] for sample in stage_samples)
+        ):
             stopped_after_stage = stage
             break
 
@@ -255,7 +355,10 @@ def main() -> int:
             "dogfight_stage_cell "
             f"stage={sample.stage} seed={sample.seed} mirror={sample.mirror} "
             f"perf={sample.perf:.6f} score={sample.score:.6f} "
-            f"signed_bias={sample.avg_signed_bias:.6f}"
+            f"signed_bias={sample.avg_signed_bias:.6f} "
+            f"roll_rotations={sample.avg_roll_rotations:.6f} "
+            f"roll_common_mode={roll_quality(sample)['common_mode']:.6f} "
+            f"roll_directional={roll_quality(sample)['directional']:.6f}"
         )
     print(
         "dogfight_stage_matrix "

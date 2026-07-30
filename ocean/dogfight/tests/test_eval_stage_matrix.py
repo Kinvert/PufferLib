@@ -16,13 +16,26 @@ def load_module():
     return module
 
 
-def eval_output(perf, *, score=0.5, abs_bias=4.0, signed_bias=1.0):
+def eval_output(
+    perf,
+    *,
+    score=0.5,
+    abs_bias=4.0,
+    signed_bias=1.0,
+    roll_rotations=0.5,
+    az_neg=0.1,
+    az_pos=-0.1,
+    az_neg_steps=64.0,
+    az_pos_steps=64.0,
+):
     return (
         "bot_eval=128/128 perf=0.000000 score=0.000000\n"
         "dogfight_eval_controls "
         f"avg_abs_bias={abs_bias:.6f} avg_signed_bias={signed_bias:.6f} "
-        "az_neg_mean_aileron=0.100000 az_pos_mean_aileron=-0.100000 "
-        "az_neg_steps=64.0 az_pos_steps=64.0\n"
+        f"avg_roll_rotations={roll_rotations:.6f} "
+        f"az_neg_mean_aileron={az_neg:.6f} "
+        f"az_pos_mean_aileron={az_pos:.6f} "
+        f"az_neg_steps={az_neg_steps:.1f} az_pos_steps={az_pos_steps:.1f}\n"
         "dogfight_eval_outcomes "
         f"perf={perf:.6f} score={score:.6f} timeouts=2.000000 "
         "player_ground_hits=1.000000 opponent_ground_hits=3.000000\n"
@@ -51,6 +64,50 @@ def test_parse_eval_output_uses_dogfight_contract():
     assert sample.opponent_ground_hits == 3.0
     assert sample.avg_abs_bias == 4.0
     assert sample.avg_signed_bias == 1.0
+    assert sample.avg_roll_rotations == 0.5
+    assert sample.az_neg_mean_aileron == 0.1
+    assert sample.az_pos_mean_aileron == -0.1
+    assert module.roll_quality(sample)["passed"] is True
+
+
+def test_roll_gate_rejects_high_perf_common_mode_right_roll():
+    module = load_module()
+    sample = module.parse_eval_output(
+        eval_output(0.99, az_neg=0.18, az_pos=0.19),
+        stage=0,
+        seed=42,
+        mirror=0,
+        requested_episodes=128,
+    )
+
+    quality = module.roll_quality(sample)
+    summary = module.summarize([sample], stages=(0,), threshold=0.90)
+
+    assert quality["common_mode"] == pytest.approx(0.185)
+    assert quality["passed"] is False
+    assert summary["stages"]["0"]["mastered"] is False
+    assert summary["roll_gate_passed"] is False
+
+
+def test_roll_gate_rejects_long_way_around_physical_rotation():
+    module = load_module()
+    sample = module.parse_eval_output(
+        eval_output(
+            0.99,
+            az_neg=0.1,
+            az_pos=-0.1,
+            roll_rotations=1.25,
+        ),
+        stage=0,
+        seed=42,
+        mirror=0,
+        requested_episodes=128,
+    )
+
+    quality = module.roll_quality(sample)
+    assert quality["avg_roll_rotations"] == 1.25
+    assert quality["rotation_limit"] == 1.0
+    assert quality["passed"] is False
 
 
 def test_parse_eval_output_accepts_progress_line_concatenation_and_overshoot():

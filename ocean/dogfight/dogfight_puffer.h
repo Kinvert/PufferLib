@@ -45,6 +45,105 @@ static inline void dogfight_sync_agent_buffers(Env* env) {
     env->terminals = env->agents[0].terminals;
 }
 
+static inline void dogfight_mirror_policy_observation(
+        float observations[OBS_SIZE]) {
+    static const int odd_indices[] = {1, 3, 5, 11, 13, 20, 22};
+    for (size_t i = 0;
+            i < sizeof(odd_indices) / sizeof(odd_indices[0]); i++) {
+        observations[odd_indices[i]] = -observations[odd_indices[i]];
+    }
+}
+
+static inline void dogfight_select_lateral_frame(Env* env) {
+    env->lateral_frame_mirror = 0;
+    if (!env->lateral_canonicalization) {
+        return;
+    }
+
+    // Target azimuth is the primary tie-break. The remaining reflection-odd
+    // features make centered spawns deterministic without choosing a global
+    // physical turn direction.
+    static const int selectors[] = {13, 11, 1, 3, 5, 20, 22};
+    for (size_t i = 0; i < sizeof(selectors) / sizeof(selectors[0]); i++) {
+        float value = env->observations[selectors[i]];
+        if (fabsf(value) > 1.0e-8f) {
+            env->lateral_frame_mirror = value < 0.0f;
+            return;
+        }
+    }
+    env->lateral_frame_mirror = (int)(dogfight_rand() & 1U);
+}
+
+static inline void dogfight_restore_raw_observations(Env* env) {
+    if (!env->lateral_canonicalization
+            || !env->lateral_observations_published) {
+        env->lateral_observations_published = 0;
+        return;
+    }
+    if (env->lateral_frame_mirror) {
+        dogfight_mirror_policy_observation(env->observations);
+        if (env->num_agents == 2) {
+            dogfight_mirror_policy_observation(
+                env->opponent_observations);
+        }
+    }
+    env->lateral_observations_published = 0;
+}
+
+static inline void dogfight_publish_canonical_observations(Env* env) {
+    if (!env->lateral_canonicalization) {
+        env->lateral_observations_published = 0;
+        return;
+    }
+    if (env->lateral_frame_mirror) {
+        dogfight_mirror_policy_observation(env->observations);
+        if (env->num_agents == 2) {
+            dogfight_mirror_policy_observation(
+                env->opponent_observations);
+        }
+    }
+    env->lateral_observations_published = 1;
+}
+
+static inline void dogfight_prepare_executed_actions(Env* env) {
+    int player_slot = env->num_agents == 2
+        ? env->two_agent_player_slot
+        : 0;
+    int opponent_slot = 1 - player_slot;
+    memcpy(env->executed_player_actions,
+        env->agents[player_slot].actions,
+        sizeof(env->executed_player_actions));
+    if (env->num_agents == 2) {
+        memcpy(env->opponent_actions_override,
+            env->agents[opponent_slot].actions,
+            sizeof(env->opponent_actions_override));
+    }
+
+    if (env->lateral_canonicalization
+            && env->lateral_frame_mirror) {
+        env->executed_player_actions[2] =
+            -env->executed_player_actions[2];
+        env->executed_player_actions[3] =
+            -env->executed_player_actions[3];
+        if (env->num_agents == 2) {
+            env->opponent_actions_override[2] =
+                -env->opponent_actions_override[2];
+            env->opponent_actions_override[3] =
+                -env->opponent_actions_override[3];
+        }
+    }
+
+    for (int i = 0; i < NUM_ATNS; i++) {
+        env->executed_player_actions[i] =
+            clampf(env->executed_player_actions[i], -1.0f, 1.0f);
+        if (env->num_agents == 2) {
+            env->opponent_actions_override[i] =
+                clampf(env->opponent_actions_override[i], -1.0f, 1.0f);
+        }
+    }
+    env->actions = env->executed_player_actions;
+}
+
 void puf_init(Env* env, Dict* kwargs) {
     dogfight_bind_rng(&env->rng);
     env->num_agents = (int)dogfight_dict_get(kwargs, "num_agents", 2);
@@ -138,6 +237,18 @@ void puf_init(Env* env, Dict* kwargs) {
         kwargs, "eval_lateral_mirror", 0);
     assert((env->eval_lateral_mirror == 0 || env->eval_lateral_mirror == 1)
         && "eval_lateral_mirror must be 0 or 1");
+    env->lateral_canonicalization = (int)dogfight_dict_get(
+        kwargs, "lateral_canonicalization", 0);
+    assert((env->lateral_canonicalization == 0
+            || env->lateral_canonicalization == 1)
+        && "lateral_canonicalization must be 0 or 1");
+    assert((!env->lateral_canonicalization
+            || obs_scheme == OBS_OPPONENT_AWARE)
+        && "lateral_canonicalization requires opponent-aware observations");
+    env->lateral_frame_mirror = 0;
+    env->lateral_observations_published = 0;
+    memset(env->executed_player_actions, 0,
+        sizeof(env->executed_player_actions));
     env->domain_randomization = (float)dogfight_dict_get(
         kwargs, "domain_randomization", 0.0);
     env->vertical_spawn_prob = (float)dogfight_dict_get(
@@ -189,6 +300,53 @@ void puf_init(Env* env, Dict* kwargs) {
         kwargs, "native_frontier_fraction", 0.75);
     assert(env->native_frontier_fraction >= 0.0f);
     assert(env->native_frontier_fraction <= 1.0f);
+    env->native_lateral_width_scale = (float)dogfight_dict_get(
+        kwargs, "native_lateral_width_scale", 1.0);
+    assert(env->native_lateral_width_scale >= 1.0f);
+    env->native_roll_recovery_fraction = (float)dogfight_dict_get(
+        kwargs, "native_roll_recovery_fraction", 0.0);
+    assert(env->native_roll_recovery_fraction >= 0.0f);
+    assert(env->native_roll_recovery_fraction <= 1.0f);
+    env->native_roll_recovery_bank_deg = (float)dogfight_dict_get(
+        kwargs, "native_roll_recovery_bank_deg", 45.0);
+    assert(env->native_roll_recovery_bank_deg >= 0.0f);
+    assert(env->native_roll_recovery_bank_deg <= 90.0f);
+    env->native_roll_recovery_rate = (float)dogfight_dict_get(
+        kwargs, "native_roll_recovery_rate", 1.0);
+    assert(env->native_roll_recovery_rate >= 0.0f);
+    env->native_bias_min_abs = (float)dogfight_dict_get(
+        kwargs, "native_bias_min_abs", 0.30);
+    assert(env->native_bias_min_abs >= 0.0f);
+    assert(env->native_bias_min_abs <= 1.0f);
+    env->native_previous_canonical_aileron_bias = 0.0f;
+    env->native_roll_discipline_scale = (float)dogfight_dict_get(
+        kwargs, "native_roll_discipline_scale", 0.0);
+    assert(env->native_roll_discipline_scale >= 0.0f);
+    env->native_bank_guidance_scale = (float)dogfight_dict_get(
+        kwargs, "native_bank_guidance_scale", 0.0);
+    assert(env->native_bank_guidance_scale >= 0.0f);
+    env->native_roll_guidance_scale = (float)dogfight_dict_get(
+        kwargs, "native_roll_guidance_scale", 0.0);
+    assert(env->native_roll_guidance_scale >= 0.0f);
+    env->native_roll_free_rotations = (float)dogfight_dict_get(
+        kwargs, "native_roll_free_rotations", 1.0);
+    env->native_roll_full_rotations = (float)dogfight_dict_get(
+        kwargs, "native_roll_full_rotations", 2.0);
+    assert(env->native_roll_free_rotations >= 0.0f);
+    assert(env->native_roll_full_rotations
+        > env->native_roll_free_rotations);
+    env->native_roll_decay_start = (long)dogfight_dict_get(
+        kwargs, "native_roll_decay_start", 80000000);
+    env->native_roll_decay_end = (long)dogfight_dict_get(
+        kwargs, "native_roll_decay_end", 300000000);
+    assert(env->native_roll_decay_start >= 0);
+    assert(env->native_roll_decay_end > env->native_roll_decay_start);
+    env->native_roll_final_fraction = (float)dogfight_dict_get(
+        kwargs, "native_roll_final_fraction", 0.50);
+    assert(env->native_roll_final_fraction >= 0.0f);
+    assert(env->native_roll_final_fraction <= 1.0f);
+    memset(env->two_agent_roll_travel_radians, 0,
+        sizeof(env->two_agent_roll_travel_radians));
 
     int recovery_enabled = (int)dogfight_dict_get(
         kwargs, "recovery_enabled", 1);
@@ -410,15 +568,20 @@ void puf_reset(Env* env) {
     } else {
         dogfight_sync_agent_buffers(env);
     }
+    env->lateral_observations_published = 0;
     c_reset(env);
     if (env->num_agents == 2) {
         compute_opponent_observations(env, env->opponent_observations);
     }
+    dogfight_select_lateral_frame(env);
+    dogfight_publish_canonical_observations(env);
 }
 
 void puf_step(Env* env) {
     dogfight_bind_rng(&env->rng);
     dogfight_sync_agent_buffers(env);
+    dogfight_restore_raw_observations(env);
+    dogfight_prepare_executed_actions(env);
     dogfight_advance_local_global_step(env);
     for (int i = 0; i < env->num_agents; i++) {
         *env->agents[i].rewards = 0.0f;
@@ -442,10 +605,15 @@ void puf_step(Env* env) {
         }
         compute_opponent_observations(env, env->opponent_observations);
     }
+    if (*env->agents[0].terminals != 0.0f) {
+        dogfight_select_lateral_frame(env);
+    }
+    dogfight_publish_canonical_observations(env);
 }
 
 void puf_render(Env* env) {
     dogfight_sync_agent_buffers(env);
+    dogfight_prepare_executed_actions(env);
     c_render(env);
 }
 
@@ -458,6 +626,7 @@ void puf_log(Log* log, Dict* out) {
     dict_set(out, "score", log->score);
     dict_set(out, "slot_0_score", log->slot_0_score);
     dict_set(out, "slot_1_score", log->slot_1_score);
+    dict_set(out, "pool_flight_quality", log->pool_flight_quality);
     dict_set(out, "draw_rate", log->draw_rate);
     dict_set(out, "slot_0_gun_kills", log->slot_0_gun_kills);
     dict_set(out, "slot_1_gun_kills", log->slot_1_gun_kills);
@@ -476,7 +645,7 @@ void puf_log(Log* log, Dict* out) {
     dict_set(out, "target_az_neg_steps", log->target_az_neg_steps);
     dict_set(out, "target_az_pos_steps", log->target_az_pos_steps);
     dict_set(out, "avg_stage", log->stage_sum);
-    dict_set(out, "avg_control_rate", log->total_control_rate);
+    dict_set(out, "avg_roll_rotations", log->total_roll_rotations);
     dict_set(out, "base_stage_kills", log->base_stage_kills);
     dict_set(out, "base_stage_eps", log->base_stage_eps);
     dict_set(out, "player_ground", log->player_ground_hits);

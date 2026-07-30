@@ -1485,6 +1485,86 @@ static void spawn_eval_midfight(Dogfight *env, Vec3 player_pos, Vec3 player_vel)
     }
 }
 
+// Native self-play can broaden early target bearings without changing fixed
+// evaluation geometry. Scaling only the lateral component preserves the
+// curriculum stage's longitudinal and vertical problem.
+static inline void dogfight_native_widen_lateral_geometry(Dogfight* env) {
+    float scale = env->native_lateral_width_scale;
+    if (scale <= 1.0f) {
+        return;
+    }
+
+    Vec3 forward = quat_rotate(env->player.ori, vec3(1, 0, 0));
+    float horizontal_norm =
+        sqrtf(forward.x * forward.x + forward.y * forward.y);
+    if (horizontal_norm <= 1.0e-6f) {
+        return;
+    }
+    forward.x /= horizontal_norm;
+    forward.y /= horizontal_norm;
+    forward.z = 0.0f;
+    Vec3 lateral = vec3(-forward.y, forward.x, 0.0f);
+    Vec3 relative = sub3(env->opponent.pos, env->player.pos);
+    float lateral_offset = dot3(relative, lateral);
+    env->opponent.pos = add3(
+        env->opponent.pos,
+        mul3(lateral, lateral_offset * (scale - 1.0f)));
+}
+
+static inline int dogfight_native_player_frame_mirror(const Dogfight* env) {
+    Vec3 body_left = quat_rotate(env->player.ori, vec3(0, 1, 0));
+    Vec3 relative = sub3(env->opponent.pos, env->player.pos);
+    return dot3(relative, body_left) < 0.0f;
+}
+
+static inline float dogfight_native_recovery_canonical_sign(Dogfight* env) {
+    float bias = env->native_previous_canonical_aileron_bias;
+    if (fabsf(bias) >= env->native_bias_min_abs) {
+        return bias < 0.0f ? -1.0f : 1.0f;
+    }
+    return 0.0f;
+}
+
+static inline void dogfight_native_apply_roll_recovery(
+        Dogfight* env, float canonical_sign, int frame_mirror) {
+    float physical_sign = frame_mirror ? -canonical_sign : canonical_sign;
+    float bank =
+        physical_sign * env->native_roll_recovery_bank_deg * DEG_TO_RAD;
+    float roll_rate = physical_sign * env->native_roll_recovery_rate;
+    Quat bank_rotation = quat_from_axis_angle(vec3(1, 0, 0), bank);
+    Plane* planes[2] = {&env->player, &env->opponent};
+
+    for (int physical = 0; physical < 2; physical++) {
+        planes[physical]->ori =
+            quat_mul(planes[physical]->ori, bank_rotation);
+        quat_normalize(&planes[physical]->ori);
+        planes[physical]->omega.x = roll_rate;
+    }
+}
+
+static inline void dogfight_native_apply_spawn_treatment(
+        Dogfight* env, int level) {
+    // Keep advanced energy-fight geometry intact. Early stages provide a
+    // controlled flight school for wider acquisition and roll arrest.
+    if (level > CURRICULUM_ANGLED) {
+        return;
+    }
+
+    float canonical_sign = dogfight_native_recovery_canonical_sign(env);
+    if (canonical_sign == 0.0f
+            || env->native_roll_recovery_fraction <= 0.0f
+            || rndf(0, 1) >= env->native_roll_recovery_fraction) {
+        return;
+    }
+
+    // Preserve the exact legacy distribution for ordinary episodes. Width is
+    // increased only as part of the bias-triggered corrective assignment.
+    dogfight_native_widen_lateral_geometry(env);
+    int frame_mirror = dogfight_native_player_frame_mirror(env);
+    dogfight_native_apply_roll_recovery(
+        env, canonical_sign, frame_mirror);
+}
+
 // Training-only spawn progression for native two-agent self-play. Fixed-stage
 // one-agent evaluation intentionally continues through the legacy curriculum
 // spawners below, so training geometry cannot redefine the acceptance oracle.
@@ -1523,11 +1603,11 @@ static void spawn_native_selfplay_progressive(
     }
     env->stage = (CurriculumStage)level;
 
-    // Reuse the exact fixed-curriculum spawn distributions so native training
-    // cannot silently optimize for geometry absent from the acceptance oracle.
-    // Both aircraft remain policy-controlled: the two-agent step path ignores
-    // the legacy spawners' opponent autopilot metadata.
+    // Start from the fixed curriculum distribution, then apply the explicit
+    // training-only treatment. Both aircraft remain policy-controlled: the
+    // two-agent step path ignores legacy opponent-autopilot metadata.
     STAGES[level].spawn(env, player_pos, player_vel);
+    dogfight_native_apply_spawn_treatment(env, level);
     if (level >= CURRICULUM_SIDE_FAR) {
         env->max_steps = STAGES[level].max_steps;
     }

@@ -154,7 +154,8 @@ static void set_asymmetric_state(DualEnv* t) {
     t->env.tick = 0;
     t->env.head_on_lockout = 0;
     compute_observations(&t->env);
-    compute_opponent_observations(&t->env, t->observations[1]);
+    compute_opponent_observations(
+        &t->env, t->env.opponent_observations);
 }
 
 static int mirrored_observations_close(
@@ -170,6 +171,19 @@ static int mirrored_observations_close(
                 "mirrored observation mismatch at %d: %.6f -> %.6f "
                 "(expected %.6f)\n",
                 i, original[i], mirrored[i], signs[i] * original[i]);
+            return 0;
+        }
+    }
+    return 1;
+}
+
+static int observations_close(
+        const obs_t a[OBS_SIZE], const obs_t b[OBS_SIZE]) {
+    for (int i = 0; i < OBS_SIZE; i++) {
+        if (!closef(a[i], b[i])) {
+            fprintf(stderr,
+                "canonical observation mismatch at %d: %.6f != %.6f\n",
+                i, a[i], b[i]);
             return 0;
         }
     }
@@ -251,10 +265,156 @@ static int test_two_agent_step_is_laterally_symmetric(void) {
     return 0;
 }
 
+static void publish_canonical_state(DualEnv* t) {
+    t->env.lateral_canonicalization = 1;
+    t->env.lateral_observations_published = 0;
+    dogfight_select_lateral_frame(&t->env);
+    dogfight_publish_canonical_observations(&t->env);
+}
+
+static int telemetry_matches_executed_aileron(
+        const Dogfight* env, float executed_aileron) {
+    int total_steps =
+        (int)(env->target_az_neg_steps + env->target_az_pos_steps);
+    float total_aileron =
+        env->target_az_neg_aileron_sum
+        + env->target_az_pos_aileron_sum;
+    return total_steps == 1 && closef(total_aileron, executed_aileron);
+}
+
+static int test_canonical_adapter_is_equivariant_and_non_mutating(void) {
+    for (int player_slot = 0; player_slot < 2; player_slot++) {
+        DualEnv original;
+        DualEnv mirrored;
+        setup_dual(&original, 71U + (unsigned int)player_slot);
+        setup_dual(&mirrored, 71U + (unsigned int)player_slot);
+        original.env.two_agent_player_slot = player_slot;
+        mirrored.env.two_agent_player_slot = player_slot;
+        dogfight_two_agent_bind_slots(&original.env);
+        dogfight_two_agent_bind_slots(&mirrored.env);
+
+        set_asymmetric_state(&original);
+        lateral_mirror_plane(
+            &original.env.player, &mirrored.env.player);
+        lateral_mirror_plane(
+            &original.env.opponent, &mirrored.env.opponent);
+        mirrored.env.tick = original.env.tick;
+        mirrored.env.head_on_lockout = original.env.head_on_lockout;
+        compute_observations(&mirrored.env);
+        compute_opponent_observations(
+            &mirrored.env, mirrored.env.opponent_observations);
+        publish_canonical_state(&original);
+        publish_canonical_state(&mirrored);
+
+        if (original.env.lateral_frame_mirror
+                == mirrored.env.lateral_frame_mirror
+                || !observations_close(
+                    original.observations[0], mirrored.observations[0])
+                || !observations_close(
+                    original.observations[1], mirrored.observations[1])) {
+            fprintf(stderr,
+                "canonical reset did not collapse mirrored worlds "
+                "for player slot %d\n", player_slot);
+            return 1;
+        }
+
+        const float slot_actions[2][NUM_ATNS] = {
+            {0.30f, -0.25f, 0.55f, 0.20f, -1.0f},
+            {-0.10f, 0.35f, -0.45f, -0.15f, -1.0f},
+        };
+        float original_action_copy[2][NUM_ATNS];
+        float mirrored_action_copy[2][NUM_ATNS];
+        memcpy(original.actions, slot_actions, sizeof(slot_actions));
+        memcpy(mirrored.actions, slot_actions, sizeof(slot_actions));
+        memcpy(original_action_copy, original.actions,
+            sizeof(original_action_copy));
+        memcpy(mirrored_action_copy, mirrored.actions,
+            sizeof(mirrored_action_copy));
+
+        puf_step(&original.env);
+        puf_step(&mirrored.env);
+
+        if (memcmp(original.actions, original_action_copy,
+                    sizeof(original_action_copy)) != 0
+                || memcmp(mirrored.actions, mirrored_action_copy,
+                    sizeof(mirrored_action_copy)) != 0) {
+            fprintf(stderr,
+                "canonical adapter mutated Protein action buffers\n");
+            return 1;
+        }
+        if (!closef(original.env.executed_player_actions[2],
+                    -mirrored.env.executed_player_actions[2])
+                || !closef(original.env.opponent_actions_override[2],
+                    -mirrored.env.opponent_actions_override[2])
+                || !telemetry_matches_executed_aileron(
+                    &original.env,
+                    original.env.executed_player_actions[2])
+                || !telemetry_matches_executed_aileron(
+                    &mirrored.env,
+                    mirrored.env.executed_player_actions[2])) {
+            fprintf(stderr,
+                "canonical adapter lost physical action signs "
+                "for player slot %d\n", player_slot);
+            return 1;
+        }
+        if (!mirrored_plane_close(
+                    &original.env.player, &mirrored.env.player)
+                || !mirrored_plane_close(
+                    &original.env.opponent, &mirrored.env.opponent)
+                || !closef(original.rewards[0], mirrored.rewards[0])
+                || !closef(original.rewards[1], mirrored.rewards[1])
+                || !observations_close(
+                    original.observations[0], mirrored.observations[0])
+                || !observations_close(
+                    original.observations[1], mirrored.observations[1])) {
+            fprintf(stderr,
+                "canonical adapter broke mirrored transition "
+                "for player slot %d\n", player_slot);
+            return 1;
+        }
+    }
+    return 0;
+}
+
+static int test_canonical_frame_refreshes_after_terminal_reset(void) {
+    DualEnv t;
+    setup_dual(&t, 991U);
+    t.env.lateral_canonicalization = 1;
+    puf_reset(&t.env);
+    t.env.max_steps = 1;
+    memset(t.actions, 0, sizeof(t.actions));
+    puf_step(&t.env);
+
+    if (t.terminals[0] == 0.0f || t.terminals[1] == 0.0f
+            || !t.env.lateral_observations_published
+            || (t.env.lateral_frame_mirror != 0
+                && t.env.lateral_frame_mirror != 1)) {
+        fprintf(stderr,
+            "canonical frame was not republished after terminal reset\n");
+        return 1;
+    }
+
+    static const int selectors[] = {13, 11, 1, 3, 5, 20, 22};
+    for (size_t i = 0; i < sizeof(selectors) / sizeof(selectors[0]); i++) {
+        float value = t.env.observations[selectors[i]];
+        if (fabsf(value) > 1.0e-8f) {
+            if (value < 0.0f) {
+                fprintf(stderr,
+                    "terminal reset published a non-canonical frame\n");
+                return 1;
+            }
+            break;
+        }
+    }
+    return 0;
+}
+
 int main(void) {
     int failures = 0;
     failures += test_stage_zero_resets_are_laterally_balanced();
     failures += test_two_agent_step_is_laterally_symmetric();
+    failures += test_canonical_adapter_is_equivariant_and_non_mutating();
+    failures += test_canonical_frame_refreshes_after_terminal_reset();
     if (failures == 0) {
         puts("two-agent lateral symmetry: ok");
     }

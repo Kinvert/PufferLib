@@ -24,9 +24,13 @@ def prepare_eval_source(tmp_path):
 
 
 def test_eval_wrapper_prepares_copy_without_touching_core(tmp_path):
-    _, generated = prepare_eval_source(tmp_path)
+    repo_root, generated = prepare_eval_source(tmp_path)
 
+    core = (repo_root / "src" / "pufferl.cu").read_text()
+    assert 'puf_ini_put(ini, "train.horizon", "1");' in core
+    assert 'puf_ini_put(ini, "train.horizon", "8");' not in core
     assert 'puf_ini_put(ini, "train.horizon", "8");' in generated
+    assert 'puf_ini_put(ini, "train.horizon", "1");' not in generated
     assert 'strcmp(mode, "render") == 0' in generated
     assert "run_eval(&ini, &ctx, EVAL_RENDER, 1);" in generated
 

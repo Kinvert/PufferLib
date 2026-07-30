@@ -127,9 +127,146 @@ static inline float dogfight_two_agent_publish_steering_reward(
         1.0f);
 }
 
+static inline float dogfight_two_agent_update_roll_travel(
+        float previous_radians, float roll_rate, float dt) {
+    float updated = previous_radians + fabsf(roll_rate) * dt;
+    float limit = 4.0f * 2.0f * (float)M_PI;
+    return clampf(updated, 0.0f, limit);
+}
+
+static inline float dogfight_two_agent_roll_stage_scale(int stage) {
+    if (stage <= 2) return 1.0f;
+    if (stage >= 6) return 0.0f;
+    return (6.0f - (float)stage) / 4.0f;
+}
+
+static inline float dogfight_two_agent_roll_time_scale(
+        long global_step,
+        long decay_start,
+        long decay_end,
+        float final_fraction) {
+    if (global_step <= decay_start) return 1.0f;
+    if (global_step >= decay_end) return final_fraction;
+    float progress = (float)(global_step - decay_start)
+        / (float)(decay_end - decay_start);
+    return 1.0f - progress * (1.0f - final_fraction);
+}
+
+static inline float dogfight_two_agent_roll_discipline_penalty(
+        float travel_radians,
+        float configured_scale,
+        float free_rotations,
+        float full_rotations,
+        int stage,
+        long global_step,
+        long decay_start,
+        long decay_end,
+        float final_fraction) {
+    if (configured_scale <= 0.0f) return 0.0f;
+    float rotations = travel_radians / (2.0f * (float)M_PI);
+    if (rotations <= free_rotations) return 0.0f;
+    float severity = clampf(
+        (rotations - free_rotations)
+            / (full_rotations - free_rotations),
+        0.0f,
+        1.0f);
+    float stage_scale = dogfight_two_agent_roll_stage_scale(stage);
+    float time_scale = dogfight_two_agent_roll_time_scale(
+        global_step, decay_start, decay_end, final_fraction);
+    return -configured_scale * stage_scale * time_scale
+        * severity * severity;
+}
+
+static inline float dogfight_two_agent_publish_roll_discipline(
+        float competitive_reward,
+        float travel_radians,
+        const Dogfight* env) {
+    float penalty = dogfight_two_agent_roll_discipline_penalty(
+        travel_radians,
+        env->native_roll_discipline_scale,
+        env->native_roll_free_rotations,
+        env->native_roll_full_rotations,
+        env->stage,
+        env->global_step,
+        env->native_roll_decay_start,
+        env->native_roll_decay_end,
+        env->native_roll_final_fraction);
+    return clampf(competitive_reward + penalty, -1.0f, 1.0f);
+}
+
+static inline float dogfight_two_agent_signed_bank(const Plane* plane) {
+    Vec3 up = quat_rotate(plane->ori, vec3(0.0f, 0.0f, 1.0f));
+    Vec3 body_y = quat_rotate(plane->ori, vec3(0.0f, 1.0f, 0.0f));
+    float magnitude = acosf(clampf(up.z, -1.0f, 1.0f));
+    return body_y.z >= 0.0f ? magnitude : -magnitude;
+}
+
+static inline float dogfight_two_agent_bank_guidance_penalty(
+        const Plane* self,
+        const Plane* other,
+        float bank_scale,
+        float roll_scale) {
+    if (bank_scale <= 0.0f && roll_scale <= 0.0f) return 0.0f;
+
+    const float max_bank = 60.0f * DEG_TO_RAD;
+    const float max_roll_rate = 60.0f * DEG_TO_RAD;
+    const float roll_gain = 2.0f;
+    Vec3 forward = quat_rotate(
+        self->ori, vec3(1.0f, 0.0f, 0.0f));
+    Vec3 relative = sub3(other->pos, self->pos);
+    float heading = atan2f(forward.y, forward.x);
+    float target_heading = atan2f(relative.y, relative.x);
+    float heading_error = target_heading - heading;
+    float target_azimuth = atan2f(
+        sinf(heading_error), cosf(heading_error));
+    // Body +Y and positive target azimuth are left. Positive bank/omega.x
+    // are right, so the target-relative desired bank has the opposite sign.
+    float desired_bank = clampf(target_azimuth * -1.0f,
+        -max_bank, max_bank);
+    float bank_error = desired_bank
+        - dogfight_two_agent_signed_bank(self);
+    float desired_roll_rate = clampf(
+        roll_gain * bank_error, -max_roll_rate, max_roll_rate);
+    float bank_error_norm = clampf(
+        bank_error / max_bank, -1.0f, 1.0f);
+    float roll_error_norm = clampf(
+        (desired_roll_rate - self->omega.x)
+            / (2.0f * max_roll_rate),
+        -1.0f,
+        1.0f);
+    return -bank_scale * bank_error_norm * bank_error_norm
+        - roll_scale * roll_error_norm * roll_error_norm;
+}
+
+static inline float dogfight_two_agent_publish_bank_guidance(
+        float competitive_reward,
+        const Plane* self,
+        const Plane* other,
+        const Dogfight* env) {
+    float schedule = dogfight_two_agent_roll_stage_scale(env->stage)
+        * dogfight_two_agent_roll_time_scale(
+            env->global_step,
+            env->native_roll_decay_start,
+            env->native_roll_decay_end,
+            env->native_roll_final_fraction);
+    float penalty = schedule * dogfight_two_agent_bank_guidance_penalty(
+        self,
+        other,
+        env->native_bank_guidance_scale,
+        env->native_roll_guidance_scale);
+    return clampf(competitive_reward + penalty, -1.0f, 1.0f);
+}
+
 static inline bool dogfight_two_agent_in_native_acquisition(
         const Dogfight* env) {
     if (!env->native_spawn_curriculum) {
+        return false;
+    }
+    // Acquisition is a current-policy training task, not a match outcome.
+    // Native frozen-bank training and final pool evaluation assign distinct
+    // policy rows, so they must run real combat even when global_step starts
+    // inside the acquisition window.
+    if (env->agents[0].policy != env->agents[1].policy) {
         return false;
     }
     if (env->native_acquisition_steps > 0
@@ -249,6 +386,223 @@ static inline float dogfight_two_agent_dense_reward(
     return clampf(reward, -1.0f, 1.0f);
 }
 
+/*
+ * Pool fitness version 2.
+ *
+ * Protein must select for combat outcomes, but an outcome alone is not enough
+ * in Dogfight: two collapsed policies can otherwise make a persistent
+ * one-direction roll look strong relative to an even worse checkpoint. These
+ * fixed, reflection-symmetric gates reduce pool score without changing PPO
+ * rewards.
+ */
+#define DOGFIGHT_POOL_GROUND_WIN_CREDIT 0.25f
+#define DOGFIGHT_POOL_QUALITY_MIN_STEPS 64
+#define DOGFIGHT_POOL_QUALITY_MIN_SIDE_STEPS 16
+#define DOGFIGHT_POOL_AILERON_BIAS_GOOD 0.20f
+#define DOGFIGHT_POOL_AILERON_BIAS_BAD 0.65f
+#define DOGFIGHT_POOL_COMMON_RESPONSE_GOOD 0.15f
+#define DOGFIGHT_POOL_COMMON_RESPONSE_BAD 0.60f
+#define DOGFIGHT_POOL_DIRECTIONAL_RESPONSE_BAD -0.02f
+#define DOGFIGHT_POOL_DIRECTIONAL_RESPONSE_GOOD 0.05f
+#define DOGFIGHT_POOL_EXCESSIVE_ROLL_RATE 2.50f
+#define DOGFIGHT_POOL_EXCESSIVE_ROLL_FRACTION_GOOD 0.10f
+#define DOGFIGHT_POOL_EXCESSIVE_ROLL_FRACTION_BAD 0.60f
+#define DOGFIGHT_POOL_ROLL_ROTATIONS_GOOD 0.75f
+#define DOGFIGHT_POOL_ROLL_ROTATIONS_BAD 2.00f
+#define DOGFIGHT_POOL_CONTROLLED_FRACTION_BAD 0.60f
+#define DOGFIGHT_POOL_CONTROLLED_FRACTION_GOOD 0.90f
+#define DOGFIGHT_POOL_CONTROLLED_MIN_ALTITUDE 100.0f
+
+static inline float dogfight_pool_quality_descending(
+        float value, float good, float bad) {
+    if (value <= good) return 1.0f;
+    if (value >= bad) return 0.0f;
+    return (bad - value) / (bad - good);
+}
+
+static inline float dogfight_pool_quality_ascending(
+        float value, float bad, float good) {
+    if (value <= bad) return 0.0f;
+    if (value >= good) return 1.0f;
+    return (value - bad) / (good - bad);
+}
+
+static inline void dogfight_two_agent_reset_pool_quality(Dogfight* env) {
+    memset(env->two_agent_pool_aileron_sum, 0,
+        sizeof(env->two_agent_pool_aileron_sum));
+    memset(env->two_agent_pool_target_negative_aileron_sum, 0,
+        sizeof(env->two_agent_pool_target_negative_aileron_sum));
+    memset(env->two_agent_pool_target_positive_aileron_sum, 0,
+        sizeof(env->two_agent_pool_target_positive_aileron_sum));
+    memset(env->two_agent_pool_steps, 0,
+        sizeof(env->two_agent_pool_steps));
+    memset(env->two_agent_pool_target_negative_steps, 0,
+        sizeof(env->two_agent_pool_target_negative_steps));
+    memset(env->two_agent_pool_target_positive_steps, 0,
+        sizeof(env->two_agent_pool_target_positive_steps));
+    memset(env->two_agent_pool_excessive_roll_steps, 0,
+        sizeof(env->two_agent_pool_excessive_roll_steps));
+    memset(env->two_agent_pool_controlled_steps, 0,
+        sizeof(env->two_agent_pool_controlled_steps));
+}
+
+static inline void dogfight_two_agent_track_pool_quality(
+        Dogfight* env, Plane* planes[2], float* actions[2]) {
+    const float target_azimuths[2] = {
+        env->observations[13],
+        env->opponent_observations[13],
+    };
+
+    for (int physical = 0; physical < 2; physical++) {
+        Plane* plane = planes[physical];
+        float aileron = actions[physical][2];
+        float target_azimuth = target_azimuths[physical];
+
+        env->two_agent_pool_steps[physical] += 1;
+        env->two_agent_pool_aileron_sum[physical] += aileron;
+        if (target_azimuth < -1.0e-4f) {
+            env->two_agent_pool_target_negative_aileron_sum[physical] += aileron;
+            env->two_agent_pool_target_negative_steps[physical] += 1;
+        } else if (target_azimuth > 1.0e-4f) {
+            env->two_agent_pool_target_positive_aileron_sum[physical] += aileron;
+            env->two_agent_pool_target_positive_steps[physical] += 1;
+        }
+
+        if (fabsf(plane->omega.x) > DOGFIGHT_POOL_EXCESSIVE_ROLL_RATE) {
+            env->two_agent_pool_excessive_roll_steps[physical] += 1;
+        }
+
+        float speed_squared =
+            plane->vel.x * plane->vel.x +
+            plane->vel.y * plane->vel.y +
+            plane->vel.z * plane->vel.z;
+        float minimum_speed = env->rcfg.speed_min;
+        bool controlled =
+            isfinite(plane->pos.z) &&
+            isfinite(speed_squared) &&
+            plane->pos.z >= DOGFIGHT_POOL_CONTROLLED_MIN_ALTITUDE &&
+            plane->pos.z <= WORLD_MAX_Z - DOGFIGHT_POOL_CONTROLLED_MIN_ALTITUDE &&
+            speed_squared >= minimum_speed * minimum_speed;
+        if (controlled) {
+            env->two_agent_pool_controlled_steps[physical] += 1;
+        }
+    }
+}
+
+static inline float dogfight_two_agent_pool_flight_quality(
+        const Dogfight* env, int physical) {
+    int steps = env->two_agent_pool_steps[physical];
+    if (steps <= 0) return 1.0f;
+
+    float controlled_fraction =
+        (float)env->two_agent_pool_controlled_steps[physical] / (float)steps;
+    float quality = dogfight_pool_quality_ascending(
+        controlled_fraction,
+        DOGFIGHT_POOL_CONTROLLED_FRACTION_BAD,
+        DOGFIGHT_POOL_CONTROLLED_FRACTION_GOOD);
+
+    /* Do not reject legitimate quick kills based on a tiny control sample. */
+    if (steps < DOGFIGHT_POOL_QUALITY_MIN_STEPS) return quality;
+
+    float signed_bias = fabsf(
+        env->two_agent_pool_aileron_sum[physical] / (float)steps);
+    quality = fminf(quality, dogfight_pool_quality_descending(
+        signed_bias,
+        DOGFIGHT_POOL_AILERON_BIAS_GOOD,
+        DOGFIGHT_POOL_AILERON_BIAS_BAD));
+
+    float excessive_roll_fraction =
+        (float)env->two_agent_pool_excessive_roll_steps[physical] /
+        (float)steps;
+    quality = fminf(quality, dogfight_pool_quality_descending(
+        excessive_roll_fraction,
+        DOGFIGHT_POOL_EXCESSIVE_ROLL_FRACTION_GOOD,
+        DOGFIGHT_POOL_EXCESSIVE_ROLL_FRACTION_BAD));
+    float roll_rotations =
+        env->two_agent_roll_travel_radians[physical]
+        / (2.0f * (float)M_PI);
+    quality = fminf(quality, dogfight_pool_quality_descending(
+        roll_rotations,
+        DOGFIGHT_POOL_ROLL_ROTATIONS_GOOD,
+        DOGFIGHT_POOL_ROLL_ROTATIONS_BAD));
+
+    int negative_steps =
+        env->two_agent_pool_target_negative_steps[physical];
+    int positive_steps =
+        env->two_agent_pool_target_positive_steps[physical];
+    if (negative_steps >= DOGFIGHT_POOL_QUALITY_MIN_SIDE_STEPS &&
+            positive_steps >= DOGFIGHT_POOL_QUALITY_MIN_SIDE_STEPS) {
+        float negative_mean =
+            env->two_agent_pool_target_negative_aileron_sum[physical] /
+            (float)negative_steps;
+        float positive_mean =
+            env->two_agent_pool_target_positive_aileron_sum[physical] /
+            (float)positive_steps;
+        float common_response = fabsf(0.5f * (
+            negative_mean + positive_mean));
+        float directional_response = 0.5f * (
+            negative_mean - positive_mean);
+
+        quality = fminf(quality, dogfight_pool_quality_descending(
+            common_response,
+            DOGFIGHT_POOL_COMMON_RESPONSE_GOOD,
+            DOGFIGHT_POOL_COMMON_RESPONSE_BAD));
+        quality = fminf(quality, dogfight_pool_quality_ascending(
+            directional_response,
+            DOGFIGHT_POOL_DIRECTIONAL_RESPONSE_BAD,
+            DOGFIGHT_POOL_DIRECTIONAL_RESPONSE_GOOD));
+    }
+
+    return clampf(quality, 0.0f, 1.0f);
+}
+
+static inline void dogfight_two_agent_remember_native_aileron_bias(
+        Dogfight* env) {
+    if (!env->native_spawn_curriculum || env->num_agents != 2) {
+        return;
+    }
+
+    // Logical slot 0 is the current trainable row. Convert its executed,
+    // physical-frame aileron mean back into the episode-fixed policy frame so
+    // the next spawn can present a corrective state independent of world side.
+    int physical = env->two_agent_player_slot == 0 ? 0 : 1;
+    int steps = env->two_agent_pool_steps[physical];
+    if (steps < DOGFIGHT_POOL_QUALITY_MIN_STEPS) {
+        return;
+    }
+    float physical_bias =
+        env->two_agent_pool_aileron_sum[physical] / (float)steps;
+    env->native_previous_canonical_aileron_bias =
+        env->lateral_frame_mirror ? -physical_bias : physical_bias;
+}
+
+static inline void dogfight_two_agent_adjusted_pool_scores(
+        DeathReason reason,
+        int physical_winner,
+        const float physical_quality[2],
+        float physical_scores[2]) {
+    physical_scores[0] = 0.0f;
+    physical_scores[1] = 0.0f;
+
+    if (physical_winner == 0) {
+        if (reason == DEATH_TIMEOUT || reason == DEATH_KILL) {
+            physical_scores[0] = 0.5f * physical_quality[0];
+            physical_scores[1] = 0.5f * physical_quality[1];
+        }
+        return;
+    }
+
+    int winner_index = physical_winner == 1 ? 0 : 1;
+    float outcome_credit = 0.0f;
+    if (reason == DEATH_KILL) {
+        outcome_credit = 1.0f;
+    } else if (reason == DEATH_OOB) {
+        outcome_credit = DOGFIGHT_POOL_GROUND_WIN_CREDIT;
+    }
+    physical_scores[winner_index] =
+        outcome_credit * physical_quality[winner_index];
+}
+
 static inline void dogfight_two_agent_finish(
         Dogfight* env,
         float reward_0,
@@ -296,6 +650,40 @@ static inline void dogfight_two_agent_finish(
         ? 0.5f
         : (logical_winner == 1 ? 1.0f : 0.0f);
     env->log.draw_rate += winner == 0 ? 1.0f : 0.0f;
+
+    float physical_quality[2] = {
+        dogfight_two_agent_pool_flight_quality(env, 0),
+        dogfight_two_agent_pool_flight_quality(env, 1),
+    };
+    env->log.pool_flight_quality +=
+        0.5f * (physical_quality[0] + physical_quality[1]);
+
+    float physical_scores[2];
+    dogfight_two_agent_adjusted_pool_scores(
+        reason, winner, physical_quality, physical_scores);
+    float logical_scores[2] = {0.0f, 0.0f};
+    logical_scores[env->two_agent_player_slot] = physical_scores[0];
+    logical_scores[1 - env->two_agent_player_slot] = physical_scores[1];
+
+    /*
+     * Replace the legacy constant-sum contribution above with adjusted,
+     * non-constant-sum fitness. PPO reward pulses are intentionally untouched.
+     */
+    float legacy_physical_scores[2] = {
+        winner == 0 ? 0.5f : (winner == 1 ? 1.0f : 0.0f),
+        winner == 0 ? 0.5f : (winner == -1 ? 1.0f : 0.0f),
+    };
+    float legacy_logical_scores[2] = {0.0f, 0.0f};
+    legacy_logical_scores[env->two_agent_player_slot] =
+        legacy_physical_scores[0];
+    legacy_logical_scores[1 - env->two_agent_player_slot] =
+        legacy_physical_scores[1];
+    env->log.slot_0_score +=
+        logical_scores[0] - legacy_logical_scores[0];
+    env->log.slot_1_score +=
+        logical_scores[1] - legacy_logical_scores[1];
+
+    dogfight_two_agent_remember_native_aileron_bias(env);
     add_log(env);
     dogfight_two_agent_select_roles(env);
     c_reset(env);
@@ -319,6 +707,9 @@ static inline void c_step_two_agent(Dogfight* env) {
             sizeof(env->two_agent_episode_returns));
         memset(env->two_agent_episode_shots, 0,
             sizeof(env->two_agent_episode_shots));
+        memset(env->two_agent_roll_travel_radians, 0,
+            sizeof(env->two_agent_roll_travel_radians));
+        dogfight_two_agent_reset_pool_quality(env);
     }
 
     for (int slot = 0; slot < 2; slot++) {
@@ -408,6 +799,7 @@ static inline void c_step_two_agent(Dogfight* env) {
         return;
     }
 
+    dogfight_two_agent_track_pool_quality(env, planes, actions);
     env->total_aileron_usage += fabsf(actions[0][2]);
     env->aileron_bias += actions[0][2];
     if (env->observations[13] < -1.0e-4f) {
@@ -428,6 +820,16 @@ static inline void c_step_two_agent(Dogfight* env) {
         planes[0], actions[0], DT, &env->flight_params);
     step_plane_with_params(
         planes[1], actions[1], DT, &env->flight_params);
+    for (int physical = 0; physical < 2; physical++) {
+        env->two_agent_roll_travel_radians[physical] =
+            dogfight_two_agent_update_roll_travel(
+                env->two_agent_roll_travel_radians[physical],
+                planes[physical]->omega.x,
+                DT);
+    }
+    env->episode_roll_travel_radians = 0.5f * (
+        env->two_agent_roll_travel_radians[0]
+        + env->two_agent_roll_travel_radians[1]);
     memcpy(env->last_opp_actions, actions[1], NUM_ATNS * sizeof(float));
 
     if (env->head_on_lockout) {
@@ -551,6 +953,18 @@ static inline void c_step_two_agent(Dogfight* env) {
         env->opponent_observations[13],
         actions[1][2],
         steering_scale);
+    published_rewards[0] = dogfight_two_agent_publish_bank_guidance(
+        published_rewards[0], planes[0], planes[1], env);
+    published_rewards[1] = dogfight_two_agent_publish_bank_guidance(
+        published_rewards[1], planes[1], planes[0], env);
+    published_rewards[0] = dogfight_two_agent_publish_roll_discipline(
+        published_rewards[0],
+        env->two_agent_roll_travel_radians[0],
+        env);
+    published_rewards[1] = dogfight_two_agent_publish_roll_discipline(
+        published_rewards[1],
+        env->two_agent_roll_travel_radians[1],
+        env);
     env->rewards[0] = published_rewards[0];
     env->opponent_rewards[0] = published_rewards[1];
     env->two_agent_episode_returns[0] += published_rewards[0];

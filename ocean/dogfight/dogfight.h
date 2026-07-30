@@ -166,8 +166,9 @@ typedef struct Log {
     float perf;            // Raw kills (becomes kill_rate after vec_log divides by n)
     float sp_player_kills; // Self-play only: player kills (TUI shows P:## O:##)
     float sp_opp_kills;    // Self-play only: opponent kills
-    float slot_0_score;    // Logical slot 0: win=1, draw=0.5, loss=0
-    float slot_1_score;    // Logical slot 1: win=1, draw=0.5, loss=0
+    float slot_0_score;    // Logical slot 0: outcome credit * flight quality
+    float slot_1_score;    // Logical slot 1: outcome credit * flight quality
+    float pool_flight_quality; // Mean episode flight quality across both slots [0, 1]
     float draw_rate;       // Raw draw count; vec log normalization makes a rate
     float slot_0_gun_kills; // Logical slot 0 decisive gun kills only
     float slot_1_gun_kills; // Logical slot 1 decisive gun kills only
@@ -185,6 +186,7 @@ typedef struct Log {
     float target_az_pos_steps;
     float stage_sum;                // Sum of stages (exported as avg_stage)
     float total_control_rate;       // Sum of per-episode mean squared deltas (exported as avg_control_rate)
+    float total_roll_rotations;     // Sum of physical roll travel in rotations
     float base_stage_kills;         // Kills at int(curriculum_target) - for per-stage gating
     float base_stage_eps;           // Episodes at int(curriculum_target) - for per-stage gating
 
@@ -355,6 +357,7 @@ typedef struct Env {
     int target_az_neg_steps;
     int target_az_pos_steps;
     float episode_control_rate; // Sum of squared control deltas this episode
+    float episode_roll_travel_radians;
     // Episode reward accumulators (for DEBUG summaries)
     float sum_r_closing;
     float sum_r_speed;      // Stall penalty
@@ -413,6 +416,12 @@ typedef struct Env {
     int eval_spawn_mode;
     // Exact fixed-stage lateral reflection for paired evaluation (0/1).
     int eval_lateral_mirror;
+    // Episode-fixed policy frame. Observations/actions are canonical for PPO,
+    // while physics, rewards, logging, and rendering remain physical.
+    int lateral_canonicalization;
+    int lateral_frame_mirror;
+    int lateral_observations_published;
+    float executed_player_actions[NUM_ATNS];
     // Previous actions for control rate penalty
     float prev_elevator;  // Previous elevator for rate penalty
     float prev_aileron;   // Previous aileron for rate penalty
@@ -434,9 +443,32 @@ typedef struct Env {
     long native_acquisition_rehearsal_steps;
     long native_spawn_total_steps;
     float native_frontier_fraction;
+    float native_lateral_width_scale;
+    float native_roll_recovery_fraction;
+    float native_roll_recovery_bank_deg;
+    float native_roll_recovery_rate;
+    float native_bias_min_abs;
+    float native_previous_canonical_aileron_bias;
+    float native_roll_discipline_scale;
+    float native_bank_guidance_scale;
+    float native_roll_guidance_scale;
+    float native_roll_free_rotations;
+    float native_roll_full_rotations;
+    long native_roll_decay_start;
+    long native_roll_decay_end;
+    float native_roll_final_fraction;
+    float two_agent_roll_travel_radians[2];
     float two_agent_prev_controls[2][3];
     float two_agent_episode_returns[2];
     float two_agent_episode_shots[2];
+    float two_agent_pool_aileron_sum[2];
+    float two_agent_pool_target_negative_aileron_sum[2];
+    float two_agent_pool_target_positive_aileron_sum[2];
+    int two_agent_pool_steps[2];
+    int two_agent_pool_target_negative_steps[2];
+    int two_agent_pool_target_positive_steps[2];
+    int two_agent_pool_excessive_roll_steps[2];
+    int two_agent_pool_controlled_steps[2];
     // Late-training debug logging (activated when global_step >= debug_trigger_step)
     long global_step;           // Current training step (set by Python each tick)
     long debug_trigger_step;    // Start logging when global_step >= this value
@@ -507,6 +539,7 @@ void init(Dogfight *env, int obs_scheme, RewardConfig *rcfg, int curriculum_enab
     // Episode tracking
     env->kill = 0;
     env->episode_shots_fired = 0.0f;
+    env->episode_roll_travel_radians = 0.0f;
 
     env->curriculum_enabled = curriculum_enabled;
     env->curriculum_randomize = curriculum_randomize;
@@ -548,6 +581,11 @@ void init(Dogfight *env, int obs_scheme, RewardConfig *rcfg, int curriculum_enab
     // Eval spawn mode: 0 = random (default)
     env->eval_spawn_mode = 0;
     env->eval_lateral_mirror = 0;
+    env->lateral_canonicalization = 0;
+    env->lateral_frame_mirror = 0;
+    env->lateral_observations_published = 0;
+    memset(env->executed_player_actions, 0,
+        sizeof(env->executed_player_actions));
 
     // Late-training debug logging: disabled by default
     env->global_step = 0;
@@ -559,6 +597,22 @@ void init(Dogfight *env, int obs_scheme, RewardConfig *rcfg, int curriculum_enab
     env->native_acquisition_rehearsal_steps = 0;
     env->native_spawn_total_steps = 536870912;
     env->native_frontier_fraction = 0.75f;
+    env->native_lateral_width_scale = 1.0f;
+    env->native_roll_recovery_fraction = 0.0f;
+    env->native_roll_recovery_bank_deg = 45.0f;
+    env->native_roll_recovery_rate = 1.0f;
+    env->native_bias_min_abs = 0.30f;
+    env->native_previous_canonical_aileron_bias = 0.0f;
+    env->native_roll_discipline_scale = 0.0f;
+    env->native_bank_guidance_scale = 0.0f;
+    env->native_roll_guidance_scale = 0.0f;
+    env->native_roll_free_rotations = 1.0f;
+    env->native_roll_full_rotations = 2.0f;
+    env->native_roll_decay_start = 80000000;
+    env->native_roll_decay_end = 300000000;
+    env->native_roll_final_fraction = 0.50f;
+    memset(env->two_agent_roll_travel_radians, 0,
+        sizeof(env->two_agent_roll_travel_radians));
     env->debug_trigger_step = 0;
     env->debug_log_file = NULL;
     env->debug_log_initialized = 0;
@@ -800,6 +854,8 @@ void add_log(Dogfight *env) {
     env->log.stage_sum += (float)env->stage;  // Accumulate for avg_stage
     // Mean squared control delta per step this episode (lower = smoother control)
     env->log.total_control_rate += env->episode_control_rate / fmaxf((float)env->tick, 1.0f);
+    env->log.total_roll_rotations +=
+        env->episode_roll_travel_radians / (2.0f * (float)M_PI);
 
     // Track performance at MAJORITY stage (the one we're trying to master)
     // At target 0.9, majority is stage 1 (90% of episodes), not stage 0
@@ -921,6 +977,7 @@ void c_reset(Dogfight *env) {
     env->target_az_neg_steps = 0;
     env->target_az_pos_steps = 0;
     env->episode_control_rate = 0.0f;
+    env->episode_roll_travel_radians = 0.0f;
 
     // Reset reward accumulators
     env->sum_r_closing = 0.0f;
@@ -1079,6 +1136,7 @@ void c_step(Dogfight *env) {
 
     // Player uses full physics with actions (with runtime-configurable params)
     step_plane_with_params(&env->player, env->actions, DT, &env->flight_params);
+    env->episode_roll_travel_radians += fabsf(env->player.omega.x) * DT;
 
     // === Opponent Recovery Hijacking (breaks death spiral equilibrium) ===
     // Only active during self-play (selfplay_active=1, set by Python when transitioning)

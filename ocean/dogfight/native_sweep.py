@@ -202,11 +202,14 @@ def selected_sweep_dimensions(
         for section in dogfight.sections()
         if section.startswith("sweep.")
     }
-    if present != set(selected):
+    missing = set(selected) - present
+    if missing:
         raise SweepError(
-            "Dogfight sweep sections must exactly match sweep_only: "
-            f"selected={sorted(selected)} present={sorted(present)}"
+            "Dogfight sweep_only references missing sections: "
+            f"{sorted(missing)}"
         )
+    for dimension in present - set(selected):
+        dogfight.remove_section(f"sweep.{dimension}")
     return sorted(selected)
 
 
@@ -455,7 +458,6 @@ def upload_wandb_run(
     run = wandb.init(
         project=project,
         id=payload["run_id"],
-        name=payload["run_id"],
         job_type="native-protein-trial",
         config=payload["config"],
         resume="allow",
@@ -513,7 +515,6 @@ def upload_fixed_wandb_run(
     run = wandb.init(
         project=project,
         id=result["run_id"],
-        name=result["run_id"],
         job_type="native-protein-trial",
         resume="allow",
         reinit=True,

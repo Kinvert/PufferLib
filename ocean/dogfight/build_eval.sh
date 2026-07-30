@@ -32,6 +32,58 @@ prepare_source() {
         "$core_source" > "$destination"
 
     awk '
+        $0 == "    // Selfplay end rating: match final checkpoint vs a small fixed opponent pool." {
+            print "    // run_eval mutates the shared INI for match topology. Preserve the"
+            print "    // trained configuration so native logs and observers report the"
+            print "    // parameters Protein actually evaluated."
+            print "    const char* dogfight_saved_eval_keys[][2] = {"
+            print "        {\"base\", \"num_games\"},"
+            print "        {\"base\", \"load_model_path\"},"
+            print "        {\"base\", \"load_enemy_model_path\"},"
+            print "        {\"base\", \"reset_every_horizon\"},"
+            print "        {\"vec\", \"num_buffers\"},"
+            print "        {\"vec\", \"total_agents\"},"
+            print "        {\"vec\", \"num_frozen_banks\"},"
+            print "        {\"vec\", \"frozen_bank_pct\"},"
+            print "        {\"vec\", \"frozen_bank_hidden_size\"},"
+            print "        {\"vec\", \"frozen_bank_num_layers\"},"
+            print "        {\"selfplay\", \"enabled\"},"
+            print "        {\"env\", \"dr\"},"
+            print "        {\"env\", \"domain_randomization\"},"
+            print "        {\"env\", \"num_agents\"},"
+            print "        {\"env\", \"num_bots\"},"
+            print "        {\"train\", \"horizon\"},"
+            print "    };"
+            print "    constexpr int dogfight_saved_eval_count ="
+            print "        sizeof(dogfight_saved_eval_keys) / sizeof(dogfight_saved_eval_keys[0]);"
+            print "    char dogfight_saved_eval_values[dogfight_saved_eval_count][4096] = {{0}};"
+            print "    if (use_selfplay) {"
+            print "        for (int i = 0; i < dogfight_saved_eval_count; i++) {"
+            print "            snprintf(dogfight_saved_eval_values[i],"
+            print "                sizeof(dogfight_saved_eval_values[i]), \"%s\","
+            print "                puf_ini_get_str(ini, dogfight_saved_eval_keys[i][0],"
+            print "                    dogfight_saved_eval_keys[i][1]));"
+            print "        }"
+            print "    }"
+            print ""
+            print
+            native_pool_eval = 1
+            next
+        }
+        native_pool_eval && $0 == "    if (ctx->artifact_owner) {" {
+            print "    if (use_selfplay) {"
+            print "        for (int i = 0; i < dogfight_saved_eval_count; i++) {"
+            print "            puf_ini_set("
+            print "                puf_ini_section(ini, dogfight_saved_eval_keys[i][0], 0),"
+            print "                dogfight_saved_eval_keys[i][1],"
+            print "                dogfight_saved_eval_values[i]);"
+            print "        }"
+            print "    }"
+            print ""
+            native_pool_eval = 0
+            print
+            next
+        }
         $0 == "            puf_dashboard_print(ini, pufferl, &log, 0);" {
             print
             finite_render = 1
@@ -74,9 +126,10 @@ prepare_source() {
             print "            double az_pos_sum = dict_get(&log, \"env/target_az_pos_aileron_sum\");"
             print "            double az_neg_steps = dict_get(&log, \"env/target_az_neg_steps\");"
             print "            double az_pos_steps = dict_get(&log, \"env/target_az_pos_steps\");"
-            print "            printf(\"dogfight_eval_controls avg_abs_bias=%.6f avg_signed_bias=%.6f az_neg_mean_aileron=%.6f az_pos_mean_aileron=%.6f az_neg_steps=%.1f az_pos_steps=%.1f\\n\","
+            print "            printf(\"dogfight_eval_controls avg_abs_bias=%.6f avg_signed_bias=%.6f avg_roll_rotations=%.6f az_neg_mean_aileron=%.6f az_pos_mean_aileron=%.6f az_neg_steps=%.1f az_pos_steps=%.1f\\n\","
             print "                dict_get(&log, \"env/avg_abs_bias\"),"
             print "                dict_get(&log, \"env/avg_signed_bias\"),"
+            print "                dict_get(&log, \"env/avg_roll_rotations\"),"
             print "                az_neg_steps > 0.0 ? az_neg_sum / az_neg_steps : 0.0,"
             print "                az_pos_steps > 0.0 ? az_pos_sum / az_pos_steps : 0.0,"
             print "                az_neg_steps, az_pos_steps);"
@@ -118,7 +171,7 @@ if command -v ccache >/dev/null 2>&1; then
     nvcc=(ccache "${nvcc[@]}")
 fi
 
-echo "Compiling Dogfight-local eval wrapper..."
+echo "Compiling Dogfight-local native binary..."
 "${nvcc[@]}" \
     -O2 --threads 0 -arch=native -std=c++17 \
     -I. -Isrc -Iocean/dogfight -Ivendor \

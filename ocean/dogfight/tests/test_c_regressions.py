@@ -45,6 +45,7 @@ TESTS = [
     "test_two_agent_competitive_reward",
     "test_two_agent_bootstrap",
     "test_two_agent_lateral_symmetry",
+    "test_two_agent_pool_fitness",
     "test_fixed_eval_mirror",
 ]
 

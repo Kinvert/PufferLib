@@ -58,8 +58,6 @@ command=(
     "$binary"
     train
     dogfight
-    "--wandb"
-    "--wandb-project=df42"
     "base.run_id=$run_id"
     "base.seed=$seed"
     "train.seed=$seed"
@@ -82,7 +80,7 @@ fi
 
 [[ -x "$binary" ]] || {
     echo "missing native binary: $binary" >&2
-    echo "build it with: CUDA_HOME=/usr/local/cuda-12.8 ./build.sh dogfight" >&2
+    echo "build it with: CUDA_HOME=/usr/local/cuda bash ocean/dogfight/build_eval.sh ./puffer" >&2
     exit 2
 }
 

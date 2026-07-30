@@ -23,32 +23,39 @@ def run_profile(*args, env=None):
 def test_vanilla_profile_emits_official_native_selfplay_contract():
     config = configparser.ConfigParser()
     config.read(CONFIG)
-    assert config["base"]["wandb_project"] == "df42"
+    assert config["base"]["wandb_project"] == "df43"
     assert config["vec"]["num_frozen_banks"] == "1"
     assert config["vec"]["frozen_bank_pct"] == "0.1"
     assert config["selfplay"]["mode"] == "vanilla"
     assert config["selfplay"]["enabled"] == "1"
     assert config["selfplay"]["max_size"] == "100"
     assert config["env"]["num_agents"] == "2"
+    assert config["env"]["lateral_canonicalization"] == "1"
+    assert not config.has_section("sweep.env.lateral_canonicalization")
     assert config["env"]["curriculum_enabled"] == "1"
     assert config["env"]["curriculum_target"] == "0"
     assert config["env"]["fixed_stage"] == "0"
     assert config["env"]["max_stage"] == "10"
     assert config["env"]["native_spawn_curriculum"] == "1"
-    assert config["env"]["native_acquisition_steps"] == "134217728"
+    assert config["env"]["native_acquisition_steps"] == "0"
     assert config["env"]["native_acquisition_reward_scale"] == "1.0"
     assert config["env"]["native_acquisition_neutral_scale"] == "0.1"
     assert config["env"]["native_acquisition_rehearsal_cycle_steps"] == "134217728"
     assert config["env"]["native_acquisition_rehearsal_steps"] == "0"
-    assert config["env"]["native_spawn_total_steps"] == "12_079_595_520"
+    assert config.getint("env", "native_spawn_total_steps") > 0
     assert config["env"]["native_frontier_fraction"] == "0.50"
     assert config["env"]["reward_version"] == "2"
-    assert config["env"]["steering_alignment_scale"] == "0.01"
+    assert config["env"]["steering_alignment_scale"] == "0"
     assert config["env"]["role_randomization"] == "1"
     assert config["env"]["selfplay_bootstrap_steps"] == "0"
     assert config["env"]["selfplay_bootstrap_imitation_scale"] == "0"
     assert config["env"]["recovery_enabled"] == "0"
     assert config["train"]["ent_coef"] == "0.0001"
+    assert config.getint("train", "total_timesteps") == config.getint(
+        "env", "native_spawn_total_steps"
+    )
+    assert config["sweep"]["metric"] == "score"
+    assert config.getint("sweep", "max_runs") >= 1000
 
     result = run_profile(
         "--dry-run",
@@ -60,7 +67,6 @@ def test_vanilla_profile_emits_official_native_selfplay_contract():
     assert result.returncode == 0, result.stdout
     expected = [
         "train dogfight",
-        "--wandb --wandb-project=df42",
         "base.run_id=vanilla_canary",
         "base.seed=42",
         "train.seed=42",
@@ -72,7 +78,8 @@ def test_vanilla_profile_emits_official_native_selfplay_contract():
     ]
     for argument in expected:
         assert argument in result.stdout
-    assert len(result.stdout.split()) <= 13
+    assert "--wandb" not in result.stdout
+    assert len(result.stdout.split()) <= 11
     assert "base.load_model_path=" not in result.stdout
 
 
