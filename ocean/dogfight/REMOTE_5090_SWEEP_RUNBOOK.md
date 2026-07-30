@@ -15,7 +15,7 @@ value through the observer-only sidecar as `protein/fitness`. Training
 ## Clone and build
 
 ```bash
-git clone <USER_FORK_URL> PufferLib-dogfight5c
+git clone https://github.com/Kinvert/PufferLib.git PufferLib-dogfight5c
 cd PufferLib-dogfight5c
 git checkout dogfight5c-robocode-stage10
 uv sync
