@@ -12,6 +12,7 @@ static void set_good_trace(Dogfight* env, int physical) {
     env->two_agent_pool_target_positive_steps[physical] = 100;
     env->two_agent_pool_target_negative_aileron_sum[physical] = 30.0f;
     env->two_agent_pool_target_positive_aileron_sum[physical] = -30.0f;
+    env->two_agent_pool_control_rate_sum[physical] = 90.0f;
     env->two_agent_roll_travel_radians[physical] =
         0.5f * 2.0f * (float)M_PI;
 }
@@ -72,6 +73,20 @@ static void test_roll_and_control_state_are_independent_gates(void) {
     free(env);
 }
 
+static void test_control_chatter_gate_relaxes_with_stage(void) {
+    Dogfight* env = calloc(1, sizeof(*env));
+    assert(env != NULL);
+
+    set_good_trace(env, 0);
+    env->two_agent_pool_control_rate_sum[0] = 270.0f;
+    env->stage = 0;
+    assert(dogfight_two_agent_pool_flight_quality(env, 0) == 0.0f);
+
+    env->stage = 10;
+    assert(dogfight_two_agent_pool_flight_quality(env, 0) > 0.0f);
+    free(env);
+}
+
 static void test_short_decisive_episode_is_not_rejected_by_lateral_gate(void) {
     Dogfight* env = calloc(1, sizeof(*env));
     assert(env != NULL);
@@ -118,6 +133,7 @@ int main(void) {
     test_balanced_target_response_passes();
     test_constant_right_or_left_collapse_fails_symmetrically();
     test_roll_and_control_state_are_independent_gates();
+    test_control_chatter_gate_relaxes_with_stage();
     test_short_decisive_episode_is_not_rejected_by_lateral_gate();
     test_adjusted_outcome_contract();
     puts("two-agent pool fitness tests passed");

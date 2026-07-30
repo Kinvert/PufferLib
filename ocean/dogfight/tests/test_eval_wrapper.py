@@ -60,11 +60,25 @@ def test_headless_and_visible_eval_use_the_same_dogfight_contract(tmp_path):
     assert "if (num_games <= 0) {" in generated
     assert "dogfight_eval_controls avg_abs_bias=" in generated
     assert "dogfight_eval_outcomes perf=" in generated
+    assert 'dict_get(&log, "env/avg_control_rate")' in generated
     assert 'dict_get(&log, "env/timeouts")' in generated
     assert 'dict_get(&log, "env/player_ground")' in generated
     assert 'dict_get(&log, "env/opponent_ground")' in generated
     assert "env/target_az_neg_aileron_sum" in generated
     assert "env/target_az_pos_aileron_sum" in generated
+
+
+def test_dogfight_log_payload_stays_within_native_limit():
+    repo_root = Path(__file__).resolve().parents[3]
+    header = (
+        repo_root / "ocean" / "dogfight" / "dogfight_puffer.h"
+    ).read_text()
+    body = header.split("void puf_log(Log* log, Dict* out) {", 1)[1].split(
+        "\n}", 1
+    )[0]
+
+    assert 'dict_set(out, "avg_control_rate", log->total_control_rate);' in body
+    assert body.count("dict_set(out,") <= 32
 
 
 def test_checkpoint_eval_script_builds_matching_commands(tmp_path):

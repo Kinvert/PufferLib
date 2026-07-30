@@ -374,6 +374,8 @@ static inline float dogfight_two_agent_dense_reward(
     float d_a = actions[2] - env->two_agent_prev_controls[slot][1];
     float d_r = actions[3] - env->two_agent_prev_controls[slot][2];
     float delta_sq = d_e*d_e + d_a*d_a + d_r*d_r;
+    env->two_agent_pool_control_rate_sum[slot] += delta_sq;
+    env->episode_control_rate += 0.5f * delta_sq;
     reward -= delta_sq * env->rcfg.control_rate_penalty;
     env->two_agent_prev_controls[slot][0] = actions[1];
     env->two_agent_prev_controls[slot][1] = actions[2];
@@ -423,6 +425,10 @@ static inline float dogfight_two_agent_dense_reward(
 #define DOGFIGHT_POOL_EXCESSIVE_ROLL_FRACTION_BAD 0.60f
 #define DOGFIGHT_POOL_ROLL_ROTATIONS_GOOD 0.75f
 #define DOGFIGHT_POOL_ROLL_ROTATIONS_BAD 2.00f
+#define DOGFIGHT_POOL_CONTROL_RATE_GOOD_EARLY 0.45f
+#define DOGFIGHT_POOL_CONTROL_RATE_BAD_EARLY 0.80f
+#define DOGFIGHT_POOL_CONTROL_RATE_GOOD_LATE 0.80f
+#define DOGFIGHT_POOL_CONTROL_RATE_BAD_LATE 1.20f
 #define DOGFIGHT_POOL_CONTROLLED_FRACTION_BAD 0.60f
 #define DOGFIGHT_POOL_CONTROLLED_FRACTION_GOOD 0.90f
 #define DOGFIGHT_POOL_CONTROLLED_MIN_ALTITUDE 100.0f
@@ -441,9 +447,24 @@ static inline float dogfight_pool_quality_ascending(
     return (value - bad) / (good - bad);
 }
 
+static inline void dogfight_pool_control_rate_limits(
+        int stage, float* good, float* bad) {
+    float difficulty = clampf((float)stage / 10.0f, 0.0f, 1.0f);
+    *good = DOGFIGHT_POOL_CONTROL_RATE_GOOD_EARLY
+        + difficulty * (
+            DOGFIGHT_POOL_CONTROL_RATE_GOOD_LATE
+            - DOGFIGHT_POOL_CONTROL_RATE_GOOD_EARLY);
+    *bad = DOGFIGHT_POOL_CONTROL_RATE_BAD_EARLY
+        + difficulty * (
+            DOGFIGHT_POOL_CONTROL_RATE_BAD_LATE
+            - DOGFIGHT_POOL_CONTROL_RATE_BAD_EARLY);
+}
+
 static inline void dogfight_two_agent_reset_pool_quality(Dogfight* env) {
     memset(env->two_agent_pool_aileron_sum, 0,
         sizeof(env->two_agent_pool_aileron_sum));
+    memset(env->two_agent_pool_control_rate_sum, 0,
+        sizeof(env->two_agent_pool_control_rate_sum));
     memset(env->two_agent_pool_target_negative_aileron_sum, 0,
         sizeof(env->two_agent_pool_target_negative_aileron_sum));
     memset(env->two_agent_pool_target_positive_aileron_sum, 0,
@@ -517,6 +538,15 @@ static inline float dogfight_two_agent_pool_flight_quality(
 
     /* Do not reject legitimate quick kills based on a tiny control sample. */
     if (steps < DOGFIGHT_POOL_QUALITY_MIN_STEPS) return quality;
+
+    float control_rate =
+        env->two_agent_pool_control_rate_sum[physical] / (float)steps;
+    float control_rate_good;
+    float control_rate_bad;
+    dogfight_pool_control_rate_limits(
+        env->stage, &control_rate_good, &control_rate_bad);
+    quality = fminf(quality, dogfight_pool_quality_descending(
+        control_rate, control_rate_good, control_rate_bad));
 
     float signed_bias = fabsf(
         env->two_agent_pool_aileron_sum[physical] / (float)steps);

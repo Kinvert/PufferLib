@@ -20,9 +20,12 @@ cd PufferLib-dogfight5c
 git checkout dogfight5c-robocode-stage10
 uv sync
 source .venv/bin/activate
+export CUDA_HOME="${CUDA_HOME:-/usr/local/cuda}"
+NCCL_LIB="$(python -c \
+  'import nvidia.nccl, os; print(os.path.join(nvidia.nccl.__path__[0], "lib"))')"
+export LD_LIBRARY_PATH="$NCCL_LIB:${LD_LIBRARY_PATH:-}"
 python -m pytest -q ocean/dogfight/tests
-CUDA_HOME=/usr/local/cuda \
-  bash ocean/dogfight/build_eval.sh ./puffer
+bash ocean/dogfight/build_eval.sh ./puffer
 ```
 
 `build_eval.sh` compiles the complete native executable from a generated
@@ -37,7 +40,8 @@ stock 5c currently asserts during final historical-pool evaluation.
 
 ## Structural canary
 
-Start the sidecar first:
+The two-run canary validates mechanics, not policy quality or hyperparameters.
+Start the observer-only sidecar first:
 
 ```bash
 python ocean/dogfight/wandb_sidecar.py \
@@ -57,21 +61,13 @@ normal W&B-generated names, and retain checkpoints under
 every epoch. Each completed run publishes 31 downsampled training-history
 points; this is curve resolution, not the number of learner updates.
 
-## Local qualification
+Do not insert a hand-authored “calibration sweep” between this canary and the
+5090 sweep. Protein is responsible for selecting values from the checked-in
+ranges. A separate smaller sweep is useful only when intentionally testing new
+ranges or metrics.
 
-Before the 5090 handoff, run at least 12 normal native trials:
-
-```bash
-python ocean/dogfight/wandb_sidecar.py \
-  --wandb --wandb-project df43 \
-  --env dogfight --max-runs 12
-```
-
-```bash
-./puffer sweep dogfight sweep.max_runs=12
-```
-
-Rank by `selfplay/pool_score`, then evaluate leading checkpoints with:
+After a sweep, rank by `selfplay/pool_score`, then evaluate leading checkpoints
+with:
 
 ```bash
 python ocean/dogfight/eval_stage_matrix.py CHECKPOINT \
@@ -97,11 +93,48 @@ tmux new-session -d -s df43-sidecar \
 
 ```bash
 tmux new-session -d -s df43-sweep \
-  'source .venv/bin/activate && ./puffer sweep dogfight'
+  'source .venv/bin/activate && NCCL_LIB="$(python -c '"'"'import nvidia.nccl, os; print(os.path.join(nvidia.nccl.__path__[0], "lib"))'"'"')" && export LD_LIBRARY_PATH="$NCCL_LIB:${LD_LIBRARY_PATH:-}" && ./puffer sweep dogfight sweep.max_runs=1000'
 ```
 
 No W&B group, session, experiment ID, or custom run name is supplied. The tmux
 names do not affect W&B plotting.
+
+Monitor without changing either process:
+
+```bash
+tmux attach -t df43-sweep
+tmux attach -t df43-sidecar
+```
+
+## Robocode parity
+
+The production path deliberately copies Robocode's native structure:
+
+- two symmetric environment agent slots;
+- one current trainable policy and one frozen historical bank;
+- native PufferLib policy routing rather than a Dogfight coordinator;
+- native periodic checkpoints, historical-opponent rotation, and boundary
+  alignment;
+- native final candidate-versus-history pool evaluation;
+- the stock Protein sweep controller invoked by `./puffer sweep`;
+- no `sweep_only` restriction and no custom Python sweep controller.
+
+Dogfight-specific differences are intentional:
+
+- RK4 aircraft dynamics and larger observations are more expensive;
+- favorable-to-hard spawn progression is retained because aerial self-play
+  has a harder exploration problem than Robocode;
+- Dogfight uses a smaller network and fewer agents;
+- `build_eval.sh` patches only a generated source copy to satisfy Dogfight's
+  final pool-evaluation and eval CLI requirements.
+
+Tracked PufferLib core files must remain byte-for-byte unchanged. Before
+committing or pushing, this command must print nothing and exit successfully:
+
+```bash
+git diff --exit-code -- \
+  src/pufferl.cu src/protein.cu pufferlib/pufferl.py pufferlib/sweep.py
+```
 
 ## Production profile
 

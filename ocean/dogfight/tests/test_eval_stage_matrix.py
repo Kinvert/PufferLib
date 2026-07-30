@@ -23,6 +23,7 @@ def eval_output(
     abs_bias=4.0,
     signed_bias=1.0,
     roll_rotations=0.5,
+    control_rate=0.01,
     az_neg=0.1,
     az_pos=-0.1,
     az_neg_steps=64.0,
@@ -33,6 +34,7 @@ def eval_output(
         "dogfight_eval_controls "
         f"avg_abs_bias={abs_bias:.6f} avg_signed_bias={signed_bias:.6f} "
         f"avg_roll_rotations={roll_rotations:.6f} "
+        f"avg_control_rate={control_rate:.6f} "
         f"az_neg_mean_aileron={az_neg:.6f} "
         f"az_pos_mean_aileron={az_pos:.6f} "
         f"az_neg_steps={az_neg_steps:.1f} az_pos_steps={az_pos_steps:.1f}\n"
@@ -65,6 +67,7 @@ def test_parse_eval_output_uses_dogfight_contract():
     assert sample.avg_abs_bias == 4.0
     assert sample.avg_signed_bias == 1.0
     assert sample.avg_roll_rotations == 0.5
+    assert sample.avg_control_rate == 0.01
     assert sample.az_neg_mean_aileron == 0.1
     assert sample.az_pos_mean_aileron == -0.1
     assert module.roll_quality(sample)["passed"] is True
@@ -108,6 +111,27 @@ def test_roll_gate_rejects_long_way_around_physical_rotation():
     assert quality["avg_roll_rotations"] == 1.25
     assert quality["rotation_limit"] == 1.0
     assert quality["passed"] is False
+
+
+def test_flight_gate_rejects_high_control_chatter_at_early_stage():
+    module = load_module()
+    sample = module.parse_eval_output(
+        eval_output(0.99, control_rate=0.85),
+        stage=0,
+        seed=42,
+        mirror=0,
+        requested_episodes=128,
+    )
+
+    quality = module.flight_quality(sample)
+    summary = module.summarize([sample], stages=(0,), threshold=0.90)
+
+    assert module.roll_quality(sample)["passed"] is True
+    assert quality["control_rate_limit"] == 0.55
+    assert quality["control_rate_passed"] is False
+    assert quality["passed"] is False
+    assert summary["stages"]["0"]["mastered"] is False
+    assert summary["control_gate_passed"] is False
 
 
 def test_parse_eval_output_accepts_progress_line_concatenation_and_overshoot():
@@ -163,6 +187,7 @@ def test_summary_requires_every_seed_and_mirror_cell_to_master_stage():
     assert summary["highest_contiguous_stage"] == 0
     assert summary["evaluated_cells"] == 8
     assert summary["max_abs_signed_bias"] == 1.0
+    assert summary["max_avg_control_rate"] == 0.01
 
 
 def test_evaluation_stops_after_complete_stage_zero_matrix_fails():

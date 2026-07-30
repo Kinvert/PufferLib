@@ -25,6 +25,7 @@ class EvalSample(NamedTuple):
     avg_abs_bias: float
     avg_signed_bias: float
     avg_roll_rotations: float
+    avg_control_rate: float
     az_neg_mean_aileron: float
     az_pos_mean_aileron: float
     az_neg_steps: float
@@ -36,6 +37,9 @@ ROLL_COMMON_MODE_LIMIT = 0.05
 ROLL_MIN_STEPS = 32.0
 ROLL_ROTATION_LIMIT_EARLY = 1.0
 ROLL_ROTATION_LIMIT_MIDDLE = 2.0
+CONTROL_RATE_LIMIT_EARLY = 0.55
+CONTROL_RATE_LIMIT_MIDDLE = 0.80
+CONTROL_RATE_LIMIT_LATE = 1.10
 
 
 Runner = Callable[[int, int, int, int], str]
@@ -95,6 +99,7 @@ def parse_eval_output(
         avg_abs_bias=controls["avg_abs_bias"],
         avg_signed_bias=controls["avg_signed_bias"],
         avg_roll_rotations=controls["avg_roll_rotations"],
+        avg_control_rate=controls["avg_control_rate"],
         az_neg_mean_aileron=controls["az_neg_mean_aileron"],
         az_pos_mean_aileron=controls["az_pos_mean_aileron"],
         az_neg_steps=controls["az_neg_steps"],
@@ -137,6 +142,27 @@ def roll_quality(sample: EvalSample) -> dict[str, float | bool]:
     }
 
 
+def flight_quality(sample: EvalSample) -> dict[str, float | bool]:
+    roll = roll_quality(sample)
+    control_rate_limit = (
+        CONTROL_RATE_LIMIT_EARLY
+        if sample.stage <= 2
+        else (
+            CONTROL_RATE_LIMIT_MIDDLE
+            if sample.stage <= 5
+            else CONTROL_RATE_LIMIT_LATE
+        )
+    )
+    control_rate_passed = sample.avg_control_rate <= control_rate_limit
+    return {
+        "passed": bool(roll["passed"]) and control_rate_passed,
+        "roll_passed": roll["passed"],
+        "control_rate_passed": control_rate_passed,
+        "avg_control_rate": sample.avg_control_rate,
+        "control_rate_limit": control_rate_limit,
+    }
+
+
 def summarize(
     samples: Sequence[EvalSample],
     *,
@@ -148,14 +174,20 @@ def summarize(
         stage_samples = [sample for sample in samples if sample.stage == stage]
         perfs = [sample.perf for sample in stage_samples]
         roll_results = [roll_quality(sample) for sample in stage_samples]
+        flight_results = [flight_quality(sample) for sample in stage_samples]
         stage_summaries[str(stage)] = {
             "mastered": (
                 bool(perfs)
                 and min(perfs) >= threshold
-                and all(result["passed"] for result in roll_results)
+                and all(result["passed"] for result in flight_results)
             ),
             "roll_gate_passed": bool(roll_results)
             and all(result["passed"] for result in roll_results),
+            "control_gate_passed": bool(flight_results)
+            and all(
+                result["control_rate_passed"]
+                for result in flight_results
+            ),
             "cells": len(stage_samples),
             "episodes": sum(sample.episodes for sample in stage_samples),
             "min_perf": min(perfs) if perfs else None,
@@ -172,6 +204,11 @@ def summarize(
             ),
             "max_avg_roll_rotations": (
                 max(sample.avg_roll_rotations for sample in stage_samples)
+                if stage_samples
+                else None
+            ),
+            "max_avg_control_rate": (
+                max(sample.avg_control_rate for sample in stage_samples)
                 if stage_samples
                 else None
             ),
@@ -195,6 +232,7 @@ def summarize(
 
     all_perfs = [sample.perf for sample in samples]
     all_roll_results = [roll_quality(sample) for sample in samples]
+    all_flight_results = [flight_quality(sample) for sample in samples]
     return {
         "threshold": threshold,
         "highest_contiguous_stage": highest_contiguous_stage,
@@ -210,6 +248,11 @@ def summarize(
         ),
         "roll_gate_passed": bool(all_roll_results)
         and all(result["passed"] for result in all_roll_results),
+        "control_gate_passed": bool(all_flight_results)
+        and all(
+            result["control_rate_passed"]
+            for result in all_flight_results
+        ),
         "max_abs_roll_common_mode": (
             max(abs(result["common_mode"]) for result in all_roll_results)
             if all_roll_results
@@ -217,6 +260,11 @@ def summarize(
         ),
         "max_avg_roll_rotations": (
             max(sample.avg_roll_rotations for sample in samples)
+            if samples
+            else None
+        ),
+        "max_avg_control_rate": (
+            max(sample.avg_control_rate for sample in samples)
             if samples
             else None
         ),
@@ -265,7 +313,10 @@ def evaluate_checkpoint(
                 stage_samples.append(sample)
         if (
             min(sample.perf for sample in stage_samples) < threshold
-            or not all(roll_quality(sample)["passed"] for sample in stage_samples)
+            or not all(
+                flight_quality(sample)["passed"]
+                for sample in stage_samples
+            )
         ):
             stopped_after_stage = stage
             break
@@ -357,6 +408,7 @@ def main() -> int:
             f"perf={sample.perf:.6f} score={sample.score:.6f} "
             f"signed_bias={sample.avg_signed_bias:.6f} "
             f"roll_rotations={sample.avg_roll_rotations:.6f} "
+            f"control_rate={sample.avg_control_rate:.6f} "
             f"roll_common_mode={roll_quality(sample)['common_mode']:.6f} "
             f"roll_directional={roll_quality(sample)['directional']:.6f}"
         )

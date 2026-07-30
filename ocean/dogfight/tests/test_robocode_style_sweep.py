@@ -54,6 +54,7 @@ def test_active_config_has_only_explicit_ranges_without_sweep_only():
         "sweep.train.momentum",
         "sweep.train.prio_alpha",
         "sweep.train.prio_beta0",
+        "sweep.env.control_rate_penalty",
         "sweep.env.native_spawn_total_steps",
         "sweep.env.native_frontier_fraction",
         "sweep.env.native_lateral_width_scale",

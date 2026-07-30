@@ -462,6 +462,7 @@ typedef struct Env {
     float two_agent_episode_returns[2];
     float two_agent_episode_shots[2];
     float two_agent_pool_aileron_sum[2];
+    float two_agent_pool_control_rate_sum[2];
     float two_agent_pool_target_negative_aileron_sum[2];
     float two_agent_pool_target_positive_aileron_sum[2];
     int two_agent_pool_steps[2];

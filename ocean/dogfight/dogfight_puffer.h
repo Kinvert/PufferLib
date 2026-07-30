@@ -646,11 +646,11 @@ void puf_log(Log* log, Dict* out) {
     dict_set(out, "target_az_pos_steps", log->target_az_pos_steps);
     dict_set(out, "avg_stage", log->stage_sum);
     dict_set(out, "avg_roll_rotations", log->total_roll_rotations);
+    dict_set(out, "avg_control_rate", log->total_control_rate);
     dict_set(out, "base_stage_kills", log->base_stage_kills);
     dict_set(out, "base_stage_eps", log->base_stage_eps);
     dict_set(out, "player_ground", log->player_ground_hits);
     dict_set(out, "opponent_ground", log->opponent_ground_hits);
-    dict_set(out, "recovery_triggers", log->recovery_triggers);
     dict_set(out, "clean_fights", log->clean_fights);
     dict_set(out, "timeouts", log->timeouts);
     dict_set(out, "altitude_kills", log->altitude_kills);
