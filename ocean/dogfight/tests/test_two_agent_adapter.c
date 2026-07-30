@@ -297,14 +297,14 @@ static int test_timeout_is_a_zero_reward_draw(void) {
             t.rewards[0], t.rewards[1]);
         return 1;
     }
-    if (!closef(t.env.log.slot_0_score, 0.5f)
-            || !closef(t.env.log.slot_1_score, 0.5f)
+    if (!closef(t.env.log.slot_0_score, 0.0f)
+            || !closef(t.env.log.slot_1_score, 0.0f)
             || !closef(t.env.log.draw_rate, 1.0f)
             || !closef(t.env.log.timeouts, 1.0f)
             || !closef(
-                t.env.log.slot_0_score + t.env.log.slot_1_score, 1.0f)) {
+                t.env.log.slot_0_score + t.env.log.slot_1_score, 0.0f)) {
         fprintf(stderr,
-            "timeout score did not conserve one match credit\n");
+            "timeout pool score was not zero for both slots\n");
         return 1;
     }
     return 0;

@@ -254,8 +254,8 @@ static int test_bank_guidance_sign_and_mirror_contract(void) {
     Plane origin = level_plane(0.0f);
     Plane target_left = posed_plane(100.0f, 100.0f, 0.0f, 0.0f, 0.0f);
     Plane target_right = posed_plane(100.0f, -100.0f, 0.0f, 0.0f, 0.0f);
-    Plane bank_left = posed_plane(0.0f, 0.0f, 0.0f, -45.0f, 0.0f);
-    Plane bank_right = posed_plane(0.0f, 0.0f, 0.0f, 45.0f, 0.0f);
+    Plane bank_left = posed_plane(0.0f, 0.0f, 0.0f, -90.0f, 0.0f);
+    Plane bank_right = posed_plane(0.0f, 0.0f, 0.0f, 90.0f, 0.0f);
     float left_reward = dogfight_two_agent_bank_guidance_penalty(
         &bank_left, &target_left, 0.001f, 0.0005f);
     float right_reward = dogfight_two_agent_bank_guidance_penalty(
@@ -277,11 +277,11 @@ static int test_bank_guidance_sign_and_mirror_contract(void) {
 
 static int test_bank_guidance_damps_and_prefers_corrective_roll(void) {
     Plane target = posed_plane(100.0f, 100.0f, 0.0f, 0.0f, 0.0f);
-    Plane aligned = posed_plane(0.0f, 0.0f, 0.0f, -45.0f, 0.0f);
-    Plane continuing = posed_plane(0.0f, 0.0f, 0.0f, -45.0f, -1.0f);
+    Plane aligned = posed_plane(0.0f, 0.0f, 0.0f, -90.0f, 0.0f);
+    Plane continuing = posed_plane(0.0f, 0.0f, 0.0f, -90.0f, -1.0f);
     Plane level_toward = posed_plane(0.0f, 0.0f, 0.0f, 0.0f, -1.0f);
     Plane level_away = posed_plane(0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-    Plane wrong = posed_plane(0.0f, 0.0f, 0.0f, 45.0f, 0.0f);
+    Plane wrong = posed_plane(0.0f, 0.0f, 0.0f, 90.0f, 0.0f);
     float aligned_reward = dogfight_two_agent_bank_guidance_penalty(
         &aligned, &target, 0.001f, 0.0005f);
     float continuing_reward = dogfight_two_agent_bank_guidance_penalty(

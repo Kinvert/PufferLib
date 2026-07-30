@@ -33,7 +33,7 @@ def test_progressive_profile_composes_native_selfplay_defaults():
     assert config["base"]["wandb_project"] == "df43"
     assert config["selfplay"]["mode"] == "vanilla"
     assert config["selfplay"]["enabled"] == "1"
-    assert config["vec"]["frozen_bank_pct"] == "0.1"
+    assert config["vec"]["frozen_bank_pct"] == "0.2"
     assert config["env"]["num_agents"] == "2"
     assert config["env"]["curriculum_enabled"] == "1"
     assert config["env"]["curriculum_randomize"] == "0"
@@ -48,8 +48,8 @@ def test_progressive_profile_composes_native_selfplay_defaults():
     assert config["env"]["native_acquisition_rehearsal_steps"] == "0"
     assert config.getint("env", "native_spawn_total_steps") > 0
     assert config["env"]["native_frontier_fraction"] == "0.50"
-    assert config.getint("train", "total_timesteps") == config.getint(
-        "env", "native_spawn_total_steps"
+    assert config.getint("env", "native_spawn_total_steps") < config.getint(
+        "train", "total_timesteps"
     )
     assert not config.has_option("sweep", "sweep_only")
     assert config["env"]["steering_alignment_scale"] == "0"

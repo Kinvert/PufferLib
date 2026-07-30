@@ -25,7 +25,7 @@ def test_vanilla_profile_emits_official_native_selfplay_contract():
     config.read(CONFIG)
     assert config["base"]["wandb_project"] == "df43"
     assert config["vec"]["num_frozen_banks"] == "1"
-    assert config["vec"]["frozen_bank_pct"] == "0.1"
+    assert config["vec"]["frozen_bank_pct"] == "0.2"
     assert config["selfplay"]["mode"] == "vanilla"
     assert config["selfplay"]["enabled"] == "1"
     assert config["selfplay"]["max_size"] == "100"
@@ -51,8 +51,8 @@ def test_vanilla_profile_emits_official_native_selfplay_contract():
     assert config["env"]["selfplay_bootstrap_imitation_scale"] == "0"
     assert config["env"]["recovery_enabled"] == "0"
     assert config["train"]["ent_coef"] == "0.0001"
-    assert config.getint("train", "total_timesteps") == config.getint(
-        "env", "native_spawn_total_steps"
+    assert config.getint("env", "native_spawn_total_steps") < config.getint(
+        "train", "total_timesteps"
     )
     assert config["sweep"]["metric"] == "score"
     assert config.getint("sweep", "max_runs") >= 1000

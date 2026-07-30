@@ -208,33 +208,47 @@ static inline float dogfight_two_agent_bank_guidance_penalty(
         float roll_scale) {
     if (bank_scale <= 0.0f && roll_scale <= 0.0f) return 0.0f;
 
-    const float max_bank = 60.0f * DEG_TO_RAD;
     const float max_roll_rate = 60.0f * DEG_TO_RAD;
     const float roll_gain = 2.0f;
-    Vec3 forward = quat_rotate(
-        self->ori, vec3(1.0f, 0.0f, 0.0f));
-    Vec3 relative = sub3(other->pos, self->pos);
-    float heading = atan2f(forward.y, forward.x);
-    float target_heading = atan2f(relative.y, relative.x);
-    float heading_error = target_heading - heading;
-    float target_azimuth = atan2f(
-        sinf(heading_error), cosf(heading_error));
-    // Body +Y and positive target azimuth are left. Positive bank/omega.x
-    // are right, so the target-relative desired bank has the opposite sign.
-    float desired_bank = clampf(target_azimuth * -1.0f,
-        -max_bank, max_bank);
-    float bank_error = desired_bank
-        - dogfight_two_agent_signed_bank(self);
+    Quat inverse = {
+        self->ori.w,
+        -self->ori.x,
+        -self->ori.y,
+        -self->ori.z,
+    };
+    Vec3 relative_body = quat_rotate(
+        inverse, sub3(other->pos, self->pos));
+    float cross_track = sqrtf(
+        relative_body.y * relative_body.y
+            + relative_body.z * relative_body.z);
+    float range = sqrtf(
+        relative_body.x * relative_body.x
+            + cross_track * cross_track);
+    float off_axis = range > 1.0e-6f ? cross_track / range : 0.0f;
+    float alignment_weight = clampf(
+        off_axis / sinf(5.0f * DEG_TO_RAD), 0.0f, 1.0f);
+    float alignment_error = cross_track > 1.0e-6f
+        ? acosf(clampf(relative_body.z / cross_track, -1.0f, 1.0f))
+        : 0.0f;
+    float signed_alignment_error = relative_body.y > 1.0e-6f
+        ? alignment_error
+        : (relative_body.y < -1.0e-6f ? -alignment_error : 0.0f);
+    // Body +Y is left and positive omega.x rolls right. Roll through the
+    // shortest direction until the target projection is on body +Z, then
+    // damp roll instead of continuing around another revolution.
     float desired_roll_rate = clampf(
-        roll_gain * bank_error, -max_roll_rate, max_roll_rate);
-    float bank_error_norm = clampf(
-        bank_error / max_bank, -1.0f, 1.0f);
+        -roll_gain * signed_alignment_error * alignment_weight,
+        -max_roll_rate,
+        max_roll_rate);
+    float alignment_error_norm =
+        alignment_error / (float)M_PI;
     float roll_error_norm = clampf(
         (desired_roll_rate - self->omega.x)
             / (2.0f * max_roll_rate),
         -1.0f,
         1.0f);
-    return -bank_scale * bank_error_norm * bank_error_norm
+    return -bank_scale * alignment_weight
+            * alignment_error_norm * alignment_error_norm
         - roll_scale * roll_error_norm * roll_error_norm;
 }
 
@@ -585,7 +599,7 @@ static inline void dogfight_two_agent_adjusted_pool_scores(
     physical_scores[1] = 0.0f;
 
     if (physical_winner == 0) {
-        if (reason == DEATH_TIMEOUT || reason == DEATH_KILL) {
+        if (reason == DEATH_KILL) {
             physical_scores[0] = 0.5f * physical_quality[0];
             physical_scores[1] = 0.5f * physical_quality[1];
         }

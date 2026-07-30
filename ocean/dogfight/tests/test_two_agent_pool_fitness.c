@@ -97,13 +97,17 @@ static void test_adjusted_outcome_contract(void) {
 
     dogfight_two_agent_adjusted_pool_scores(
         DEATH_TIMEOUT, 0, qualities, scores);
-    assert(scores[0] == 0.5f && scores[1] == 0.5f);
+    assert(scores[0] == 0.0f && scores[1] == 0.0f);
 
     float collapsed[2] = {0.0f, 0.0f};
     dogfight_two_agent_adjusted_pool_scores(
         DEATH_TIMEOUT, 0, collapsed, scores);
     assert(scores[0] == 0.0f && scores[1] == 0.0f);
     assert(scores[0] + scores[1] < 1.0f);
+
+    dogfight_two_agent_adjusted_pool_scores(
+        DEATH_KILL, 0, qualities, scores);
+    assert(scores[0] == 0.5f && scores[1] == 0.5f);
 
     dogfight_two_agent_adjusted_pool_scores(
         DEATH_OOB, 0, qualities, scores);
