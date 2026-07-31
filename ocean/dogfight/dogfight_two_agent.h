@@ -620,6 +620,16 @@ static inline void dogfight_two_agent_remember_native_aileron_bias(
         env->lateral_frame_mirror ? -physical_bias : physical_bias;
 }
 
+static inline void dogfight_two_agent_raw_pool_scores(
+        int physical_winner, float physical_scores[2]) {
+    physical_scores[0] = physical_winner == 0
+        ? 0.5f
+        : (physical_winner == 1 ? 1.0f : 0.0f);
+    physical_scores[1] = physical_winner == 0
+        ? 0.5f
+        : (physical_winner == -1 ? 1.0f : 0.0f);
+}
+
 static inline void dogfight_two_agent_adjusted_pool_scores(
         DeathReason reason,
         int physical_winner,
@@ -687,20 +697,22 @@ static inline void dogfight_two_agent_finish(
             env->log.slot_1_gun_kills += 1.0f;
         }
     }
-    env->log.slot_0_score += winner == 0
-        ? 0.5f
-        : (logical_winner == 0 ? 1.0f : 0.0f);
-    env->log.slot_1_score += winner == 0
-        ? 0.5f
-        : (logical_winner == 1 ? 1.0f : 0.0f);
+    float physical_raw_scores[2];
+    dogfight_two_agent_raw_pool_scores(winner, physical_raw_scores);
+    float logical_raw_scores[2] = {0.0f, 0.0f};
+    logical_raw_scores[env->two_agent_player_slot] = physical_raw_scores[0];
+    logical_raw_scores[1 - env->two_agent_player_slot] =
+        physical_raw_scores[1];
+    env->log.slot_0_score += logical_raw_scores[0];
+    env->log.slot_1_score += logical_raw_scores[1];
     env->log.draw_rate += winner == 0 ? 1.0f : 0.0f;
 
     float physical_quality[2] = {
         dogfight_two_agent_pool_flight_quality(env, 0),
         dogfight_two_agent_pool_flight_quality(env, 1),
     };
-    env->log.pool_flight_quality +=
-        0.5f * (physical_quality[0] + physical_quality[1]);
+    int candidate_physical = env->two_agent_player_slot == 0 ? 0 : 1;
+    env->log.pool_flight_quality += physical_quality[candidate_physical];
 
     float physical_scores[2];
     dogfight_two_agent_adjusted_pool_scores(
@@ -708,24 +720,7 @@ static inline void dogfight_two_agent_finish(
     float logical_scores[2] = {0.0f, 0.0f};
     logical_scores[env->two_agent_player_slot] = physical_scores[0];
     logical_scores[1 - env->two_agent_player_slot] = physical_scores[1];
-
-    /*
-     * Replace the legacy constant-sum contribution above with adjusted,
-     * non-constant-sum fitness. PPO reward pulses are intentionally untouched.
-     */
-    float legacy_physical_scores[2] = {
-        winner == 0 ? 0.5f : (winner == 1 ? 1.0f : 0.0f),
-        winner == 0 ? 0.5f : (winner == -1 ? 1.0f : 0.0f),
-    };
-    float legacy_logical_scores[2] = {0.0f, 0.0f};
-    legacy_logical_scores[env->two_agent_player_slot] =
-        legacy_physical_scores[0];
-    legacy_logical_scores[1 - env->two_agent_player_slot] =
-        legacy_physical_scores[1];
-    env->log.slot_0_score +=
-        logical_scores[0] - legacy_logical_scores[0];
-    env->log.slot_1_score +=
-        logical_scores[1] - legacy_logical_scores[1];
+    env->log.slot_0_fitness += logical_scores[0];
 
     dogfight_two_agent_remember_native_aileron_bias(env);
     add_log(env);

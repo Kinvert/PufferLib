@@ -626,6 +626,7 @@ void puf_log(Log* log, Dict* out) {
     dict_set(out, "score", log->score);
     dict_set(out, "slot_0_score", log->slot_0_score);
     dict_set(out, "slot_1_score", log->slot_1_score);
+    dict_set(out, "slot_0_fitness", log->slot_0_fitness);
     dict_set(out, "pool_flight_quality", log->pool_flight_quality);
     dict_set(out, "draw_rate", log->draw_rate);
     dict_set(out, "slot_0_gun_kills", log->slot_0_gun_kills);
@@ -653,6 +654,5 @@ void puf_log(Log* log, Dict* out) {
     dict_set(out, "opponent_ground", log->opponent_ground_hits);
     dict_set(out, "clean_fights", log->clean_fights);
     dict_set(out, "timeouts", log->timeouts);
-    dict_set(out, "altitude_kills", log->altitude_kills);
     dict_set(out, "n", log->n);
 }

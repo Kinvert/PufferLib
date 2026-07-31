@@ -60,6 +60,10 @@ def _load_native(path: Path, dimensions: Iterable[str]) -> dict:
         "seed": parser.getint("base", "seed", fallback=-1),
         "final_agent_steps": _last(parser, "agent_steps"),
         "pool_score": _last(parser, "selfplay/pool_score"),
+        "pool_flight_quality": _last(
+            parser, "selfplay/pool_flight_quality"
+        ),
+        "pool_fitness": _last(parser, "selfplay/pool_fitness"),
         "native_perf": _last(parser, "env/perf"),
         "native_score": _last(parser, "env/score"),
         "native_sps": _last(parser, "SPS"),
@@ -146,7 +150,11 @@ def _rank_key(row: dict):
         -row["fixed_min_perf"],
         -row["fixed_mean_perf"],
         row["fixed_max_abs_signed_bias"],
-        -(row["pool_score"] if row["pool_score"] is not None else -math.inf),
+        -(
+            row["pool_fitness"]
+            if row["pool_fitness"] is not None
+            else -math.inf
+        ),
     )
 
 
@@ -225,6 +233,12 @@ def analyze_experiment(
     leaderboard = ranked + unscreened
 
     correlations = {
+        "pool_fitness_vs_fixed_mean": _correlation(
+            screened, "pool_fitness", "fixed_mean_perf"
+        ),
+        "pool_fitness_vs_fixed_min": _correlation(
+            screened, "pool_fitness", "fixed_min_perf"
+        ),
         "pool_score_vs_fixed_mean": _correlation(
             screened, "pool_score", "fixed_mean_perf"
         ),
@@ -238,7 +252,7 @@ def analyze_experiment(
             screened, "native_score", "fixed_mean_perf"
         ),
     }
-    primary = correlations["pool_score_vs_fixed_mean"]
+    primary = correlations["pool_fitness_vs_fixed_mean"]
     if primary["n"] < minimum_candidates:
         gate_status = "insufficient"
         gate_reason = (
@@ -246,7 +260,7 @@ def analyze_experiment(
         )
     elif primary["spearman"] is None:
         gate_status = "fail"
-        gate_reason = "pool score or fixed performance is constant"
+        gate_reason = "pool fitness or fixed performance is constant"
     elif primary["spearman"] < minimum_spearman:
         gate_status = "fail"
         gate_reason = (
@@ -261,7 +275,7 @@ def analyze_experiment(
         )
 
     return {
-        "format": "dogfight-sweep-calibration-v1",
+        "format": "dogfight-sweep-calibration-v2",
         "generated_utc": datetime.now(timezone.utc).isoformat(),
         "experiment_dir": str(experiment),
         "native_sweep_dimensions": dimensions,
@@ -310,6 +324,8 @@ def _csv_content(analysis: dict) -> str:
         "fixed_roll_gate_passed",
         "fixed_max_abs_roll_common_mode",
         "pool_score",
+        "pool_flight_quality",
+        "pool_fitness",
         "native_perf",
         "native_score",
         "native_sps",
@@ -329,7 +345,7 @@ def _csv_content(analysis: dict) -> str:
 
 
 def _markdown_content(analysis: dict) -> str:
-    primary = analysis["correlations"]["pool_score_vs_fixed_mean"]
+    primary = analysis["correlations"]["pool_fitness_vs_fixed_mean"]
     lines = [
         "# Dogfight Protein Calibration Report",
         "",
@@ -340,7 +356,7 @@ def _markdown_content(analysis: dict) -> str:
         f"- Protein gate: `{analysis['protein_gate']['status']}`",
         f"- Gate reason: {analysis['protein_gate']['reason']}",
         (
-            "- Historical pool score versus fixed mean: "
+            "- Adjusted pool fitness versus fixed mean: "
             f"Spearman `{primary['spearman']}`, "
             f"Pearson `{primary['pearson']}`, n `{primary['n']}`"
         ),
@@ -349,8 +365,8 @@ def _markdown_content(analysis: dict) -> str:
         "still requires every fixed seed/mirror cell to reach at least 90%.",
         "",
         "| Rank | Run | Fixed status | Highest stage | Fixed min | "
-        "Fixed mean | Pool score | Roll gate | Bias |",
-        "|---:|---|---|---:|---:|---:|---:|---:|",
+        "Fixed mean | Raw pool | Flight quality | Fitness | Roll gate | Bias |",
+        "|---:|---|---|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for row in analysis["leaderboard"]:
         lines.append(
@@ -358,7 +374,8 @@ def _markdown_content(analysis: dict) -> str:
             f"{row['fixed_status']} | "
             f"{row['highest_contiguous_stage']} | "
             f"{row['fixed_min_perf']} | {row['fixed_mean_perf']} | "
-            f"{row['pool_score']} | {row['fixed_roll_gate_passed']} | "
+            f"{row['pool_score']} | {row['pool_flight_quality']} | "
+            f"{row['pool_fitness']} | {row['fixed_roll_gate_passed']} | "
             f"{row['fixed_max_abs_signed_bias']} |"
         )
     lines.extend(["", "## Swept parameters", ""])

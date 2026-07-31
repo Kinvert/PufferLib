@@ -129,6 +129,22 @@ static void test_adjusted_outcome_contract(void) {
     assert(scores[0] == 0.0f && scores[1] == 0.0f);
 }
 
+static void test_raw_outcomes_remain_robocode_constant_sum(void) {
+    float scores[2];
+
+    dogfight_two_agent_raw_pool_scores(1, scores);
+    assert(scores[0] == 1.0f && scores[1] == 0.0f);
+    assert(scores[0] + scores[1] == 1.0f);
+
+    dogfight_two_agent_raw_pool_scores(-1, scores);
+    assert(scores[0] == 0.0f && scores[1] == 1.0f);
+    assert(scores[0] + scores[1] == 1.0f);
+
+    dogfight_two_agent_raw_pool_scores(0, scores);
+    assert(scores[0] == 0.5f && scores[1] == 0.5f);
+    assert(scores[0] + scores[1] == 1.0f);
+}
+
 int main(void) {
     test_balanced_target_response_passes();
     test_constant_right_or_left_collapse_fails_symmetrically();
@@ -136,6 +152,7 @@ int main(void) {
     test_control_chatter_gate_relaxes_with_stage();
     test_short_decisive_episode_is_not_rejected_by_lateral_gate();
     test_adjusted_outcome_contract();
+    test_raw_outcomes_remain_robocode_constant_sum();
     puts("two-agent pool fitness tests passed");
     return 0;
 }

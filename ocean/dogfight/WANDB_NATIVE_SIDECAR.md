@@ -11,24 +11,43 @@ Dogfight follows native Robocode's self-play contract:
 - final evaluation matches the candidate against up to eight historical
   checkpoints over 4096 games;
 - wins score 1, draws score 0.5, and losses score 0;
-- the mean is logged as `selfplay/pool_score` and becomes Protein's score.
+- the raw mean is logged unchanged as `selfplay/pool_score`;
+- candidate flight quality is logged as `selfplay/pool_flight_quality`;
+- quality-adjusted outcome credit is logged as `selfplay/pool_fitness` and
+  becomes Protein's score.
 
-The sidecar publishes the same final value as `selfplay/pool_winrate` and
-`protein/fitness`. `env/perf` and shaped reward metrics are diagnostics, not
-the sweep objective.
+The sidecar publishes raw `selfplay/pool_score` as
+`selfplay/pool_winrate`, and publishes adjusted `selfplay/pool_fitness` as
+`protein/fitness`. These values are deliberately different. `env/perf` and
+shaped reward metrics are diagnostics, not the sweep objective.
+
+Fitness is computed per episode and then averaged:
+
+```text
+episode_fitness =
+    raw_candidate_outcome
+    * terminal-cause credit
+    * candidate_flight_quality
+```
+
+Gun wins use terminal-cause credit `1`, opponent ground/OOB wins use `0.25`,
+and timeouts use `0`. Because averaging happens after the per-episode
+multiplication, aggregate pool fitness is not generally equal to aggregate
+pool score multiplied by aggregate flight quality.
 
 Dogfight overrides native history downsampling to 31 points. This gives W&B a
 useful post-run learning curve without changing update cadence. The native log
-is still written at trial completion, and historical pool fitness remains a
-single final-only measurement.
+is still written at trial completion, and all three historical pool values are
+single final-only measurements.
 
 ## Clean-core compatibility build
 
 Stock 5c forces match evaluation to horizon 1 while its advantage kernel
 requires a multiple of 4 or 8. Dogfight keeps `src/pufferl.cu` pristine.
 `build_eval.sh` copies the source, changes only the generated copy to horizon
-8, restores the trained INI after native match evaluation mutates it, adds
-Dogfight's fixed evaluator contract, and compiles the complete native binary:
+8, restores the trained INI after native match evaluation mutates it, keeps
+raw pool score separate from Dogfight's adjusted Protein fitness, adds the
+fixed evaluator contract, and compiles the complete native binary:
 
 ```bash
 CUDA_HOME=/usr/local/cuda \

@@ -21,6 +21,8 @@ def write_native_log(
     perf,
     score,
     pool_score,
+    pool_fitness,
+    pool_quality,
     frontier_fraction,
     steps=671_088_640,
 ):
@@ -45,6 +47,8 @@ uptime = 1.0,240.0
 env/perf = 0.0,{perf}
 env/score = 0.5,{score}
 selfplay/pool_score = {pool_score},{pool_score}
+selfplay/pool_fitness = {pool_fitness},{pool_fitness}
+selfplay/pool_flight_quality = {pool_quality},{pool_quality}
 env/avg_stage = 0.0,5.0
 env/avg_abs_bias = 2.0,3.0
 env/avg_signed_bias = 1.0,-1.5
@@ -102,7 +106,9 @@ def make_experiment(tmp_path, fixed_means):
             run_id,
             perf=native_perf,
             score=0.4 + native_perf,
-            pool_score=0.4 + native_perf,
+            pool_score=0.5,
+            pool_fitness=0.4 + native_perf,
+            pool_quality=0.8,
             frontier_fraction=0.45 + 0.05 * index,
         )
         write_fixed_result(
@@ -129,8 +135,8 @@ def test_analysis_ranks_mastery_and_measures_native_objective(tmp_path):
         "sweep_0001",
         "sweep_0000",
     ]
-    assert analysis["correlations"]["pool_score_vs_fixed_mean"]["spearman"] == 1.0
-    assert analysis["correlations"]["pool_score_vs_fixed_mean"]["pearson"] > 0.99
+    assert analysis["correlations"]["pool_fitness_vs_fixed_mean"]["spearman"] == 1.0
+    assert analysis["correlations"]["pool_fitness_vs_fixed_mean"]["pearson"] > 0.99
     assert analysis["protein_gate"]["status"] == "pass"
     assert analysis["leaderboard"][0]["parameters"] == {
         "env.native_frontier_fraction": 0.55
@@ -145,7 +151,7 @@ def test_analysis_rejects_anti_correlated_native_objective(tmp_path):
         experiment, minimum_candidates=3, minimum_spearman=0.25
     )
 
-    assert analysis["correlations"]["pool_score_vs_fixed_mean"]["spearman"] == -1.0
+    assert analysis["correlations"]["pool_fitness_vs_fixed_mean"]["spearman"] == -1.0
     assert analysis["protein_gate"]["status"] == "fail"
 
 

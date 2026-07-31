@@ -17,6 +17,11 @@ from typing import Any
 
 STATE_FORMAT = "dogfight-wandb-sidecar-v1"
 POOL_SCORE_KEY = "selfplay/pool_score"
+POOL_QUALITY_KEY = "selfplay/pool_flight_quality"
+POOL_FITNESS_KEY = "selfplay/pool_fitness"
+FINAL_POOL_KEYS = frozenset(
+    (POOL_SCORE_KEY, POOL_QUALITY_KEY, POOL_FITNESS_KEY)
+)
 
 
 class SidecarError(RuntimeError):
@@ -122,10 +127,10 @@ def load_native_log(path: Path) -> dict[str, Any]:
     for index, step in enumerate(steps):
         row: dict[str, float] = {}
         for key, values in metrics.items():
-            # Native serialization backfills final-only pool_score into every
-            # downsample bucket. It is measured only after training, so expose
-            # it at the final step rather than presenting a fake flat curve.
-            if key == POOL_SCORE_KEY:
+            # Native serialization backfills final-only pool metrics into
+            # every downsample bucket. They are measured only after training,
+            # so expose them at the final step instead of as fake flat curves.
+            if key in FINAL_POOL_KEYS:
                 if index == len(steps) - 1 and values:
                     row[key] = values[-1]
                 continue
@@ -138,15 +143,23 @@ def load_native_log(path: Path) -> dict[str, Any]:
         history.append({"step": step, "metrics": row})
 
     pool_score = final_metric(metrics, POOL_SCORE_KEY)
+    pool_quality = final_metric(metrics, POOL_QUALITY_KEY)
+    pool_fitness = final_metric(metrics, POOL_FITNESS_KEY)
+    valid_pool_eval = all(
+        value is not None
+        for value in (pool_score, pool_quality, pool_fitness)
+    )
     final_steps = steps[-1]
     final_uptime = final_metric(metrics, "uptime")
     summary: dict[str, Any] = {
         "native/run_id": run_id,
         "native/log_path": str(path.resolve()),
         "native/final_agent_steps": final_steps,
-        "selfplay/valid_pool_eval": pool_score is not None,
+        "selfplay/valid_pool_eval": valid_pool_eval,
         "selfplay/pool_winrate": pool_score,
-        "protein/fitness": pool_score,
+        "selfplay/pool_flight_quality": pool_quality,
+        "selfplay/pool_fitness": pool_fitness,
+        "protein/fitness": pool_fitness,
     }
     if final_uptime is not None:
         summary["native/uptime"] = final_uptime
@@ -162,7 +175,7 @@ def load_native_log(path: Path) -> dict[str, Any]:
         "metrics": metrics,
         "history": history,
         "summary": summary,
-        "valid_pool_eval": pool_score is not None,
+        "valid_pool_eval": valid_pool_eval,
     }
 
 
@@ -430,7 +443,9 @@ def main(argv: list[str] | None = None) -> int:
             print(
                 f"wandb uploaded native={payload['run_id']} "
                 f"wandb={entry.get('wandb_name') or entry.get('wandb_id')} "
-                f"pool_winrate={payload['summary']['selfplay/pool_winrate']}",
+                f"pool_score={payload['summary']['selfplay/pool_winrate']} "
+                f"flight_quality={payload['summary']['selfplay/pool_flight_quality']} "
+                f"fitness={payload['summary']['protein/fitness']}",
                 flush=True,
             )
             if args.max_runs and uploaded >= args.max_runs:

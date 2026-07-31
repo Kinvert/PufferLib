@@ -33,6 +33,18 @@ def test_eval_wrapper_prepares_copy_without_touching_core(tmp_path):
     assert 'puf_ini_put(ini, "train.horizon", "1");' not in generated
     assert 'strcmp(mode, "render") == 0' in generated
     assert "run_eval(&ini, &ctx, EVAL_RENDER, 1);" in generated
+    assert "float fitness;" not in core
+    assert "float fitness;" in generated
+    assert (
+        'result.fitness = (float)dict_get(&log, "env/slot_0_fitness");'
+        in generated
+    )
+    assert 'dict_set(&last_log, "selfplay/pool_score", pool_score);' in generated
+    assert (
+        'dict_set(&last_log, "selfplay/pool_fitness", pool_fitness);'
+        in generated
+    )
+    assert "result.score = pool_fitness;" in generated
 
 
 def test_eval_wrapper_removes_small_batch_survivorship_bias(tmp_path):
@@ -78,6 +90,8 @@ def test_dogfight_log_payload_stays_within_native_limit():
     )[0]
 
     assert 'dict_set(out, "avg_control_rate", log->total_control_rate);' in body
+    assert 'dict_set(out, "slot_0_fitness", log->slot_0_fitness);' in body
+    assert 'dict_set(out, "altitude_kills"' not in body
     assert body.count("dict_set(out,") <= 32
 
 

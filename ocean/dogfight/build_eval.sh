@@ -10,6 +10,8 @@ prepare_source() {
     local horizon_line='    puf_ini_put(ini, "train.horizon", "1");'
     local eval_agents_guard='            if (eval_agents > num_games && num_games >= 1024) {'
     local eval_branch='    } else if (strcmp(mode, "eval") == 0 || strcmp(mode, "eval_bot") == 0) {'
+    local eval_result_draw='    float draw;'
+    local match_score='            result.score = (float)dict_get(&log, "env/slot_0_score");'
 
     if [[ "$(grep -Fxc "$horizon_line" "$core_source")" -ne 1 ]]; then
         echo "Expected exactly one upstream eval horizon assignment" >&2
@@ -23,6 +25,14 @@ prepare_source() {
         echo "Expected exactly one upstream eval CLI branch" >&2
         exit 1
     fi
+    if [[ "$(grep -Fxc "$eval_result_draw" "$core_source")" -ne 1 ]]; then
+        echo "Expected exactly one upstream EvalResult draw field" >&2
+        exit 1
+    fi
+    if [[ "$(grep -Fxc "$match_score" "$core_source")" -ne 1 ]]; then
+        echo "Expected exactly one upstream match score assignment" >&2
+        exit 1
+    fi
 
     mkdir -p "$(dirname "$destination")"
     sed \
@@ -32,6 +42,18 @@ prepare_source() {
         "$core_source" > "$destination"
 
     awk '
+        $0 == "    float draw;" {
+            print
+            print "    float fitness;"
+            print "    float flight_quality;"
+            next
+        }
+        $0 == "            result.score = (float)dict_get(&log, \"env/slot_0_score\");" {
+            print
+            print "            result.fitness = (float)dict_get(&log, \"env/slot_0_fitness\");"
+            print "            result.flight_quality = (float)dict_get(&log, \"env/pool_flight_quality\");"
+            next
+        }
         $0 == "    // Selfplay end rating: match final checkpoint vs a small fixed opponent pool." {
             print "    // run_eval mutates the shared INI for match topology. Preserve the"
             print "    // trained configuration so native logs and observers report the"
@@ -68,6 +90,43 @@ prepare_source() {
             print ""
             print
             native_pool_eval = 1
+            next
+        }
+        native_pool_eval && $0 == "            float sum = 0;" {
+            print "            float score_sum = 0;"
+            print "            float fitness_sum = 0;"
+            print "            float flight_quality_sum = 0;"
+            next
+        }
+        native_pool_eval && $0 == "                sum += r.score;" {
+            print "                score_sum += r.score;"
+            print "                fitness_sum += r.fitness;"
+            print "                flight_quality_sum += r.flight_quality;"
+            next
+        }
+        native_pool_eval && $0 == "                float pool_score = sum / n_opp;" {
+            print "                float pool_score = score_sum / n_opp;"
+            print "                float pool_fitness = fitness_sum / n_opp;"
+            print "                float pool_flight_quality = flight_quality_sum / n_opp;"
+            next
+        }
+        native_pool_eval && $0 == "                printf(\"selfplay_eval mean_score=%.4f n=%d\\n\", pool_score, n_opp);" {
+            print "                printf(\"selfplay_eval pool_score=%.4f flight_quality=%.4f fitness=%.4f n=%d\\n\","
+            print "                    pool_score, pool_flight_quality, pool_fitness, n_opp);"
+            next
+        }
+        native_pool_eval && $0 == "                result.score = pool_score;" {
+            print "                result.score = pool_fitness;"
+            next
+        }
+        native_pool_eval && $0 == "                result.scores[0] = pool_score;" {
+            print "                result.scores[0] = pool_fitness;"
+            next
+        }
+        native_pool_eval && $0 == "                dict_set(&last_log, \"selfplay/pool_score\", pool_score);" {
+            print
+            print "                dict_set(&last_log, \"selfplay/pool_flight_quality\", pool_flight_quality);"
+            print "                dict_set(&last_log, \"selfplay/pool_fitness\", pool_fitness);"
             next
         }
         native_pool_eval && $0 == "    if (ctx->artifact_owner) {" {

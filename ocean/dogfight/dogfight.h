@@ -166,9 +166,10 @@ typedef struct Log {
     float perf;            // Raw kills (becomes kill_rate after vec_log divides by n)
     float sp_player_kills; // Self-play only: player kills (TUI shows P:## O:##)
     float sp_opp_kills;    // Self-play only: opponent kills
-    float slot_0_score;    // Logical slot 0: outcome credit * flight quality
-    float slot_1_score;    // Logical slot 1: outcome credit * flight quality
-    float pool_flight_quality; // Mean episode flight quality across both slots [0, 1]
+    float slot_0_score;    // Logical slot 0: raw Robocode outcome credit
+    float slot_1_score;    // Logical slot 1: raw Robocode outcome credit
+    float slot_0_fitness;  // Logical slot 0: outcome credit * flight quality
+    float pool_flight_quality; // Logical slot 0 candidate flight quality [0, 1]
     float draw_rate;       // Raw draw count; vec log normalization makes a rate
     float slot_0_gun_kills; // Logical slot 0 decisive gun kills only
     float slot_1_gun_kills; // Logical slot 1 decisive gun kills only

@@ -8,9 +8,17 @@ candidate-versus-history pool evaluation. No PufferLib core file may differ
 from Joseph's 5c branch. The older `native_sweep.py` harness remains available
 for controlled benchmarks but is not the production sweep controller.
 
-Protein maximizes final `selfplay/pool_score`. W&B project `df43` receives that
-value through the observer-only sidecar as `protein/fitness`. Training
-`env/perf`, shaped reward, and `env/score` are diagnostics.
+`selfplay/pool_score` preserves Robocode's raw outcome contract: win `1`, draw
+`0.5`, and loss `0`. Dogfight separately computes candidate-only flight
+quality and adjusted outcome fitness. Protein maximizes final
+`selfplay/pool_fitness`; W&B project `df43` publishes the same value as
+`protein/fitness`. Training `env/perf`, shaped reward, and `env/score` are
+diagnostics.
+
+Adjusted fitness is averaged after per-episode multiplication. Gun wins
+receive `1 * flight_quality`, opponent ground/OOB wins receive
+`0.25 * flight_quality`, and timeouts receive `0`. Raw pool score is never
+overwritten by these penalties.
 
 ## Clone and build
 
@@ -55,8 +63,9 @@ In another terminal:
 ./puffer sweep dogfight sweep.max_runs=2
 ```
 
-Both trials must finish with `selfplay/pool_score`, upload to `df43` with
-normal W&B-generated names, and retain checkpoints under
+Both trials must finish with raw `selfplay/pool_score`,
+`selfplay/pool_flight_quality`, and adjusted `selfplay/pool_fitness`; upload to
+`df43` with normal W&B-generated names; and retain checkpoints under
 `checkpoints/dogfight/<run_id>/`. W&B updates after each completed trial, not
 every epoch. Each completed run publishes 31 downsampled training-history
 points; this is curve resolution, not the number of learner updates.
@@ -66,8 +75,8 @@ Do not insert a hand-authored “calibration sweep” between this canary and th
 ranges. A separate smaller sweep is useful only when intentionally testing new
 ranges or metrics.
 
-After a sweep, rank by `selfplay/pool_score`, then evaluate leading checkpoints
-with:
+After a sweep, rank by `protein/fitness`, inspect raw
+`selfplay/pool_winrate`, then evaluate leading checkpoints with:
 
 ```bash
 python ocean/dogfight/eval_stage_matrix.py CHECKPOINT \
@@ -146,7 +155,8 @@ git diff --exit-code -- \
 - Checkpoint interval 384, approximately one snapshot per 100M agent steps.
 - At most 31 explicit logged values; native `n` keeps the total at 32 or less.
 
-The favorable-to-hard spawn schedule shapes training opportunities, but the
-final Protein score remains outcome-only. Pool score cannot detect shared
-flight defects, which is why the mirrored fixed evaluator and visible eval are
-mandatory promotion gates.
+The favorable-to-hard spawn schedule shapes training opportunities. Raw pool
+score remains outcome-only and directly comparable to Robocode; Protein
+fitness applies the candidate's flight-quality multiplier without changing
+that raw value. Fixed mirrored evaluation and visible evaluation remain
+mandatory because no scalar sweep objective proves acceptable flight.

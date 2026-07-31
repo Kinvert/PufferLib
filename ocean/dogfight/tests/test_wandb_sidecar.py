@@ -15,13 +15,12 @@ def load_module():
     return module
 
 
-def write_log(path: Path, include_pool_score: bool = True) -> None:
-    # Native INI serialization backfills this final-only metric across all
+def write_log(path: Path, include_pool_fitness: bool = True) -> None:
+    # Native INI serialization backfills these final-only metrics across all
     # downsample points; the sidecar must still publish it only at the end.
-    pool = (
-        "selfplay/pool_score = 0.75,0.75\n"
-        if include_pool_score
-        else ""
+    pool_fitness = (
+        "selfplay/pool_fitness = 0.60,0.60\n"
+        if include_pool_fitness else ""
     )
     path.write_text(
         f"""
@@ -43,7 +42,9 @@ agent_steps = 100,200
 SPS = 50,80
 uptime = 2,4
 env/perf = 0.25,0.5
-{pool}""".strip()
+selfplay/pool_score = 0.75,0.75
+selfplay/pool_flight_quality = 0.80,0.80
+{pool_fitness}""".strip()
         + "\n",
         encoding="ascii",
     )
@@ -80,7 +81,9 @@ class FakeWandb:
         return run
 
 
-def test_native_pool_score_is_the_fitness_and_aligns_to_final_step(tmp_path):
+def test_raw_pool_score_and_adjusted_fitness_are_separate_final_values(
+    tmp_path,
+):
     module = load_module()
     log_path = tmp_path / "sweep_1_0000.ini"
     write_log(log_path)
@@ -88,10 +91,14 @@ def test_native_pool_score_is_the_fitness_and_aligns_to_final_step(tmp_path):
     payload = module.load_native_log(log_path)
 
     assert payload["valid_pool_eval"] is True
-    assert payload["summary"]["protein/fitness"] == 0.75
+    assert payload["summary"]["protein/fitness"] == 0.60
     assert payload["summary"]["selfplay/pool_winrate"] == 0.75
-    assert module.POOL_SCORE_KEY not in payload["history"][0]["metrics"]
+    assert payload["summary"]["selfplay/pool_flight_quality"] == 0.80
+    for key in module.FINAL_POOL_KEYS:
+        assert key not in payload["history"][0]["metrics"]
+        assert key in payload["history"][1]["metrics"]
     assert payload["history"][1]["metrics"][module.POOL_SCORE_KEY] == 0.75
+    assert payload["history"][1]["metrics"][module.POOL_FITNESS_KEY] == 0.60
     assert payload["summary"]["native/mean_sps"] == 50
 
 
@@ -158,15 +165,16 @@ def test_new_state_ignores_old_logs_and_discovers_new_logs(tmp_path):
     assert module.discover_logs(log_dir, state, 0) == [new_log]
 
 
-def test_missing_pool_score_is_explicitly_invalid(tmp_path):
+def test_missing_adjusted_pool_fitness_is_explicitly_invalid(tmp_path):
     module = load_module()
     log_path = tmp_path / "sweep_1_0000.ini"
-    write_log(log_path, include_pool_score=False)
+    write_log(log_path, include_pool_fitness=False)
 
     payload = module.load_native_log(log_path)
 
     assert payload["valid_pool_eval"] is False
     assert payload["summary"]["selfplay/valid_pool_eval"] is False
+    assert payload["summary"]["selfplay/pool_winrate"] == 0.75
     assert payload["summary"]["protein/fitness"] is None
 
 
