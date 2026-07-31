@@ -6,10 +6,12 @@ if [[ -n "${PUFFER_VENV:-}" ]]; then
     puffer_venv="$PUFFER_VENV"
 elif [[ -x "$repo_root/.venv/bin/python" ]]; then
     puffer_venv="$repo_root/.venv"
+elif command -v python >/dev/null 2>&1; then
+    python="$(command -v python)"
+    puffer_venv="$("$python" -c 'import sys; print(sys.prefix)')"
 else
-    # Compatibility fallback for this research worktree. A normal clone uses
-    # its own .venv above and never depends on this path.
-    puffer_venv="/home/claude/PufferLib/.venv"
+    echo "missing Python; activate the PufferLib virtualenv first" >&2
+    exit 2
 fi
 python="$puffer_venv/bin/python"
 launcher="$repo_root/ocean/dogfight/native_sweep.py"

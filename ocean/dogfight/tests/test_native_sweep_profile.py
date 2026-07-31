@@ -3,6 +3,7 @@ import importlib.util
 import json
 import re
 import subprocess
+import sys
 from pathlib import Path
 
 
@@ -47,7 +48,7 @@ def test_wrapper_translates_friendly_max_runs_to_native_5c_syntax():
     assert "--max-runs 1000" not in result.stdout
     assert "--wandb" in result.stdout
     assert "--wandb-project=df42" in result.stdout
-    assert "/home/claude/PufferLib/.venv/bin/python" in result.stdout
+    assert sys.executable in result.stdout
     assert "tmux new-session" in result.stdout
 
 
@@ -55,9 +56,10 @@ def test_launcher_prefers_clone_local_virtualenv():
     wrapper = WRAPPER.read_text()
     launcher = SCRIPT.read_text()
     local_choice = wrapper.index('repo_root/.venv')
-    compatibility_fallback = wrapper.index('/home/claude/PufferLib/.venv')
+    path_fallback = wrapper.index('command -v python')
 
-    assert local_choice < compatibility_fallback
+    assert local_choice < path_fallback
+    assert "/home/claude/PufferLib" not in wrapper
     assert "/home/claude/PufferLib" not in launcher
     assert "python3.12" not in launcher
 
@@ -66,7 +68,7 @@ def test_prepare_stages_only_the_intended_native_sweep_dimensions(tmp_path):
     experiment = tmp_path / "df42-sweep-canary"
     result = subprocess.run(
         [
-            "/home/claude/PufferLib/.venv/bin/python",
+            sys.executable,
             str(SCRIPT),
             "prepare",
             "--experiment-dir",
@@ -125,7 +127,7 @@ def test_default_profile_is_a_bounded_screening_run(tmp_path):
     experiment = tmp_path / "df42-sweep-screen"
     result = subprocess.run(
         [
-            "/home/claude/PufferLib/.venv/bin/python",
+            sys.executable,
             str(SCRIPT),
             "prepare",
             "--experiment-dir",
