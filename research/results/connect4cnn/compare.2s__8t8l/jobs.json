@@ -1,0 +1,20 @@
+[
+  {
+    "variant": "nature_cnn",
+    "seed": 73,
+    "status": "ok",
+    "train_process_wall_s": 162.55211340400274
+  },
+  {
+    "variant": "nature_cnn",
+    "seed": 74,
+    "status": "ok",
+    "train_process_wall_s": 164.11660413301433
+  },
+  {
+    "variant": "nature_cnn",
+    "seed": 75,
+    "status": "ok",
+    "train_process_wall_s": 166.1677619619877
+  }
+]

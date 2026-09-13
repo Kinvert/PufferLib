@@ -1,0 +1,38 @@
+[
+  {
+    "variant": "state",
+    "seed": 73,
+    "status": "ok",
+    "train_process_wall_s": 121.86490363199846
+  },
+  {
+    "variant": "tiny_cnn",
+    "seed": 73,
+    "status": "ok",
+    "train_process_wall_s": 135.6490040839999
+  },
+  {
+    "variant": "tiny_cnn",
+    "seed": 74,
+    "status": "ok",
+    "train_process_wall_s": 135.3612156920135
+  },
+  {
+    "variant": "state",
+    "seed": 74,
+    "status": "ok",
+    "train_process_wall_s": 121.71386315501877
+  },
+  {
+    "variant": "state",
+    "seed": 75,
+    "status": "ok",
+    "train_process_wall_s": 122.47351327299839
+  },
+  {
+    "variant": "tiny_cnn",
+    "seed": 75,
+    "status": "ok",
+    "train_process_wall_s": 136.61399873401388
+  }
+]

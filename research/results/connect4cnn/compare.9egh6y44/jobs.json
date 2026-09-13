@@ -1,0 +1,20 @@
+[
+  {
+    "variant": "stock_state",
+    "seed": 73,
+    "status": "ok",
+    "train_process_wall_s": 41.9129073540098
+  },
+  {
+    "variant": "stock_state",
+    "seed": 74,
+    "status": "ok",
+    "train_process_wall_s": 40.63396218200796
+  },
+  {
+    "variant": "stock_state",
+    "seed": 75,
+    "status": "ok",
+    "train_process_wall_s": 47.69452660001116
+  }
+]

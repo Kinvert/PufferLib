@@ -1,0 +1,46 @@
+{
+  "steps": 65536,
+  "seeds": [
+    73,
+    74
+  ],
+  "eval_seed": 10073,
+  "eval_games": 256,
+  "checkpoints": 2,
+  "timeout": 120,
+  "recipe": "/home/claude/cnn/ocean/connect4cnn/compare.ini",
+  "precision": "float32",
+  "variants": {
+    "state": "connect4",
+    "tiny_cnn": "connect4cnn"
+  },
+  "revision": "89414204ce8509c3fecede41f5dc432e33e35908",
+  "source_sha256": {
+    "build.sh": "3682a835ef989391b11ab53cc02bede0551b46d9302e32e2f98758d598cb879a",
+    "config/default.ini": "7f493977f49f2537a59c18c2a283f062e5d6063d9e130c2d15f6be075cda1084",
+    "config/connect4.ini": "cdb2fd371d14d5821fb2edddc380120239177fbbfced7ae55bafe80999521eeb",
+    "config/connect4cnn.ini": "956006c84890b6a2928ace24ebdc2c43731466760ca128adf3c0917e9dbb1af4",
+    "src/protein.cu": "7127fe4fa3e9b0ab76ae0b8a4703357318366b1292f835f02b23bd98a6c90538",
+    "src/pufferenv.h": "3324a670791e2b3e46cbe7d10d9233d52fbc258e0d7e37d5b0c470e580de880c",
+    "src/ocean.cu": "98eb871bc70ff99d939c51eb343d64693c6b97263e14cd5f99c467728fbe366f",
+    "src/constellation.c": "deda12600fb99755994dcb0a9b84c442dac76259b15910eea83e398150c1f6c4",
+    "src/algo.cu": "beb55f848076b6e089b015cf90970bb0d7a38290aa6e1ff74c961d9d4e1471f1",
+    "src/pufferl.cu": "046688e753bf5b3c5485c0e061abeb8a19606db4556b83e243466fc3274d058f",
+    "src/puffercpu.c": "6bbcd2d5f37e133972f9bb6df45e3412b8b856893c23764e1ce77582550a7adf",
+    "src/ini.h": "cd4c83ba12ba40a7bef03ad810246cc0a5880f81e8566f6ac5a089b5c598859f",
+    "ocean/connect4/connect4.h": "762228ea574cfff52002873bd75ebccd82ea91eef0bc24422503539301d13ed9",
+    "ocean/connect4cnn/compare.py": "62b26fe726dfeb43123547d778120590c5e5916cace6581bf2b2a649c27e3270",
+    "ocean/connect4cnn/README.md": "984dabe51170a262e519ac54e6c04c7aeb00b1dcd464154ad69d83ba13a276d6",
+    "ocean/connect4cnn/compare.ini": "d7c261055e37bee075ca7509108c8751e4a0ad0dfd8e58c92034326f5665a7ea",
+    "ocean/connect4cnn/smoke.sh": "6bf5da4a4940c1312e0eacb340004fe1e6e81498cbdc6312a81c5a8827453339",
+    "ocean/connect4cnn/connect4cnn.cu": "6e4532ad5b089e75a62df51332b85b0213ea88ae253c9a7e72fbf57e5ef04547",
+    "ocean/connect4cnn/connect4cnn.h": "cfb1be91f1e6c8489e7f9155634a53f033d33b5793dcda65c2c8be6229563e79",
+    "ocean/connect4cnn/runtime_env.sh": "ec2612244cb94cc40904772f9ef58828cd3121594b48a1a205157cc9cf516ef1",
+    "ocean/connect4cnn/compare.sh": "a38ee8286c89090e1e1eae870b551d65bcbb8dc9b4e525550a9a234443b6f5aa"
+  },
+  "build_arch": "sm_120",
+  "binary_sha256": {
+    "state": "9177e3b9fb3e23fbeab55357e5afa24ed2d1229d42477dd6be9ace1d2258874e",
+    "tiny_cnn": "effd7f65bb8545c43c97ce09b1f0728701f1cff6ed79b649489d82aa6aae3749"
+  }
+}

@@ -1,0 +1,267 @@
+"""Compare state/pixel policies with a common recipe, or measure stock Connect4 separately."""
+import argparse
+import configparser
+import csv
+from datetime import datetime, timezone
+import fcntl
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import shutil
+import subprocess
+import tempfile
+import time
+
+ROOT = Path(__file__).resolve().parents[2]
+HERE = Path(__file__).resolve().parent
+VARIANTS = {"state": "connect4", "tiny_cnn": "connect4cnn", "nature_cnn": "connect4cnn"}
+EVAL = re.compile(r"CUDA_EVAL env=(\S+) score=([-+\d.eE]+) perf=([-+\d.eE]+) games=(\d+) params=(\d+)")
+
+
+def read_ini(path):
+    ini = configparser.ConfigParser(interpolation=None, inline_comment_prefixes=("#", ";"))
+    with Path(path).open() as f:
+        ini.read_file(f)
+    return ini
+
+
+def overrides(ini):
+    return [f"--{section}.{key}={value}" for section in ini for key, value in ini[section].items()]
+
+
+def run(command, log, timeout, commands):
+    with commands.open("a") as f:
+        f.write(json.dumps({"argv": command, "log": str(log)}) + "\n")
+    started = time.perf_counter()
+    with log.open("w") as output:
+        subprocess.run(command, cwd=ROOT, stdout=output, stderr=subprocess.STDOUT,
+                       check=True, timeout=timeout)
+    return time.perf_counter() - started
+
+
+def sha256(path):
+    with Path(path).open("rb") as f:
+        return hashlib.file_digest(f, "sha256").hexdigest()
+
+
+def append_history(out, rows, jobs, protocol):
+    history = ROOT / "research/EXPERIMENT_LOG.md"
+    relative = os.path.relpath(out, history.parent)
+    lines = [f"\n## {datetime.now(timezone.utc).isoformat(timespec='seconds')} — {out.name}", "",
+             f"Change/purpose: {protocol['note']}", "",
+             f"Revision `{protocol['revision'][:12]}`; recipe SHA256 `{protocol['recipe_sha256']}`. "
+             f"[Report]({relative}/REPORT.md) · [CSV]({relative}/results.csv) · [Source/build hashes]({relative}/protocol.json) · [GPU]({relative}/gpu.txt)", "",
+             "| Policy | Seed | Steps | Win rate | Score | Parameters | Wall s | Process SPS | Native avg SPS | Native last SPS | VRAM last GB |",
+             "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
+    for job in jobs:
+        if job["status"] != "ok":
+            lines.append(f"| {job['variant']} | {job['seed']} | — | FAILED | — | — | — | — | — | — | — |")
+            continue
+        r = max((r for r in rows if r["variant"] == job["variant"] and r["seed"] == job["seed"]), key=lambda r: r["steps"])
+        lines.append(f"| {r['variant']} | {r['seed']} | {r['steps']:,} | {r['win_rate']:.2%} | {r['score']:.4f} | {r['params']:,} | {r['train_process_wall_s']:.3f} | {r['process_sps']:,.0f} | {r['native_avg_sps']:,.0f} | {r['native_last_sps']:,.0f} | {r['vram_last_gb']:.3f} |")
+    lines += ["", ("Stock training configuration in float32; common 64-agent evaluation. Training hypers differ from the earlier state/tiny-CNN comparison."
+                       if protocol["stock"] else "Matched learner/core recipe; state and CNN parameter counts differ."),
+              "See the report for checkpoint curves and actual evaluation counts.", ""]
+    with history.open("a") as f:
+        fcntl.flock(f, fcntl.LOCK_EX)
+        f.write("\n".join(lines))
+
+
+def report(out, rows, jobs, protocol):
+    fields = ["variant", "seed", "eval_seed", "steps", "win_rate", "score", "games",
+              "params", "checkpoint_wall_s", "train_process_wall_s", "eval_wall_s",
+              "process_sps", "native_uptime_s", "native_avg_sps", "native_last_sps", "vram_last_gb", "checkpoint"]
+    with (out / "results.csv").open("w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=fields)
+        writer.writeheader()
+        writer.writerows(rows)
+    (out / "jobs.json").write_text(json.dumps(jobs, indent=2) + "\n")
+    description = ("Stock Connect4 training configuration, float32, one GPU, serial seeds. "
+                   "Evaluation uses the common 64-agent setup. This is a separately configured baseline, not a matched-hyperparameter comparison."
+                   if protocol["stock"] else
+                   "Same 7-column × 6-row game, opponent, learner recipe and core. Float32, one GPU, serial trials. "
+                   "The input representation and encoder differ; parameters/FLOPs are not matched. State uses a modified configuration.")
+    lines = ["# Connect4 training results", "", description,
+             f"Requested decisions: {protocol['steps']:,}; expected completed decisions: {protocol['completed_steps']:,}.", "",
+             "## Final results by training seed", "",
+             "| Policy | Seed | Steps | Win rate | Score | Games | Parameters | Train wall seconds | Process SPS | Native avg SPS |",
+             "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
+    for job in jobs:
+        if job["status"] != "ok":
+            lines.append(f"| {job['variant']} | {job['seed']} | — | **FAILED** | — | — | — | — | — | — |")
+            continue
+        row = max((r for r in rows if r["variant"] == job["variant"] and r["seed"] == job["seed"]), key=lambda r: r["steps"])
+        lines.append(f"| {row['variant']} | {row['seed']} | {row['steps']:,} | {row['win_rate']:.2%} | {row['score']:.4f} | {row['games']} | {row['params']:,} | {row['train_process_wall_s']:.3f} | {row['process_sps']:,.0f} | {row['native_avg_sps']:,.0f} |")
+    lines += ["", "## Checkpoint evaluation curves", "",
+              "| Policy | Seed | Steps | Win rate | Training wall time at checkpoint (s) |",
+              "|---|---:|---:|---:|---:|"]
+    for r in rows:
+        lines.append(f"| {r['variant']} | {r['seed']} | {r['steps']:,} | {r['win_rate']:.2%} | {r['checkpoint_wall_s']:.3f} |")
+    lines += ["", "## Reading these results", "",
+              "- Win rate is native `perf`. Evaluation seeds are separate from training seeds and shared across policies.",
+              "- Evaluation is batched and may exceed the requested game count; actual counts are shown. Games are not independent training seeds.",
+              "- Train wall time includes process startup and checkpoint writing; builds and later evaluations are excluded. Per-checkpoint time uses file modification time relative to process launch, so it is approximate.",
+              "- Process SPS = full training steps / process wall time. Native average SPS = full training steps / the trainer's final logged uptime. Native last SPS is the last logged SPS sample/bin, not a whole-run average. These training-run statistics repeat on checkpoint rows; they are not checkpoint-specific throughput.",
+              "- Evaluation happens after training at fixed saved checkpoints. It does not affect training timing or select a best checkpoint.",
+              "- When several policies are selected, trials alternate policy order by seed. Separate invocations are not interleaved. Short smoke timings are not steady-state speed benchmarks.",
+              "- CSV retains each checkpoint result. `protocol.json`, `source/`, `commands.jsonl`, resolved INIs, logs, hashes, and checkpoints preserve the run context.",
+              "- A short run or one training seed cannot establish a reliable performance ranking. Use the same longer budget and several seeds before drawing conclusions."]
+    (out / "REPORT.md").write_text("\n".join(lines) + "\n")
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--steps", type=int)
+    parser.add_argument("--stock", action="store_true", help="Run only original Connect4 with stock training settings; float32 and common evaluation")
+    parser.add_argument("--variants", nargs="+", choices=VARIANTS, default=None)
+    parser.add_argument("--seeds", type=int, nargs="+", default=[73, 74, 75])
+    parser.add_argument("--eval-seed", type=int, default=10073)
+    parser.add_argument("--eval-games", type=int, default=1024)
+    parser.add_argument("--checkpoints", type=int, default=4)
+    parser.add_argument("--timeout", type=int, default=120, help="Seconds per training or evaluation process")
+    parser.add_argument("--recipe", type=Path)
+    parser.add_argument("--note", help="Change or purpose recorded in the experiment history")
+    args = parser.parse_args()
+    if args.stock and (args.recipe is not None or args.steps is not None or args.variants is not None):
+        parser.error("--stock preserves the stock training recipe and budget; omit --recipe, --steps and --variants")
+    args.recipe = args.recipe or HERE / "compare.ini"
+    recipe = read_ini(ROOT / "config/default.ini") if args.stock else read_ini(args.recipe)
+    if args.stock:
+        recipe.read(ROOT / "config/connect4.ini")
+    args.steps = recipe.getint("train", "total_timesteps") if args.stock else (65536 if args.steps is None else args.steps)
+    selected = args.variants or ["state", "tiny_cnn"]
+    if len(selected) != len(set(selected)):
+        parser.error("Use unique variants")
+    variants = {"stock_state": "connect4"} if args.stock else {v: VARIANTS[v] for v in selected}
+    args.note = args.note or ("Stock Connect4 training configuration in float32" if args.stock
+                              else "Common-recipe comparison: " + ", ".join(selected))
+    # CUDA_EVAL.score follows sweep.metric; fix it to episode score so the
+    # report can show both return and the separately reported win rate.
+    if recipe.get("sweep", "metric", fallback="score") != "score":
+        parser.error("Keep sweep.metric=score so the report's score column is episode return")
+    batch = recipe.getint("vec", "total_agents") * recipe.getint("train", "horizon")
+    epochs = args.steps // batch
+    if args.steps <= 0 or args.checkpoints <= 0 or epochs < args.checkpoints or (not args.stock and args.steps % (batch * args.checkpoints)):
+        parser.error(f"--steps must be a positive multiple of rollout batch ({batch}) × --checkpoints")
+    completed_steps = epochs * batch
+    checkpoint_interval = (epochs + args.checkpoints - 1) // args.checkpoints
+    checkpoint_steps = sorted({e * batch for e in range(checkpoint_interval, epochs + 1, checkpoint_interval)} | {completed_steps})
+    if args.eval_games <= 0 or args.timeout <= 0 or len(set(args.seeds)) != len(args.seeds):
+        parser.error("Use positive game/time limits and unique training seeds")
+    eval_seeds = {args.eval_seed + i for i in range(len(args.seeds))}
+    if set(args.seeds) & eval_seeds:
+        parser.error("Training and evaluation seed lists must not overlap")
+    os.chdir(ROOT)
+    (ROOT / "build/connect4cnn").mkdir(parents=True, exist_ok=True)
+    out = Path(tempfile.mkdtemp(prefix="compare.", dir=ROOT / "build/connect4cnn"))
+    commands = out / "commands.jsonl"
+    print(f"Comparison: {out}", flush=True)
+    sources = ["build.sh", "config/default.ini", "config/connect4.ini", "config/connect4cnn.ini"]
+    sources += [str(p.relative_to(ROOT)) for p in (ROOT / "src").glob("*") if p.is_file()]
+    sources += ["ocean/connect4/connect4.h"]
+    sources += [str(p.relative_to(ROOT)) for p in HERE.glob("*") if p.is_file()]
+    for name in sources:
+        target = out / "source" / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(ROOT / name, target)
+    with (out / "recipe.ini").open("w") as f:
+        recipe.write(f)
+    protocol = {**vars(args), "recipe": "config/default.ini + config/connect4.ini" if args.stock else str(args.recipe),
+                "precision": "float32", "variants": variants, "completed_steps": completed_steps,
+                "checkpoint_steps": checkpoint_steps,
+                "revision": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
+                "source_sha256": {p: sha256(ROOT / p) for p in sources},
+                "build_arch": os.environ.get("NVCC_ARCH", "native"), "binary_sha256": {},
+                "recipe_sha256": sha256(out / "recipe.ini"), "started_utc": datetime.now(timezone.utc).isoformat()}
+    (out / "protocol.json").write_text(json.dumps(protocol, indent=2) + "\n")
+    run(["/usr/lib/wsl/lib/nvidia-smi"], out / "gpu.txt", 20, commands)
+    binaries = {}
+    # Always build from the current source. PufferLib's ccache handles reuse.
+    for variant, env in variants.items():
+        binaries[variant] = str(out / variant)
+        build = ["bash", "build.sh", env, binaries[variant], "--float"]
+        if variant == "nature_cnn":
+            build = ["env", "NVCC_PREPEND_FLAGS=" + os.environ.get("NVCC_PREPEND_FLAGS", "") + " -DC4_NATURE_CNN", *build]
+        run(build, out / f"build-{variant}.log", 300, commands)
+        protocol["binary_sha256"][variant] = sha256(binaries[variant])
+    (out / "protocol.json").write_text(json.dumps(protocol, indent=2) + "\n")
+    rows, jobs = [], []
+    settings = [] if args.stock else overrides(recipe)
+    effective = None
+    for index, seed in enumerate(args.seeds):
+        order = list(variants) if index % 2 == 0 else list(reversed(variants))
+        for variant in order:
+            env = variants[variant]
+            trial = out / f"{variant}-s{seed}"
+            trial.mkdir()
+            common = settings + ["--headless", f"--base.seed={seed}", "--base.run_id=trial",
+                f"--train.total_timesteps={args.steps}",
+                "--base.eval_episodes=0",
+                f"--base.checkpoint_interval={checkpoint_interval}",
+                f"--base.checkpoint_dir={trial}/checkpoints", f"--base.log_dir={trial}/metrics"]
+            job = {"variant": variant, "seed": seed, "status": "running"}
+            jobs.append(job)
+            try:
+                start_wall = time.time()
+                elapsed = run([binaries[variant], "train", *common], trial / "train.log", args.timeout, commands)
+                job["train_process_wall_s"] = elapsed
+                resolved = read_ini(trial / "metrics" / env / "trial.ini")
+                metrics = resolved["metrics"]
+                native_uptime = float(metrics["uptime"].split(",")[-1])
+                if native_uptime <= 0 or int(float(metrics["agent_steps"].split(",")[-1])) != completed_steps:
+                    raise ValueError("Invalid native timing or step count")
+                timing = dict(process_sps=completed_steps / elapsed, native_uptime_s=native_uptime,
+                              native_avg_sps=completed_steps / native_uptime,
+                              native_last_sps=float(metrics["sps"].split(",")[-1]),
+                              vram_last_gb=float(metrics["util/vram_used_gb"].split(",")[-1]))
+                # Enforce matched effective settings, including inherited defaults.
+                ignore = {"env_name", "seed", "run_id", "checkpoint_dir", "log_dir"}
+                current = {s: dict(resolved[s]) for s in resolved if s != "metrics"}
+                current["base"] = {k: v for k, v in current["base"].items() if k not in ignore}
+                if effective is None:
+                    effective = current
+                if current != effective:
+                    raise ValueError("Effective configurations differ; comparison is not matched")
+                if args.stock:
+                    for section in ("train", "vec", "policy", "env", "selfplay"):
+                        for key, value in recipe[section].items():
+                            if float(resolved[section][key]) != float(value):
+                                raise ValueError(f"Stock configuration changed: {section}.{key}")
+                    if resolved.getint("base", "async") != recipe.getint("base", "async"):
+                        raise ValueError("Stock async setting changed")
+                paths = sorted((trial / "checkpoints" / env / "trial").glob("*.bin"))
+                if [int(p.stem) for p in paths] != checkpoint_steps:
+                    raise ValueError("Missing or unexpected checkpoint schedule")
+                for checkpoint in paths:
+                    checkpoint_wall = checkpoint.stat().st_mtime - start_wall
+                    log = trial / f"eval-{checkpoint.stem}.log"
+                    eval_seed = args.eval_seed + index
+                    eval_args = common + [f"--base.seed={eval_seed}", f"--base.eval_episodes={args.eval_games}",
+                                          f"--base.load_model_path={checkpoint}"]
+                    if args.stock:
+                        eval_args += ["--vec.total_agents=64", "--vec.num_buffers=1", "--vec.num_threads=2", "--base.async=0"]
+                    eval_wall = run([binaries[variant], "eval", *eval_args], log, args.timeout, commands)
+                    match = EVAL.search(log.read_text())
+                    if not match or match[1] != env:
+                        raise ValueError(f"Missing native evaluation result in {log}")
+                    rows.append(dict(variant=variant, seed=seed, eval_seed=eval_seed,
+                        steps=int(checkpoint.stem), win_rate=float(match[3]), score=float(match[2]),
+                        games=int(match[4]), params=int(match[5]), checkpoint_wall_s=checkpoint_wall,
+                        train_process_wall_s=elapsed, eval_wall_s=eval_wall,
+                        **timing, checkpoint=str(checkpoint.relative_to(out))))
+                job["status"] = "ok"
+                print(f"{variant} seed={seed}: {rows[-1]['win_rate']:.2%} wins, {elapsed:.3f}s training wall, {timing['process_sps']:,.0f} process SPS", flush=True)
+            except (subprocess.SubprocessError, OSError, ValueError) as exc:
+                job.update(status="failed", error=str(exc))
+                print(f"FAILED {variant} seed={seed}: {exc}; see {trial}", flush=True)
+            report(out, rows, jobs, protocol)
+    print(f"Report: {out / 'REPORT.md'}", flush=True)
+    append_history(out, rows, jobs, protocol)
+    if any(j["status"] != "ok" for j in jobs):
+        raise SystemExit(1)
+
+
+if __name__ == "__main__":
+    main()

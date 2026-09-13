@@ -1,0 +1,26 @@
+[
+  {
+    "variant": "state",
+    "seed": 73,
+    "status": "ok",
+    "train_process_wall_s": 1.2670243780012242
+  },
+  {
+    "variant": "tiny_cnn",
+    "seed": 73,
+    "status": "ok",
+    "train_process_wall_s": 1.1674777820007876
+  },
+  {
+    "variant": "tiny_cnn",
+    "seed": 74,
+    "status": "ok",
+    "train_process_wall_s": 1.1665746709913947
+  },
+  {
+    "variant": "state",
+    "seed": 74,
+    "status": "ok",
+    "train_process_wall_s": 1.0163705369923264
+  }
+]

@@ -1,0 +1,23 @@
+diff --git a/src/ocean.cu b/src/ocean.cu
+index ec33deec..37cc1424 100644
+--- a/src/ocean.cu
++++ b/src/ocean.cu
+@@ -26,6 +26,9 @@ void puf_normal_init(Prec* dst, float std, ulong seed, cudaStream_t stream) {
+ #ifdef PUFFER_ASTEROIDS
+ #include "../ocean/asteroids/asteroids.cu"
+ #endif
++#ifdef PUFFER_CONNECT4CNN
++#include "../ocean/connect4cnn/connect4cnn.cu"
++#endif
+ #if defined(PUFFER_OSRS_COLOSSEUM) || defined(PUFFER_OSRS_INFERNO) \
+     || defined(PUFFER_OSRS_ZULRAH) || defined(PUFFER_OSRS_PVP)
+ #define PUFFER_OSRS_ENTITY_NET
+@@ -72,6 +75,8 @@ static void create_custom_encoder(Encoder* enc) {
+ #endif
+ #elif defined(PUFFER_ASTEROIDS)
+     create_asteroids_encoder(enc);
++#elif defined(PUFFER_CONNECT4CNN)
++    create_connect4_encoder(enc);
+ #elif defined(PUFFER_OSRS_COLOSSEUM)
+     create_osrs_entity_encoder<&OSRS_COLOSSEUM_ENTITY_DESCRIPTOR>(enc);
+ #elif defined(PUFFER_OSRS_INFERNO)
