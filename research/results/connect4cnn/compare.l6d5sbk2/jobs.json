@@ -1,0 +1,38 @@
+[
+  {
+    "variant": "impala_cnn",
+    "seed": 73,
+    "status": "ok",
+    "train_process_wall_s": 1227.2282123169862
+  },
+  {
+    "variant": "impoola_cnn",
+    "seed": 73,
+    "status": "ok",
+    "train_process_wall_s": 1224.2015626399952
+  },
+  {
+    "variant": "impoola_cnn",
+    "seed": 74,
+    "status": "ok",
+    "train_process_wall_s": 1228.5833647889958
+  },
+  {
+    "variant": "impala_cnn",
+    "seed": 74,
+    "status": "ok",
+    "train_process_wall_s": 1232.5047389179817
+  },
+  {
+    "variant": "impala_cnn",
+    "seed": 75,
+    "status": "ok",
+    "train_process_wall_s": 1229.1026594490104
+  },
+  {
+    "variant": "impoola_cnn",
+    "seed": 75,
+    "status": "ok",
+    "train_process_wall_s": 1224.7133623500122
+  }
+]

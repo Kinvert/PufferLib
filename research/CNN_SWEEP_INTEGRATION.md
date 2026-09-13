@@ -1,6 +1,6 @@
 # Configurable native CNNs with PROTEIN
 
-Research only, 2026-09-13. Source inspected at `2c25bf6707dbb62a3c8f8879e3f13274eed2e5c5`. This note proposes changes; none of the interfaces or INI keys proposed below has been implemented. The preceding commit preserves the validated IMPALA/Impoola implementation and smoke evidence. The long reference comparison remains separate and pending.
+Research only, 2026-09-13. Source inspected at `2c25bf6707dbb62a3c8f8879e3f13274eed2e5c5`. This note proposes changes; none of the interfaces or INI keys proposed below has been implemented. The preceding commit preserves the validated IMPALA/Impoola implementation and smoke evidence. The long reference comparison was pending during inspection and subsequently completed; its separate results are in [the experiment history](EXPERIMENT_LOG.md).
 
 ## Decision
 
@@ -141,4 +141,4 @@ The existing reference files all define `create_connect4_encoder` and are mutual
 4. Run a bounded native PROTEIN smoke sweep with varied training budget; confirm the effective final-only observation behavior, score/cost semantics, saved curve summaries, and architecture identity for every trial.
 5. Run the first discovery sweep, retain non-dominated performance/time points, and independently evaluate promising candidates and reference controls. Then extend seeds/environments and expand the search space based on evidence.
 
-No GPU profiling, training, system/package changes, or new architecture implementation was performed for this note. The local search index refresh is deferred while the timing comparison occupies the machine; use exact file reads/`rg` for these new findings until it is refreshed.
+No GPU profiling, new training run, system/package changes, or new architecture implementation was performed for this note. Research used exact file reads and `rg`; CPU indexing was deferred until the existing timing comparison completed.

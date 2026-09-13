@@ -13,9 +13,9 @@ Persistent results across code and configuration changes. The comparison runner 
 
 ## Current measured baselines (2026-09-12 local time)
 
-**IMPALA/Impoola extension in progress:** `build/connect4cnn/compare.l6d5sbk2` runs the same 13,279,232-decision common recipe, seeds 73/74/75, four checkpoint evaluations, and 1,024 requested evaluation games. Its report records completed trials as they finish; the full comparison is pending and is not included in the completed three-seed means below. Both variants use original-SAME pooling and the same 16/32/32 backbone; GAP is the readout change. See the environment README for reference adaptations and numerical validation. Archive the full results after completion.
+**IMPALA/Impoola extension completed (2026-09-13 local time):** all six trials and 24 checkpoint evaluations passed under the same common recipe. Both variants use original-SAME pooling and the same 16/32/32 backbone; GAP is the readout change. See the environment README for reference adaptations and numerical validation.
 
-Arithmetic means across training seeds 73/74/75, evaluated with separate paired seeds 10073/10074/10075. All runs use float32 on G240's RTX 5060, and the same game/opponent and 64-agent evaluation setup. Stock, Nature, and the earlier state/tiny pair ran in separate invocations, not one interleaved speed experiment.
+Arithmetic means across training seeds 73/74/75, evaluated with separate paired seeds 10073/10074/10075. All runs use float32 on G240's RTX 5060, and the same game/opponent and 64-agent evaluation setup. Stock, Nature, state/tiny, and IMPALA/Impoola ran in separate invocations, not one interleaved speed experiment.
 
 | Policy | Training recipe | Actual decisions per seed | Parameters | Mean wins | Mean process SPS | Mean train wall s |
 |---|---|---:|---:|---:|---:|---:|
@@ -23,8 +23,10 @@ Arithmetic means across training seeds 73/74/75, evaluated with separate paired 
 | State | Modified common recipe | 13,279,232 | 55,552 | 18.51% | 108,831 | 122.017 |
 | Tiny CNN | Modified common recipe | 13,279,232 | 151,680 | 64.04% | 97,733 | 135.875 |
 | Adapted Nature CNN | Modified common recipe | 13,279,232 | 138,528 | 78.71% | 80,840 | 164.279 |
+| Adapted IMPALA CNN | Modified common recipe | 13,279,232 | 270,496 | 99.19% | 10,800 | 1,229.612 |
+| Adapted Impoola CNN | Modified common recipe | 13,279,232 | 151,712 | 69.49% | 10,833 | 1,225.833 |
 
-Reports: [stock state](results/connect4cnn/compare.9egh6y44/REPORT.md), [state/tiny CNN](results/connect4cnn/compare.we7qgdcg/REPORT.md), [Nature](results/connect4cnn/compare.2s__8t8l/REPORT.md). Stock wins here, with a different learner/network/batching configuration. Nature outperformed tiny CNN in each paired seed under the common recipe, while processing about 17.3% fewer decisions per second. Nature is the adapted three-convolution stack, not a complete DQN reproduction. No pixel policy has yet been tested with the stock training recipe.
+Reports: [stock state](results/connect4cnn/compare.9egh6y44/REPORT.md), [state/tiny CNN](results/connect4cnn/compare.we7qgdcg/REPORT.md), [Nature](results/connect4cnn/compare.2s__8t8l/REPORT.md), [IMPALA/Impoola](results/connect4cnn/compare.l6d5sbk2/REPORT.md). Stock has by far the lowest measured training time, with a different learner/network/batching configuration. IMPALA reached the highest mean win rate, but its small numerical edge over stock does not establish a reliable advantage. Nature outperformed tiny CNN in each paired seed under the common recipe, while processing about 17.3% fewer decisions per second. These are adapted encoders, not complete reproductions of the reference agents. No pixel policy has yet been tested with the stock training recipe.
 
 ## Policy identities and hyperparameters for compare.we7qgdcg
 
@@ -186,3 +188,23 @@ Revision `43850f172637`; recipe SHA256 `5dc685bea68d293cbce8a2cc367584dab252d2eb
 
 Matched learner/core recipe; state and CNN parameter counts differ.
 See the report for checkpoint curves and actual evaluation counts.
+
+## 2026-09-13T08:16:45+00:00 — compare.l6d5sbk2
+
+Change/purpose: First IMPALA and Impoola full-budget common-recipe comparison; shared original-SAME backbone, flatten versus GAP, base widths 16/32/32
+
+Revision `43850f172637`; recipe SHA256 `5dc685bea68d293cbce8a2cc367584dab252d2eb5d33d344d5dcb8dfd8bbad4b`. [Report](results/connect4cnn/compare.l6d5sbk2/REPORT.md) · [CSV](results/connect4cnn/compare.l6d5sbk2/results.csv) · [Source/build hashes](results/connect4cnn/compare.l6d5sbk2/protocol.json) · [GPU](results/connect4cnn/compare.l6d5sbk2/gpu.txt)
+
+| Policy | Seed | Steps | Win rate | Score | Parameters | Wall s | Process SPS | Native avg SPS | Native last SPS | VRAM last GB |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| impala_cnn | 73 | 13,279,232 | 98.99% | 0.9798 | 270,496 | 1227.228 | 10,821 | 10,824 | 10,734 | 3.503 |
+| impoola_cnn | 73 | 13,279,232 | 61.75% | 0.2350 | 151,712 | 1224.202 | 10,847 | 10,851 | 10,892 | 3.496 |
+| impoola_cnn | 74 | 13,279,232 | 73.59% | 0.4718 | 151,712 | 1228.583 | 10,809 | 10,812 | 10,814 | 3.496 |
+| impala_cnn | 74 | 13,279,232 | 99.01% | 0.9801 | 270,496 | 1232.505 | 10,774 | 10,778 | 10,744 | 3.503 |
+| impala_cnn | 75 | 13,279,232 | 99.57% | 0.9914 | 270,496 | 1229.103 | 10,804 | 10,808 | 10,835 | 3.503 |
+| impoola_cnn | 75 | 13,279,232 | 73.14% | 0.4628 | 151,712 | 1224.713 | 10,843 | 10,846 | 10,721 | 3.496 |
+
+Matched learner/core recipe; state and CNN parameter counts differ.
+See the report for checkpoint curves and actual evaluation counts.
+
+Interpretation: all six training jobs and 24 held-out evaluations passed; all saved checkpoints were finite. Resolved train/vec/policy/env/selfplay settings matched across trials and against the completed Nature baseline. IMPALA averaged **99.19% wins / 10,800 process SPS / 1,229.612 s**, with seed win rates 98.99/99.01/99.57%. Impoola averaged **69.49% / 10,833 SPS / 1,225.833 s**, with 61.75/73.59/73.14%. IMPALA exceeded Impoola in each paired seed; GAP's parameter reduction brought little throughput improvement in this implementation. IMPALA's shared-recipe training time was about 7.5 times Nature's. These timings combine architecture cost and our initial native implementation overhead; individual kernels have not been profiled. The stock state baseline achieved 98.87% in 43.414 s with a different recipe. No generalization or SOTA claim follows from this Connect4 comparison.

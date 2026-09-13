@@ -13,6 +13,7 @@ These small files are copies of the original local `build/connect4cnn/<run>/` ar
 | [compare.ltxw6alr](compare.ltxw6alr/REPORT.md) | Nature same-seed training repeat |
 | [compare.ij5_xpo7](compare.ij5_xpo7/REPORT.md) | IMPALA/Impoola training smoke tests |
 | [compare.sqngvlom](compare.sqngvlom/REPORT.md) | IMPALA/Impoola same-seed repeats |
+| [compare.l6d5sbk2](compare.l6d5sbk2/REPORT.md) | Full-budget IMPALA/Impoola common-recipe comparison, three seeds each |
 | smoke.a0cFzy / smoke.EMKokT | Earlier tiny-CNN smoke/repeat receipts, configs, and evaluation outputs |
 
 The interpretation and hyperparameter comparison live in [EXPERIMENT_LOG.md](../../EXPERIMENT_LOG.md). Absolute paths in command/protocol receipts describe the original machine. CSV checkpoint paths refer to the original run directory, not files included in this archive.
