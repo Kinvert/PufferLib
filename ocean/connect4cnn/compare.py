@@ -16,7 +16,8 @@ import time
 
 ROOT = Path(__file__).resolve().parents[2]
 HERE = Path(__file__).resolve().parent
-VARIANTS = {"state": "connect4", "tiny_cnn": "connect4cnn", "nature_cnn": "connect4cnn"}
+VARIANTS = {"state": "connect4", "tiny_cnn": "connect4cnn", "nature_cnn": "connect4cnn",
+            "impala_cnn": "connect4cnn", "impoola_cnn": "connect4cnn"}
 EVAL = re.compile(r"CUDA_EVAL env=(\S+) score=([-+\d.eE]+) perf=([-+\d.eE]+) games=(\d+) params=(\d+)")
 
 
@@ -182,8 +183,8 @@ def main():
     for variant, env in variants.items():
         binaries[variant] = str(out / variant)
         build = ["bash", "build.sh", env, binaries[variant], "--float"]
-        if variant == "nature_cnn":
-            build = ["env", "NVCC_PREPEND_FLAGS=" + os.environ.get("NVCC_PREPEND_FLAGS", "") + " -DC4_NATURE_CNN", *build]
+        if variant in ("nature_cnn", "impala_cnn", "impoola_cnn"):
+            build = ["env", "NVCC_PREPEND_FLAGS=" + os.environ.get("NVCC_PREPEND_FLAGS", "") + " -DC4_" + variant.upper(), *build]
         run(build, out / f"build-{variant}.log", 300, commands)
         protocol["binary_sha256"][variant] = sha256(binaries[variant])
     (out / "protocol.json").write_text(json.dumps(protocol, indent=2) + "\n")

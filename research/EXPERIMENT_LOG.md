@@ -13,6 +13,8 @@ Persistent results across code and configuration changes. The comparison runner 
 
 ## Current measured baselines (2026-09-12 local time)
 
+**IMPALA/Impoola extension in progress:** `build/connect4cnn/compare.l6d5sbk2` runs the same 13,279,232-decision common recipe, seeds 73/74/75, four checkpoint evaluations, and 1,024 requested evaluation games. Its report records completed trials as they finish; the full comparison is pending and is not included in the completed three-seed means below. Both variants use original-SAME pooling and the same 16/32/32 backbone; GAP is the readout change. See the environment README for reference adaptations and numerical validation. Archive the full results after completion.
+
 Arithmetic means across training seeds 73/74/75, evaluated with separate paired seeds 10073/10074/10075. All runs use float32 on G240's RTX 5060, and the same game/opponent and 64-agent evaluation setup. Stock, Nature, and the earlier state/tiny pair ran in separate invocations, not one interleaved speed experiment.
 
 | Policy | Training recipe | Actual decisions per seed | Parameters | Mean wins | Mean process SPS | Mean train wall s |
@@ -153,6 +155,34 @@ Revision `89414204ce85`; recipe SHA256 `5dc685bea68d293cbce8a2cc367584dab252d2eb
 | nature_cnn | 73 | 13,279,232 | 77.10% | 0.5420 | 138,528 | 162.552 | 81,692 | 81,900 | 82,193 | 1.552 |
 | nature_cnn | 74 | 13,279,232 | 88.33% | 0.7686 | 138,528 | 164.117 | 80,913 | 81,076 | 83,865 | 1.552 |
 | nature_cnn | 75 | 13,279,232 | 70.68% | 0.4457 | 138,528 | 166.168 | 79,915 | 80,068 | 81,722 | 1.552 |
+
+Matched learner/core recipe; state and CNN parameter counts differ.
+See the report for checkpoint curves and actual evaluation counts.
+
+## 2026-09-13T06:11:19+00:00 — compare.ij5_xpo7
+
+Change/purpose: IMPALA/Impoola training smoke after numerical validation; original SAME pooling, base widths, common recipe
+
+Revision `43850f172637`; recipe SHA256 `5dc685bea68d293cbce8a2cc367584dab252d2eb5d33d344d5dcb8dfd8bbad4b`. [Report](results/connect4cnn/compare.ij5_xpo7/REPORT.md) · [CSV](results/connect4cnn/compare.ij5_xpo7/results.csv) · [Source/build hashes](results/connect4cnn/compare.ij5_xpo7/protocol.json) · [GPU](results/connect4cnn/compare.ij5_xpo7/gpu.txt)
+
+| Policy | Seed | Steps | Win rate | Score | Parameters | Wall s | Process SPS | Native avg SPS | Native last SPS | VRAM last GB |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| impala_cnn | 73 | 65,536 | 0.00% | -0.9377 | 270,496 | 6.679 | 9,812 | 10,513 | 10,744 | 3.503 |
+| impoola_cnn | 73 | 65,536 | 0.00% | -0.9491 | 151,712 | 6.633 | 9,880 | 10,531 | 10,682 | 3.496 |
+
+Matched learner/core recipe; state and CNN parameter counts differ.
+See the report for checkpoint curves and actual evaluation counts.
+
+## 2026-09-13T06:12:52+00:00 — compare.sqngvlom
+
+Change/purpose: IMPALA/Impoola identical-seed smoke repeat for training determinism
+
+Revision `43850f172637`; recipe SHA256 `5dc685bea68d293cbce8a2cc367584dab252d2eb5d33d344d5dcb8dfd8bbad4b`. [Report](results/connect4cnn/compare.sqngvlom/REPORT.md) · [CSV](results/connect4cnn/compare.sqngvlom/results.csv) · [Source/build hashes](results/connect4cnn/compare.sqngvlom/protocol.json) · [GPU](results/connect4cnn/compare.sqngvlom/gpu.txt)
+
+| Policy | Seed | Steps | Win rate | Score | Parameters | Wall s | Process SPS | Native avg SPS | Native last SPS | VRAM last GB |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| impala_cnn | 73 | 65,536 | 0.00% | -0.9377 | 270,496 | 6.630 | 9,885 | 10,510 | 10,741 | 3.503 |
+| impoola_cnn | 73 | 65,536 | 0.00% | -0.9491 | 151,712 | 6.580 | 9,960 | 10,605 | 10,758 | 3.496 |
 
 Matched learner/core recipe; state and CNN parameter counts differ.
 See the report for checkpoint curves and actual evaluation counts.

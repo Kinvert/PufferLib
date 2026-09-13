@@ -29,6 +29,8 @@ void puf_normal_init(Prec* dst, float std, ulong seed, cudaStream_t stream) {
 #ifdef PUFFER_CONNECT4CNN
 #ifdef C4_NATURE_CNN
 #include "../ocean/connect4cnn/nature.cu"
+#elif defined(C4_IMPALA_CNN) || defined(C4_IMPOOLA_CNN)
+#include "../ocean/connect4cnn/impala.cu"
 #else
 #include "../ocean/connect4cnn/connect4cnn.cu"
 #endif

@@ -124,3 +124,11 @@ Joseph's question concerns the compute-efficient convolutional encoder for pixel
 
 - User authorized local commits. Preserved small evidence from all seven comparison runs and both original tiny-CNN smoke runs under `research/results/connect4cnn/`, including the superseded diagnostic. Updated report links to committed copies. Full binaries, checkpoints, downloaded papers, and search caches remain local and ignored.
 - Split the milestone into research/documentation and implementation/benchmark commits. Existing Git author configuration is retained. Publication to either remote is outside this local commit step.
+
+## 2026-09-12 — IMPALA and Impoola implementation
+
+- User authorized completing the reference set. Added a shared 15-convolution, 16/32/32-channel IMPALA backbone with original-SAME pooling and two preactivation residual blocks per stage. Impoola differs only by global average pooling after the final ReLU. Input and projection are adapted to the same grayscale board and hidden-128 core.
+- Added independent NumPy/CUDA numerical tests. All 16 weight/bias pairs passed finite differences, all board cells affect the output, pooling border/tie cases passed, and native forward/all gradients matched for B=1/3/32 and H=16/32/128. Rollout/train and repeated eager/graph execution matched exactly.
+- `compare.ij5_xpo7` and `compare.sqngvlom` passed two-encoder training/checkpoint smoke tests. Each variant reproduced its checkpoints byte-for-byte; every encoder parameter array updated and all values were finite. Zero wins at the short budget; approximately 9,800–10,000 SPS and 3.5 GB VRAM. These are initial implementation timings, not architecture limits.
+- Started the full 13,279,232-decision, three-seed-per-encoder common-recipe comparison in `build/connect4cnn/compare.l6d5sbk2`. Per-training/evaluation-process timeout is 2,400 seconds. Full results are pending; stock-derived CNN training remains a later experiment.
+- Existing tiny/Nature encoders, game, core, training config, and system CUDA stack remain unchanged. The source integration adds only a conditional include; all new encoder code stays under `ocean/connect4cnn/`.

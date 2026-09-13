@@ -1,0 +1,14 @@
+[
+  {
+    "variant": "impala_cnn",
+    "seed": 73,
+    "status": "ok",
+    "train_process_wall_s": 6.629893413017271
+  },
+  {
+    "variant": "impoola_cnn",
+    "seed": 73,
+    "status": "ok",
+    "train_process_wall_s": 6.58004062899272
+  }
+]

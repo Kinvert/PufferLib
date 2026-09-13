@@ -89,7 +89,7 @@ NVCC_ARCH=sm_120 bash ocean/connect4cnn/compare.sh \
     --note 'First full-budget comparison; unchanged common recipe and architectures'
 ```
 
-Use `--variants state tiny_cnn nature_cnn` to select the common-recipe candidates; the default remains `state tiny_cnn`. IMPALA and Impoola are not implemented yet. Selection builds separate binaries; Nature uses the process-local compiler definition `C4_NATURE_CNN`. The tiny encoder source and standard build system remain unchanged.
+Use `--variants state tiny_cnn nature_cnn impala_cnn impoola_cnn` to select common-recipe candidates; the default remains `state tiny_cnn`. Selection builds separate binaries with process-local encoder definitions. Existing encoder sources and the standard build system remain unchanged when adding a candidate.
 
 Verified comparison: `build/connect4cnn/compare.16ohu06z/REPORT.md`, two training seeds (73,74), 65,536 steps each, two checkpoints each, all four training jobs and eight checkpoint evaluations successful. Both policies had zero final wins at this smoke budget; no gameplay ranking follows from that check. Keep `sweep.metric=score` in the recipe: the native evaluation's score field follows that selection, while `perf` independently reports win rate.
 
@@ -132,6 +132,39 @@ Float32 CPU finite differences for all four weight/bias pairs and all-cell cover
 Two 65,536-step Nature smoke runs (`compare.z10zc3xf`, `compare.ltxw6alr`) produced byte-identical checkpoints; all encoder weight/bias arrays updated. Final checkpoint SHA256: `1bbecd40be2327277c1852ce273720e09f026aab072b53a87f02e0d81cbfcb1b`.
 
 Full comparison [compare.2s__8t8l](../../research/results/connect4cnn/compare.2s__8t8l/REPORT.md) completed all three training seeds and 12 checkpoint evaluations at 13,279,232 decisions per seed. Nature win rates were **77.10%, 88.33%, and 70.68%**; mean **78.71%**, mean process SPS **80,840**, mean wall **164.279 seconds**. Resolved Nature settings were checked against the earlier state/tiny run. All checkpoints were finite. Nature exceeded tiny CNN's win rate in each paired seed while running slower; both remain below the separately configured stock state baseline. The [experiment history](../../research/EXPERIMENT_LOG.md#current-measured-baselines-2026-09-12-local-time) contains the four-policy summary.
+
+## IMPALA and Impoola
+
+[impala.cu](impala.cu) implements one shared backbone for both candidates. Each of three stages, with channels **16/32/32**, has a 3×3 convolution, 3×3 stride-two max pooling, and two preactivation residual blocks. Each residual block is `ReLU → Conv3×3 → ReLU → Conv3×3 → add skip`, with no extra activation after the addition. All convolutions have bias. After the final stage, apply ReLU, the selected readout, a linear projection to hidden size, and ReLU.
+
+This follows the [original IMPALA torso](https://github.com/google-deepmind/scalable_agent/blob/master/experiment.py#L129). Convolutions use SAME padding; max pooling uses the original TensorFlow SAME alignment, including trailing-edge-only padding for even dimensions. Negative infinity represents padded pool entries, and equal maxima choose the first valid position in row-major order. For our image, pooled maps are 18×22 → 9×11 → 5×6.
+
+`impala_cnn` flattens the final 5×6×32 map to 960 features. `impoola_cnn` applies global average pooling to the same post-ReLU map, giving 32 features, following the [Impoola paper's readout change](https://arxiv.org/html/2503.05546v2#S4). This is a controlled Impoola variant using the same original-SAME backbone; no separate padding or width changes accompany GAP. The input is grayscale 36×44 and the projection is 128 rather than the reference's 256. These are adapted encoders within PufferLib's existing recurrent actor/critic learner, not reproductions of the papers' complete agents or benchmark scores.
+
+Reference cross-check: the [Impoola author implementation at commit 1d71110451cc](https://github.com/raphajaner/impoola/blob/1d71110451cc03390d8cf6911b570995d17d94cb/impoola/train/nn.py) likewise places activation before GAP, but uses symmetric `MaxPool2d(..., padding=1)`. Our pair deliberately keeps original IMPALA SAME alignment, which differs at even image sizes. Both native variants use PufferLib Kaiming initialization with gain √2 and zero biases, rather than that file's default PyTorch layer initialization. A reproduction of the author's exact implementation would need those differences handled as explicit additional variants.
+
+| Candidate at hidden 128 | Convolution parameters | Projection parameters | Encoder parameters | Full policy parameters |
+|---|---:|---:|---:|---:|
+| IMPALA | 97,312 | 123,008 | 220,320 | 270,496 |
+| Impoola | 97,312 | 4,224 | 101,536 | 151,712 |
+
+Derived forward weight MACs per observation: **11,493,120 IMPALA**, **11,374,336 Impoola**, versus **647,168 Nature** at this input/projection size. One MAC is one multiplication plus accumulation; these counts exclude bias, activation, pooling, backward, optimizer, and core/head operations. GAP removes many projection parameters but only about 1% of this pair's encoder MACs. Neither these counts nor parameter totals alone establish wall-clock speed.
+
+Convolution scratch is shared and regenerated during backward passes. Activations needed for residual gradients are retained. Overlapping convolution/pooling gradients use fixed-order gathers, and bias gradients use fixed reduction trees. This keeps the unchanged 2,048-decision training minibatch within the RTX 5060's memory: smoke runs logged about 3.5 GB total GPU memory. The first implementation is a correctness baseline; timing includes scratch traffic and kernel overhead, so its SPS is not a hardware-independent property of IMPALA or Impoola.
+
+```bash
+NVCC_ARCH=sm_120 bash ocean/connect4cnn/tests/build_encoder_test.sh test_impala
+source ocean/connect4cnn/runtime_env.sh
+OPENBLAS_NUM_THREADS=1 .venv/bin/python ocean/connect4cnn/tests/test_impala.py \
+    --library build/connect4cnn/test_impala.so
+NVCC_ARCH=sm_120 bash ocean/connect4cnn/compare.sh --variants impala_cnn impoola_cnn \
+    --steps 13279232 --seeds 73 74 75 --checkpoints 4 --eval-games 1024 --timeout 2400 \
+    --note 'IMPALA/Impoola: original-SAME backbone, flatten versus GAP, common recipe'
+```
+
+Float32 finite differences passed for all 16 weight/bias pairs in each variant, as did all-cell coverage checks. GPU forward and every parameter gradient matched independent NumPy results for batches 1/3/32 and hidden sizes 16/32/128. Pooling tests covered even/odd borders, negative inputs, equal maxima, and overlapping backward contributions. Rollout/train outputs and repeated eager/CUDA-graph execution matched exactly. BF16 is not validated.
+
+Training smoke runs `compare.ij5_xpo7` and `compare.sqngvlom` each completed both variants at 65,536 decisions, with independent checkpoint evaluation. Matching seeds produced byte-identical checkpoints, all parameters were finite, and every encoder weight/bias array updated. Final SHA256: IMPALA `0e6e0b2835d0e39dfeb50891d46733d858b61ad67b9d2a60343dc9301832e1a0`; Impoola `b1251292b649a88d1e72307ee1c6c05b80f578f9bd3605eb44794037d69f4015`. Both had zero evaluation wins at the smoke budget and about 9,800–10,000 process SPS. Full-budget results are pending in `build/connect4cnn/compare.l6d5sbk2`; use the experiment history for completed results.
 
 ## Verified 2026-09-12
 
