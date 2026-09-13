@@ -1,0 +1,7 @@
+# Local research tools; independent of PufferLib's native training build.
+# Target CPython 3.12; resolve exact versions into requirements.lock.
+beautifulsoup4
+markdownify
+pymupdf4llm
+lancedb
+fastembed

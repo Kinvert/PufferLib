@@ -1,0 +1,8 @@
+# Downloaded third-party papers and reproducible local search artifacts.
+sources/
+papers/
+.lancedb/
+.models/
+index_state.json
+index.lock
+conversion_status.json
