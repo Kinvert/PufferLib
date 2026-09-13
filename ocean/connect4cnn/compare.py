@@ -221,6 +221,12 @@ def main():
                 ignore = {"env_name", "seed", "run_id", "checkpoint_dir", "log_dir"}
                 current = {s: dict(resolved[s]) for s in resolved if s != "metrics"}
                 current["base"] = {k: v for k, v in current["base"].items() if k not in ignore}
+                if env == "connect4cnn":
+                    if resolved.getint("policy", "encoder", fallback=0) != 0:
+                        raise ValueError("Reference comparison requires encoder=0; use sweep.sh for the experimental CNN")
+                    # These construction settings are inactive for reference encoders.
+                    current["policy"] = {k: v for k, v in current["policy"].items()
+                                         if k != "encoder" and not k.startswith("cnn_")}
                 if effective is None:
                     effective = current
                 if current != effective:

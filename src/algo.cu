@@ -30,6 +30,7 @@ struct Encoder {
     create_weights_fn create_weights;
     int in_dim, out_dim;
     size_t activation_size;  // sizeof(EncoderActivations) or custom override
+    Dict* config; // Borrowed during construction; custom weights copy needed values.
 };
 
 struct EncoderWeights {
@@ -979,10 +980,11 @@ Weights weights_create(Arch* p, Allocator* params) {
 #include "ocean.cu"
 
 // Build an Arch (ops + dims) for this env. Encoder/decoder algorithms are
-// fixed at compile time; hidden_size/num_layers/horizon parameterize shape.
+// selected by the env; optional policy config parameterizes custom encoders.
 // Arch has no heap state so this returns by value; callers store it wherever.
 Arch build_arch(int input_size, int hidden_size,
-        int num_layers, int decoder_output_size, bool is_continuous, int horizon) {
+        int num_layers, int decoder_output_size, bool is_continuous, int horizon,
+        Dict* policy = NULL) {
     Encoder encoder = {
         .forward = encoder_forward,
         .backward = encoder_backward,
@@ -994,7 +996,7 @@ Arch build_arch(int input_size, int hidden_size,
         .in_dim = input_size, .out_dim = hidden_size,
         .activation_size = sizeof(EncoderActivations),
     };
-    create_custom_encoder(&encoder);
+    create_custom_encoder(&encoder, policy);
     Decoder decoder = {
         .forward = decoder_forward,
         .backward = decoder_backward,

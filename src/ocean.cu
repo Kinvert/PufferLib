@@ -27,6 +27,7 @@ void puf_normal_init(Prec* dst, float std, ulong seed, cudaStream_t stream) {
 #include "../ocean/asteroids/asteroids.cu"
 #endif
 #ifdef PUFFER_CONNECT4CNN
+#include "../ocean/connect4cnn/cnn.cu"
 #ifdef C4_NATURE_CNN
 #include "../ocean/connect4cnn/nature.cu"
 #elif defined(C4_IMPALA_CNN) || defined(C4_IMPOOLA_CNN)
@@ -62,7 +63,7 @@ __device__ static const float OSRS_ITEM_OBS_TABLE_DEV
 #endif
 
 // Override encoder vtable when this env has a custom net. No-op otherwise.
-static void create_custom_encoder(Encoder* enc) {
+static void create_custom_encoder(Encoder* enc, Dict* policy = NULL) {
 #ifdef PUFFER_NETHACK
     create_nethack_encoder(enc);
 #elif defined(PUFFER_CRAFTAX)
@@ -82,7 +83,14 @@ static void create_custom_encoder(Encoder* enc) {
 #elif defined(PUFFER_ASTEROIDS)
     create_asteroids_encoder(enc);
 #elif defined(PUFFER_CONNECT4CNN)
-    create_connect4_encoder(enc);
+    DictItem* type = policy ? dict_find(policy, "encoder") : NULL;
+    if (type && type->value == 1) {
+        c4_cnn::create_connect4_encoder(enc);
+        enc->config = policy;
+    } else {
+        assert((!type || type->value == 0) && "unsupported Connect4CNN encoder ID");
+        create_connect4_encoder(enc);
+    }
 #elif defined(PUFFER_OSRS_COLOSSEUM)
     create_osrs_entity_encoder<&OSRS_COLOSSEUM_ENTITY_DESCRIPTOR>(enc);
 #elif defined(PUFFER_OSRS_INFERNO)

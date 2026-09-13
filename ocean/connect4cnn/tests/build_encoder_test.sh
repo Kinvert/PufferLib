@@ -9,7 +9,7 @@ if [ -z "$nccl_dir" ]; then
 fi
 mkdir -p build/connect4cnn
 test_name="${1:-test_encoder}"
-case "$test_name" in test_encoder|test_nature|test_impala) ;; *) echo "Expected test_encoder, test_nature or test_impala" >&2; exit 1 ;; esac
+case "$test_name" in test_encoder|test_nature|test_impala|test_cnn) ;; *) echo "Unknown encoder test: $test_name" >&2; exit 1 ;; esac
 "$cuda_dir/bin/nvcc" -shared -O1 -std=c++17 -arch="${NVCC_ARCH:-native}" \
     -Xcompiler=-fPIC -Xcompiler=-fopenmp -Xcompiler=-Wno-narrowing \
     --diag-suppress=2361 --diag-suppress=111 --diag-suppress=128 \

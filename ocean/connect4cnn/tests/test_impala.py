@@ -6,19 +6,19 @@ from pathlib import Path
 import numpy as np
 
 
-def shapes(hidden, gap):
+def shapes(hidden, gap, channels=16, blocks=2):
     result = []
     ci = 1
-    for co in (16, 32, 32):
-        for j in range(5):
+    for co in (channels, 2 * channels, 2 * channels):
+        for j in range(1 + 2 * blocks):
             result += [(co, 9 * (ci if j == 0 else co)), (co,)]
         ci = co
-    return result + [(hidden, 32 if gap else 960), (hidden,)]
+    return result + [(hidden, 2 * channels * (1 if gap else 30)), (hidden,)]
 
 
-def unpack(values, hidden, gap):
+def unpack(values, hidden, gap, channels=16, blocks=2):
     result, offset = [], 0
-    for shape in shapes(hidden, gap):
+    for shape in shapes(hidden, gap, channels, blocks):
         n = int(np.prod(shape))
         result.append(values[offset:offset + n].reshape(shape))
         offset += n
@@ -44,10 +44,12 @@ def pool_reference(x):
     return output, backward
 
 
-def reference(obs, values, upstream, gap, backward=True):
+def reference(obs, values, upstream, gap, backward=True, channels=16, blocks=2):
     B, hidden = upstream.shape
-    params = unpack(values, hidden, gap)
-    grads = [None] * 32
+    params = unpack(values, hidden, gap, channels, blocks)
+    grads = [None] * len(params)
+    per_stage = 1 + 2 * blocks
+    projection = 6 * per_stage
 
     def conv(x, i, relu):
         B, H, W, C = x.shape
@@ -75,25 +77,25 @@ def reference(obs, values, upstream, gap, backward=True):
     x = obs.reshape(B, 36, 44, 1)
     stages = []
     for s in range(3):
-        x, entry_back = conv(x, s * 5, False)
+        x, entry_back = conv(x, s * per_stage, False)
         x, pool_back = pool_reference(x)
         residuals = []
-        for r in range(2):
+        for r in range(blocks):
             skip = x
-            x, first = conv(x, s * 5 + 1 + 2 * r, True)
-            x, second = conv(x, s * 5 + 2 + 2 * r, True)
+            x, first = conv(x, s * per_stage + 1 + 2 * r, True)
+            x, second = conv(x, s * per_stage + 2 + 2 * r, True)
             x = x + skip
             residuals.append((first, second))
         stages.append((entry_back, pool_back, residuals))
     activated = np.maximum(x, 0)
     readout = activated.mean(axis=(1, 2)) if gap else activated.reshape(B, -1)
-    final = readout @ params[30].T + params[31]
+    final = readout @ params[projection].T + params[projection + 1]
     output = np.maximum(final, 0)
     if not backward:
         return output, None
     g = upstream * (final > 0)
-    grads[30], grads[31] = g.T @ readout, g.sum(axis=0)
-    g = g @ params[30]
+    grads[projection], grads[projection + 1] = g.T @ readout, g.sum(axis=0)
+    g = g @ params[projection]
     g = np.broadcast_to(g[:, None, None, :] / 30, x.shape) if gap else g.reshape(x.shape)
     g = g * (x > 0)
     for entry, pool, blocks in reversed(stages):
@@ -103,10 +105,10 @@ def reference(obs, values, upstream, gap, backward=True):
     return output, np.concatenate([g.ravel() for g in grads])
 
 
-def fixture(B, hidden, gap, dtype):
+def fixture(B, hidden, gap, dtype, channels=16, blocks=2):
     rng = np.random.default_rng(351 + B)
     values = []
-    for shape in shapes(hidden, gap):
+    for shape in shapes(hidden, gap, channels, blocks):
         a = rng.normal(0, 0.45 / np.sqrt(shape[1]), shape) if len(shape) == 2 else rng.uniform(-0.04, 0.04, shape)
         values.append(a.astype(dtype).ravel())
     return rng.uniform(0, 1, (B, 1584)).astype(dtype), np.concatenate(values), rng.normal(0, 0.1, (B, hidden)).astype(dtype)

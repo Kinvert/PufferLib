@@ -1,5 +1,7 @@
 # CNN experiment history
 
+Latest infrastructure milestone: the September 13 [custom-CNN native PROTEIN canary](results/connect4cnn/sweep.7s4ovb72/REPORT.md) completed 12 trials, 8 architectures, and offline W&B logging. Canary training scores are excluded from the held-out baseline table below.
+
 Persistent results across code and configuration changes. The comparison runner appends a dated entry after each comparison; keep earlier results, including failures. Each entry links the exact protocol, source/binary hashes, recipe, hardware record, raw logs, and checkpoints. Add interpretation below an entry rather than rewriting its measured numbers.
 
 ## Metric definitions
@@ -208,3 +210,15 @@ Matched learner/core recipe; state and CNN parameter counts differ.
 See the report for checkpoint curves and actual evaluation counts.
 
 Interpretation: all six training jobs and 24 held-out evaluations passed; all saved checkpoints were finite. Resolved train/vec/policy/env/selfplay settings matched across trials and against the completed Nature baseline. IMPALA averaged **99.19% wins / 10,800 process SPS / 1,229.612 s**, with seed win rates 98.99/99.01/99.57%. Impoola averaged **69.49% / 10,833 SPS / 1,225.833 s**, with 61.75/73.59/73.14%. IMPALA exceeded Impoola in each paired seed; GAP's parameter reduction brought little throughput improvement in this implementation. IMPALA's shared-recipe training time was about 7.5 times Nature's. These timings combine architecture cost and our initial native implementation overhead; individual kernels have not been profiled. The stock state baseline achieved 98.87% in 43.414 s with a different recipe. No generalization or SOTA claim follows from this Connect4 comparison.
+
+## 2026-09-13 — Native PROTEIN custom-CNN canaries
+
+Change: optional INI-to-encoder construction settings, numeric encoder ID 1, and a bounded residual CNN family. Same Connect4CNN pixels, hidden-128 single-layer MinGRU, and common learner settings. PROTEIN varies channels (8/16/32), residual blocks per stage (0/1/2), flatten/GAP, and training budget. Source baseline `ed4b7655` plus archived source hashes. No reference-family search or randomized environments yet.
+
+Reports: [first canary](results/connect4cnn/sweep.r3qepq1g/REPORT.md), [finalized canary](results/connect4cnn/sweep.7s4ovb72/REPORT.md). Each completed 12 native trials covering 8 distinct architectures, including one model-guided proposal (`gp_obs=11`). Finalized sweep wall was **19.409 seconds**, excluding compilation and the subsequent sidecar. Actual decisions ranged from **14,336 to 32,768**; native integer/batch truncation, including floating-point rounding at a log-budget lower bound, is retained in the reported actual counts. Parameters ranged from **55,920 to 684,224**. First-run observed native average SPS ranged roughly **5,689–33,437**; these very short timings include substantial fixed overhead and are not a speed ranking. Use each report's exact trial results.
+
+All completed checkpoint arrays were finite and had the expected parameter counts; all effective non-swept learner/core settings matched. The first 11 checkpoint hashes matched across repeats. Native float32 numerical and eager/graph/rollout checks passed for all 18 legal shapes; finite differences also passed for the smallest-width variants. Default tiny-encoder training matched the old binary exactly (SHA256 `d418cf69c822e2b04bda3ff03deb42a717bff1e4f0117a09ea52e429dd4046d5`). Vanilla state Connect4 and the largest sampled CNN both passed checkpoint reload/evaluation.
+
+Both canaries generated 12 offline W&B runs. Re-ingestion of the finalized canary left that count unchanged. Sidecar JSON preserves final PROTEIN observations separately from binned INI histories, plus architecture/checkpoint hashes. Reported final score/cost use native stdout rounding (four score decimals, two time decimals); SPS divides actual steps by that cost. Training win rates at these canary budgets were near zero and establish no learning advantage.
+
+Temporary Python preparation/reporting glue is permitted only for this first end-to-end proof; native tooling is the delivery target. The search, worker scheduler, CNN, and training are already C/CUDA. Online W&B, BF16, larger-budget performance, other architecture families, and other environments remain unvalidated in this workflow.

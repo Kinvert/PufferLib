@@ -168,6 +168,56 @@ Training smoke runs `compare.ij5_xpo7` and `compare.sqngvlom` each completed bot
 
 The [full-budget comparison](../../research/results/connect4cnn/compare.l6d5sbk2/REPORT.md) completed all six trials and 24 evaluations on September 13. At 13,279,232 decisions per seed, IMPALA averaged **99.19% held-out wins and 10,800 process SPS**; Impoola averaged **69.49% and 10,833 SPS**. Mean training times were 1,229.612 and 1,225.833 seconds. All checkpoints were finite, and resolved learner/core settings matched the earlier Nature baseline. See the [experiment history](../../research/EXPERIMENT_LOG.md) for the six-policy table, per-seed variation, and separately configured stock baseline.
 
+## Experimental CNN native sweeps
+
+`policy.encoder=1` selects [cnn.cu](cnn.cu); `0` preserves the existing compiled reference/default encoder. No other IDs are implemented yet. The new family has three SAME Conv3/MaxPool3-s2 stages, channels `[c,2c,2c]`, zero to two preactivation residual blocks per stage, and flatten or GAP before Linear/ReLU to the existing core width. `cnn_channels` accepts 8/16/32, `cnn_blocks` accepts 0/1/2, and `cnn_global_pool` accepts 0/1. Input remains the same 36×44 pixel board. Core width/layers are separate settings. All weights start fresh and train jointly.
+
+The actual optimizer, trial selection/launch, CNN, and training are native C/CUDA. `sweep.py` is **temporary configuration/reporting scaffolding**, authorized for the first end-to-end canary. Replacing that glue with native tooling is a delivery requirement. It does not implement its own search algorithm. The external Python W&B sidecar stays outside training. Reference-family comparisons and randomized environments are not included in this first sweep tool.
+
+```bash
+# Run outside the sandbox, after checking that the GPU is available.
+NVCC_ARCH=sm_120 bash ocean/connect4cnn/sweep.sh
+
+# No W&B SDK invocation; still save JSON sidecar payloads and local results.
+NVCC_ARCH=sm_120 bash ocean/connect4cnn/sweep.sh --wandb disabled
+
+# Explicit online logging, using your existing W&B authentication.
+NVCC_ARCH=sm_120 bash ocean/connect4cnn/sweep.sh --wandb online --project puffer-cnn
+```
+
+Defaults: 12 trials, 600-second hard deadline for the entire sweep process group, float32, one GPU, offline W&B. The first candidate is the base INI configuration; PROTEIN then explores before making a model-guided proposal. These short budgets test plumbing, not useful learning or a speed ranking.
+
+The runner merges the original defaults, Connect4CNN config, common `compare.ini`, and [sweep.ini](sweep.ini). It removes inherited sweep sections and retains only the four ranges declared in `sweep.ini`: channels, blocks, pooling, and timesteps. It writes an isolated `build/connect4cnn/sweep.*/config/` and runs one freshly built binary from that directory. **The checkout's `config/default.ini` is never rewritten.** Use `--recipe PATH`, `--max-runs N`, and `--timeout SECONDS` for a bounded custom campaign. The first version deliberately validates this limited shape space.
+
+Every campaign saves its source snapshots/hashes, binary hash, effective configuration, GPU record, native sweep log, trial INIs, checkpoints, CSV, Markdown report, completion status, and sidecar JSON. The architecture fingerprint includes the construction version, observation shape, channels/blocks/readout, and core dimensions. Sidecar payloads also hash the final checkpoint. Load checkpoints with the corresponding campaign config; the native checkpoint itself is still a raw FP32 array.
+
+Native `sweep.metric=perf` is **training win rate**, not the held-out evaluation used in the reference reports. Final score/cost/steps come from PROTEIN stdout (four score decimals, two cost decimals), while INI histories are binned means and are labeled `binned/*`. Native cost excludes trainer setup and graph-capture time. Reported trial SPS is actual decisions divided by that rounded native cost; whole sweep wall time additionally includes worker startup and search. Log-sampled budgets are truncated by native integer/batch handling, including possible lower-bound floating-point rounding; report actual completed decisions rather than the requested budget.
+
+The current native observation loop overwrites earlier points sharing the same parameter vector; the optimizer effectively retains the final observation. Five-point summaries remain in artifacts. This implementation preserves that existing PROTEIN behavior.
+
+### W&B sidecar
+
+The sidecar follows the F-Zero/Admiral saved-INI pattern. It joins complete native logs with final PROTEIN output, creates one W&B run per completed trial, and tracks successful ingestion locally so rerunning it does not re-upload completed runs to the same destination. The runner invokes it after training so SDK work does not affect trial timing. Use `--follow` separately to ingest completed trials as the sweep proceeds; it exits after `finished.json` appears. It does not stream per-step training metrics that the native trainer does not write.
+
+```bash
+.venv/bin/python ocean/connect4cnn/wandb_sidecar.py build/connect4cnn/sweep.RUN \
+    --mode offline --project puffer-cnn
+```
+
+`--mode online` and optional `--entity` select an explicit remote destination. Offline mode stores W&B files locally, following the [W&B SDK mode contract](https://docs.wandb.ai/models/ref/python/functions/init). The project Python 3.12 dependency lock now includes W&B 0.21.4; install/sync it with `uv` into this checkout's `.venv`. No Torch or system CUDA changes are needed. W&B requires protobuf 6.x, so the lock uses protobuf 6.33.6; LanceDB and FastEmbed remain at their previous pinned versions.
+
+### Validation
+
+```bash
+NVCC_ARCH=sm_120 bash ocean/connect4cnn/tests/build_encoder_test.sh test_cnn
+source ocean/connect4cnn/runtime_env.sh
+OPENBLAS_NUM_THREADS=1 .venv/bin/python ocean/connect4cnn/tests/test_cnn.py \
+    --library build/connect4cnn/test_cnn.so
+.venv/bin/python ocean/connect4cnn/tests/test_sweep_tools.py
+```
+
+All 18 shapes passed native float32 forward/all-gradient comparisons, rollout/train equality, repeated eager/graph execution, and allocation alignment checks. The smallest-width variants also passed parameter finite differences. CPU tool tests cover inherited-sweep removal, source-config preservation, final versus binned metrics, partial results, missing checkpoints, and repeat sidecar ingestion. BF16 remains unvalidated.
+
 ## Verified 2026-09-12
 
 - Standard `build.sh` CPU build passed without modifications to the build system.

@@ -1945,7 +1945,8 @@ PuffeRL* create_pufferl(Ini* ini, TrainContext* ctx) {
         assert(slice > 0 && "policy has no agents");
 
         pol->arch = build_arch(input_size, h, L,
-            decoder_output_size, is_continuous, hypers.horizon);
+            decoder_output_size, is_continuous, hypers.horizon,
+            puf_ini_section(ini, "policy", 0));
         pol->weights = weights_create(&pol->arch, &pol->params_alloc);
         Allocator* aalloc = pol->frozen ? &pol->activ_alloc : acts;
         pol->buf_acts = (Activations*)calloc(

@@ -1,5 +1,7 @@
 # Configurable native CNNs with PROTEIN
 
+Implementation update, September 13: the first single-environment canary is now implemented; see [the runnable workflow](../ocean/connect4cnn/README.md#experimental-cnn-native-sweeps) and [experiment history](EXPERIMENT_LOG.md). Native PROTEIN/CUDA use numeric encoder ID 1 with 18 allowed shapes; ID 0 preserves the existing compiled encoder. Temporary Python configuration/reporting glue is explicitly a prototype and must be replaced with native tooling for delivery. Reference-family and multi-environment sweeps remain future work. The source audit and design below are historical, not a claim that the entire long-term plan is implemented.
+
 Research only, 2026-09-13. Source inspected at `2c25bf6707dbb62a3c8f8879e3f13274eed2e5c5`. This note proposes changes; none of the interfaces or INI keys proposed below has been implemented. The preceding commit preserves the validated IMPALA/Impoola implementation and smoke evidence. The long reference comparison was pending during inspection and subsequently completed; its separate results are in [the experiment history](EXPERIMENT_LOG.md).
 
 ## Decision

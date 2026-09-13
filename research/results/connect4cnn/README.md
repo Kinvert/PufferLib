@@ -14,6 +14,8 @@ These small files are copies of the original local `build/connect4cnn/<run>/` ar
 | [compare.ij5_xpo7](compare.ij5_xpo7/REPORT.md) | IMPALA/Impoola training smoke tests |
 | [compare.sqngvlom](compare.sqngvlom/REPORT.md) | IMPALA/Impoola same-seed repeats |
 | [compare.l6d5sbk2](compare.l6d5sbk2/REPORT.md) | Full-budget IMPALA/Impoola common-recipe comparison, three seeds each |
+| [sweep.r3qepq1g](sweep.r3qepq1g/REPORT.md) | Initial native PROTEIN custom-CNN canary, 12 trials; before final tooling refinements |
+| [sweep.7s4ovb72](sweep.7s4ovb72/REPORT.md) | Finalized custom-CNN canary, repeatability and offline W&B evidence |
 | smoke.a0cFzy / smoke.EMKokT | Earlier tiny-CNN smoke/repeat receipts, configs, and evaluation outputs |
 
 The interpretation and hyperparameter comparison live in [EXPERIMENT_LOG.md](../../EXPERIMENT_LOG.md). Absolute paths in command/protocol receipts describe the original machine. CSV checkpoint paths refer to the original run directory, not files included in this archive.
@@ -21,3 +23,5 @@ The interpretation and hyperparameter comparison live in [EXPERIMENT_LOG.md](../
 Large checkpoints, executables, full training dashboards, and full source snapshots remain in the ignored local build directories. This archive retains the original source hashes and copied config snapshots; it is not a backup of the checkpoint binaries. Implementation source and test code are committed under `ocean/connect4cnn/`, with the shared integration under `src/`. Benchmark receipts refer to the upstream base revision plus source hashes because these experiments preceded the first local implementation commit.
 
 Before committing future results, preserve the same small evidence files here under the unique run ID and update Markdown links to this archive. Keep earlier results and diagnostic records intact.
+
+The `sweep.*` archives additionally retain the isolated effective configs, native PROTEIN stdout as `sweep.txt`, and sidecar JSON payloads. They do not contain the local W&B binary run files. Canary scores are training metrics at very short budgets; they are not comparable to the held-out learning baselines above. Validation receipts live under the finalized canary's `validation/` directory.

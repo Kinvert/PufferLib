@@ -29,7 +29,7 @@ uv pip check --python .venv/bin/python
 .venv/bin/python research/search.py doctor
 ```
 
-The lock includes LanceDB 0.38.0, FastEmbed 0.8.0, ONNX Runtime 1.30.0, and PyMuPDF4LLM 1.28.2. Do not install `fastembed-gpu`/`onnxruntime-gpu` alongside the CPU packages. The current setup uses only `CPUExecutionProvider` and has no Torch dependency. Do not modify the system CUDA stack, drivers, cuDNN, system libraries, global settings, or other environments. CUDA inspection is allowed; any future basic Torch work must be confined to this directory's `.venv`.
+The lock includes LanceDB 0.38.0, FastEmbed 0.8.0, ONNX Runtime 1.30.0, and PyMuPDF4LLM 1.28.2. It also includes W&B 0.21.4 for the external native-training sidecar (added September 13; protobuf is pinned to compatible 6.33.6). Do not install `fastembed-gpu`/`onnxruntime-gpu` alongside the CPU packages. The current setup uses only `CPUExecutionProvider` and has no Torch dependency. Do not modify the system CUDA stack, drivers, cuDNN, system libraries, global settings, or other environments. CUDA inspection is allowed; any future basic Torch work must be confined to this directory's `.venv`.
 
 ## Collect and convert papers
 

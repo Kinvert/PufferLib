@@ -5,3 +5,5 @@ markdownify
 pymupdf4llm
 lancedb
 fastembed
+# Optional external logging sidecar; never imported by native training/search.
+wandb==0.21.4
