@@ -8,6 +8,7 @@ On September 12, the checkout was fast-forwarded eight commits to `89414204ce850
 
 - [Experiment log](EXPERIMENT_LOG.md): persistent learning/speed results across code and configuration changes, including SPS definitions and linked artifacts.
 - [Connect4CNN implementation plan](CONNECT4CNN_PLAN.md): the first pixel environment and staged end-to-end workflow.
+- [CNN sweep integration](CNN_SWEEP_INTEGRATION.md): current INI-to-network construction path, minimal proposed core changes, and native PROTEIN constraints for architecture search.
 - [Reading list](READING_LIST.md): what to read and why, with local conversions and primary sources.
 - [CNN architectures](CNN_ARCHITECTURES.md): Nature, IMPALA, pooling variants, compute accounting, and candidate designs.
 - [CUDA and scaffolding](CUDA_AND_SCAFFOLDING.md): actual PufferLib integration points, reference implementations, interchangeable candidates, and a route to native kernels.
