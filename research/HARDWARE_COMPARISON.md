@@ -1,5 +1,7 @@
 # Run the fixed CNN comparison on the RTX 5090
 
+For a fresh session with no conversation context, follow **[START_HERE_5090.md](../START_HERE_5090.md)**. It includes the full setup, CPU/GPU tests, build/train instructions, expected completion counts, result-table definitions and evidence packaging.
+
 Purpose: measure ours, Nature, IMPALA and Impoola on the 5090 using one fixed recipe. No new architecture search. Use the **Kinvert/PufferLib** fork, branch **cnn-research**; never push this research to PufferAI/PufferLib. Record the exact `git rev-parse HEAD` on both machines.
 
 ## Checkout and existing dependencies

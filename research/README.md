@@ -6,6 +6,8 @@ On September 12, the checkout was fast-forwarded eight commits to `89414204ce850
 
 ## Start here
 
+- [Complete 5090 session handoff](../START_HERE_5090.md): context and executable checklist from fresh clone through tests, training, tables and evidence transfer.
+
 - [5090 fixed-model hardware comparison](HARDWARE_COMPARISON.md): Kinvert-fork checkout, existing-toolchain setup, canary/full commands and same-revision timing requirements.
 
 - [Potential CNN constructor/search deliverable](CNN_CONSTRUCTOR_PLAN.md): native small-first architecture search, per-environment frontiers, exported training configurations and an evidence plan.

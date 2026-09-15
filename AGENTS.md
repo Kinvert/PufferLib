@@ -1,5 +1,7 @@
 # Working preferences
 
+- **On the separate RTX 5090 machine, start with `START_HERE_5090.md`.** It is the complete context/setup/build/test/train/table/artifact handoff. G240-specific paths and its active Pong job below refer to another machine; do not assume them locally. Use the fixed hardware comparison first, not a new sweep, and retain the exact code/config/hardware receipts.
+
 - Edit files directly using `apply_patch` whenever possible. Do not use Python heredocs (`python << 'PY'`) or scripts merely to create or rewrite text files.
 - Reuse PufferLib's normal build paths and shared dependencies. Do not create per-environment Raylib installations or header copies; generate synthetic pixel observations directly in the native buffer, independently of the human viewer.
 - When changing `src/`, follow the surrounding PufferLib coding style and existing interfaces. Keep changes small, simple, and straightforward; avoid unrelated refactors or speculative abstractions. Keep experimental CNN code outside the core where the existing custom-encoder pattern permits. Preserve determinism and speed: inspect allocation, synchronization, RNG, and reduction-order effects, and validate numerical correctness, seeded repeatability, and relevant performance before claiming an improvement.
