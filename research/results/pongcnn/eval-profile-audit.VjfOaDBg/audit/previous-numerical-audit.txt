@@ -1,0 +1,3 @@
+PASS: all 14 captured native core/encoder source hashes match the prior 5090 numerical audit
+Prior validation: /home/keith/Git/ml/cnn-5090/build/connect4cnn/compare.vtew3n12/validation-5090
+Same CUDA 13.1.115, NVCC_ARCH=sm_120, float32; Pong action-head size is checked in the new native canary.

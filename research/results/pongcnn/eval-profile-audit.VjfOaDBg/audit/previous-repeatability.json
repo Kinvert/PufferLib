@@ -1,0 +1,46 @@
+{
+  "all_identical": true,
+  "checkpoint_pairs": 32,
+  "jobs": [
+    {
+      "job": "a-flex_quality-s51001",
+      "identical": true,
+      "checkpoints": 4
+    },
+    {
+      "job": "b-flex_quality-s51001",
+      "identical": true,
+      "checkpoints": 4
+    },
+    {
+      "job": "b-impoola_cnn-s51001",
+      "identical": true,
+      "checkpoints": 4
+    },
+    {
+      "job": "a-nature_cnn-s51001",
+      "identical": true,
+      "checkpoints": 4
+    },
+    {
+      "job": "a-impoola_cnn-s51001",
+      "identical": true,
+      "checkpoints": 4
+    },
+    {
+      "job": "b-nature_cnn-s51001",
+      "identical": true,
+      "checkpoints": 4
+    },
+    {
+      "job": "b-impala_cnn-s51001",
+      "identical": true,
+      "checkpoints": 4
+    },
+    {
+      "job": "a-impala_cnn-s51001",
+      "identical": true,
+      "checkpoints": 4
+    }
+  ]
+}

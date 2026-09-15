@@ -1,0 +1,120 @@
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0               🐡 GPU:   3%   VRAM:   5.2/31G    RAM:  1.1G     │
+│                                                                              │
+│ Env             pongcnn    Evaluate       72ms  58%    Losses       2.341    │
+│ Params           270.0K      Model        69ms  56%    policy       0.929    │
+│ Steps              2.0K      Env           1ms   0%    value        0.806    │
+│ SPS               16.8K      Copy          2ms   1%    entropy      1.098    │
+│ Epoch                 1    Train          50ms  41%    old_kl      -0.000    │
+│ Uptime            122ms      Model        50ms  41%    kl           0.000    │
+│ To go          7s 695ms      Misc          0ms   0%    clipfrac     0.000    │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0              🐡  GPU:  99%   VRAM:   5.2/31G    RAM:  1.1G     │
+│                                                                              │
+│ Env             pongcnn    Evaluate      144ms  24%    Losses       1.059    │
+│ Params           270.0K      Model       120ms  20%    policy       0.233    │
+│ Steps             20.5K      Env           3ms   0%    value        0.472    │
+│ SPS               30.7K      Copy         19ms   3%    entropy      1.077    │
+│ Epoch                10    Train         453ms  75%    old_kl       0.000    │
+│ Uptime            723ms      Model       452ms  75%    kl           0.000    │
+│ To go          3s 606ms      Misc          0ms   0%    clipfrac     0.000    │
+│                                                                              │
+│ perf                          0.000   score                       -21.000    │
+│ episode_return              -21.000   episode_length               11.353    │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0             🐡   GPU:  99%   VRAM:   5.2/31G    RAM:  1.1G     │
+│                                                                              │
+│ Env             pongcnn    Evaluate      161ms  24%    Losses       0.376    │
+│ Params           270.0K      Model       133ms  20%    policy      -0.116    │
+│ Steps             41.0K      Env           4ms   0%    value        0.281    │
+│ SPS               30.8K      Copy         22ms   3%    entropy      1.010    │
+│ Epoch                20    Train         501ms  75%    old_kl       0.000    │
+│ Uptime         1s 389ms      Model       501ms  75%    kl           0.000    │
+│ To go          2s 928ms      Misc          0ms   0%    clipfrac     0.000    │
+│                                                                              │
+│ perf                          0.000   score                       -21.000    │
+│ episode_return              -21.000   episode_length               11.795    │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0            🐡    GPU:  99%   VRAM:   5.2/31G    RAM:  1.1G     │
+│                                                                              │
+│ Env             pongcnn    Evaluate      159ms  24%    Losses       0.257    │
+│ Params           270.0K      Model       133ms  20%    policy      -0.025    │
+│ Steps             61.4K      Env           3ms   0%    value        0.161    │
+│ SPS               31.0K      Copy         21ms   3%    entropy      0.912    │
+│ Epoch                30    Train         500ms  75%    old_kl      -0.000    │
+│ Uptime         2s 050ms      Model       499ms  75%    kl           0.000    │
+│ To go          2s 249ms      Misc          0ms   0%    clipfrac     0.000    │
+│                                                                              │
+│ perf                          0.000   score                       -21.000    │
+│ episode_return              -21.000   episode_length               12.833    │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0           🐡     GPU:  99%   VRAM:   5.2/31G    RAM:  1.1G     │
+│                                                                              │
+│ Env             pongcnn    Evaluate      144ms  24%    Losses       0.154    │
+│ Params           270.0K      Model       120ms  20%    policy      -0.026    │
+│ Steps             79.9K      Env           3ms   0%    value        0.103    │
+│ SPS               30.7K      Copy         18ms   3%    entropy      0.829    │
+│ Epoch                39    Train         454ms  75%    old_kl       0.000    │
+│ Uptime         2s 651ms      Model       454ms  75%    kl           0.000    │
+│ To go          1s 669ms      Misc          0ms   0%    clipfrac     0.000    │
+│                                                                              │
+│ perf                          0.000   score                       -21.000    │
+│ episode_return              -21.000   episode_length               14.412    │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0          🐡      GPU:  98%   VRAM:   5.2/31G    RAM:  1.1G     │
+│                                                                              │
+│ Env             pongcnn    Evaluate      159ms  24%    Losses       0.127    │
+│ Params           270.0K      Model       133ms  20%    policy      -0.021    │
+│ Steps            100.4K      Env           3ms   0%    value        0.085    │
+│ SPS               30.8K      Copy         21ms   3%    entropy      0.789    │
+│ Epoch                49    Train         503ms  75%    old_kl       0.000    │
+│ Uptime         3s 315ms      Model       502ms  75%    kl           0.000    │
+│ To go             996ms      Misc          0ms   0%    clipfrac     0.000    │
+│                                                                              │
+│ perf                          0.000   score                       -21.000    │
+│ episode_return              -21.000   episode_length               19.769    │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0         🐡       GPU:  99%   VRAM:   5.2/31G    RAM:  1.1G     │
+│                                                                              │
+│ Env             pongcnn    Evaluate      144ms  23%    Losses       0.115    │
+│ Params           270.0K      Model       121ms  20%    policy      -0.004    │
+│ Steps            118.8K      Env           3ms   0%    value        0.068    │
+│ SPS               30.6K      Copy         17ms   2%    entropy      0.785    │
+│ Epoch                58    Train         456ms  76%    old_kl       0.000    │
+│ Uptime         3s 918ms      Model       456ms  76%    kl           0.000    │
+│ To go             402ms      Misc          0ms   0%    clipfrac     0.000    │
+│                                                                              │
+│ perf                          0.000   score                       -21.000    │
+│ episode_return              -21.000   episode_length               17.226    │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0        🐡        GPU:  99%   VRAM:   5.2/31G    RAM:  1.1G     │
+│                                                                              │
+│ Env             pongcnn    Evaluate       95ms  23%    Losses       0.100    │
+│ Params           270.0K      Model        80ms  20%    policy      -0.004    │
+│ Steps            131.1K      Env           2ms   0%    value        0.059    │
+│ SPS               30.8K      Copy         12ms   2%    entropy      0.773    │
+│ Epoch                64    Train         301ms  76%    old_kl       0.000    │
+│ Uptime         4s 316ms      Model       301ms  75%    kl           0.000    │
+│ To go               0ms      Misc          0ms   0%    clipfrac     0.000    │
+│                                                                              │
+│ perf                          0.000   score                       -21.000    │
+│ episode_return              -21.000   episode_length               15.500    │
+╰──────────────────────────────────────────────────────────────────────────────╯
+Capture range started in the application.
+Capture range ended in the application.
+Generating '/tmp/nsys-report-d30e.qdstrm'
+[1/2] [0%                          ] profile.nsys-repProcessing events...
+[1/2] [0%                          ] profile.nsys-rep[1/2] [7%                          ] profile.nsys-rep[1/2] [6%                          ] profile.nsys-rep[1/2] [5%                          ] profile.nsys-rep[1/2] [7%                          ] profile.nsys-rep[1/2] [11%                         ] profile.nsys-rep[1/2] [14%                         ] profile.nsys-rep[1/2] [=17%                        ] profile.nsys-rep[1/2] [==20%                       ] profile.nsys-rep[1/2] [===24%                      ] profile.nsys-rep[1/2] [====27%                     ] profile.nsys-rep[1/2] [=====30%                    ] profile.nsys-rep[1/2] [======33%                   ] profile.nsys-rep[1/2] [=======36%                  ] profile.nsys-rep[1/2] [========40%                 ] profile.nsys-rep[1/2] [=========43%                ] profile.nsys-rep[1/2] [=========46%                ] profile.nsys-rep[1/2] [==========49%               ] profile.nsys-rep[1/2] [===========52%              ] profile.nsys-rep[1/2] [============55%             ] profile.nsys-rep[1/2] [=============58%            ] profile.nsys-rep[1/2] [=============59%            ] profile.nsys-rep[1/2] [========================100%] profile.nsys-rep[1/2] [========================100%] profile.nsys-rep
+[2/2] [0%                          ] profile.sqlite[2KProcessing 291548 events: 
+[2/2] [1%                          ] profile.sqlite[2/2] [2%                          ] profile.sqlite[2/2] [3%                          ] profile.sqlite[2/2] [4%                          ] profile.sqlite[2/2] [5%                          ] profile.sqlite[2/2] [6%                          ] profile.sqlite[2/2] [7%                          ] profile.sqlite[2/2] [8%                          ] profile.sqlite[2/2] [9%                          ] profile.sqlite[2/2] [10%                         ] profile.sqlite[2/2] [11%                         ] profile.sqlite[2/2] [12%                         ] profile.sqlite[2/2] [13%                         ] profile.sqlite[2/2] [14%                         ] profile.sqlite[2/2] [=15%                        ] profile.sqlite[2/2] [=16%                        ] profile.sqlite[2/2] [=17%                        ] profile.sqlite[2/2] [==18%                       ] profile.sqlite[2/2] [==19%                       ] profile.sqlite[2/2] [==20%                       ] profile.sqlite[2/2] [==21%                       ] profile.sqlite[2/2] [===22%                      ] profile.sqlite[2/2] [===23%                      ] profile.sqlite[2/2] [===24%                      ] profile.sqlite[2/2] [====25%                     ] profile.sqlite[2/2] [====26%                     ] profile.sqlite[2/2] [====27%                     ] profile.sqlite[2/2] [====28%                     ] profile.sqlite[2/2] [=====29%                    ] profile.sqlite[2/2] [=====30%                    ] profile.sqlite[2/2] [=====31%                    ] profile.sqlite[2/2] [=====32%                    ] profile.sqlite[2/2] [======33%                   ] profile.sqlite[2/2] [======34%                   ] profile.sqlite[2/2] [======35%                   ] profile.sqlite[2/2] [=======36%                  ] profile.sqlite[2/2] [=======37%                  ] profile.sqlite[2/2] [=======38%                  ] profile.sqlite[2/2] [=======39%                  ] profile.sqlite[2/2] [========40%                 ] profile.sqlite[2/2] [========41%                 ] profile.sqlite[2/2] [========42%                 ] profile.sqlite[2/2] [=========43%                ] profile.sqlite[2/2] [=========44%                ] profile.sqlite[2/2] [=========45%                ] profile.sqlite[2/2] [=========46%                ] profile.sqlite[2/2] [==========47%               ] profile.sqlite[2/2] [==========48%               ] profile.sqlite[2/2] [==========49%               ] profile.sqlite[2/2] [===========50%              ] profile.sqlite[2/2] [===========51%              ] profile.sqlite[2/2] [===========52%              ] profile.sqlite[2/2] [===========53%              ] profile.sqlite[2/2] [============54%             ] profile.sqlite[2/2] [============55%             ] profile.sqlite[2/2] [============56%             ] profile.sqlite[2/2] [============57%             ] profile.sqlite[2/2] [=============58%            ] profile.sqlite[2/2] [=============59%            ] profile.sqlite[2/2] [=============60%            ] profile.sqlite[2/2] [==============61%           ] profile.sqlite[2/2] [==============62%           ] profile.sqlite[2/2] [==============63%           ] profile.sqlite[2/2] [==============64%           ] profile.sqlite[2/2] [===============65%          ] profile.sqlite[2/2] [===============66%          ] profile.sqlite[2/2] [===============67%          ] profile.sqlite[2/2] [================68%         ] profile.sqlite[2/2] [================69%         ] profile.sqlite[2/2] [================70%         ] profile.sqlite[2/2] [================71%         ] profile.sqlite[2/2] [=================72%        ] profile.sqlite[2/2] [=================73%        ] profile.sqlite[2/2] [=================74%        ] profile.sqlite[2/2] [==================75%       ] profile.sqlite[2/2] [==================76%       ] profile.sqlite[2/2] [==================77%       ] profile.sqlite[2/2] [==================78%       ] profile.sqlite[2/2] [===================79%      ] profile.sqlite[2/2] [===================80%      ] profile.sqlite[2/2] [===================81%      ] profile.sqlite[2/2] [===================82%      ] profile.sqlite[2/2] [====================83%     ] profile.sqlite[2/2] [====================84%     ] profile.sqlite[2/2] [====================85%     ] profile.sqlite[2/2] [=====================86%    ] profile.sqlite[2/2] [=====================87%    ] profile.sqlite[2/2] [=====================88%    ] profile.sqlite[2/2] [=====================89%    ] profile.sqlite[2/2] [======================90%   ] profile.sqlite[2/2] [======================91%   ] profile.sqlite[2/2] [======================92%   ] profile.sqlite[2/2] [=======================93%  ] profile.sqlite[2/2] [=======================94%  ] profile.sqlite[2/2] [=======================95%  ] profile.sqlite[2/2] [=======================96%  ] profile.sqlite[2/2] [========================97% ] profile.sqlite[2/2] [========================98% ] profile.sqlite[2/2] [========================99% ] profile.sqlite[2/2] [========================100%] profile.sqlite[2/2] [========================100%] profile.sqlite
+Generated:
+	/home/keith/Git/ml/cnn-5090/build/pongcnn/eval-profile-audit.VjfOaDBg/performance/a-impala_cnn/instrumented/profile.nsys-rep
+	/home/keith/Git/ml/cnn-5090/build/pongcnn/eval-profile-audit.VjfOaDBg/performance/a-impala_cnn/instrumented/profile.sqlite

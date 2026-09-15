@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/../../.."
+
+# Same shared Raylib directory used by build.sh and other Ocean environment tests.
+case "$(uname -s)" in
+    Linux) raylib_dir=raylib-5.5_linux_amd64; platform_libs=(-lGL -lpthread -ldl -lrt) ;;
+    Darwin) raylib_dir=raylib-5.5_macos; platform_libs=(-framework Cocoa -framework IOKit -framework CoreVideo -framework OpenGL) ;;
+    *) echo "Unsupported platform" >&2; exit 1 ;;
+esac
+if [ ! -f "$raylib_dir/lib/libraylib.a" ]; then
+    echo "Shared Raylib is missing. Use PufferLib's normal CPU build first:" >&2
+    echo "bash build.sh connect4cnn --cpu" >&2
+    exit 1
+fi
+mkdir -p build/connect4cnn
+flags=(-std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra
+       -Wno-unused-function -Wno-unused-parameter -O1 -g
+       -fsanitize=address,undefined -fno-omit-frame-pointer
+       -I. -Isrc -I"$raylib_dir/include")
+for variant in connect4 connect4cnn; do
+    extra=()
+    if [ "$variant" = connect4cnn ]; then extra=(-DTEST_PIXELS); fi
+    "${CC:-clang}" "${flags[@]}" "${extra[@]}" \
+        "-DENV_HEADER=\"ocean/$variant/$variant.h\"" \
+        ocean/connect4cnn/tests/test_environment.c \
+        "$raylib_dir/lib/libraylib.a" "${platform_libs[@]}" -lm \
+        -o "build/connect4cnn/test_$variant"
+    "build/connect4cnn/test_$variant" > "build/connect4cnn/$variant.trace"
+done
+cmp build/connect4cnn/connect4.trace build/connect4cnn/connect4cnn.trace
+build/connect4cnn/test_connect4cnn > build/connect4cnn/connect4cnn.repeat.trace
+cmp build/connect4cnn/connect4cnn.trace build/connect4cnn/connect4cnn.repeat.trace
+for representation in {1..9}; do
+    build/connect4cnn/test_connect4cnn "$representation" > "build/connect4cnn/representation-$representation.trace"
+    cmp build/connect4cnn/connect4.trace "build/connect4cnn/representation-$representation.trace"
+    build/connect4cnn/test_connect4cnn "$representation" > build/connect4cnn/representation.repeat.trace
+    cmp "build/connect4cnn/representation-$representation.trace" build/connect4cnn/representation.repeat.trace
+done
+for invalid in -1 10 1.5 nan; do
+    if build/connect4cnn/test_connect4cnn "$invalid" > /dev/null 2> build/connect4cnn/representation-invalid.txt; then
+        echo "Invalid representation accepted: $invalid" >&2
+        exit 1
+    fi
+    rg -q 'representation must be an integer' build/connect4cnn/representation-invalid.txt
+done
+"${CC:-clang}" "${flags[@]}" ocean/connect4cnn/tests/test_appearance.c -lm \
+    -o build/connect4cnn/test_appearance
+build/connect4cnn/test_appearance
+for seed in 0 12345 4294967295; do
+    build/connect4cnn/test_connect4cnn 0 1 "$seed" > build/connect4cnn/mixed.trace
+    cmp build/connect4cnn/connect4.trace build/connect4cnn/mixed.trace
+done
+for option in '0 2 0' '0 1 -1' '0 1 4294967296' '0 1 nan' '0 1 1.5'; do
+    if build/connect4cnn/test_connect4cnn $option >/dev/null 2>build/connect4cnn/appearance-invalid.txt; then
+        echo "Invalid appearance options accepted: $option" >&2
+        exit 1
+    fi
+    rg -q 'must be an integer' build/connect4cnn/appearance-invalid.txt
+done
+echo "PASS: all 10 representations, pixel/reset fixtures, 4096-step upstream parity each, repeats and invalid-ID rejection (ASan/UBSan)."
+echo "PASS: mixed per-slot appearances, fixed assignment, independent RNG, golden IDs and invalid mode/seed rejection."

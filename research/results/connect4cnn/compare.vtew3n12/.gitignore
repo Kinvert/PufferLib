@@ -1,0 +1,2 @@
+# Preserve original archived log filenames in this evidence directory only.
+!*.log

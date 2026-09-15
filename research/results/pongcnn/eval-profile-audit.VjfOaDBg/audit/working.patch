@@ -1,0 +1,186 @@
+diff --git a/ocean/pongcnn/resume_hypers.sh b/ocean/pongcnn/resume_hypers.sh
+index 0934796c..f8cf519f 100644
+--- a/ocean/pongcnn/resume_hypers.sh
++++ b/ocean/pongcnn/resume_hypers.sh
+@@ -13,10 +13,12 @@ for variant in impala_cnn impoola_cnn; do
+     test -x "$out/$variant/train"
+ done
+ source ocean/connect4cnn/runtime_env.sh
++source ocean/pongcnn/gpu_env.sh
++PONG_SMI=$(pong_find_smi)
+ export OPENBLAS_NUM_THREADS=1
+ gpu_idle() {
+     local active
+-    active=$(/usr/lib/wsl/lib/nvidia-smi --query-compute-apps=pid --format=csv,noheader)
++    active=$("$PONG_SMI" --query-compute-apps=pid --format=csv,noheader) || return
+     [[ -z "${active//[[:space:]]/}" ]] || { echo 'GPU busy; stopping without interrupting other work.' >&2; return 1; }
+ }
+ gpu_idle
+@@ -41,7 +43,7 @@ for variant in impala_cnn impoola_cnn; do
+     job="$out/$variant"
+     gpu_idle
+     sha256sum "$job/train" "$job/config/"*.ini > "$job/inputs.sha256"
+-    /usr/lib/wsl/lib/nvidia-smi > "$job/gpu-before.txt"
++    "$PONG_SMI" > "$job/gpu-before.txt"
+     echo running > "$job/status.txt"
+     printf 'timeout -k 10 3600 %q sweep --headless\n' "$job/train" > "$job/command.txt"
+     code=0
+diff --git a/ocean/pongcnn/sweep.sh b/ocean/pongcnn/sweep.sh
+index b7f93887..14af7e49 100644
+--- a/ocean/pongcnn/sweep.sh
++++ b/ocean/pongcnn/sweep.sh
+@@ -87,7 +87,7 @@ export OPENBLAS_NUM_THREADS=1
+ [[ -z "${NVCC_PREPEND_FLAGS:-}" ]]
+ gpu_idle() {
+     local active
+-    active=$("$PONG_SMI" --query-compute-apps=pid --format=csv,noheader)
++    active=$("$PONG_SMI" --query-compute-apps=pid --format=csv,noheader) || return
+     [[ -z "${active//[[:space:]]/}" ]] || { echo 'GPU busy; stopping without interrupting other work.' >&2; return 1; }
+ }
+ trap 'echo failed > "$out/status.txt"' EXIT
+diff --git a/research/EXPERIMENT_LOG.md b/research/EXPERIMENT_LOG.md
+index de2e8bb6..3a855778 100644
+--- a/research/EXPERIMENT_LOG.md
++++ b/research/EXPERIMENT_LOG.md
+@@ -434,3 +434,92 @@ Revision `9ed6bc2a192e`; recipe SHA256 `5dc685bea68d293cbce8a2cc367584dab252d2eb
+ 
+ Matched learner/core recipe; state and CNN parameter counts differ.
+ See the report for checkpoint curves and actual evaluation counts.
++
++## 2026-09-15T04:11:58+00:00 — compare.bfi2gjs_
++
++Change/purpose: Hardware CANARY: four-model build/train/reload plumbing only; exclude from speed claims
++
++Revision `9b829e071f6d`; recipe SHA256 `49d54fd3eccc7203be314539fb9a3ea164d3b2da9cbc2566b055fee6b3da4f5c`. [Report](../build/connect4cnn/compare.bfi2gjs_/REPORT.md) · [CSV](../build/connect4cnn/compare.bfi2gjs_/results.csv) · [Source/build hashes](../build/connect4cnn/compare.bfi2gjs_/protocol.json) · [GPU](../build/connect4cnn/compare.bfi2gjs_/gpu.txt)
++
++| Policy | Seed | Steps | Win rate | Score | Parameters | Wall s | Process SPS | Native avg SPS | Native last SPS | VRAM last GB |
++|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
++| flex_quality | 9173 | 65,536 | 0.00% | -0.9599 | 160,736 | 0.815 | 80,425 | 144,612 | 160,252 | 3.208 |
++| nature_cnn | 9173 | 65,536 | 0.00% | -0.9549 | 138,528 | 0.765 | 85,691 | 140,784 | 155,542 | 3.327 |
++| impala_cnn | 9173 | 65,536 | 0.00% | -0.9615 | 270,496 | 2.818 | 23,256 | 26,027 | 26,600 | 5.279 |
++| impoola_cnn | 9173 | 65,536 | 0.00% | -0.9593 | 151,712 | 2.818 | 23,258 | 25,937 | 26,576 | 5.275 |
++
++Matched learner/core recipe; state and CNN parameter counts differ.
++See the report for checkpoint curves and actual evaluation counts.
++
++## 2026-09-15T04:33:01+00:00 — compare.vtew3n12
++
++Change/purpose: Fixed four-model hardware comparison; seed 173; same-revision cross-host timing, not a new sweep
++
++Revision `9b829e071f6d`; recipe SHA256 `49d54fd3eccc7203be314539fb9a3ea164d3b2da9cbc2566b055fee6b3da4f5c`. [Report](../build/connect4cnn/compare.vtew3n12/REPORT.md) · [CSV](../build/connect4cnn/compare.vtew3n12/results.csv) · [Source/build hashes](../build/connect4cnn/compare.vtew3n12/protocol.json) · [GPU](../build/connect4cnn/compare.vtew3n12/gpu.txt)
++
++| Policy | Seed | Steps | Win rate | Score | Parameters | Wall s | Process SPS | Native avg SPS | Native last SPS | VRAM last GB |
++|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
++| flex_quality | 173 | 13,312,000 | 71.78% | 0.4357 | 160,736 | 77.819 | 171,063 | 171,897 | 167,906 | 3.219 |
++| nature_cnn | 173 | 13,312,000 | 66.11% | 0.3296 | 138,528 | 83.790 | 158,873 | 159,390 | 175,591 | 3.328 |
++| impala_cnn | 173 | 13,312,000 | 96.49% | 0.9298 | 270,496 | 461.455 | 28,848 | 28,866 | 28,812 | 5.319 |
++| impoola_cnn | 173 | 13,312,000 | 82.77% | 0.6554 | 151,712 | 476.149 | 27,958 | 27,974 | 26,628 | 5.264 |
++
++Matched learner/core recipe; state and CNN parameter counts differ.
++See the report for checkpoint curves and actual evaluation counts.
++
++## 2026-09-15 — Pong RTX 5090 locked replication launched
++
++Native PufferLib PongCNN; point fraction is not match win rate. Local source commit `1d9e9e0dca88706c7a8495644c8dc584a4446f11`; frozen protocol SHA256 `7627852d943d2b2777db6fd6874cd6eaffaca64c8a6a95b6c6acd44771125571`.
++
++Run: `build/pongcnn/confirm-5090.full.JXYKB06r`; tmux `pong-5090-replication`. [Frozen protocol](../build/pongcnn/confirm-5090.full.JXYKB06r/protocol.json), [planned jobs and eventual receipts](../build/pongcnn/confirm-5090.full.JXYKB06r/jobs.json), [handoff](PONG_5090_HANDOFF.md), [runner documentation](../ocean/pongcnn/CONFIRMATION.md).
++
++Four unchanged encoders x two shared learner recipes x seeds 31001–31005; paired evaluation seeds 41001–41005. Each job has 4,194,304 decisions and eight checkpoints, 512 requested full matches per checkpoint: 40 training jobs / 320 evaluations planned. Training/evaluation caps remain 1800/300 seconds. Native integer replay semantics give 1/3 updates per rollout while preserving the prescribed floating recipe values.
++
++Validation passed: CPU parity/pixel/sanitizer suite, four existing config tests, nine new runner tests, all eight final canary jobs and 32 evaluations. All 32 checkpoint pairs across two canaries are byte-identical. Completed resume is a verified no-op. [Archived canary and validation](results/pongcnn/confirm-5090.canary.9ZnvPpBA/REPORT.md). Fourteen native core/encoder hashes match the prior 5090 numerical audit; no native kernels, environment rules or architecture changed.
++
++Full campaign is running, not yet a result. Canary-based estimate is about 120 minutes with substantial uncertainty in learned-policy evaluation duration. Startup was verified once; training is left unattended. The launcher automatically appends completion totals/final means here and writes the full observed-frontier analysis, paired whole-seed bootstrap intervals, raw failure/missing-data accounting, evidence archive SHA256 and `TRANSFER.txt` SCP command in the run directory. Original Connect4 results and all failed preparation/packaging attempts remain preserved locally.
++
++## Pong 5090 replication completed — confirm-5090.full.JXYKB06r
++
++Source commit `1d9e9e0dca88706c7a8495644c8dc584a4446f11`. [Report](../build/pongcnn/confirm-5090.full.JXYKB06r/REPORT.md) · [CSV](../build/pongcnn/confirm-5090.full.JXYKB06r/results.csv) · [Audit](../build/pongcnn/confirm-5090.full.JXYKB06r/audit.json).
++
++```json
++{
++  "status": "completed_with_failures",
++  "training_completed": 40,
++  "training_planned": 40,
++  "evaluations_completed": 312,
++  "evaluations_planned": 320,
++  "train_process_sum_s": 4923.91,
++  "evaluation_sum_s": 6611.45,
++  "build_sum_s": 16.58,
++  "overall_elapsed_s": 11581.313245296478,
++  "active_execution_segments_s": 11564.11639213562,
++  "protocol_sha256": "7627852d943d2b2777db6fd6874cd6eaffaca64c8a6a95b6c6acd44771125571",
++  "source_files": 89
++}
++```
++
++
++| Recipe | Model | Parameters | Observed seeds | Mean point fraction [pointwise 95% CI] | Mean point-score difference | Mean train s | Process SPS | Native avg SPS |
++|---|---|---:|---:|---|---:|---:|---:|---:|
++| A | flex_quality | 160,224 | 4/5 | missing [missing, missing] | missing | 8.69 | 483,276.85 | 498,603.54 |
++
++Missing-result identification bounds for a/flex_quality: [68.42%, 88.42%]. No available-case mean replaces the full panel.
++
++| A | nature_cnn | 138,016 | 4/5 | missing [missing, missing] | missing | 9.36 | 448,386.08 | 461,505.57 |
++
++Missing-result identification bounds for a/nature_cnn: [69.46%, 89.46%]. No available-case mean replaces the full panel.
++
++| A | impala_cnn | 269,984 | 5/5 | 79.64% [39.66%, 99.96%] | 12.52 | 131.92 | 31,809.81 | 31,874.79 |
++| A | impoola_cnn | 151,200 | 5/5 | 99.91% [99.85%, 99.95%] | 20.98 | 132.61 | 31,651.27 | 31,716.21 |
++| B | flex_quality | 160,224 | 5/5 | 29.90% [0.36%, 69.55%] | -8.61 | 13.52 | 310,339.77 | 316,616.35 |
++| B | nature_cnn | 138,016 | 4/5 | missing [missing, missing] | missing | 14.79 | 284,627.68 | 290,015.81 |
++
++Missing-result identification bounds for b/nature_cnn: [79.66%, 99.66%]. No available-case mean replaces the full panel.
++
++| B | impala_cnn | 269,984 | 5/5 | 59.37% [19.68%, 99.07%] | 4.06 | 338.47 | 12,410.86 | 12,421.46 |
++| B | impoola_cnn | 151,200 | 5/5 | 0.00% [0.00%, 0.00%] | -21.00 | 335.42 | 12,509.59 | 12,520.35 |
++
++
++Pong metric is fraction of points won, not match win rate. Paired five-seed uncertainty, target censoring and full observed frontiers are retained in the report.
+diff --git a/src/pufferl.cu b/src/pufferl.cu
+index bcef14b7..050e1c5c 100644
+--- a/src/pufferl.cu
++++ b/src/pufferl.cu
+@@ -2396,7 +2396,6 @@ void log_util(PuffeRL* p, Dict* out) {
+ void trainer_eval_log(PuffeRL* p, Dict* out) {
+     p->last_log_time = wall_clock();
+     p->last_log_step = p->global_step;
+-    log_util(p, out);
+     vec_log(p->vec, out, 0);
+ }
+ 
+@@ -2856,6 +2855,9 @@ static EvalResult eval_loop(Ini* ini, PuffeRL* p, int mode, int verbose,
+         dict_clear(&wipe);
+     }
+     double last_dash = 0;
++    double started = wall_clock();
++    double last_progress = started;
++    long start_step = p->global_step;
+     while (true) {
+         if (render) {
+             puf_render(p->vec->envs);
+@@ -2878,6 +2880,7 @@ static EvalResult eval_loop(Ini* ini, PuffeRL* p, int mode, int verbose,
+         Dict* show = board ? board : &el;
+         double now = wall_clock();
+         if (!render && verbose && now - last_dash >= 0.6) {
++            if (!board) log_util(p, show);
+             puf_dashboard_print(ini, p, show, board ? epoch : 0);
+             last_dash = now;
+         }
+@@ -2886,11 +2889,18 @@ static EvalResult eval_loop(Ini* ini, PuffeRL* p, int mode, int verbose,
+             continue;
+         }
+         long n = dict_get(&el, "env/n");
++        if (verbose && now - last_progress >= 5.0) {
++            printf("CUDA_EVAL_PROGRESS steps=%ld games=%ld requested=%ld elapsed=%.3f\n",
++                p->global_step - start_step, n, eval_episodes, now - started);
++            fflush(stdout);
++            last_progress = now;
++        }
+         if (n < eval_episodes) {
+             dict_clear(&el);
+             continue;
+         }
+         if (verbose) {
++            if (!board) log_util(p, show);
+             puf_dashboard_print(ini, p, show, board ? epoch : 0);
+         }
+         DictItem* m = dict_find(&el, metric_key);

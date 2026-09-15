@@ -4,6 +4,8 @@ These small files are copies of the original local `build/connect4cnn/<run>/` ar
 
 | Run | Purpose |
 |---|---|
+| [appearance.xRxsamIZ](appearance.xRxsamIZ/REPORT.md) | Both games/all four encoders: 16 seeded mixed-appearance training/reload runs, paired byte equality across CPU worker counts, CPU parity/pixel/sanitizer checks |
+| [compare.vtew3n12](compare.vtew3n12/RECEIVED.md) | RTX 5090 four-model/52-evaluation receipt audit and complete single-seed time/step frontiers; original `.log` names preserved by scoped ignore exception |
 | [confirm.ol9tcj5k](confirm.ol9tcj5k/analysis/REPORT.md) | Complete frozen five-seed confirmation: 30 jobs, 390 evaluations, audited checkpoints/configs, full uncertain time/step frontiers |
 | [sweep.wstneiqe](sweep.wstneiqe/REPORT.md) | Representation selector native canary: three IDs, fixed CNN, finite checkpoints; all-ten-preset CPU fixtures/parity receipts |
 | [confirm-canary._0y3shor](confirm-canary._0y3shor/REPORT.md) | Frozen confirmation plumbing: all six models, 24 evaluations, six online uploads passed |

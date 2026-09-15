@@ -1,0 +1,887 @@
+diff --git a/AGENTS.md b/AGENTS.md
+index 3ac006ec..32eb4b3d 100644
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -14,7 +14,7 @@
+ 
+ ## GPU access on G240 (WSL)
+ 
+-5090 comparison handoff: `research/HARDWARE_COMPARISON.md` and `ocean/connect4cnn/hardware_compare.sh`. Push destination is only Kinvert-owned `origin` (`Kinvert/PufferLib`), branch `cnn-research`; official upstream pushing stays disabled. The hardware preset uses four fixed models, seed 173, 13.312M decisions, float32, and local reports. It finds `nvidia-smi` in PATH or WSL, refuses existing compute processes, and records host/compiler metadata. Reuse the 5090's existing NCCL/toolkit; do not install Torch or change system CUDA. Compare the same revision on both hosts, scheduling G240 only after its current Pong campaign is finished. No 5090 run has yet been verified here.
++5090 comparison handoff: `research/HARDWARE_COMPARISON.md` and `ocean/connect4cnn/hardware_compare.sh`. Push destination is only Kinvert-owned `origin` (`Kinvert/PufferLib`), branch `cnn-research`; official upstream pushing stays disabled. The hardware preset uses four fixed models, seed 173, 13.312M decisions, float32, and local reports. It finds `nvidia-smi` in PATH or WSL, refuses existing compute processes, and records host/compiler metadata. Reuse the 5090's existing NCCL/toolkit; do not install Torch or change system CUDA. Compare the same revision on both hosts, scheduling G240 only after its current Pong campaign is finished. The first 5090 archive is received: `research/HARDWARE_5090_RESULTS.md` links the successful 42-source/52-evaluation/config receipt audit and complete single-seed frontier. Weights/binaries were not transferred; their checks were not repeated locally. Use `research/audit_hardware_archive.py` to reproduce receipt analysis; do not execute the machine-specific archived runtime helper on G240.
+ 
+ - This host uses WSL. The GPU was verified outside the sandbox on 2026-09-12 as an RTX 5060 with 8 GB VRAM. The user's RTX 5090 training machine is separate.
+ - **Do not infer that GPU access is unavailable because `nvidia-smi` is absent from PATH or `/dev/nvidia*` is missing.** Use `/usr/lib/wsl/lib/nvidia-smi` through the tool's `require_escalated` execution path. No Docker, device-file creation, driver installation, or system CUDA changes are needed.
+@@ -57,12 +57,16 @@ IMPALA/Impoola share `ocean/connect4cnn/impala.cu`, selected with per-build `C4_
+ 
+ ## Experimental CNN canaries
+ 
+-Pong discovery `hypers.jwyApeXS` recovery: original runner stopped after ours/Nature completed 24 trials each because one Nature evaluation hit its 180-second cap. Active recovery tmux is `pong-cnn3-resume-20260914`, log `build/pongcnn/cnn3-hypers-resume.log`. It preserves the timeout and uses original binaries/configs to run only IMPALA/Impoola, with original resource ceilings; no repeat of completed training. Read `research/PONG_HYPER_SWEEP.md` before checking status. Full discovery retains failed evaluations and continues other families; canaries remain strict. Do not interpret `completed_with_eval_failures` as failure-free confirmation or silently omit censored evaluations.
++Pong discovery `hypers.jwyApeXS` is finished: ours/Nature completed 24 trials each, IMPALA/Impoola eight each at resource caps, and two evaluation timeouts remain. Historical recovery log: `build/pongcnn/cnn3-hypers-resume.log`; do not restart the campaign-specific recovery script. The 5090's subsequent 40-run replication is reported in `research/PONG_5090_RESULTS.md`, with eight of 320 evaluations timed out and raw archive verification pending. Do not interpret `completed_with_eval_failures` as failure-free confirmation or silently omit censored evaluations.
++
++Evaluation follow-up: `research/PONG_EVALUATION_AUDIT_HANDOFF.md` contains self-contained bounded 5090 diagnosis/profiling instructions using artifacts already on that machine. G240's telemetry patch moves resource queries from every evaluation rollout to periodic/final standalone dashboards, keeps training-owned resource fields frozen, and flushes five-second `CUDA_EVAL_PROGRESS` lines. Both dashboard sites require utilization fields; omitting the final refresh caused a preserved regression. Two patched/original Pong checkpoint evaluations match exactly; see `research/results/pongcnn/eval-audit-20260915/README.md`. Progress is not a completed score, and elapsed is loop time, not full-process time. No proven speedup or timeout cause yet. Do not change game rules, selectively retry original failures or rerun full training as part of diagnosis. Pong launchers use shared PATH-first GPU discovery and reject query failures via `runtime_env.sh`.
+ 
+ Pong fixed-model hyperparameter search is authorized; see `research/PONG_HYPER_SWEEP.md` and `ocean/pongcnn/sweep.sh`. All four pixel architectures and H128/L1 core stay fixed; nine training/budget dimensions only. Native C/CUDA PROTEIN, Bash launch, external Python reporting/W&B. Defaults: 24 completed trials / 3,600 search-process seconds per family, serial; `kinvert-k/cnn3` uploads after each family and separate final-checkpoint evaluation. Equal ceilings do not guarantee equal consumed tuning compute. Five-model native build/reload and eight-trial online sweep canaries now pass. The common-recipe quality pilot scored zero after 13.312M decisions; do not claim successful Pong learning from plumbing checks. Source/config/hash receipts are saved per campaign. Do not launch duplicate sweeps or actively poll long runs.
+ 
+ Paper evidence requirement: Kinvert wants the advantage over Nature established with thesis-defense rigor before making the corresponding arXiv claim. Follow `research/PAPER_PLAN.md`'s required evidence standard: predeclare the claim, replication/stopping and analysis; verify baseline fairness and efficiency; account for frontier uncertainty; preserve contrary evidence and exact provenance. The completed five-seed confirmation does not establish score superiority. Do not add seeds until significance or treat beating Nature alone as SOTA.
+ 
++Current immediate claim task: `research/CONNECT4_CLAIM_PROTOCOL.md` and `research/connect4_claim_design.json`. Kinvert requires the **full observed frontier**, with identical learner settings, 13.312M decisions, LR schedule, checkpoint cadence and paired training/evaluation seed allocation for all four encoders. No three-time restriction, short wall cap or per-family learner selection. The proposed 51-checkpoint cadence and replication count need measurement/inference calibration before launch; 40 seeds is only a resource estimate. Native checkpoint completion receipts, exact episode allocation, baseline review and simultaneous frontier analysis remain open gates. `research/design_connect4_confirmation.py` and its nine-contrast power table reproduce a **superseded development-only design**, not the new analysis. Preserve every seed/curve, declines and failures; no best-seed envelope or best-test-score checkpoint selection for deployment. Native environment tests validate finite match/terminal invariants, not the complete evaluator. No new confirmation data have been collected. Pong evaluation v2 remains separate work.
++
+ Benchmark revision map: read `research/BENCHMARK_STATE.md`. Commit `b2fa7787a754d36362374ac271ea6c7b23beeb25` retrospectively reproduces all 38 captured source/config hashes for the confirmation; the original launch base alone had uncommitted changes. Later Pong/representation work and archived results are in `5352d24ec1b740ed05ebe11e01126c8e3886cfb0`. Preserve the original protocol receipt, and identify the measured source separately from whichever revision is current when discussing performance.
+ 
+ Frozen confirmation `confirm.ol9tcj5k` is completed and audited: 30 jobs, 390 evaluations, no upload failures. Read `research/CONFIRMATION_RESULTS.md` for the paired-seed full-frontier result and limitations before proposing another search. `research/analyze_confirmation.py` regenerates audited tables/interactive curves from the local campaign. Do not reuse the old single-seed CNN2 chart as the definitive confirmation, pool best seeds into a frontier, or claim 92% typical performance for the former winner. Mean time front favors ours at low cost and IMPALA at high score; uncertainty in the quality-versus-Nature score difference includes zero. Preserve native-source/hash provenance because current source contains later Pong/representation changes absent from this campaign.
+diff --git a/PROJECT_NOTES.md b/PROJECT_NOTES.md
+index 64d80046..cd77247f 100644
+--- a/PROJECT_NOTES.md
++++ b/PROJECT_NOTES.md
+@@ -1,5 +1,37 @@
+ # CNN project notes
+ 
++## 2026-09-15 — Full frontier and identical training regime
++
++Kinvert corrected the proposed three-time comparison: measure the entire observed frontier, keeping all four encoders on the same learner settings, 13.312M decisions, LR schedule and checkpoint steps. [Updated protocol](research/CONNECT4_CLAIM_PROTOCOL.md) removes the 80s cap and per-family recipe selection. Dense checkpointing, paired independent training seeds, multiple held-out evaluation seed blocks and simultaneous uncertainty must retain declines/failures and expose where larger models win. Forty seeds is now provisional resource planning; the old nine-contrast power calculation does not justify whole-frontier inference. The earlier design below is superseded and archived, not executed. No new GPU run or push.
++
++## 2026-09-15 — Strategic priority: focused Connect4 frontier claim
++
++Kinvert reaffirmed the objective of a defensible win in a bounded frontier region. [CONNECT4_CLAIM_PROTOCOL.md](research/CONNECT4_CLAIM_PROTOCOL.md) fixes a 60s quality target against three references at 30/45/60s, a shared six-recipe learner challenge, and 40 fresh paired confirmation seeds with nine adjusted contrasts. The initial design is ready for implementation gates, not a launch-ready/finally frozen source configuration. Reproducible historical selection/power tables and four CPU safeguards are added; finite-game/terminal checks pass native original/pixel parity and ASan/UBSan for all representations. Immediate code work is native checkpoint availability and exact episode allocation; Pong v2 remains supporting work. No new training or push was performed.
++
++## 2026-09-15 — Next implementation order consolidated
++
++[Main paper plan](research/PAPER_PLAN.md#next-actions--ordered-implementation-milestones) now contains the ordered tasks and acceptance gates: specify/implement evaluation v2; validate on saved checkpoints; attribute baseline costs; deliver portable native CNN construction; integrate an original external benchmark; compare search methods; then freeze final paper experiments. The immediate task is fixed episode allocation/seeding, match counters, decision-cap/truncation policy and native tests, without retraining. Numeric cap calibration remains an explicit design task. The constructor plan links to this sequence, and the paper-writing track distinguishes usable software from demonstrated research novelty. No implementation or GPU work was launched by this planning update.
++
++## 2026-09-15 — 5090 evaluation/profile handoff received
++
++[Audit results](research/PONG_EVALUATION_AUDIT_RESULTS.md): package and raw diagnostic receipts verified. Timeout checkpoints simulate quickly but complete few matches; telemetry cleanup did not solve this. Fixed episode allocation/caps/truncation accounting are proposed for evaluation v2. Shared GEMM and patch paths dominate measured residual-backend kernel time, with per-layer attribution unresolved. Original-context quality curves/review are now local, but full original raw/checkpoint/profiler databases are not. No archived code applied or executed; no new training. The next work needs a separately versioned evaluator and focused backend attribution, not another blind full sweep.
++
++## 2026-09-15 — Evaluation fixes verified; 5090 diagnostic handoff
++
++Native evaluation resource queries now occur at dashboard refreshes rather than every rollout; progress logs expose advancing decisions/completed matches. Portable Pong launchers reject busy GPUs and failed GPU queries. Ten CPU checks passed, and two original/patched checkpoint evaluations matched exactly; synthetic timeout progress verified. No training, game-rule changes or measured speedup claim. [Evidence](research/results/pongcnn/eval-audit-20260915/README.md) retains the initial dashboard regression and correction. [Next 5090 instructions](research/PONG_EVALUATION_AUDIT_HANDOFF.md) are self-contained: use existing local artifacts, diagnose eight timeouts with controls, profile fixed references, keep a 45-minute cap and preserve original results. No setup transfer or push required.
++
++## 2026-09-15 — RTX 5090 Pong replication finished remotely
++
++[Reported results](research/PONG_5090_RESULTS.md): all 40 training runs completed; eight of 320 evaluations timed out. Ours trained fastest, but Nature performed substantially better under recipe B; Impoola was most reliable under A. Evaluation took 1h50m of 3h13m total elapsed. Three final means remain unresolved. Raw evidence has not arrived locally, so remote audit claims and full curve analysis are not independently verified on G240. No additional local training or evaluation retries were started.
++
++## RTX 5090 Pong comparison handoff prepared
++
++[Full agent instructions](research/PONG_5090_HANDOFF.md) specify four locked architectures crossed with two shared development learner recipes and five fresh paired seeds: 40 runs, 4.194304M decisions each, eight checkpoints each. This is a bounded replication stage, not a powered superiority test. G240 discovery is now completed with two evaluation failures retained: ours/Nature 24 trials each, IMPALA/Impoola eight each at resource caps; all families found >99% evaluated point fraction. The handoff records unequal discovery coverage, exact shared recipe values, native runner work still needed, the WSL GPU-path portability fix, validation, full-frontier analysis and evidence transfer. No new Pong training was launched on G240 and no handoff source was pushed.
++
++## RTX 5090 first result received and audited
++
++Received and audited the four-model/52-evaluation hardware comparison at `9b829e07`; [results](research/HARDWARE_5090_RESULTS.md) preserve metrics, full curves and runtime provenance. All 42 source snapshots match Git; all 52 CSV observations match raw logs; four non-encoder configs match. Ours: final 71.78% wins, 77.819 s; Nature: 66.11%, 83.790 s. Total training 18m19.214s. The complete observed time frontier contains ours at low cost, Impoola in the middle, and IMPALA at high score; Nature contributes no points this seed. Binary/checkpoint arrays were not transferred, so their remote checks were not independently repeated. Single-seed evidence remains insufficient for score superiority; the historical 5060 run used different source/toolchain versions. No new GPU job was launched.
++
+ ## 5090 hardware-comparison handoff
+ 
+ Prepared `cnn-research` for the Kinvert-owned `Kinvert/PufferLib` fork only; official `PufferAI/PufferLib` pushing remains disabled. [Hardware comparison instructions](research/HARDWARE_COMPARISON.md) provide fresh-checkout/local-venv setup using the existing CUDA/NCCL toolchain, a four-model canary, and fixed full-budget comparison. Portable `nvidia-smi` lookup, optional competing-process rejection and host/compiler receipts were added to the reporting runner; native model/training code is unchanged. Twenty-one CPU configuration/sidecar/hardware tests passed. No additional GPU job was launched on G240, and the separate 5090 host has not yet been tested. A same-revision G240 run after Pong completes is needed for a controlled cross-host timing comparison.
+diff --git a/config/connect4cnn.ini b/config/connect4cnn.ini
+index d19fb665..2bf3c0a0 100644
+--- a/config/connect4cnn.ini
++++ b/config/connect4cnn.ini
+@@ -11,6 +11,8 @@ num_threads = 2
+ 
+ [env]
+ representation = 0
++representation_mode = 0
++representation_seed = 0
+ num_agents = 1
+ player_pieces = 0
+ env_pieces = 0
+diff --git a/config/pongcnn.ini b/config/pongcnn.ini
+index 69f4c1ae..ea179eec 100644
+--- a/config/pongcnn.ini
++++ b/config/pongcnn.ini
+@@ -7,6 +7,9 @@ num_buffers = 1
+ num_threads = 16
+ 
+ [env]
++representation = 0
++representation_mode = 0
++representation_seed = 0
+ width = 500
+ height = 640
+ paddle_width = 20
+diff --git a/ocean/connect4cnn/compare.ini b/ocean/connect4cnn/compare.ini
+index e239cf7c..205f3867 100644
+--- a/ocean/connect4cnn/compare.ini
++++ b/ocean/connect4cnn/compare.ini
+@@ -17,6 +17,8 @@ hist_policy_percent = 0
+ 
+ [env]
+ representation = 0
++representation_mode = 0
++representation_seed = 0
+ num_agents = 1
+ player_pieces = 0
+ env_pieces = 0
+diff --git a/ocean/connect4cnn/connect4cnn.h b/ocean/connect4cnn/connect4cnn.h
+index 2f2d87dd..c1f7897b 100644
+--- a/ocean/connect4cnn/connect4cnn.h
++++ b/ocean/connect4cnn/connect4cnn.h
+@@ -7,6 +7,7 @@
+ #include "raylib.h"
+ typedef float obs_t;
+ #include "pufferenv.h"
++#include "appearance.h"
+ 
+ #define ACT_SIZES {7}
+ #define CONNECT4CNN_CELL_PIXELS 6
+@@ -493,13 +494,7 @@ void puf_init(Env* env, Dict* kwargs) {
+     env->num_agents = 1;
+     env->player_pieces = dict_get(kwargs, "player_pieces");
+     env->env_pieces = dict_get(kwargs, "env_pieces");
+-    DictItem* representation = dict_find(kwargs, "representation");
+-    double value = representation ? representation->value : 0;
+-    if (!(value >= 0 && value < CONNECT4CNN_NUM_REPRESENTATIONS && value == floor(value))) {
+-        fprintf(stderr, "connect4cnn: representation must be an integer from 0 to 9\n");
+-        exit(1);
+-    }
+-    env->representation = (int)value;
++    env->representation = cnn_appearance_init(kwargs, env->rng, CONNECT4CNN_NUM_REPRESENTATIONS);
+     const int* spec = CONNECT4CNN_REPRESENTATIONS[env->representation];
+     int cw = spec[0], ch = spec[1], width = spec[2], height = spec[3], style = spec[4];
+     int left = (cw - width) / 2, top = (ch - height) / 2;
+diff --git a/ocean/connect4cnn/runtime_env.sh b/ocean/connect4cnn/runtime_env.sh
+index ed965db9..343d92b3 100644
+--- a/ocean/connect4cnn/runtime_env.sh
++++ b/ocean/connect4cnn/runtime_env.sh
+@@ -21,3 +21,24 @@ export LIBRARY_PATH="$NCCL_ROOT/lib:$CUDA_HOME/lib64/stubs${LIBRARY_PATH:+:$LIBR
+ export LD_LIBRARY_PATH="$NCCL_ROOT/lib:$CUDA_HOME/lib64:/usr/lib/wsl/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+ export CCACHE_DIR="$PWD/build/ccache"
+ unset c4_nccl
++
++# Native Linux first; WSL exposes the driver tool outside PATH on G240.
++puffer_find_nvidia_smi() {
++    if command -v nvidia-smi >/dev/null 2>&1; then
++        command -v nvidia-smi
++    elif [ -x /usr/lib/wsl/lib/nvidia-smi ]; then
++        echo /usr/lib/wsl/lib/nvidia-smi
++    else
++        echo 'Cannot find nvidia-smi in PATH or the WSL driver directory.' >&2
++        return 1
++    fi
++}
++
++puffer_require_idle_gpu() {
++    local active
++    active=$("$1" --query-compute-apps=pid --format=csv,noheader) || return
++    if [[ -n "${active//[[:space:]]/}" ]]; then
++        echo 'GPU busy; stopping without interrupting other work.' >&2
++        return 1
++    fi
++}
+diff --git a/ocean/connect4cnn/sweep.py b/ocean/connect4cnn/sweep.py
+index c581a471..2496e549 100644
+--- a/ocean/connect4cnn/sweep.py
++++ b/ocean/connect4cnn/sweep.py
+@@ -54,6 +54,12 @@ def prepare(out, recipe, max_runs):
+             ini.remove_section(section)
+     ini.read(recipe)
+     dimensions = {s[6:] for s in ini.sections() if s.startswith("sweep.")}
++    mode = ini.getfloat("env", "representation_mode", fallback=0)
++    appearance_seed = ini.getfloat("env", "representation_seed", fallback=0)
++    if mode not in (0, 1) or not (0 <= appearance_seed <= 4294967295 and appearance_seed.is_integer()):
++        raise ValueError("Invalid fixed appearance mode/seed")
++    if mode == 1 and "env.representation" in dimensions:
++        raise ValueError("representation is inactive in mixed mode; do not sweep it")
+     encoder = ini.getint("policy", "encoder")
+     if encoder not in LIMITS or not dimensions or not dimensions <= set(LIMITS[encoder]) | {"train.total_timesteps", "env.representation"}:
+         raise ValueError("Fix encoder to 1/2/3/4 and sweep a nonempty subset of architecture/budget/representation options")
+@@ -121,10 +127,13 @@ def execute(command, cwd, log, timeout):
+ 
+ 
+ def write_report(out, rows, wall, status):
+-    fields = ["index", "run_id", "name", "family", "representation", "channels", "depth", "stride", "projection", "blocks", "global_pool", "architecture_json", "steps", "score", "cost", "native_avg_sps", "params", "random", "gp_obs", "architecture_sha256", "pareto"]
++    fields = ["index", "run_id", "name", "family", "representation", "representation_mode", "representation_seed", "channels", "depth", "stride", "projection", "blocks", "global_pool", "architecture_json", "steps", "score", "cost", "native_avg_sps", "params", "random", "gp_obs", "architecture_sha256", "pareto"]
++    def appearance(row):
++        mode = row.get("representation_mode", 0)
++        return (mode, row.get("representation_seed", 0) if mode else row.get("representation", 0))
+     flat = []
+     for row in rows:
+-        dominated = any(r.get("representation", 0) == row.get("representation", 0) and
++        dominated = any(appearance(r) == appearance(row) and
+                         r["cost"] <= row["cost"] and r["score"] >= row["score"] and
+                         (r["cost"] < row["cost"] or r["score"] > row["score"]) for r in rows)
+         shape = row["architecture"]
+@@ -132,6 +141,8 @@ def write_report(out, rows, wall, status):
+                      **{k: shape.get("policy.cnn_" + k, "") for k in ("channels", "depth", "stride", "projection", "blocks", "global_pool")},
+                      "name": display_name(out, row["index"]), "family": shape["version"],
+                      "representation": row.get("representation", 0),
++                     "representation_mode": row.get("representation_mode", 0),
++                     "representation_seed": row.get("representation_seed", 0),
+                      "architecture_json": json.dumps(shape, sort_keys=True), "pareto": not dominated})
+     with (out / "results.csv").open("w", newline="") as f:
+         writer = csv.DictWriter(f, fieldnames=fields)
+@@ -139,12 +150,13 @@ def write_report(out, rows, wall, status):
+     lines = ["# Experimental CNN native PROTEIN sweep", "", f"Status: {status}. Sweep process wall: {wall:.3f} seconds.",
+              "Same Connect4 rules and image dimensions; representation, architecture and budget follow the saved config. Learner/core recipe is locked.",
+              "Training metrics, not held-out evaluation. Cost is native adjusted uptime rounded by PROTEIN stdout; SPS = actual decisions / that cost.",
+-             "Training observations guide discovery; held-out evaluation and repeated seeds are required to confirm finalists. Report Pareto flags use rounded final observations within each representation; native PROTEIN still optimizes the joint search objective.", "",
++             "Training observations guide discovery; held-out evaluation and repeated seeds are required to confirm finalists. Report Pareto flags use rounded final observations within each appearance assignment (fixed ID or mixed seed); native PROTEIN still optimizes the joint search objective. CSV retains mode and seed.", "",
+              "| Run | Family | Representation | Architecture settings | Steps | Training wins | Cost s | Native avg SPS | Parameters | GP proposal | Pareto |",
+              "|---|---|---:|---|---:|---:|---:|---:|---:|---|---|"]
+     for r in flat:
+         shape = ", ".join(f"{k.removeprefix('policy.cnn_')}={v}" for k, v in json.loads(r["architecture_json"]).items() if k.startswith("policy.cnn_")) or "fixed Nature"
+-        lines.append(f"| {r['name']} | {r['family']} | {r['representation']} | {shape} | {r['steps']:,} | {r['score']:.2%} | {r['cost']:.2f} | {r['native_avg_sps']:,.0f} | {r['params']:,} | {bool(r['gp_obs'])} | {r['pareto']} |")
++        appearance_label = f"mixed seed {r['representation_seed']}" if r['representation_mode'] else str(r['representation'])
++        lines.append(f"| {r['name']} | {r['family']} | {appearance_label} | {shape} | {r['steps']:,} | {r['score']:.2%} | {r['cost']:.2f} | {r['native_avg_sps']:,.0f} | {r['params']:,} | {bool(r['gp_obs'])} | {r['pareto']} |")
+     lines += ["", "Source/config/binary hashes: protocol.json. Effective frozen config: config/default.ini.",
+               "Per-trial INIs and checkpoints retain exact shapes; sidecar JSON joins these with final native observations.",
+               "Whole sweep wall includes PROTEIN search and worker startup, but excludes compilation and final W&B synchronization. Online logging runs concurrently on CPU.", ""]
+diff --git a/ocean/connect4cnn/tests/run_all.sh b/ocean/connect4cnn/tests/run_all.sh
+index 6ea1bc06..2dd8304b 100644
+--- a/ocean/connect4cnn/tests/run_all.sh
++++ b/ocean/connect4cnn/tests/run_all.sh
+@@ -44,4 +44,19 @@ for invalid in -1 10 1.5 nan; do
+     fi
+     rg -q 'representation must be an integer' build/connect4cnn/representation-invalid.txt
+ done
++"${CC:-clang}" "${flags[@]}" ocean/connect4cnn/tests/test_appearance.c -lm \
++    -o build/connect4cnn/test_appearance
++build/connect4cnn/test_appearance
++for seed in 0 12345 4294967295; do
++    build/connect4cnn/test_connect4cnn 0 1 "$seed" > build/connect4cnn/mixed.trace
++    cmp build/connect4cnn/connect4.trace build/connect4cnn/mixed.trace
++done
++for option in '0 2 0' '0 1 -1' '0 1 4294967296' '0 1 nan' '0 1 1.5'; do
++    if build/connect4cnn/test_connect4cnn $option >/dev/null 2>build/connect4cnn/appearance-invalid.txt; then
++        echo "Invalid appearance options accepted: $option" >&2
++        exit 1
++    fi
++    rg -q 'must be an integer' build/connect4cnn/appearance-invalid.txt
++done
+ echo "PASS: all 10 representations, pixel/reset fixtures, 4096-step upstream parity each, repeats and invalid-ID rejection (ASan/UBSan)."
++echo "PASS: mixed per-slot appearances, fixed assignment, independent RNG, golden IDs and invalid mode/seed rejection."
+diff --git a/ocean/connect4cnn/tests/test_environment.c b/ocean/connect4cnn/tests/test_environment.c
+index 3136eb26..a6fa658d 100644
+--- a/ocean/connect4cnn/tests/test_environment.c
++++ b/ocean/connect4cnn/tests/test_environment.c
+@@ -4,6 +4,8 @@
+ #include ENV_HEADER
+ 
+ static double representation = 0;
++static double representation_mode = 0;
++static double representation_seed = 0;
+ 
+ typedef struct {
+     Env env;
+@@ -25,8 +27,12 @@ static void setup(Fixture* f, unsigned int seed) {
+ #ifdef TEST_PIXELS
+     // Omitting zero also tests backward compatibility with old configs.
+     if (representation != 0) dict_set(&kwargs, "representation", representation);
++    dict_set(&kwargs, "representation_mode", representation_mode);
++    dict_set(&kwargs, "representation_seed", representation_seed);
+ #endif
++    f->env.rng = seed;
+     puf_init(&f->env, &kwargs);
++    assert(f->env.rng == seed);
+     // These entries have numeric values only; dict_set allocates the item array.
+     free(kwargs.items);
+     f->env.rng = seed;
+@@ -38,7 +44,7 @@ static void check_observation(Fixture* f) {
+     assert(f->buffer[OBS_SIZE + 1] == -12345.0f);
+     const float* obs = f->env.agents[0].observations;
+ #ifdef TEST_PIXELS
+-    if (representation != 0) {
++    if (f->env.representation != 0) {
+         // Independent literal masks: bit 0 is the leftmost pixel in each row.
+         const int widths[] = {6,6,6,6,6,6,4,2,1,2};
+         const int heights[] = {6,6,6,6,6,6,4,2,1,4};
+@@ -48,7 +54,7 @@ static void check_observation(Fixture* f) {
+             {15,15,15,15}, {3,3}, {1}, {3,3,3,3},
+         };
+         const unsigned char ring[] = {30,51,33,33,51,30};
+-        int id = (int)representation, cw = widths[id], ch = heights[id];
++        int id = f->env.representation, cw = widths[id], ch = heights[id];
+         int left = (44 - 7 * cw) / 2, top = (36 - 6 * ch) / 2;
+         float expected[OBS_SIZE] = {0};
+         for (int column = 0; column < 7; column++) {
+@@ -147,17 +153,42 @@ static void check_fixtures(void) {
+ 
+ int main(int argc, char** argv) {
+     if (argc > 1) representation = atof(argv[1]);
++    if (argc > 2) representation_mode = atof(argv[2]);
++    if (argc > 3) representation_seed = atof(argv[3]);
+     check_fixtures();
+     for (unsigned int seed = 1; seed <= 16; seed++) {
+         Fixture f;
+         setup(&f, seed);
++#ifdef TEST_PIXELS
++        int assigned = f.env.representation;
++#endif
+         unsigned int action_rng = seed + 1000;
++        int episode_steps = 0;
++        int completed_games = 0;
+         for (int step = 0; step < 256; step++) {
+             // Independent action RNG: policy does not consume the opponent RNG.
+             action_rng = action_rng * 1664525u + 1013904223u;
+             f.action = (float)(action_rng % 7);
++            int pieces_before = __builtin_popcountll(f.env.player_pieces | f.env.env_pieces);
++            episode_steps++;
+             puf_step(&f.env);
++            assert(episode_steps <= 21);
++            if (f.terminal) {
++                completed_games++;
++                assert(f.env.player_pieces == 0 && f.env.env_pieces == 0);
++                assert(f.reward == -1 || f.reward == 0 || f.reward == 1);
++                episode_steps = 0;
++            } else {
++                // Two legal moves per nonterminal call; a full board must end.
++                int pieces_after = __builtin_popcountll(f.env.player_pieces | f.env.env_pieces);
++                assert(pieces_after == pieces_before + 2 && pieces_after < 42);
++                assert(episode_steps < 21);
++            }
++            assert(f.env.log.n == completed_games);
+             check_observation(&f);
++#ifdef TEST_PIXELS
++            assert(f.env.representation == assigned);
++#endif
+             printf("%u %d %.0f %" PRIu64 " %" PRIu64 " %" PRIu64
+                    " %u %d %d %.0f %.0f %.0f %.0f %.0f %.0f %.0f %.0f\n",
+                    seed, step, f.action, f.env.player_pieces, f.env.env_pieces,
+diff --git a/ocean/connect4cnn/tests/test_sweep_tools.py b/ocean/connect4cnn/tests/test_sweep_tools.py
+index 53d47c0c..47a00099 100644
+--- a/ocean/connect4cnn/tests/test_sweep_tools.py
++++ b/ocean/connect4cnn/tests/test_sweep_tools.py
+@@ -13,6 +13,17 @@ import wandb_sidecar as sidecar
+ 
+ 
+ class ToolsTest(unittest.TestCase):
++    def test_mixed_appearance_cannot_sweep_inactive_id(self):
++        with tempfile.TemporaryDirectory() as tmp:
++            root = Path(tmp)
++            recipe = sidecar.read_ini(sweep.HERE / "sweep_representation.ini")
++            recipe.set("env", "representation_mode", "1")
++            path = root / "mixed.ini"
++            with path.open("w") as f:
++                recipe.write(f)
++            with self.assertRaisesRegex(ValueError, "inactive"):
++                sweep.prepare(root, path, 2)
++
+     def test_representation_sweep(self):
+         with tempfile.TemporaryDirectory() as tmp:
+             config = sweep.prepare(Path(tmp), sweep.HERE / "sweep_representation.ini", 2)
+@@ -51,6 +62,15 @@ class ToolsTest(unittest.TestCase):
+                 rows = list(csv.DictReader(f))
+             self.assertEqual([r["representation"] for r in rows], ["5", "7"])
+             self.assertEqual([r["pareto"] for r in rows], ["True", "True"])
++            mixed = {**trial, "index": 2, "representation_mode": 1,
++                     "representation_seed": 12, "score": 1, "cost": 1}
++            another = {**mixed, "index": 3, "representation_seed": 13,
++                       "score": .5, "cost": 4}
++            sweep.write_report(root, [trial, mixed, another], 5, "ok")
++            with (root / "results.csv").open() as f:
++                rows = list(csv.DictReader(f))
++            self.assertEqual([r["pareto"] for r in rows], ["True"] * 3)
++            self.assertEqual([r["representation_seed"] for r in rows], ["0", "12", "13"])
+ 
+     def test_isolated_dimensions(self):
+         original = (sweep.ROOT / "config/default.ini").read_bytes()
+diff --git a/ocean/connect4cnn/wandb_sidecar.py b/ocean/connect4cnn/wandb_sidecar.py
+index 933d6927..c295c1bf 100644
+--- a/ocean/connect4cnn/wandb_sidecar.py
++++ b/ocean/connect4cnn/wandb_sidecar.py
+@@ -121,6 +121,8 @@ def trials(root):
+                 raise ValueError("Evaluation checkpoint does not match completed trial")
+         result.append(dict(index=index, run_id=path.stem, config=config, architecture=spec, evaluation=evaluation,
+                            representation=config.get("env.representation", 0),
++                           representation_mode=config.get("env.representation_mode", 0),
++                           representation_seed=config.get("env.representation_seed", 0),
+                            architecture_sha256=identity, checkpoint=str(checkpoint.relative_to(root)),
+                            checkpoint_sha256=hashlib.sha256(checkpoint.read_bytes()).hexdigest(),
+                            params=checkpoint.stat().st_size // 4, history=history,
+diff --git a/ocean/pongcnn/canary.sh b/ocean/pongcnn/canary.sh
+index f4973f40..f17b739c 100644
+--- a/ocean/pongcnn/canary.sh
++++ b/ocean/pongcnn/canary.sh
+@@ -30,16 +30,13 @@ echo prepared > "$out/status.txt"
+ if [[ "${1:-}" == --prepare-only ]]; then exit 0; fi
+ 
+ source ocean/connect4cnn/runtime_env.sh
++nvidia_smi=$(puffer_find_nvidia_smi)
+ export OPENBLAS_NUM_THREADS=1
+ if [[ -n "${NVCC_PREPEND_FLAGS:-}" ]]; then
+     echo "Unset NVCC_PREPEND_FLAGS; the runner selects reference builds." >&2
+     exit 2
+ fi
+-active=$(/usr/lib/wsl/lib/nvidia-smi --query-compute-apps=pid --format=csv,noheader)
+-if [[ -n "${active//[[:space:]]/}" ]]; then
+-    echo "GPU is busy; leave confirmation undisturbed and run this canary later." >&2
+-    exit 1
+-fi
++puffer_require_idle_gpu "$nvidia_smi"
+ trap 'echo failed > "$out/status.txt"' EXIT
+ run() {
+     printf 'cwd=%q ' "$PWD" >> "$out/commands.txt"
+@@ -47,7 +44,7 @@ run() {
+     printf '\n' >> "$out/commands.txt"
+     "$@"
+ }
+-/usr/lib/wsl/lib/nvidia-smi > "$out/gpu.txt"
++"$nvidia_smi" > "$out/gpu.txt"
+ for variant in "${variants[@]}"; do
+     env=pongcnn
+     flags=()
+@@ -69,12 +66,8 @@ for variant in "${variants[@]}"; do
+     if [[ "$variant" == state ]]; then env=pong; fi
+     if [[ "$variant" == flex_quality ]]; then encoder=4; fi
+     trial="$out/$variant"
+-    active=$(/usr/lib/wsl/lib/nvidia-smi --query-compute-apps=pid --format=csv,noheader)
+-    if [[ -n "${active//[[:space:]]/}" ]]; then
+-        echo "GPU became busy before $variant; stopping without interrupting it." >&2
+-        exit 1
+-    fi
+-    /usr/lib/wsl/lib/nvidia-smi > "$trial/gpu-before.txt"
++    puffer_require_idle_gpu "$nvidia_smi"
++    "$nvidia_smi" > "$trial/gpu-before.txt"
+     common=(--headless --policy.encoder="$encoder" --base.run_id=trial
+         --base.checkpoint_dir="$trial/checkpoints" --base.log_dir="$trial/metrics")
+     (
+diff --git a/ocean/pongcnn/compare.ini b/ocean/pongcnn/compare.ini
+index e258ed6f..76263f1e 100644
+--- a/ocean/pongcnn/compare.ini
++++ b/ocean/pongcnn/compare.ini
+@@ -18,6 +18,9 @@ num_policies = 1
+ hist_policy_percent = 0
+ 
+ [env]
++representation = 0
++representation_mode = 0
++representation_seed = 0
+ width = 500
+ height = 640
+ paddle_width = 20
+diff --git a/ocean/pongcnn/pongcnn.h b/ocean/pongcnn/pongcnn.h
+index 66dce085..1a289f71 100644
+--- a/ocean/pongcnn/pongcnn.h
++++ b/ocean/pongcnn/pongcnn.h
+@@ -6,6 +6,7 @@
+ #include "raylib.h"
+ typedef float obs_t;
+ #include "pufferenv.h"
++#include "../connect4cnn/appearance.h"
+ 
+ #define ACT_SIZES {3}
+ #define OBS_CHANNELS 1
+@@ -15,6 +16,7 @@ typedef float obs_t;
+ #define PONGCNN_SCORE_ROWS 2
+ #define PONGCNN_MARGIN 2
+ #define NUM_ATNS 1
++#define PONGCNN_NUM_REPRESENTATIONS 5
+ 
+ typedef struct Log Log;
+ struct Log {
+@@ -62,6 +64,7 @@ struct Env {
+     int frameskip;
+     int continuous;
+     unsigned int rng;
++    int representation;
+ };
+ typedef Env Pong;
+ 
+@@ -117,6 +120,31 @@ void compute_observations(Pong* env) {
+         OBS_HEIGHT - (env->ball_y + env->ball_height) * sy,
+         PONGCNN_MARGIN + (env->ball_x + env->ball_width) * sx,
+         OBS_HEIGHT - env->ball_y * sy, 1.0f);
++    // Reversible court-only transforms; scores, physics and actions stay fixed.
++    if (env->representation == 1 || env->representation == 4) {
++        for (int i = PONGCNN_SCORE_ROWS * OBS_WIDTH; i < OBS_SIZE; i++) {
++            if (env->representation == 4) obs[i] = 1 - obs[i];
++            else if (obs[i] == 0.5f) obs[i] = 0.75f;
++            else if (obs[i] == 0.75f) obs[i] = 0.5f;
++        }
++    } else if (env->representation == 2) {
++        for (int y = PONGCNN_SCORE_ROWS; y < OBS_HEIGHT; y++) {
++            for (int x = 0; x < OBS_WIDTH / 2; x++) {
++                float tmp = obs[y * OBS_WIDTH + x];
++                obs[y * OBS_WIDTH + x] = obs[y * OBS_WIDTH + OBS_WIDTH - 1 - x];
++                obs[y * OBS_WIDTH + OBS_WIDTH - 1 - x] = tmp;
++            }
++        }
++    } else if (env->representation == 3) {
++        for (int y = PONGCNN_SCORE_ROWS; y < (OBS_HEIGHT + PONGCNN_SCORE_ROWS) / 2; y++) {
++            for (int x = 0; x < OBS_WIDTH; x++) {
++                int other = OBS_HEIGHT + PONGCNN_SCORE_ROWS - 1 - y;
++                float tmp = obs[y * OBS_WIDTH + x];
++                obs[y * OBS_WIDTH + x] = obs[other * OBS_WIDTH + x];
++                obs[other * OBS_WIDTH + x] = tmp;
++            }
++        }
++    }
+ }
+ 
+ void reset_round(Pong* env) {
+@@ -371,6 +399,7 @@ void puf_log(Log* log, Dict* out) {
+ 
+ void puf_init(Env* env, Dict* kwargs) {
+     env->num_agents = 1;
++    env->representation = cnn_appearance_init(kwargs, env->rng, PONGCNN_NUM_REPRESENTATIONS);
+     env->width = dict_get(kwargs, "width");
+     env->height = dict_get(kwargs, "height");
+     env->paddle_width = dict_get(kwargs, "paddle_width");
+diff --git a/ocean/pongcnn/sweep.sh b/ocean/pongcnn/sweep.sh
+index 244777ed..26cdaf2c 100644
+--- a/ocean/pongcnn/sweep.sh
++++ b/ocean/pongcnn/sweep.sh
+@@ -81,16 +81,15 @@ done
+ echo prepared > "$out/status.txt"
+ if [[ "$mode" == prepare ]]; then exit 0; fi
+ source ocean/connect4cnn/runtime_env.sh
++nvidia_smi=$(puffer_find_nvidia_smi)
+ export OPENBLAS_NUM_THREADS=1
+ [[ -z "${NVCC_PREPEND_FLAGS:-}" ]]
+ gpu_idle() {
+-    local active
+-    active=$(/usr/lib/wsl/lib/nvidia-smi --query-compute-apps=pid --format=csv,noheader)
+-    [[ -z "${active//[[:space:]]/}" ]] || { echo 'GPU busy; stopping without interrupting other work.' >&2; return 1; }
++    puffer_require_idle_gpu "$nvidia_smi"
+ }
+ trap 'echo failed > "$out/status.txt"' EXIT
+ gpu_idle
+-/usr/lib/wsl/lib/nvidia-smi > "$out/gpu.txt"
++"$nvidia_smi" > "$out/gpu.txt"
+ for variant in "${variants[@]}"; do
+     flags=()
+     case "$variant" in
+@@ -107,7 +106,7 @@ for variant in "${variants[@]}"; do
+     job="$out/$variant"
+     sha256sum "$job/train" "$job/config/"*.ini > "$job/inputs.sha256"
+     gpu_idle
+-    /usr/lib/wsl/lib/nvidia-smi > "$job/gpu-before.txt"
++    "$nvidia_smi" > "$job/gpu-before.txt"
+     echo running > "$job/status.txt"
+     printf 'timeout -k 10 %q %q sweep --headless\n' "$wall_cap" "$job/train" > "$job/command.txt"
+     code=0
+diff --git a/ocean/pongcnn/tests/run_all.sh b/ocean/pongcnn/tests/run_all.sh
+index 27539613..b283bc68 100644
+--- a/ocean/pongcnn/tests/run_all.sh
++++ b/ocean/pongcnn/tests/run_all.sh
+@@ -21,4 +21,20 @@ done
+ cmp build/pongcnn/pong.trace build/pongcnn/pongcnn.trace
+ build/pongcnn/test_pongcnn > build/pongcnn/pongcnn.repeat.trace
+ cmp build/pongcnn/pongcnn.trace build/pongcnn/pongcnn.repeat.trace
++for representation in {1..4}; do
++    build/pongcnn/test_pongcnn "$representation" > "build/pongcnn/representation-$representation.trace"
++    cmp build/pongcnn/pong.trace "build/pongcnn/representation-$representation.trace"
++done
++for seed in 0 12345 4294967295; do
++    build/pongcnn/test_pongcnn 0 1 "$seed" > build/pongcnn/mixed.trace
++    cmp build/pongcnn/pong.trace build/pongcnn/mixed.trace
++done
++for option in '-1' '5' 'nan' '1.5' '0 2' '0 1 -1' '0 1 4294967296'; do
++    if build/pongcnn/test_pongcnn $option >/dev/null 2>build/pongcnn/appearance-invalid.txt; then
++        echo "Invalid appearance options accepted: $option" >&2
++        exit 1
++    fi
++    rg -q 'must be an integer' build/pongcnn/appearance-invalid.txt
++done
+ echo "PASS: 49,152 transitions match native Pong; repeat, pixel fixtures, rewards/reset, ASan/UBSan."
++echo "PASS: all five fixed appearances and three mixed seeds preserve Pong physics/RNG; invalid settings rejected."
+diff --git a/ocean/pongcnn/tests/test_environment.c b/ocean/pongcnn/tests/test_environment.c
+index a94862b7..f3b6ad93 100644
+--- a/ocean/pongcnn/tests/test_environment.c
++++ b/ocean/pongcnn/tests/test_environment.c
+@@ -2,6 +2,11 @@
+ #include <assert.h>
+ #include <inttypes.h>
+ #include ENV_HEADER
++#include <stddef.h>
++
++static double representation = 0;
++static double representation_mode = 0;
++static double representation_seed = 0;
+ 
+ typedef struct {
+     Env env;
+@@ -32,7 +37,14 @@ static void setup(Fixture* f, unsigned int seed, int frameskip, int continuous)
+     dict_set(&kwargs, "max_score", 21);
+     dict_set(&kwargs, "frameskip", frameskip);
+     dict_set(&kwargs, "continuous", continuous);
++#ifdef TEST_PIXELS
++    dict_set(&kwargs, "representation", representation);
++    dict_set(&kwargs, "representation_mode", representation_mode);
++    dict_set(&kwargs, "representation_seed", representation_seed);
++#endif
++    f->env.rng = seed;
+     puf_init(&f->env, &kwargs);
++    assert(f->env.rng == seed);
+     free(kwargs.items);
+     f->env.rng = seed;
+     puf_reset(&f->env);
+@@ -113,7 +125,13 @@ static void fixtures(void) {
+                 float expected = x < 2 && y >= 33 ? 0.5f
+                     : x >= 42 && y < 5 ? 0.75f : 0;
+                 if (x >= bx && x < bx + 2 && y >= by && y < by + 2) expected = 1;
+-                assert(obs[y * 44 + x] == expected);
++                int tx = f.env.representation == 2 ? 43 - x : x;
++                int ty = f.env.representation == 3 ? 37 - y : y;
++                if (f.env.representation == 1) {
++                    if (expected == 0.5f) expected = 0.75f;
++                    else if (expected == 0.75f) expected = 0.5f;
++                } else if (f.env.representation == 4) expected = 1 - expected;
++                assert(obs[ty * 44 + tx] == expected);
+             }
+         }
+         float saved[OBS_SIZE];
+@@ -138,13 +156,17 @@ static uint64_t state_hash(Fixture* f) {
+     memset(state.agents, 0, sizeof(state.agents));
+     const unsigned char* bytes = (const unsigned char*)&state;
+     uint64_t hash = UINT64_C(14695981039346656037);
+-    for (size_t i = 0; i < sizeof(state); i++) {
++    // Compare the unchanged game fields, excluding appearance and tail padding.
++    for (size_t i = 0; i < offsetof(Env, rng) + sizeof(state.rng); i++) {
+         hash = (hash ^ bytes[i]) * UINT64_C(1099511628211);
+     }
+     return hash;
+ }
+ 
+-int main(void) {
++int main(int argc, char** argv) {
++    if (argc > 1) representation = atof(argv[1]);
++    if (argc > 2) representation_mode = atof(argv[2]);
++    if (argc > 3) representation_seed = atof(argv[3]);
+     fixtures();
+     int skips[] = {1, 3, 8};
+     for (int continuous = 0; continuous <= 1; continuous++) {
+@@ -152,12 +174,18 @@ int main(void) {
+             for (unsigned int seed = 1; seed <= 8; seed++) {
+                 Fixture f;
+                 setup(&f, seed, skips[k], continuous);
++#ifdef TEST_PIXELS
++                int assigned = f.env.representation;
++#endif
+                 unsigned int rng = seed + 1000;
+                 for (int step = 0; step < 1024; step++) {
+                     rng = rng * 1664525u + 1013904223u;
+                     f.action = continuous ? (float)(rng % 201) / 100 - 1 : (float)(rng % 3);
+                     puf_step(&f.env);
+                     check_observation(&f);
++#ifdef TEST_PIXELS
++                    assert(f.env.representation == assigned);
++#endif
+                     printf("%d %d %u %d %016" PRIx64 " %a %a\n", continuous, skips[k],
+                         seed, step, state_hash(&f), f.reward, f.terminal);
+                 }
+diff --git a/research/CNN_CONSTRUCTOR_PLAN.md b/research/CNN_CONSTRUCTOR_PLAN.md
+index 051e6ced..6b949071 100644
+--- a/research/CNN_CONSTRUCTOR_PLAN.md
++++ b/research/CNN_CONSTRUCTOR_PLAN.md
+@@ -2,6 +2,8 @@
+ 
+ **Goal:** deliver a clean, usable PufferLib tool that finds a useful CNN performance-versus-training-time frontier for each pixel environment and search budget. A winning fixed CNN remains a possible deliverable; this is an additional route, not a replacement for the existing research or an accepted upstream feature.
+ 
++September 15 sequencing: follow the [ordered milestones in the main paper plan](PAPER_PLAN.md#next-actions--ordered-implementation-milestones). The immediate [Connect4 protocol](CONNECT4_CLAIM_PROTOCOL.md) measures the full observed frontier with identical learner settings, decision budget and checkpoint cadence for all four fixed encoders. Validate timing/exact episode allocation, baseline fairness and simultaneous analysis, then confirm on fresh training seeds. Per-model hyperparameter selection and architecture search are separate later studies. Pong v2 remains necessary before further Pong quality claims; baseline attribution and portable image support remain delivery work. The [5090 audit](PONG_EVALUATION_AUDIT_RESULTS.md) found sparse match completion and substantial recipe dependence. The tool must expose reliable tradeoffs even when our current compact model loses; more architecture trials cannot repair a biased/incomplete evaluation protocol.
++
+ ## User workflow
+ 
+ 1. Select an environment, search budget, and allowed architecture building blocks through normal numeric INI settings.
+@@ -15,6 +17,7 @@ The output is a small menu of verified tradeoffs: low training cost, a chosen pe
+ 
+ - Build on the existing native configurable CNN and PROTEIN integration. Expose depth, channels, kernels, strides, pooling, residual connections and projection width; add dilation as a separately validated extension. Keep architecture construction, optimization and training in C/CUDA, with minimal changes to `src/`. External W&B/reporting can remain optional.
+ - Initially hold the recurrent core, environment representation and learner recipe fixed while searching architecture and training budget. Give finalists a separately declared hyperparameter-tuning allowance; joint architecture/learner search can follow once comparisons are dependable.
++- Treat any single fixed learner recipe as one controlled slice, not evidence of a generally inferior architecture. Pong's recipe-dependent ranking makes a small shared recipe panel or declared comparable finalist tuning necessary for broader claims. Separate architecture-search and learner-tuning resources and account for native effective replay updates.
+ - Prefer small candidates initially, but retain broader exploration. Increasing complexity is optional, not a mandatory growth ladder. A larger model may learn enough faster to cost less overall.
+ - Construct each trial's network before training and start from fresh weights. Growing a live network or transferring weights between architectures is outside the first version.
+ - Validate legal shapes before launch, identify equivalent active architectures, and avoid repeating identical configuration/budget/seed trials. Record full configs, native timing, SPS, decisions, evaluation, failures and source/checkpoint hashes.
+diff --git a/research/EXPERIMENT_LOG.md b/research/EXPERIMENT_LOG.md
+index de2e8bb6..36a04563 100644
+--- a/research/EXPERIMENT_LOG.md
++++ b/research/EXPERIMENT_LOG.md
+@@ -1,5 +1,29 @@
+ # CNN experiment history
+ 
++## 2026-09-15 — Protocol correction: full frontier, common learner
++
++User requires full observed Pareto curves and identical training regimes. [Current protocol](CONNECT4_CLAIM_PROTOCOL.md) and [design JSON](connect4_claim_design.json) supersede the narrow time-point proposal below: all four fixed encoders complete 13.312M decisions under one shared recipe, with proposed 51-checkpoint cadence. No short wall cap or separate per-model hyperparameter selection. Retain every seed/checkpoint and failures; calibrate simultaneous time/score inference and freeze training-seed replication before launch. Extra evaluation seeds measure evaluation noise, not independent training variability. Old snapshot/power calculations remain historical development artifacts. No new training or measured result.
++
++## 2026-09-15 — Focused Connect4 claim design and CPU validation (design superseded)
++
++[Design and execution gates](CONNECT4_CLAIM_PROTOCOL.md), [machine-readable settings](connect4_claim_design.json), and [development-only analysis](results/connect4cnn/claim-design-20260915/REPORT.md). Target: quality at 60s versus Nature/IMPALA/Impoola at 30/45/60s, with nine adjusted paired contrasts. Historical 5060 and one-seed 5090 data remain separate; selection takes latest available checkpoints, preserves declines and never imputes missing early checkpoints as zero. Four CPU selection safeguards passed. Native match-bound/terminal checks passed original/pixel parity, repeats and sanitizers across all ten representations. Proposed next stages: the same six LR/gamma recipes on three development seeds per family, then one frozen recipe per family on 40 fresh paired seeds. Power sensitivity is approximate and assumes effect/variance; no statistical victory is guaranteed. Native deadline publication, exact episode allocation and baseline review remain open gates. No GPU training or final-data collection launched.
++
++## 2026-09-15 — 5090 evaluation/profile archive received and checked
++
++[Findings and evidence](PONG_EVALUATION_AUDIT_RESULTS.md): 764 package hashes, 57 raw attempt receipts and 90 included source hashes verified locally. Twelve completed old/new pairs match exactly; all eight timeout pairs time out again. Progress shows 14.64–18.22M advancing decisions but only 0–13 matches around 25s: sparse completion, not a hard stall. No consistent telemetry speedup. Remote profiling reports residual-backend shared GEMMs 61–64%, patch materialization 19–22% of summed kernel durations, with caller attribution still incomplete. Original 40/312/8 counts and missing outcomes remain unchanged. Full trace databases/checkpoint bytes remain remote. Evaluation v2 is a proposal only; no new runs, patch application or push during intake.
++
++## 2026-09-15 — Evaluation telemetry fix and portable Pong launchers
++
++Removed per-rollout resource queries from `trainer_eval_log`; standalone evaluation refreshes them only for periodic/final dashboards. Added flushed five-second `CUDA_EVAL_PROGRESS` diagnostics without changing the final result format, scoring, RNG or match rules. Pong canary/sweep use PATH-first GPU discovery with WSL fallback and reject failed status queries. Ten focused CPU tests and Bash syntax checks passed. [GPU regression receipts](results/pongcnn/eval-audit-20260915/README.md): two old/patched saved-checkpoint pairs return identical final metrics/counts, unchanged checkpoint hashes; intentional seven-second timeout retains progress and no success. Initial missing-final-dashboard-field failure is preserved. Timings varied; no speedup established. No new training ran. [Self-contained 5090 follow-up](PONG_EVALUATION_AUDIT_HANDOFF.md) limits evaluation diagnosis and reference profiling to a 45-minute GPU campaign, preserving the completed study.
++
++## 2026-09-15 — RTX 5090 Pong replication reported
++
++[Full reported table and limitations](PONG_5090_RESULTS.md): 40/40 training jobs, 312/320 evaluations, eight fixed-cap timeouts; all 320 checkpoint hash/finiteness checks reportedly passed. Source `1d9e9e0dca88706c7a8495644c8dc584a4446f11`. Total 3h13m2s: training 1h22m4s, evaluation 1h50m11s. Ours had 7–9% lower mean training wall than Nature but no demonstrated quality advantage; Nature was much better under recipe B, and Impoola reached >=95% in 5/5 seeds under A. Three final row means remain unresolved due to missing evaluations. Raw archive is not yet on G240; full-frontier/source/config review is pending. Do not present the supplied final table as a full-frontier audit or rerun censored cases selectively. No new local training was launched.
++
++## RTX 5090 result received and receipt audit passed
++
++[Results and provenance](HARDWARE_5090_RESULTS.md): four fixed models, 52 evaluations, zero failures at revision `9b829e07`, float32, seed 173, 13.312M decisions each. Ours 71.78% / 77.819 s; Nature 66.11% / 83.790 s; IMPALA 96.49% / 461.455 s; Impoola 82.77% / 476.149 s. Total training-process time 18m19.214s. Ours took 7.13% less time than Nature and scored +5.67 pp in this one seed. The received archive audit verified 42 source files against Git, all 52 CSV rows against raw evaluation logs, and matching non-encoder settings for all four jobs. Runtime helper inspected without executing it. Numerical/repeatability/sanitizer checks were reported passed remotely, not rerun here; binary/checkpoint arrays are absent from the transfer. The [complete observed time frontier](results/connect4cnn/compare.vtew3n12/analysis/REPORT.md) contains ours at low cost (72.14% at 53.960s), Impoola in the middle (83.76% at 138.215s), and IMPALA at high score (96.88% at 357.207s); Nature contributes no points this seed. Step frontier contains IMPALA/Impoola only. All observations, including declines, survive. Same-revision cross-host and fresh-seed confirmation remain pending; no new training was launched.
++
+ ## 2026-09-14 — Pong discovery recovered after Nature evaluation timeout
+ 
+ Status check found `hypers.jwyApeXS` stopped: ours and Nature each completed 24 training trials, taking 437.21 / 614.65 seconds of total native sweep wall. Ours completed 24 evaluation/upload jobs; Nature had 23 successful evaluations and one timeout at 180.04 s (`sweep_1789436514815_0004`, exit 124). Strict reporting aborted before Nature upload and the remaining two families. Preserve this failure; do not infer a score from the incomplete evaluation dashboard or silently drop it from comparisons.
+diff --git a/research/HARDWARE_COMPARISON.md b/research/HARDWARE_COMPARISON.md
+index fef77a3b..c5cbe915 100644
+--- a/research/HARDWARE_COMPARISON.md
++++ b/research/HARDWARE_COMPARISON.md
+@@ -1,5 +1,7 @@
+ # Run the fixed CNN comparison on the RTX 5090
+ 
++The [first 5090 results and complete frontier](HARDWARE_5090_RESULTS.md) are received and audited on G240: 42 source files match the revision, 52 evaluations match raw logs, and four non-encoder configs match. Binary/checkpoint arrays were not transferred. The instructions below remain the reproduction procedure.
++
+ For a fresh session with no conversation context, follow **[START_HERE_5090.md](../START_HERE_5090.md)**. It includes the full setup, CPU/GPU tests, build/train instructions, expected completion counts, result-table definitions and evidence packaging.
+ 
+ Purpose: measure ours, Nature, IMPALA and Impoola on the 5090 using one fixed recipe. No new architecture search. Use the **Kinvert/PufferLib** fork, branch **cnn-research**; never push this research to PufferAI/PufferLib. Record the exact `git rev-parse HEAD` on both machines.
+@@ -30,7 +32,7 @@ Set `CUDA_HOME` only if the existing toolkit is elsewhere than `/usr/local/cuda`
+ export NCCL_ROOT=/path/to/existing/venv/lib/python3.12/site-packages/nvidia/nccl
+ ```
+ 
+-The runtime helper reads those files and sets process-local paths. It also discovers NCCL in this checkout's `.venv` if present; the G240 fallback path is not assumed to exist on the 5090. GPU inspection now finds `nvidia-smi` in PATH, with a WSL fallback. These steps have not yet been executed on the separate 5090 host.
++The runtime helper reads those files and sets process-local paths. It also discovers NCCL in this checkout's `.venv` if present; the G240 fallback path is not assumed to exist on the 5090. GPU inspection finds `nvidia-smi` in PATH, with a WSL fallback. The completed 5090 run's exact helper is preserved with its evidence.
+ 
+ ## Run
+ 
+@@ -47,7 +49,7 @@ mkdir -p build/connect4cnn
+ tmux new-session -d -s cnn-hardware 'bash ocean/connect4cnn/hardware_compare.sh --full > build/connect4cnn/hardware-launch.log 2>&1'
+ ```
+ 
+-The full preset trains **four models × one seed (173)** for **13,312,000 decisions each**, with 13 checkpoints and 1,024 requested evaluation games per checkpoint on seed 20173. It uses the frozen quality model, the common H128/L1 core, original Connect4 representation 0, and float32. Each training job has a 2,400-second safety cap. Actual 5090 runtime is unmeasured. W&B is disabled for this initial local comparison. `--print-command` displays the full command without using the GPU.
++The full preset trains **four models × one seed (173)** for **13,312,000 decisions each**, with 13 checkpoints and 1,024 requested evaluation games per checkpoint on seed 20173. It uses the frozen quality model, the common H128/L1 core, original Connect4 representation 0, and float32. Each training job has a 2,400-second safety cap. The first 5090 run took 18m19.214s summed training time, excluding builds/tests/evaluations. W&B is disabled for this initial local comparison. `--print-command` displays the full command without using the GPU.
+ 
+ The runner refuses existing compute processes before builds and each training job. These checks are not a GPU reservation; keep other jobs off that GPU during measurement. Let the run finish unattended. Results appear in a new `build/connect4cnn/compare.*` directory; the launcher prints its exact path.
+ 
+diff --git a/research/PAPER_PLAN.md b/research/PAPER_PLAN.md
+index 67b9f349..41e22529 100644
+--- a/research/PAPER_PLAN.md
++++ b/research/PAPER_PLAN.md
+@@ -1,16 +1,54 @@
+ # Paper plan: practical compute-efficient visual RL encoders
+ 
+-Status: research plan, September 14, 2026. No additional training, new architecture search, installation, or publication is triggered by this document. Kinvert wants the project treated as a paper backed by usable software and verifiable comparisons. Architecture innovation is paused while measurement, portability, and confirmation are established.
++Status: research plan, updated September 15, 2026 after the 5090 Pong evaluation/backend audit. Kinvert wants usable native PufferLib software and an arXiv paper with defensible evidence. Architecture innovation is paused while measurement, portability, and confirmation are established. The ordered implementation milestones below supersede older proposed sequencing; editing this plan does not launch experiments.
+ 
+ Working title: **Practical Compute-Efficient Visual Encoders for Reinforcement Learning**. Keep the title neutral until the experiments establish the contribution. The main question is: **Can a fixed compact encoder, trained from scratch on each task, improve the score-versus-training-time tradeoff across diverse pixel environments under fair tuning and reliable evaluation?** A useful result could be a small set of budget-specific encoders; one universal winner is not a required conclusion.
+ 
++The practical delivery target is the [native CNN constructor and search workflow](CNN_CONSTRUCTOR_PLAN.md). There are two distinguishable research claims: a frozen encoder's tradeoff advantage, and a search procedure finding better configurations for a declared resource budget. Neither is established yet. The software should remain useful when the existing compact model loses; the paper must not depend on forcing that model to win.
++
++## Next actions — ordered implementation milestones
++
++**Current priority after Kinvert's full-frontier clarification:** execute the gates in [CONNECT4_CLAIM_PROTOCOL.md](CONNECT4_CLAIM_PROTOCOL.md). Compare all four complete curves under one identical learner recipe, 13.312M-decision budget and checkpoint cadence. No three-time restriction, short wall cap or per-family recipe selection. Native checkpoint completion receipts, exact evaluation allocation and calibrated simultaneous frontier analysis precede fresh-seed confirmation; the replication count remains to be justified and frozen. Pong v2 remains supporting work and must precede further Pong quality claims.
++
++**Current evidence:** Connect4 five-seed confirmation and the 5090 Pong replication/profile work are complete. The [received audit](PONG_EVALUATION_AUDIT_RESULTS.md) establishes sparse Pong match completion despite high throughput; telemetry cleanup preserves results but has no measured speed advantage. Nature beats ours under Pong recipe B; a quality advantage is not established. Original missing outcomes remain missing. Full 5090 trace/checkpoint bytes are retained remotely; transferred summary/diagnostic receipt checks are separately identified.
++
++| Order | Work | Concrete result and completion check |
++|---|---|---|
++| 1 | Implement Connect4 timing and evaluation gates | Native fully-written checkpoint times, identical dense step cadence, deterministic exact episode allocation and saved-model tests |
++| 2 | Audit fairness and freeze the full-frontier protocol | Review backend/architecture adaptations; freeze one shared resolved learner recipe/source; calibrate simultaneous analysis and independent training-seed count |
++| 3 | Measure the complete Connect4 frontier | All four models finish the same 13.312M decisions; retain every checkpoint/seed, declines and failures; report supported and unresolved regions without significance-driven additions |
++| 4 | Deliver a portable constructor | Ordinary numeric INIs, configurable image channels/dimensions, validated shapes, native build/train/eval/reload and export; another clean checkout reproduces the workflow |
++| 5 | Integrate an established benchmark | Original environment semantics and train/validation/test splits preserved; first native original-Procgen feasibility result before committing to a broader suite; shared 64x64 RGB input tested |
++| 6 | Run the search-method study | Small-first PROTEIN versus random/unrestricted search and competitive references under declared tuning resources; full search costs, failures, recipe effects and exported configurations retained |
++| 7 | Freeze and run final paper confirmation | Candidate selection, budget schedules, test tasks, seed count/stopping and analysis fixed in advance; paired uncertainty and complete results support only the claims actually demonstrated |
++
++### Supporting task: Pong evaluation v2, with saved models
++
++Use the [received proposal](results/pongcnn/eval-profile-audit.VjfOaDBg/audit/PONG_EVALUATION_POLICY_PROPOSAL.md) as design input, not an already implemented specification. Finish a short v2 protocol before writing the implementation:
++
++- Assign exactly 512 episode IDs, eight per each of 64 slots, and an explicit deterministic seed mapping. Fast slots cannot contribute extra sampled episodes. Finished-slot masking must preserve active-slot behavior and recurrent state/reset semantics; test interactions with action RNG and vector execution rather than assuming isolation.
++- Record whole-match decisions, current-rally decisions, score, seed/ID, completion/truncation status and slot contribution. Current Pong `tick` resets at each point, so it is insufficient as a match counter.
++- Choose the numeric per-match decision cap from a declared duration-only calibration on existing development checkpoints, with an explicit compute ceiling; freeze it before new comparative quality evaluation. Record the cap rationale and check how truncation affects the usefulness of the result. A short cap that leaves broad score bounds is not a solved quality benchmark.
++- At a cap, record truncation without awarding a win or inventing a final score. Preserve current environment physics, scoring and observations. Report completion fraction plus identification bounds for the complete-match estimand; do not claim an unbiased complete-case mean. Keep a separate infrastructure/process timeout and distinguish it from planned episode truncation.
++- Specify reset/seeding behavior and a fixture-based comparison of genuinely matched completed trajectories. New episode allocation is a new estimator; it need not reproduce v1's pooled score, and its scores must not replace v1 entries.
++
++Implement native accounting/masking using existing interfaces, with minimal changes to `src/`; inspect the 5090 runner changes before duplicating or merging them. Preserve archived source as evidence instead of blindly applying a whole archive. Keep ordinary training and unrelated environments on their existing paths. Package the tested telemetry/portability fixes and v2 work as reviewable changes with exact source identity; reconcile both machines before their next shared experiment.
++
++Acceptance tests: unique/exact episode allocation; repeatable ID/seed mapping and results; cap/terminal boundary precedence; recurrent reset correctness; inactive-slot isolation; complete/truncated/error distinction; correct bounds; no loss of assigned episodes on process failure; deterministic repeated checkpoint evaluation. Use fixtures and bounded saved-model checks first. Then freeze one balanced diagnostic checkpoint panel with common rules for every family, including previously slow examples. **This milestone requires no full training rerun.** Store v2 results in new directories and preserve all v1 failures/declines.
++
++Only after v2 is dependable should it be used for further quality comparisons. Baseline layer attribution can proceed independently; kernel rewrites should follow measured attribution. Connect4 rendering variants are useful regression/appearance tests but are secondary to this evaluation milestone and do not substitute for held-out game identities.
++
++### Paper writing alongside implementation
++
++Draft motivation, contribution alternatives, native software design, experimental protocol and limitations now. Keep current Connect4/Pong findings as development evidence with explicit source and evaluation versions. Add final results after the method/protocol is frozen; do not retrofit the primary claim to a favorable test checkpoint. Refresh related work before making a novelty/SOTA claim. A useful software artifact and a scientifically novel search result are separate requirements; neither guarantees the other.
++
+ ## Action checklist
+ 
+ Additional potential software contribution: [native CNN constructor and per-environment frontier search](CNN_CONSTRUCTOR_PLAN.md). This can complement the fixed-CNN result; its search-budget comparisons and practical-delivery requirements are distinct from claiming that one architecture generalizes everywhere.
+ 
+ 1. **Confirm current results — completed:** all 30 jobs and 390 evaluations passed; checkpoint/config/source audit and full paired-seed frontier analysis are in [CONFIRMATION_RESULTS.md](CONFIRMATION_RESULTS.md). Our models occupy the low-cost mean frontier and IMPALA the high-performance region; the quality-versus-Nature score advantage remains uncertain with five seeds.
+ 2. **Establish a defensible advantage over Nature — open:** substantially reduce uncertainty using the thesis-defense standard below, and separate controlled identical-learner comparisons from comparable per-family tuning allowances. Completing item 1 did not establish this claim.
+-3. **Test architecture generalization:** select on development environments and freeze before retraining on untouched game identities; see generalization and environment strategy.
++3. **Test architecture generalization — partial development evidence:** the Connect4-selected architecture has been retrained on Pong, with strong recipe dependence and no demonstrated advantage over Nature. Untouched-game confirmation remains open; see generalization and environment strategy.
+ 4. **Integrate an established external benchmark:** proposed original Procgen; its native integration remains unverified here.
+ 5. **Deliver a usable native PufferLib component:** standard configuration, portable pixel contract, reproducible build/train/eval commands; see practical deliverable.
+ 6. **Report the whole tradeoff:** all curves, uncertainty, failures, search cost, and tasks where a method loses; see measurement and analysis requirements.
+@@ -39,7 +77,7 @@ The paper may claim a reliable improvement in a useful, explicitly bounded porti
+ | Claim | Required evidence | Current status |
+ |---|---|---|
+ | Better observed Connect4 time/score tradeoff | Matched protocol, whole curves, repeated independent training seeds | Five-seed confirmation complete: low-cost mean advantage for ours; broad score uncertainty; IMPALA leads sample efficiency/high scores |
+-| Encoder architecture generalizes across environments | Shape selected on development tasks, frozen before training on unseen tasks, fresh weights per task | Not tested |
++| Encoder architecture generalizes across environments | Shape selected on development tasks, frozen before training on unseen tasks, fresh weights per task | Connect4-selected shape retrained on Pong; recipe dependence and seed failures measured, advantage unproven; further untouched-task confirmation open |
+ | Efficient practical PufferLib component | Standard configuration/build path, documented pixel contract, multiple actual environments, reproducible commands | Native trainer/encoders work for Connect4CNN; input assumptions and temporary sweep glue remain |
+ | Faster implementation of a given architecture | Same model/math/precision/data across implementations with numerical checks and realistic timing | Native correctness checks exist; controlled implementation-speed comparison not established |
+ | Optimal encoder/recurrent-core allocation | Separate controlled sweep of both components across visual and memory demands | Not tested; current core is fixed at 128 |
+@@ -84,7 +122,7 @@ Rotate/interleave model order while running serially on an otherwise available G
+ 
+ ## Environment strategy
+ 
+-September 14 implementation: user authorized adding native **PongCNN**, then its fixed-architecture training-hyperparameter search. See [PongCNN](../ocean/pongcnn/README.md) and [search protocol](PONG_HYPER_SWEEP.md). It is a development/integration task, not ALE Pong or an untouched test game. CPU transition/pixel checks, five-model native GPU train/reload, and eight-trial online search canary pass. The common-recipe quality pilot scored zero after 13.312M decisions; learning transfer is not established. State/pixel information differences and Pong's point-fraction metric are documented. This does not replace the proposed external benchmark.
++September 14–15 implementation: native **PongCNN**, fixed-architecture learner search and the 5090 two-recipe/five-seed replication are complete. See [PongCNN](../ocean/pongcnn/README.md), [search protocol](PONG_HYPER_SWEEP.md), [replication](PONG_5090_RESULTS.md) and [evaluation audit](PONG_EVALUATION_AUDIT_RESULTS.md). The initial common-recipe quality pilot scored zero after 13.312M decisions; subsequent learning depends strongly on recipe and seed, and eight replication evaluations remain incomplete. Pong is a development/integration task, not ALE Pong or a pristine test game. State/pixel information differences and the point-fraction metric remain documented. This does not replace the proposed external benchmark.
+ 
+ **Stage A — Connect4 confirmation:** validate the measurement pipeline, train the frozen panel across fresh seeds, and reproduce the full-frontier analysis with equal checkpoint density. Preserve the existing sweep as development evidence. Keep the stock state baseline as a separately tuned practical reference; a pixel/state comparison alone is not a CNN-architecture comparison.
+ 
+diff --git a/research/results/connect4cnn/README.md b/research/results/connect4cnn/README.md
+index d3aff3e2..b7f2ec3c 100644
+--- a/research/results/connect4cnn/README.md
++++ b/research/results/connect4cnn/README.md
+@@ -4,6 +4,7 @@ These small files are copies of the original local `build/connect4cnn/<run>/` ar
+ 
+ | Run | Purpose |
+ |---|---|
++| [compare.vtew3n12](compare.vtew3n12/RECEIVED.md) | RTX 5090 four-model/52-evaluation receipt audit and complete single-seed time/step frontiers; original `.log` names preserved by scoped ignore exception |
+ | [confirm.ol9tcj5k](confirm.ol9tcj5k/analysis/REPORT.md) | Complete frozen five-seed confirmation: 30 jobs, 390 evaluations, audited checkpoints/configs, full uncertain time/step frontiers |
+ | [sweep.wstneiqe](sweep.wstneiqe/REPORT.md) | Representation selector native canary: three IDs, fixed CNN, finite checkpoints; all-ten-preset CPU fixtures/parity receipts |
+ | [confirm-canary._0y3shor](confirm-canary._0y3shor/REPORT.md) | Frozen confirmation plumbing: all six models, 24 evaluations, six online uploads passed |
+diff --git a/src/pufferl.cu b/src/pufferl.cu
+index bcef14b7..a210179a 100644
+--- a/src/pufferl.cu
++++ b/src/pufferl.cu
+@@ -2396,7 +2396,6 @@ void log_util(PuffeRL* p, Dict* out) {
+ void trainer_eval_log(PuffeRL* p, Dict* out) {
+     p->last_log_time = wall_clock();
+     p->last_log_step = p->global_step;
+-    log_util(p, out);
+     vec_log(p->vec, out, 0);
+ }
+ 
+@@ -2856,6 +2855,9 @@ static EvalResult eval_loop(Ini* ini, PuffeRL* p, int mode, int verbose,
+         dict_clear(&wipe);
+     }
+     double last_dash = 0;
++    double started = wall_clock();
++    double last_progress = started;
++    long start_step = p->global_step;
+     while (true) {
+         if (render) {
+             puf_render(p->vec->envs);
+@@ -2878,6 +2880,8 @@ static EvalResult eval_loop(Ini* ini, PuffeRL* p, int mode, int verbose,
+         Dict* show = board ? board : &el;
+         double now = wall_clock();
+         if (!render && verbose && now - last_dash >= 0.6) {
++            // Utilization is for display, not per-rollout evaluation scoring.
++            if (!board) log_util(p, show);
+             puf_dashboard_print(ini, p, show, board ? epoch : 0);
+             last_dash = now;
+         }
+@@ -2886,11 +2890,18 @@ static EvalResult eval_loop(Ini* ini, PuffeRL* p, int mode, int verbose,
+             continue;
+         }
+         long n = dict_get(&el, "env/n");
++        if (verbose && now - last_progress >= 5.0) {
++            printf("CUDA_EVAL_PROGRESS steps=%ld games=%ld requested=%ld elapsed=%.3f\n",
++                p->global_step - start_step, n, eval_episodes, now - started);
++            fflush(stdout);
++            last_progress = now;
++        }
+         if (n < eval_episodes) {
+             dict_clear(&el);
+             continue;
+         }
+         if (verbose) {
++            if (!board) log_util(p, show);
+             puf_dashboard_print(ini, p, show, board ? epoch : 0);
+         }
+         DictItem* m = dict_find(&el, metric_key);

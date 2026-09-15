@@ -1,0 +1,5 @@
+99ca283a2474be08d621292b79c7285593cd3a4f5059b5cd7b952c4dab2d44dc  build/connect4cnn/runtime-5090.sh
+a0b9e41a1450baa994fe7f81eef9623160afa7f32b15f48a027fb67f2fecb14d  build/connect4cnn/validate-5090.sh
+6c887af380f99a088be322287a642ab9b0537b325d200d84e1af60d9a6dceb2f  build/connect4cnn/run-full-5090.sh
+8c3267c76f44f3b0e3b39748f53dd14349fb8d2e37a036979c6b33d73c5ec650  build/connect4cnn/audit-5090.py
+66d9a204160c118fee315b7293ad13da9c1c415360e9613d32074ac34f192956  build/connect4cnn/finalize-5090.sh

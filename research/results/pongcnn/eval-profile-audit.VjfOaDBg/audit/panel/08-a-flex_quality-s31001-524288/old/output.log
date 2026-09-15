@@ -1,0 +1,125 @@
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0               🐡 GPU:   4%   VRAM:   3.1/31G    RAM:  0.5G     │
+│                                                                              │
+│ Env             pongcnn    Evaluate        0ms   0%    Losses                │
+│ Params           160.2K      Model         0ms   0%    policy                │
+│ Steps              2.0K      Env           0ms   0%    value                 │
+│ SPS                 0.0      Copy          0ms   0%    entropy               │
+│ Epoch                 0    Train           0ms   0%    old_kl                │
+│ Uptime             53ms      Model         0ms   0%    kl                    │
+│ To go               0ms      Misc          0ms   0%    clipfrac              │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0              🐡  GPU:   4%   VRAM:   3.1/31G    RAM:  0.5G     │
+│                                                                              │
+│ Env             pongcnn    Evaluate        0ms   0%    Losses                │
+│ Params           160.2K      Model         0ms   0%    policy                │
+│ Steps            454.7K      Env           0ms   0%    value                 │
+│ SPS                 0.0      Copy          0ms   0%    entropy               │
+│ Epoch                 0    Train           0ms   0%    old_kl                │
+│ Uptime            653ms      Model         0ms   0%    kl                    │
+│ To go               0ms      Misc          0ms   0%    clipfrac              │
+│                                                                              │
+│ perf                          0.163   score                       -16.649    │
+│ episode_return              -16.649   episode_length              223.421    │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0             🐡   GPU:  71%   VRAM:   3.1/31G    RAM:  0.5G     │
+│                                                                              │
+│ Env             pongcnn    Evaluate        0ms   0%    Losses                │
+│ Params           160.2K      Model         0ms   0%    policy                │
+│ Steps            899.1K      Env           0ms   0%    value                 │
+│ SPS                 0.0      Copy          0ms   0%    entropy               │
+│ Epoch                 0    Train           0ms   0%    old_kl                │
+│ Uptime         1s 255ms      Model         0ms   0%    kl                    │
+│ To go               0ms      Misc          0ms   0%    clipfrac              │
+│                                                                              │
+│ perf                          0.163   score                       -16.661    │
+│ episode_return              -16.661   episode_length              219.874    │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0            🐡    GPU:  71%   VRAM:   3.1/31G    RAM:  0.5G     │
+│                                                                              │
+│ Env             pongcnn    Evaluate        0ms   0%    Losses                │
+│ Params           160.2K      Model         0ms   0%    policy                │
+│ Steps              1.3M      Env           0ms   0%    value                 │
+│ SPS                 0.0      Copy          0ms   0%    entropy               │
+│ Epoch                 0    Train           0ms   0%    old_kl                │
+│ Uptime         1s 856ms      Model         0ms   0%    kl                    │
+│ To go               0ms      Misc          0ms   0%    clipfrac              │
+│                                                                              │
+│ perf                          0.166   score                       -16.558    │
+│ episode_return              -16.558   episode_length              223.974    │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0           🐡     GPU:  71%   VRAM:   3.1/31G    RAM:  0.5G     │
+│                                                                              │
+│ Env             pongcnn    Evaluate        0ms   0%    Losses                │
+│ Params           160.2K      Model         0ms   0%    policy                │
+│ Steps              1.8M      Env           0ms   0%    value                 │
+│ SPS                 0.0      Copy          0ms   0%    entropy               │
+│ Epoch                 0    Train           0ms   0%    old_kl                │
+│ Uptime         2s 457ms      Model         0ms   0%    kl                    │
+│ To go               0ms      Misc          0ms   0%    clipfrac              │
+│                                                                              │
+│ perf                          0.168   score                       -16.494    │
+│ episode_return              -16.494   episode_length              227.973    │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0          🐡      GPU:  72%   VRAM:   3.1/31G    RAM:  0.5G     │
+│                                                                              │
+│ Env             pongcnn    Evaluate        0ms   0%    Losses                │
+│ Params           160.2K      Model         0ms   0%    policy                │
+│ Steps              2.2M      Env           0ms   0%    value                 │
+│ SPS                 0.0      Copy          0ms   0%    entropy               │
+│ Epoch                 0    Train           0ms   0%    old_kl                │
+│ Uptime         3s 057ms      Model         0ms   0%    kl                    │
+│ To go               0ms      Misc          0ms   0%    clipfrac              │
+│                                                                              │
+│ perf                          0.168   score                       -16.514    │
+│ episode_return              -16.514   episode_length              230.107    │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0         🐡       GPU:  72%   VRAM:   3.1/31G    RAM:  0.5G     │
+│                                                                              │
+│ Env             pongcnn    Evaluate        0ms   0%    Losses                │
+│ Params           160.2K      Model         0ms   0%    policy                │
+│ Steps              2.7M      Env           0ms   0%    value                 │
+│ SPS                 0.0      Copy          0ms   0%    entropy               │
+│ Epoch                 0    Train           0ms   0%    old_kl                │
+│ Uptime         3s 659ms      Model         0ms   0%    kl                    │
+│ To go               0ms      Misc          0ms   0%    clipfrac              │
+│                                                                              │
+│ perf                          0.172   score                       -16.409    │
+│ episode_return              -16.409   episode_length              226.958    │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0        🐡        GPU:  71%   VRAM:   3.1/31G    RAM:  0.5G     │
+│                                                                              │
+│ Env             pongcnn    Evaluate        0ms   0%    Losses                │
+│ Params           160.2K      Model         0ms   0%    policy                │
+│ Steps              3.1M      Env           0ms   0%    value                 │
+│ SPS                 0.0      Copy          0ms   0%    entropy               │
+│ Epoch                 0    Train           0ms   0%    old_kl                │
+│ Uptime         4s 259ms      Model         0ms   0%    kl                    │
+│ To go               0ms      Misc          0ms   0%    clipfrac              │
+│                                                                              │
+│ perf                          0.173   score                       -16.387    │
+│ episode_return              -16.387   episode_length              228.149    │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0       🐡         GPU:  71%   VRAM:   3.1/31G    RAM:  0.5G     │
+│                                                                              │
+│ Env             pongcnn    Evaluate        0ms   0%    Losses                │
+│ Params           160.2K      Model         0ms   0%    policy                │
+│ Steps              3.3M      Env           0ms   0%    value                 │
+│ SPS                 0.0      Copy          0ms   0%    entropy               │
+│ Epoch                 0    Train           0ms   0%    old_kl                │
+│ Uptime         4s 559ms      Model         0ms   0%    kl                    │
+│ To go               0ms      Misc          0ms   0%    clipfrac              │
+│                                                                              │
+│ perf                          0.174   score                       -16.334    │
+│ episode_return              -16.334   episode_length              228.613    │
+╰──────────────────────────────────────────────────────────────────────────────╯
+CUDA_EVAL env=pongcnn score=-16.333984 perf=0.174224 games=512 params=160224

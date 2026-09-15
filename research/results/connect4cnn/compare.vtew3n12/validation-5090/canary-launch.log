@@ -1,0 +1,6 @@
+Comparison: /home/keith/Git/ml/cnn-5090/build/connect4cnn/compare.bfi2gjs_
+flex_quality seed=9173: 0.00% wins, 0.815s training wall, 80,425 process SPS
+nature_cnn seed=9173: 0.00% wins, 0.765s training wall, 85,691 process SPS
+impala_cnn seed=9173: 0.00% wins, 2.818s training wall, 23,256 process SPS
+impoola_cnn seed=9173: 0.00% wins, 2.818s training wall, 23,258 process SPS
+Report: /home/keith/Git/ml/cnn-5090/build/connect4cnn/compare.bfi2gjs_/REPORT.md

@@ -1,0 +1,50 @@
+diff --git a/src/pufferl.cu b/src/pufferl.cu
+index bcef14b7..a210179a 100644
+--- a/src/pufferl.cu
++++ b/src/pufferl.cu
+@@ -2396,7 +2396,6 @@ void log_util(PuffeRL* p, Dict* out) {
+ void trainer_eval_log(PuffeRL* p, Dict* out) {
+     p->last_log_time = wall_clock();
+     p->last_log_step = p->global_step;
+-    log_util(p, out);
+     vec_log(p->vec, out, 0);
+ }
+ 
+@@ -2856,6 +2855,9 @@ static EvalResult eval_loop(Ini* ini, PuffeRL* p, int mode, int verbose,
+         dict_clear(&wipe);
+     }
+     double last_dash = 0;
++    double started = wall_clock();
++    double last_progress = started;
++    long start_step = p->global_step;
+     while (true) {
+         if (render) {
+             puf_render(p->vec->envs);
+@@ -2878,6 +2880,8 @@ static EvalResult eval_loop(Ini* ini, PuffeRL* p, int mode, int verbose,
+         Dict* show = board ? board : &el;
+         double now = wall_clock();
+         if (!render && verbose && now - last_dash >= 0.6) {
++            // Utilization is for display, not per-rollout evaluation scoring.
++            if (!board) log_util(p, show);
+             puf_dashboard_print(ini, p, show, board ? epoch : 0);
+             last_dash = now;
+         }
+@@ -2886,11 +2890,18 @@ static EvalResult eval_loop(Ini* ini, PuffeRL* p, int mode, int verbose,
+             continue;
+         }
+         long n = dict_get(&el, "env/n");
++        if (verbose && now - last_progress >= 5.0) {
++            printf("CUDA_EVAL_PROGRESS steps=%ld games=%ld requested=%ld elapsed=%.3f\n",
++                p->global_step - start_step, n, eval_episodes, now - started);
++            fflush(stdout);
++            last_progress = now;
++        }
+         if (n < eval_episodes) {
+             dict_clear(&el);
+             continue;
+         }
+         if (verbose) {
++            if (!board) log_util(p, show);
+             puf_dashboard_print(ini, p, show, board ? epoch : 0);
+         }
+         DictItem* m = dict_find(&el, metric_key);

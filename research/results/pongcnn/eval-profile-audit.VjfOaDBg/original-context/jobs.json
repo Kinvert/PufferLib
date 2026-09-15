@@ -1,0 +1,802 @@
+[
+  {
+    "id": "a-flex_quality-s31001",
+    "recipe": "a",
+    "variant": "flex_quality",
+    "seed": 31001,
+    "eval_seed": 41001,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 9.44,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "b-flex_quality-s31001",
+    "recipe": "b",
+    "variant": "flex_quality",
+    "seed": 31001,
+    "eval_seed": 41001,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 13.9,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "b-impoola_cnn-s31001",
+    "recipe": "b",
+    "variant": "impoola_cnn",
+    "seed": 31001,
+    "eval_seed": 41001,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 348.96,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "a-nature_cnn-s31001",
+    "recipe": "a",
+    "variant": "nature_cnn",
+    "seed": 31001,
+    "eval_seed": 41001,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 9.81,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "a-impoola_cnn-s31001",
+    "recipe": "a",
+    "variant": "impoola_cnn",
+    "seed": 31001,
+    "eval_seed": 41001,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 139.57,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "b-nature_cnn-s31001",
+    "recipe": "b",
+    "variant": "nature_cnn",
+    "seed": 31001,
+    "eval_seed": 41001,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 16.73,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "b-impala_cnn-s31001",
+    "recipe": "b",
+    "variant": "impala_cnn",
+    "seed": 31001,
+    "eval_seed": 41001,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 365.49,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "a-impala_cnn-s31001",
+    "recipe": "a",
+    "variant": "impala_cnn",
+    "seed": 31001,
+    "eval_seed": 41001,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 137.71,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "b-flex_quality-s31002",
+    "recipe": "b",
+    "variant": "flex_quality",
+    "seed": 31002,
+    "eval_seed": 41002,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 13.51,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "b-impoola_cnn-s31002",
+    "recipe": "b",
+    "variant": "impoola_cnn",
+    "seed": 31002,
+    "eval_seed": 41002,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 332.61,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "a-nature_cnn-s31002",
+    "recipe": "a",
+    "variant": "nature_cnn",
+    "seed": 31002,
+    "eval_seed": 41002,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 9.38,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "a-impoola_cnn-s31002",
+    "recipe": "a",
+    "variant": "impoola_cnn",
+    "seed": 31002,
+    "eval_seed": 41002,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 132.2,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "b-nature_cnn-s31002",
+    "recipe": "b",
+    "variant": "nature_cnn",
+    "seed": 31002,
+    "eval_seed": 41002,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 14.41,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "b-impala_cnn-s31002",
+    "recipe": "b",
+    "variant": "impala_cnn",
+    "seed": 31002,
+    "eval_seed": 41002,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 334.6,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "a-impala_cnn-s31002",
+    "recipe": "a",
+    "variant": "impala_cnn",
+    "seed": 31002,
+    "eval_seed": 41002,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 131.07,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "a-flex_quality-s31002",
+    "recipe": "a",
+    "variant": "flex_quality",
+    "seed": 31002,
+    "eval_seed": 41002,
+    "status": "completed_with_eval_failures",
+    "training_status": "ok",
+    "train_process_wall_s": 8.55,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "timeout",
+      "timeout",
+      "timeout",
+      "timeout"
+    ]
+  },
+  {
+    "id": "b-impoola_cnn-s31003",
+    "recipe": "b",
+    "variant": "impoola_cnn",
+    "seed": 31003,
+    "eval_seed": 41003,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 331.98,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "a-nature_cnn-s31003",
+    "recipe": "a",
+    "variant": "nature_cnn",
+    "seed": 31003,
+    "eval_seed": 41003,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 9.21,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "a-impoola_cnn-s31003",
+    "recipe": "a",
+    "variant": "impoola_cnn",
+    "seed": 31003,
+    "eval_seed": 41003,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 130.57,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "b-nature_cnn-s31003",
+    "recipe": "b",
+    "variant": "nature_cnn",
+    "seed": 31003,
+    "eval_seed": 41003,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 14.3,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "b-impala_cnn-s31003",
+    "recipe": "b",
+    "variant": "impala_cnn",
+    "seed": 31003,
+    "eval_seed": 41003,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 330.63,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "a-impala_cnn-s31003",
+    "recipe": "a",
+    "variant": "impala_cnn",
+    "seed": 31003,
+    "eval_seed": 41003,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 130.28,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "a-flex_quality-s31003",
+    "recipe": "a",
+    "variant": "flex_quality",
+    "seed": 31003,
+    "eval_seed": 41003,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 8.5,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "b-flex_quality-s31003",
+    "recipe": "b",
+    "variant": "flex_quality",
+    "seed": 31003,
+    "eval_seed": 41003,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 13.38,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "a-nature_cnn-s31004",
+    "recipe": "a",
+    "variant": "nature_cnn",
+    "seed": 31004,
+    "eval_seed": 41004,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 9.17,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "a-impoola_cnn-s31004",
+    "recipe": "a",
+    "variant": "impoola_cnn",
+    "seed": 31004,
+    "eval_seed": 41004,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 130.08,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "b-nature_cnn-s31004",
+    "recipe": "b",
+    "variant": "nature_cnn",
+    "seed": 31004,
+    "eval_seed": 41004,
+    "status": "completed_with_eval_failures",
+    "training_status": "ok",
+    "train_process_wall_s": 14.25,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "timeout"
+    ]
+  },
+  {
+    "id": "b-impala_cnn-s31004",
+    "recipe": "b",
+    "variant": "impala_cnn",
+    "seed": 31004,
+    "eval_seed": 41004,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 330.68,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "a-impala_cnn-s31004",
+    "recipe": "a",
+    "variant": "impala_cnn",
+    "seed": 31004,
+    "eval_seed": 41004,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 130.19,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "a-flex_quality-s31004",
+    "recipe": "a",
+    "variant": "flex_quality",
+    "seed": 31004,
+    "eval_seed": 41004,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 8.51,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "b-flex_quality-s31004",
+    "recipe": "b",
+    "variant": "flex_quality",
+    "seed": 31004,
+    "eval_seed": 41004,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 13.4,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "b-impoola_cnn-s31004",
+    "recipe": "b",
+    "variant": "impoola_cnn",
+    "seed": 31004,
+    "eval_seed": 41004,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 331.65,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "a-impoola_cnn-s31005",
+    "recipe": "a",
+    "variant": "impoola_cnn",
+    "seed": 31005,
+    "eval_seed": 41005,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 130.62,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "b-nature_cnn-s31005",
+    "recipe": "b",
+    "variant": "nature_cnn",
+    "seed": 31005,
+    "eval_seed": 41005,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 14.28,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "b-impala_cnn-s31005",
+    "recipe": "b",
+    "variant": "impala_cnn",
+    "seed": 31005,
+    "eval_seed": 41005,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 330.95,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "a-impala_cnn-s31005",
+    "recipe": "a",
+    "variant": "impala_cnn",
+    "seed": 31005,
+    "eval_seed": 41005,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 130.34,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "a-flex_quality-s31005",
+    "recipe": "a",
+    "variant": "flex_quality",
+    "seed": 31005,
+    "eval_seed": 41005,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 8.47,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "b-flex_quality-s31005",
+    "recipe": "b",
+    "variant": "flex_quality",
+    "seed": 31005,
+    "eval_seed": 41005,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 13.4,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "b-impoola_cnn-s31005",
+    "recipe": "b",
+    "variant": "impoola_cnn",
+    "seed": 31005,
+    "eval_seed": 41005,
+    "status": "ok",
+    "training_status": "ok",
+    "train_process_wall_s": 331.9,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok"
+    ]
+  },
+  {
+    "id": "a-nature_cnn-s31005",
+    "recipe": "a",
+    "variant": "nature_cnn",
+    "seed": 31005,
+    "eval_seed": 41005,
+    "status": "completed_with_eval_failures",
+    "training_status": "ok",
+    "train_process_wall_s": 9.23,
+    "evaluation_statuses": [
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "ok",
+      "timeout",
+      "timeout",
+      "timeout"
+    ]
+  }
+]

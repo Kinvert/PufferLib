@@ -1,0 +1,705 @@
+1789490988.792781793
+3 %, 0 %, 2075 MiB, 89.51 W
+    PID    PPID %CPU     TIME   RSS STAT COMMAND
+      1       0  0.0 00:00:22 15020 Ss   systemd
+      2       0  0.0 00:00:00     0 S    kthreadd
+      3       2  0.0 00:00:00     0 S    pool_workqueue_release
+      4       2  0.0 00:00:00     0 I<   kworker/R-rcu_gp
+      5       2  0.0 00:00:00     0 I<   kworker/R-sync_wq
+      6       2  0.0 00:00:00     0 I<   kworker/R-kvfree_rcu_reclaim
+      7       2  0.0 00:00:00     0 I<   kworker/R-slub_flushwq
+      8       2  0.0 00:00:00     0 I<   kworker/R-netns
+     11       2  0.0 00:00:00     0 I<   kworker/0:0H-events_highpri
+     13       2  0.0 00:00:00     0 I<   kworker/R-mm_percpu_wq
+     14       2  0.0 00:00:06     0 S    ksoftirqd/0
+     15       2  0.0 00:02:45     0 I    rcu_preempt
+     16       2  0.0 00:00:00     0 S    rcu_exp_par_gp_kthread_worker/1
+     17       2  0.0 00:00:00     0 S    rcu_exp_gp_kthread_worker
+     18       2  0.0 00:00:14     0 S    migration/0
+     19       2  0.0 00:00:00     0 S    idle_inject/0
+     20       2  0.0 00:00:00     0 S    cpuhp/0
+     21       2  0.0 00:00:00     0 S    cpuhp/1
+     22       2  0.0 00:00:00     0 S    idle_inject/1
+     23       2  0.0 00:00:16     0 S    migration/1
+     24       2  0.0 00:00:01     0 S    ksoftirqd/1
+     26       2  0.0 00:00:00     0 I<   kworker/1:0H-events_highpri
+     27       2  0.0 00:00:00     0 S    cpuhp/2
+     28       2  0.0 00:00:00     0 S    idle_inject/2
+     29       2  0.0 00:00:15     0 S    migration/2
+     30       2  0.0 00:00:00     0 S    ksoftirqd/2
+     32       2  0.0 00:00:00     0 I<   kworker/2:0H-events_highpri
+     33       2  0.0 00:00:00     0 S    cpuhp/3
+     34       2  0.0 00:00:00     0 S    idle_inject/3
+     35       2  0.0 00:00:12     0 S    migration/3
+     36       2  0.0 00:00:00     0 S    ksoftirqd/3
+     38       2  0.0 00:00:00     0 I<   kworker/3:0H-events_highpri
+     39       2  0.0 00:00:00     0 S    cpuhp/4
+     40       2  0.0 00:00:00     0 S    idle_inject/4
+     41       2  0.0 00:00:10     0 S    migration/4
+     42       2  0.0 00:00:00     0 S    ksoftirqd/4
+     44       2  0.0 00:00:00     0 I<   kworker/4:0H-events_highpri
+     45       2  0.0 00:00:00     0 S    cpuhp/5
+     46       2  0.0 00:00:00     0 S    idle_inject/5
+     47       2  0.0 00:00:13     0 S    migration/5
+     48       2  0.0 00:00:00     0 S    ksoftirqd/5
+     50       2  0.0 00:00:00     0 I<   kworker/5:0H-events_highpri
+     51       2  0.0 00:00:00     0 S    cpuhp/6
+     52       2  0.0 00:00:00     0 S    idle_inject/6
+     53       2  0.0 00:00:12     0 S    migration/6
+     54       2  0.0 00:00:00     0 S    ksoftirqd/6
+     56       2  0.0 00:00:00     0 I<   kworker/6:0H-events_highpri
+     57       2  0.0 00:00:00     0 S    cpuhp/7
+     58       2  0.0 00:00:00     0 S    idle_inject/7
+     59       2  0.0 00:00:09     0 S    migration/7
+     60       2  0.0 00:00:00     0 S    ksoftirqd/7
+     62       2  0.0 00:00:00     0 I<   kworker/7:0H-events_highpri
+     63       2  0.0 00:00:00     0 S    cpuhp/8
+     64       2  0.0 00:00:00     0 S    idle_inject/8
+     65       2  0.0 00:00:36     0 S    migration/8
+     66       2  0.0 00:00:00     0 S    ksoftirqd/8
+     68       2  0.0 00:00:00     0 I<   kworker/8:0H-events_highpri
+     69       2  0.0 00:00:00     0 S    cpuhp/9
+     70       2  0.0 00:00:00     0 S    idle_inject/9
+     71       2  0.0 00:00:13     0 S    migration/9
+     72       2  0.0 00:00:00     0 S    ksoftirqd/9
+     74       2  0.0 00:00:00     0 I<   kworker/9:0H-events_highpri
+     75       2  0.0 00:00:00     0 S    cpuhp/10
+     76       2  0.0 00:00:00     0 S    idle_inject/10
+     77       2  0.0 00:00:38     0 S    migration/10
+     78       2  0.0 00:00:00     0 S    ksoftirqd/10
+     80       2  0.0 00:00:00     0 I<   kworker/10:0H-events_highpri
+     81       2  0.0 00:00:00     0 S    cpuhp/11
+     82       2  0.0 00:00:00     0 S    idle_inject/11
+     83       2  0.0 00:00:30     0 S    migration/11
+     84       2  0.0 00:00:00     0 S    ksoftirqd/11
+     86       2  0.0 00:00:00     0 I<   kworker/11:0H-events_highpri
+     87       2  0.0 00:00:00     0 S    cpuhp/12
+     88       2  0.0 00:00:00     0 S    idle_inject/12
+     89       2  0.0 00:00:11     0 S    migration/12
+     90       2  0.0 00:00:00     0 S    ksoftirqd/12
+     92       2  0.0 00:00:00     0 I<   kworker/12:0H-events_highpri
+     93       2  0.0 00:00:00     0 S    cpuhp/13
+     94       2  0.0 00:00:00     0 S    idle_inject/13
+     95       2  0.0 00:00:28     0 S    migration/13
+     96       2  0.0 00:00:00     0 S    ksoftirqd/13
+     98       2  0.0 00:00:00     0 I<   kworker/13:0H-events_highpri
+     99       2  0.0 00:00:00     0 S    cpuhp/14
+    100       2  0.0 00:00:00     0 S    idle_inject/14
+    101       2  0.0 00:00:40     0 S    migration/14
+    102       2  0.0 00:00:00     0 S    ksoftirqd/14
+    104       2  0.0 00:00:00     0 I<   kworker/14:0H-events_highpri
+    105       2  0.0 00:00:00     0 S    cpuhp/15
+    106       2  0.0 00:00:00     0 S    idle_inject/15
+    107       2  0.0 00:00:27     0 S    migration/15
+    108       2  0.0 00:00:00     0 S    ksoftirqd/15
+    110       2  0.0 00:00:00     0 I<   kworker/15:0H-events_highpri
+    111       2  0.0 00:00:00     0 S    cpuhp/16
+    112       2  0.0 00:00:00     0 S    idle_inject/16
+    113       2  0.0 00:00:05     0 S    migration/16
+    114       2  0.0 00:00:00     0 S    ksoftirqd/16
+    116       2  0.0 00:00:00     0 I<   kworker/16:0H-events_highpri
+    117       2  0.0 00:00:00     0 S    rcu_exp_par_gp_kthread_worker/2
+    118       2  0.0 00:00:00     0 S    cpuhp/17
+    119       2  0.0 00:00:00     0 S    idle_inject/17
+    120       2  0.0 00:00:03     0 S    migration/17
+    121       2  0.0 00:00:00     0 S    ksoftirqd/17
+    123       2  0.0 00:00:00     0 I<   kworker/17:0H-events_highpri
+    124       2  0.0 00:00:00     0 S    cpuhp/18
+    125       2  0.0 00:00:00     0 S    idle_inject/18
+    126       2  0.0 00:00:06     0 S    migration/18
+    127       2  0.0 00:00:00     0 S    ksoftirqd/18
+    129       2  0.0 00:00:00     0 I<   kworker/18:0H-events_highpri
+    130       2  0.0 00:00:00     0 S    cpuhp/19
+    131       2  0.0 00:00:00     0 S    idle_inject/19
+    132       2  0.0 00:00:04     0 S    migration/19
+    133       2  0.0 00:00:00     0 S    ksoftirqd/19
+    135       2  0.0 00:00:00     0 I<   kworker/19:0H-events_highpri
+    136       2  0.0 00:00:00     0 S    cpuhp/20
+    137       2  0.0 00:00:00     0 S    idle_inject/20
+    138       2  0.0 00:00:03     0 S    migration/20
+    139       2  0.0 00:00:00     0 S    ksoftirqd/20
+    141       2  0.0 00:00:00     0 I<   kworker/20:0H-events_highpri
+    142       2  0.0 00:00:00     0 S    cpuhp/21
+    143       2  0.0 00:00:00     0 S    idle_inject/21
+    144       2  0.0 00:00:07     0 S    migration/21
+    145       2  0.0 00:00:00     0 S    ksoftirqd/21
+    147       2  0.0 00:00:00     0 I<   kworker/21:0H-events_highpri
+    148       2  0.0 00:00:00     0 S    cpuhp/22
+    149       2  0.0 00:00:00     0 S    idle_inject/22
+    150       2  0.0 00:00:08     0 S    migration/22
+    151       2  0.0 00:00:00     0 S    ksoftirqd/22
+    153       2  0.0 00:00:00     0 I<   kworker/22:0H-events_highpri
+    154       2  0.0 00:00:00     0 S    cpuhp/23
+    155       2  0.0 00:00:00     0 S    idle_inject/23
+    156       2  0.0 00:00:09     0 S    migration/23
+    157       2  0.0 00:00:00     0 S    ksoftirqd/23
+    159       2  0.0 00:00:00     0 I<   kworker/23:0H-events_highpri
+    160       2  0.0 00:00:00     0 S    cpuhp/24
+    161       2  0.0 00:00:00     0 S    idle_inject/24
+    162       2  0.0 00:00:14     0 S    migration/24
+    163       2  0.0 00:00:00     0 S    ksoftirqd/24
+    165       2  0.0 00:00:00     0 I<   kworker/24:0H-events_highpri
+    166       2  0.0 00:00:00     0 S    cpuhp/25
+    167       2  0.0 00:00:00     0 S    idle_inject/25
+    168       2  0.0 00:00:01     0 S    migration/25
+    169       2  0.0 00:00:00     0 S    ksoftirqd/25
+    171       2  0.0 00:00:00     0 I<   kworker/25:0H-events_highpri
+    172       2  0.0 00:00:00     0 S    cpuhp/26
+    173       2  0.0 00:00:00     0 S    idle_inject/26
+    174       2  0.0 00:00:13     0 S    migration/26
+    175       2  0.0 00:00:01     0 S    ksoftirqd/26
+    177       2  0.0 00:00:00     0 I<   kworker/26:0H-events_highpri
+    178       2  0.0 00:00:00     0 S    cpuhp/27
+    179       2  0.0 00:00:00     0 S    idle_inject/27
+    180       2  0.0 00:00:08     0 S    migration/27
+    181       2  0.0 00:00:00     0 S    ksoftirqd/27
+    183       2  0.0 00:00:00     0 I<   kworker/27:0H-events_highpri
+    184       2  0.0 00:00:00     0 S    cpuhp/28
+    185       2  0.0 00:00:00     0 S    idle_inject/28
+    186       2  0.0 00:00:01     0 S    migration/28
+    187       2  0.0 00:00:00     0 S    ksoftirqd/28
+    189       2  0.0 00:00:00     0 I<   kworker/28:0H-events_highpri
+    190       2  0.0 00:00:00     0 S    cpuhp/29
+    191       2  0.0 00:00:00     0 S    idle_inject/29
+    192       2  0.0 00:00:06     0 S    migration/29
+    193       2  0.0 00:00:00     0 S    ksoftirqd/29
+    195       2  0.0 00:00:00     0 I<   kworker/29:0H-events_highpri
+    196       2  0.0 00:00:00     0 S    cpuhp/30
+    197       2  0.0 00:00:00     0 S    idle_inject/30
+    198       2  0.0 00:00:19     0 S    migration/30
+    199       2  0.0 00:00:00     0 S    ksoftirqd/30
+    201       2  0.0 00:00:00     0 I<   kworker/30:0H-events_highpri
+    202       2  0.0 00:00:00     0 S    cpuhp/31
+    203       2  0.0 00:00:00     0 S    idle_inject/31
+    204       2  0.0 00:00:16     0 S    migration/31
+    205       2  0.0 00:00:01     0 S    ksoftirqd/31
+    207       2  0.0 00:00:00     0 I<   kworker/31:0H-events_highpri
+    210       2  0.0 00:00:00     0 S    kdevtmpfs
+    211       2  0.0 00:00:00     0 I<   kworker/R-inet_frag_wq
+    212       2  0.0 00:00:00     0 I    rcu_tasks_kthread
+    213       2  0.0 00:00:00     0 I    rcu_tasks_rude_kthread
+    214       2  0.0 00:00:00     0 I    rcu_tasks_trace_kthread
+    215       2  0.0 00:00:00     0 S    kauditd
+    216       2  0.0 00:00:05     0 S    khungtaskd
+    218       2  0.0 00:00:00     0 S    oom_reaper
+    220       2  0.0 00:00:00     0 I<   kworker/R-writeback
+    221       2  0.0 00:07:15     0 S    kcompactd0
+    222       2  0.0 00:00:00     0 SN   ksmd
+    223       2  0.0 00:00:01     0 SN   khugepaged
+    224       2  0.0 00:00:00     0 I<   kworker/R-kblockd
+    225       2  0.0 00:00:00     0 I<   kworker/R-blkcg_punt_bio
+    226       2  0.0 00:00:00     0 I<   kworker/R-kintegrityd
+    227       2  0.0 00:00:00     0 S    irq/9-acpi
+    230       2  0.0 00:00:00     0 I<   kworker/R-tpm_dev_wq
+    231       2  0.0 00:00:00     0 I<   kworker/R-ata_sff
+    232       2  0.0 00:00:00     0 I<   kworker/R-md
+    233       2  0.0 00:00:00     0 I<   kworker/R-md_bitmap
+    234       2  0.0 00:00:00     0 I<   kworker/R-edac-poller
+    235       2  0.0 00:00:00     0 I    kworker/u128:1-ipv6_addrconf
+    236       2  0.0 00:00:00     0 I<   kworker/R-devfreq_wq
+    237       2  0.0 00:00:00     0 S    watchdogd
+    239       2  0.0 00:00:00     0 I<   kworker/R-quota_events_unbound
+    240       2  0.0 00:00:00     0 I<   kworker/0:1H-kblockd
+    241       2  0.0 00:00:00     0 S    irq/27-AMD-Vi
+    243       2  0.0 00:00:53     0 S    kswapd0
+    244       2  0.0 00:00:00     0 S    ecryptfs-kthread
+    245       2  0.0 00:00:00     0 I<   kworker/R-kthrotld
+    246       2  0.0 00:00:00     0 I<   kworker/u131:0-hci0
+    248       2  0.0 00:00:00     0 S    irq/51-pciehp
+    250       2  0.0 00:00:00     0 S    irq/52-pciehp
+    251       2  0.0 00:00:00     0 I<   kworker/R-acpi_thermal_pm
+    265       2  0.0 00:00:00     0 I<   kworker/R-mld
+    266       2  0.0 00:00:00     0 I<   kworker/26:1H-kblockd
+    267       2  0.0 00:00:00     0 I<   kworker/R-ipv6_addrconf
+    268       2  0.0 00:00:00     0 I<   kworker/R-kstrp
+    282       2  0.0 00:00:00     0 I<   kworker/u132:0
+    283       2  0.0 00:06:22     0 I<   kworker/u133:0-uvcvideo
+    296       2  0.0 00:00:00     0 I<   kworker/R-charger_manager
+    297       2  0.0 00:00:00     0 S    irq/28-ACPI:Event
+    298       2  0.0 00:00:00     0 S    irq/29-ACPI:Event
+    299       2  0.0 00:00:00     0 S    irq/30-ACPI:Event
+    324       2  0.0 00:00:02     0 I<   kworker/12:1H-kblockd
+    349       2  0.0 00:00:02     0 I<   kworker/9:1H-kblockd
+    351       2  0.0 00:00:00     0 I<   kworker/31:1H-kblockd
+    352       2  0.0 00:00:00     0 I<   kworker/27:1H-kblockd
+    353       2  0.0 00:00:00     0 I<   kworker/14:1H-kblockd
+    354       2  0.0 00:00:00     0 I<   kworker/8:1H-kblockd
+    355       2  0.0 00:00:01     0 I<   kworker/28:1H-kblockd
+    357       2  0.0 00:00:01     0 I<   kworker/10:1H-kblockd
+    358       2  0.0 00:00:00     0 I<   kworker/15:1H-kblockd
+    360       2  0.0 00:00:01     0 I<   kworker/29:1H-kblockd
+    363       2  0.0 00:00:00     0 I<   kworker/18:1H-kblockd
+    371       2  0.0 00:00:00     0 I<   kworker/1:1H-kblockd
+    380       2  0.0 00:00:00     0 I<   kworker/22:1H-kblockd
+    387       2  0.0 00:00:00     0 I<   kworker/11:1H-kblockd
+    388       2  0.0 00:00:01     0 I<   kworker/25:1H-kblockd
+    389       2  0.0 00:00:00     0 I<   kworker/30:1H-kblockd
+    391       2  0.0 00:00:01     0 I<   kworker/13:1H-kblockd
+    392       2  0.0 00:00:00     0 I<   kworker/24:1H-kblockd
+    393       2  0.0 00:00:00     0 I<   kworker/16:1H-kblockd
+    394       2  0.0 00:00:00     0 I<   kworker/4:1H-kblockd
+    396       2  0.0 00:00:00     0 I<   kworker/5:1H-kblockd
+    399       2  0.0 00:00:00     0 I<   kworker/17:1H-kblockd
+    400       2  0.0 00:00:00     0 I<   kworker/19:1H-kblockd
+    404       2  0.0 00:00:00     0 I<   kworker/21:1H-kblockd
+    405       2  0.0 00:00:00     0 I<   kworker/20:1H-kblockd
+    412       2  0.0 00:00:00     0 I<   kworker/3:1H-kblockd
+    413       2  0.0 00:00:00     0 I<   kworker/23:1H-kblockd
+    414       2  0.0 00:00:00     0 I<   kworker/6:1H-kblockd
+    415       2  0.0 00:00:00     0 I<   kworker/2:1H-kblockd
+    420       2  0.0 00:00:00     0 S    scsi_eh_0
+    422       2  0.0 00:00:00     0 I<   kworker/R-scsi_tmf_0
+    423       2  0.0 00:00:00     0 S    scsi_eh_1
+    425       2  0.0 00:00:00     0 I<   kworker/R-scsi_tmf_1
+    426       2  0.0 00:00:00     0 S    scsi_eh_2
+    427       2  0.0 00:00:00     0 I<   kworker/R-scsi_tmf_2
+    428       2  0.0 00:00:00     0 S    scsi_eh_3
+    430       2  0.0 00:00:00     0 I<   kworker/R-scsi_tmf_3
+    431       2  0.0 00:00:00     0 S    scsi_eh_4
+    432       2  0.0 00:00:00     0 I<   kworker/R-scsi_tmf_4
+    433       2  0.0 00:00:00     0 S    scsi_eh_5
+    435       2  0.0 00:00:00     0 I<   kworker/R-scsi_tmf_5
+    445       2  0.0 00:00:00     0 S    scsi_eh_6
+    447       2  0.0 00:00:00     0 I<   kworker/R-scsi_tmf_6
+    452       2  0.0 00:00:00     0 S    scsi_eh_7
+    453       2  0.0 00:00:00     0 I<   kworker/R-scsi_tmf_7
+    454       2  0.0 00:00:00     0 S    scsi_eh_8
+    455       2  0.0 00:00:00     0 I<   kworker/R-scsi_tmf_8
+    456       2  0.0 00:00:00     0 S    scsi_eh_9
+    457       2  0.0 00:00:00     0 I<   kworker/R-scsi_tmf_9
+    459       2  0.0 00:00:00     0 S    scsi_eh_10
+    460       2  0.0 00:00:00     0 I<   kworker/R-scsi_tmf_10
+    461       2  0.0 00:00:00     0 S    scsi_eh_11
+    463       2  0.0 00:00:00     0 I<   kworker/R-scsi_tmf_11
+    476       2  0.0 00:00:00     0 I<   kworker/R-nvme-wq
+    477       2  0.0 00:00:00     0 I<   kworker/R-nvme-reset-wq
+    478       2  0.0 00:00:00     0 I<   kworker/R-nvme-delete-wq
+    479       2  0.0 00:00:00     0 I<   kworker/R-nvme-auth-wq
+    542       2  0.0 00:00:40     0 S    jbd2/nvme0n1p2-8
+    543       2  0.0 00:00:00     0 I<   kworker/R-ext4-rsv-conversion
+    549       2  0.0 00:00:00     0 I<   kworker/7:1H-kblockd
+    599       1  0.0 00:01:05 75600 S<s  systemd-journal
+    661       1  0.0 00:00:00  8852 Ss   systemd-udevd
+    714       2  0.0 00:00:00     0 S    psimon
+    919       2  0.0 00:00:00     0 I<   kworker/R-cfg80211
+    955       2  0.0 00:00:00     0 S    nv_queue
+    956       2  0.0 00:00:00     0 S    nv_queue
+    957       2  0.0 00:00:00     0 S    nv_open_q
+    961       2  0.0 00:00:00     0 I<   kworker/u131:1-hci0
+    967       2  0.0 00:00:00     0 I<   kworker/R-ath12k_wq
+    968       2  0.0 00:00:00     0 I<   kworker/R-ath12k_aux_wq
+    969       2  0.0 00:00:00     0 S    irq/144-bhi
+    974       2  0.1 00:31:18     0 S    nvidia-modeset/kthread_q
+    975       2  0.0 00:00:00     0 S    nvidia-modeset/deferred_close_kthread_q
+    983       2  0.0 00:00:00     0 S    irq/161-nvidia
+    984       2  0.0 00:00:00     0 S    irq/162-nvidia
+    985       2  0.0 00:00:41     0 S    irq/163-nvidia
+    986       2  0.0 00:00:00     0 S    irq/164-nvidia
+    987       2  0.0 00:00:00     0 S    irq/165-nvidia
+    988       2  0.0 00:00:00     0 S    irq/166-nvidia
+    989       2  0.0 00:00:00     0 S    irq/167-nvidia
+    990       2  0.0 00:00:00     0 S    irq/168-nvidia
+    991       2  0.0 00:00:00     0 S    nvidia
+    992       2  0.0 00:00:00     0 S    nv_queue
+   1031       2  0.0 00:00:00     0 I    kworker/u128:2-ipv6_addrconf
+   1450       1  0.0 00:02:58  7496 Ss   systemd-oomd
+   1451       1  0.0 00:02:14 16304 Ss   systemd-resolve
+   1452       1  0.0 00:00:01  7688 Ssl  systemd-timesyn
+   1462       1  0.0 00:00:02  4516 Ss   avahi-daemon
+   1463       1  0.0 00:00:00  6784 Ss   bluetoothd
+   1464       1  0.0 00:00:20  7840 Ss   dbus-daemon
+   1467       1  0.0 00:00:00 16104 Ssl  gnome-remote-de
+   1472       1  0.0 00:00:14 23368 Ssl  polkitd
+   1474       1  0.0 00:00:00  7528 Ssl  power-profiles-
+   1481       1  0.0 00:00:00  2824 Ss   nvidia-persiste
+   1485       1  0.0 00:00:15  7948 Ssl  accounts-daemon
+   1488       1  0.0 00:00:00  2964 Ss   cron
+   1490       1  0.0 00:00:00  6464 Ssl  switcheroo-cont
+   1498       1  0.0 00:00:03  9088 Ss   systemd-logind
+   1501       1  0.0 00:00:32 16224 Ssl  udisksd
+   1509    1462  0.0 00:00:00  1600 S    avahi-daemon
+   1546       1  0.0 00:00:19 20236 Ssl  NetworkManager
+   1547       1  0.0 00:00:02 11740 Ss   wpa_supplicant
+   1610       1  0.0 00:00:15  6764 Ssl  rsyslogd
+   1625       1  0.0 00:00:00 12608 Ssl  ModemManager
+   1627       1  0.0 00:00:00  8044 Ssl  boltd
+   1777       1  0.0 00:00:00 22908 Ssl  unattended-upgr
+   1834       1  0.0 00:00:00  9172 Ssl  gdm3
+   1847       1  0.0 00:01:01 32960 Ss   postgres
+   1868    1847  0.0 00:00:00 12360 Ss   postgres
+   1869    1847  0.0 00:00:00  7580 Ss   postgres
+   1870    1847  0.0 00:00:00  5928 Ss   postgres
+   1871    1847  0.0 00:00:00  9120 Ss   postgres
+   1872    1847  0.0 00:00:03  7388 Ss   postgres
+   1875    1847  0.0 00:00:03 10424 Ss   postgres
+   1876    1847  0.0 00:00:14  9268 Ss   postgres
+   1877    1847  0.0 00:00:00  8472 Ss   postgres
+   1941       1  0.0 00:00:04  3556 SNsl rtkit-daemon
+   2083       2  0.0 00:00:00     0 S<   krfcommd
+   2149       1  0.0 00:00:00 14900 Ssl  colord
+   2197       1  0.0 00:00:10 15316 Ssl  upowerd
+   2470       1  0.0 00:00:00  2468 Ss   kerneloops
+   2473       1  0.0 00:00:00  2436 Ss   kerneloops
+   2568    1834  0.0 00:00:00 10304 Sl   gdm-session-wor
+   2581       1  0.0 00:00:03 12728 Ss   systemd
+   2587    2581  0.0 00:00:00  3712 S    (sd-pam)
+   2600    2581  0.1 00:20:19 25084 S<sl pipewire
+   2601    2581  0.0 00:00:00  6032 Ssl  pipewire
+   2605    2581  0.0 00:00:21 19048 S<sl wireplumber
+   2606    2581  0.1 00:20:17 82848 S<sl pipewire-pulse
+   2608    2581  0.0 00:00:02 10644 SLsl gnome-keyring-d
+   2618    2581  0.0 00:00:26  7180 Ss   dbus-daemon
+   2667    2581  0.0 00:00:02  8108 Ssl  xdg-document-po
+   2671    2581  0.0 00:00:00  6248 Ssl  xdg-permission-
+   2678    2667  0.0 00:00:00  2104 Ss   fusermount3
+   2747    2568  0.0 00:00:00  6192 Ssl+ gdm-x-session
+   2749    2747  0.7 02:11:42 186656 Sl+ Xorg
+   2767    2747  0.0 00:00:00 16060 Sl+  gnome-session-b
+   2848    2581  0.0 00:00:00  8540 Ssl  at-spi-bus-laun
+   2855    2848  0.0 00:00:05  5392 S    dbus-daemon
+   2861    2581  0.0 00:00:00  6840 Ssl  gcr-ssh-agent
+   2862    2581  0.0 00:00:00  5768 Ssl  gnome-session-c
+   2876    2581  0.0 00:00:00  8316 Ssl  gvfsd
+   2884    2581  0.0 00:00:00  7204 Sl   gvfsd-fuse
+   2887    2581  0.0 00:00:05 18328 Ssl  gnome-session-b
+   2918    2581  1.6 04:45:27 1066496 Ssl gnome-shell
+   2945       2  0.0 00:00:00     0 S    nvidia-drm/timeline-9
+   3002    2918  0.0 00:00:51 258384 Sl  mutter-x11-fram
+   3005    2581  0.0 00:00:14  8308 Sl   at-spi2-registr
+   3029    2581  0.0 00:00:00 21508 Sl   gnome-shell-cal
+   3039    2581  0.0 00:00:00 41856 Ssl  evolution-sourc
+   3045    2581  0.0 00:00:01 27480 Sl   gjs
+   3064    2581  0.0 00:03:24 13820 Ssl  ibus-daemon
+   3065    2581  0.0 00:00:01  6992 Ssl  gsd-a11y-settin
+   3066    2581  0.0 00:00:05 24776 Ssl  gsd-color
+   3069    2581  0.0 00:00:01 12092 Ssl  gsd-datetime
+   3071    2581  0.0 00:00:11  9508 Ssl  gsd-housekeepin
+   3077    2581  0.0 00:00:03 24256 Ssl  gsd-keyboard
+   3078    2581  0.0 00:00:11 30260 Ssl  gsd-media-keys
+   3081    2581  0.0 00:00:11 27900 Ssl  gsd-power
+   3085    2581  0.0 00:00:01 11532 Ssl  gsd-print-notif
+   3090    2581  0.0 00:00:01  6908 Ssl  gsd-rfkill
+   3096    2581  0.0 00:00:01  6628 Ssl  gsd-screensaver
+   3100    2581  0.0 00:00:01 11944 Ssl  gsd-sharing
+   3104    2581  0.0 00:00:01  8424 Ssl  gsd-smartcard
+   3109    2581  0.0 00:00:01  9804 Ssl  gsd-sound
+   3111    2581  0.0 00:00:03 25048 Ssl  gsd-wacom
+   3112    2581  0.0 00:00:13 29084 Ssl  gsd-xsettings
+   3135    2581  0.0 00:00:07 11624 Ssl  gvfs-udisks2-vo
+   3142    2887  0.0 00:00:02 65604 Sl   evolution-alarm
+   3158    2887  0.0 00:00:00  7980 Sl   gsd-disk-utilit
+   3206    3064  0.0 00:00:00  7116 Sl   ibus-memconf
+   3209    3064  0.0 00:00:46 31704 Sl   ibus-extension-
+   3216    2581  0.0 00:00:01 24392 Sl   ibus-x11
+   3221    2581  0.0 00:00:02 11376 Sl   ibus-portal
+   3262    2581  0.0 00:00:00  6760 Ssl  gvfs-goa-volume
+   3281    2581  0.0 00:00:00 23196 Sl   goa-daemon
+   3291    2581  0.0 00:00:00 14704 Sl   gsd-printer
+   3311    2581  0.0 00:00:02  9372 Sl   goa-identity-se
+   3322    2581  0.0 00:00:14  8112 Ssl  gvfs-afc-volume
+   3327    2581  0.0 00:00:00 24156 Ssl  evolution-calen
+   3337    2581  0.0 00:00:00  6964 Ssl  gvfs-mtp-volume
+   3345    2581  0.0 00:00:00  7388 Ssl  gvfs-gphoto2-vo
+   3359    2581  0.0 00:00:00 29580 Ssl  evolution-addre
+   3380    2581  0.0 00:00:00 26708 Sl   gjs
+   3402    2581  0.0 00:00:42 40376 SNsl tracker-miner-f
+   3403    3064  0.0 00:01:05  7740 Sl   ibus-engine-sim
+   3422    2581  0.0 00:00:00  6360 Ssl  dconf-service
+   3459    2876  0.0 00:00:00  9776 Sl   gvfsd-trash
+   3478    2581  0.0 00:00:12 15436 Ssl  xdg-desktop-por
+   3484    2581  0.0 00:05:04 777388 Ssl xdg-desktop-por
+   3497    2581  0.0 00:00:13 27764 Ssl  xdg-desktop-por
+   3547       2  0.0 00:00:00     0 S    UVM global queue
+   3548       2  0.0 00:00:00     0 S    UVM deferred release queue
+   3549       2  0.0 00:00:00     0 S    UVM Tools Event Queue
+   3632    2918  0.0 00:00:26 64504 Sl   gjs
+   3724    2581  0.0 00:00:00  7532 Ssl  gvfsd-metadata
+   4761    2581  0.0 00:00:00  6508 Ssl  user-session-he
+   4839    4761  0.0 00:00:05 123092 Sl  snapd-desktop-i
+   4915    2887  0.0 00:00:12 49084 Sl   update-notifier
+   4967    2918  1.0 03:00:55 1141952 Sl thunderbird-bin
+   5155    2581  0.0 00:00:00  3540 Sl   crashhelper
+   5267       2  0.0 00:00:00     0 S    nvidia-drm/timeline-c
+   5285    4967  0.0 00:02:01 217372 Sl  WebExtensions
+   5288    4967  0.0 00:00:00 50060 Sl   RDD Process
+   5340       2  0.0 00:00:00     0 S    nvidia-drm/timeline-d
+   5364    2581  0.0 00:00:16 26640 Sl   snap
+   6055    4967  0.0 00:01:23 138632 Sl  Isolated Web Co
+   6120    2918  0.0 00:00:00  3676 S    brave-browser-s
+   6126    6120  0.0 00:00:00  2016 S    cat
+   6127    6120  0.0 00:00:00  2020 S    cat
+   6128    6120  0.7 02:04:48 1768336 Sl brave
+   6130    2581  0.0 00:00:00  5052 Sl   chrome_crashpad
+   6132    2581  0.0 00:00:00  3996 Sl   chrome_crashpad
+   6138    6128  0.0 00:00:00 61968 S    brave
+   6139    6128  0.0 00:00:00  1872 S    chrome-sandbox
+   6140    6139  0.0 00:00:00 61536 S    brave
+   6142    6140  0.0 00:00:07 20552 S    brave
+   6166    6138  2.5 07:12:33 900248 Sl  brave
+   6170    6128  0.3 01:05:59 270152 Sl  brave
+   6182    6142  0.0 00:03:37 91524 Sl   brave
+   6234       2  0.0 00:00:00     0 S    nvidia-drm/timeline-e
+   6235    6166  0.0 00:00:00 48200 S    brave
+   6300    6142  0.0 00:00:06 135720 Sl  brave
+   6381    6142  0.2 00:47:44 323008 Sl  brave
+   6459    6142  0.0 00:01:29 216736 Sl  brave
+   6541    6142  0.0 00:01:29 218412 Sl  brave
+   6606    6142  0.1 00:27:28 281972 Sl  brave
+   6618    6142  0.1 00:26:45 293084 Sl  brave
+   6637    6142  0.1 00:29:55 385816 Sl  brave
+   7007    6142  0.0 00:01:33 221208 Sl  brave
+   7016    6142  0.0 00:01:29 217204 Sl  brave
+   7029    6128  0.0 00:06:44 98456 Sl   brave
+   7075    6142  0.0 00:01:30 238516 Sl  brave
+   7122    6142  0.0 00:01:33 218820 Sl  brave
+   7337    6142  0.0 00:01:35 215544 Sl  brave
+   7348    6142  0.0 00:01:30 217996 Sl  brave
+   7994    6142  0.0 00:00:04 99724 Sl   brave
+   8136       1  0.0 00:00:22 47996 Ssl  fwupd
+   9515    2581  0.0 00:00:05  3512 SLsl gpg-agent
+   9994    2876  0.0 00:00:00 10464 Sl   gvfsd-recent
+  20679    4967  0.0 00:01:36 138732 Sl  Isolated Web Co
+  88391       2  0.0 00:00:00     0 I<   kworker/u133:1
+  88428    6142  0.2 00:10:46 353076 Sl  brave
+  92142    2581  0.0 00:05:01 722672 SLl nautilus
+  92162       2  0.0 00:00:00     0 S    nvidia-drm/timeline-7f
+  94802    2918  0.0 00:01:26 215868 SLl obsidian
+  94808   94802  0.0 00:00:00 47968 S    obsidian
+  94809   94802  0.0 00:00:00 47472 S    obsidian
+  94811   94809  0.0 00:00:00 11272 S    obsidian
+  94967   94808  0.0 00:02:39 269744 Sl  obsidian
+  94974   94802  0.0 00:00:22 71248 Sl   obsidian
+  94989   94802  0.0 00:08:31 463876 Sl  obsidian
+  95003       2  0.0 00:00:00     0 S    nvidia-drm/timeline-83
+  95004   94967  0.0 00:00:00 39748 S    obsidian
+ 208667    6142  0.2 00:34:07 573152 Sl  brave
+ 209306    2581  0.1 00:14:28 90956 Ssl  gnome-terminal-
+ 209319  209306  0.0 00:00:00  5824 Ss+  bash
+ 214031    6142  0.0 00:00:10 210424 Sl  brave
+ 216418    6142  0.0 00:01:41 254684 Sl  brave
+ 223062    6142  0.4 00:59:15 397660 Sl  brave
+ 226592    2918  0.1 00:17:04 255872 SLl code
+ 226598  226592  0.0 00:00:00 47404 S    code
+ 226599  226592  0.0 00:00:00 47404 S    code
+ 226601  226599  0.0 00:00:00 13204 S    code
+ 226617    2581  0.0 00:00:00  3652 Sl   chrome_crashpad
+ 226634  226598  6.6 14:13:51 428388 Sl  code
+ 226643  226592  0.0 00:00:44 72520 Sl   code
+ 226659       2  0.0 00:00:06     0 S    nvidia-drm/timeline-ac
+ 226661  226601  5.8 12:25:07 413720 Sl  code
+ 226688  226634  0.0 00:00:00 38540 S    code
+ 226784    2608  0.0 00:00:00  6012 S    ssh-agent
+ 226798  226592  0.0 00:03:23 164564 Sl  code
+ 261977    6142  0.2 00:26:19 354976 Sl  brave
+ 262096    6142  0.0 00:00:43 184188 Sl  brave
+ 262172    6142  0.0 00:02:01 248320 Sl  brave
+ 263438  209306  0.0 00:00:00  5724 Ss+  bash
+ 263453  209306  0.0 00:00:00  6252 Ss+  bash
+ 263466  209306  0.0 00:00:00  5708 Ss+  bash
+ 263480  209306  0.0 00:00:00  5732 Ss+  bash
+ 263863    6142  0.0 00:02:12 230528 Sl  brave
+ 264209    2918  0.0 00:00:17 213768 Sl  gnome-text-edit
+ 264231       2  0.0 00:00:00     0 S    nvidia-drm/timeline-b0
+ 264529       2  0.0 00:00:00     0 S    nvidia-drm/timeline-b1
+ 264539    2876  0.0 00:00:00  9096 Sl   gvfsd-network
+ 264549    2876  0.0 00:00:00  9124 Sl   gvfsd-dnssd
+ 269521    6142  0.0 00:00:50 279420 Sl  brave
+ 271996    6142  0.0 00:05:23 239296 Sl  brave
+ 273637    6142  0.0 00:00:20 193676 Sl  brave
+ 273667    6142  0.0 00:00:11 203216 Sl  brave
+ 273891    6142  0.0 00:00:29 215476 Sl  brave
+ 292972    6142  0.0 00:00:04 159512 Sl  brave
+ 293157    6142  0.2 00:34:21 374960 Sl  brave
+ 293168    6142  0.0 00:06:24 412808 Sl  brave
+ 293303    6142  0.0 00:00:08 138524 Sl  brave
+ 293314    6142  0.0 00:00:38 206208 Sl  brave
+ 293331    6142  0.0 00:03:53 363548 Sl  brave
+ 295861       1  0.0 00:00:29 48204 Ssl  snapd
+ 315602    6142  0.0 00:00:01 172168 Sl  brave
+ 318151    6142  0.0 00:00:01 172156 Sl  brave
+ 364087  226601  6.9 13:04:41 473992 Sl  code
+ 368080    6142  0.0 00:00:55 557256 Sl  brave
+ 368104    6142  0.0 00:00:03 127380 Sl  brave
+ 368924    6142  0.0 00:00:19 142452 Sl  brave
+ 370828    6142  0.0 00:02:29 874560 Sl  brave
+ 380445  209306  0.0 00:00:00  6760 Ss+  bash
+ 393898       2  0.0 00:00:00     0 I    kworker/6:1-mm_percpu_wq
+ 412416    6142  0.2 00:27:46 378988 Sl  brave
+ 980888       2  0.0 00:00:00     0 S    scsi_eh_12
+ 980889       2  0.0 00:00:00     0 I<   kworker/R-scsi_tmf_12
+ 980890       2  0.0 00:00:05     0 S    usb-storage
+ 980895       2  0.0 00:00:00     0 I<   kworker/R-uas
+ 981309       2  0.0 00:00:00     0 I    kworker/16:1-mm_percpu_wq
+ 981510       2  0.0 00:00:00     0 I    kworker/7:1-events
+ 986580       2  0.0 00:00:01     0 I    kworker/26:2-mm_percpu_wq
+ 988998       2  0.0 00:00:00     0 I    kworker/20:1-mm_percpu_wq
+1024871    6142  0.0 00:00:54 298760 Sl  brave
+1045255       2  0.0 00:00:01     0 I    kworker/4:0-events
+1067618  209306  0.0 00:00:00  5780 Ss   bash
+1080550       2  0.0 00:00:00     0 I    kworker/2:1-mm_percpu_wq
+1087750    6142  0.5 00:06:59 338384 Sl  brave
+1090126    6128  0.0 00:00:01 96168 Sl   brave
+1092167    6142  0.1 00:02:12 230428 Sl  brave
+1103265    6142  0.5 00:06:30 411520 Sl  brave
+1103593    6142  1.2 00:14:10 465660 Sl  brave
+1103904       2  0.0 00:00:00     0 I    kworker/27:2-events
+1117872    6142  0.0 00:00:00 137652 Sl  brave
+1121383    6142  0.0 00:00:00 116004 Sl  brave
+1122929    6142  0.4 00:04:46 313556 Sl  brave
+1126337    6142  0.5 00:04:31 496112 Sl  brave
+1128967       2  0.0 00:00:01     0 I    kworker/11:0-mm_percpu_wq
+1129889       2  0.0 00:00:00     0 I    kworker/14:0-events
+1130908       2  0.0 00:00:00     0 I    kworker/16:2-events
+1132306       2  0.0 00:00:00     0 I    kworker/23:2-mm_percpu_wq
+1132308       2  0.0 00:00:01     0 I    kworker/0:0-events
+1132997       1  0.5 00:04:16 60484 Ssl  tailscaled
+1133244    6142  0.1 00:01:20 432300 Sl  brave
+1133290    6142  0.0 00:00:00 135780 Sl  brave
+1133633    6142  0.1 00:00:50 331616 Sl  brave
+1134469       1  0.0 00:00:00 12740 Ss   cupsd
+1134472       1  0.0 00:00:00 20684 Ssl  cups-browsed
+1134995 1067618  0.0 00:00:00 46364 Sl+  MainThread
+1135034 1134995  0.2 00:01:48 252536 Sl+ codex
+1136195 1135034  0.0 00:00:00 23524 Sl   codex-code-mode
+1138451       2  0.0 00:00:00     0 I    kworker/22:3-mm_percpu_wq
+1139277    6142  0.3 00:02:48 449540 Sl  brave
+1139434       2  0.0 00:00:00     0 I    kworker/17:0-mm_percpu_wq
+1140887    6142  0.2 00:02:04 429464 Sl  brave
+1141728    6142  0.2 00:01:28 338136 Sl  brave
+1141882    6142  0.6 00:04:34 461016 Sl  brave
+1142559       2  0.0 00:00:00     0 I    kworker/19:2-mm_percpu_wq
+1143114  209306  0.0 00:00:00  5684 Ss+  bash
+1148230       2  0.0 00:00:00     0 I    kworker/28:1-mm_percpu_wq
+1154519    6142  0.0 00:00:31 357520 Sl  brave
+1163786       2  0.0 00:00:00     0 I    kworker/18:2-cgroup_free
+1164660       2  0.0 00:00:00     0 I    kworker/10:2-events
+1169967       2  0.0 00:00:00     0 I    kworker/21:0-mm_percpu_wq
+1170235       2  0.0 00:00:00     0 I    kworker/19:1
+1171607       2  0.0 00:00:00     0 I    kworker/0:1-events
+1173328       2  0.0 00:00:00     0 I    kworker/8:1-events
+1175445       2  0.0 00:00:00     0 I    kworker/27:0
+1178722       2  0.0 00:00:00     0 I    kworker/1:2-events
+1179163       2  0.0 00:00:00     0 I    kworker/9:1-slub_flushwq
+1179710       2  0.0 00:00:00     0 S    psimon
+1195667       2  0.0 00:00:00     0 I    kworker/7:0-cgroup_free
+1196604       2  0.0 00:00:00     0 I    kworker/9:2
+1197248       2  0.0 00:00:00     0 I    kworker/5:2-events
+1198111       2  0.0 00:00:00     0 I    kworker/3:0-events
+1199861       2  0.0 00:00:00     0 I    kworker/12:2-mm_percpu_wq
+1202390       2  0.0 00:00:00     0 I    kworker/31:1-mm_percpu_wq
+1202738       2  0.0 00:00:00     0 I    kworker/13:1-cgroup_free
+1203232       2  0.0 00:00:00     0 I    kworker/12:1-events
+1204093       2  0.0 00:00:00     0 I    kworker/24:1-events
+1208355       2  0.0 00:00:00     0 I    kworker/18:0-mm_percpu_wq
+1213207       2  0.0 00:00:00     0 I    kworker/14:2
+1213777       2  0.0 00:00:00     0 I    kworker/21:1
+1214682       2  0.0 00:00:00     0 I    kworker/2:2
+1214797       2  0.0 00:00:00     0 I    kworker/30:2-mm_percpu_wq
+1215535       2  0.0 00:00:00     0 I    kworker/15:2-events
+1216042       2  0.0 00:00:00     0 I    kworker/13:2-events
+1216882  226592  0.6 00:00:37 180844 Sl  code
+1216903  226592  0.0 00:00:00 105588 Sl  code
+1216927 1216882  0.0 00:00:01 85476 Ssl  code
+1216936 1216927  0.2 00:00:11  9164 S    ssh
+1216978    6142  6.1 00:05:34 499028 Sl  brave
+1217052       2  0.0 00:00:00     0 I    kworker/29:0-events
+1217586  226592  0.0 00:00:00 105728 Sl  code
+1217602  226592  1.0 00:00:54 144620 Sl  code
+1217635  226592  0.9 00:00:48 147460 Sl  code
+1217656  226592  0.0 00:00:00 105452 Sl  code
+1217992       2  0.0 00:00:00     0 I    kworker/u130:2-kvfree_rcu_reclaim
+1219003       2  0.0 00:00:00     0 I    kworker/17:1
+1219225       2  0.0 00:00:00     0 I    kworker/u130:3-flush-259:0
+1219245       2  0.0 00:00:00     0 I    kworker/31:0-events
+1219634       2  0.0 00:00:00     0 I    kworker/6:0
+1220036       2  0.0 00:00:00     0 I    kworker/3:1-mm_percpu_wq
+1220216       2  0.0 00:00:00     0 I    kworker/15:0
+1220829    6142  0.0 00:00:00 142152 Sl  brave
+1221321       2  0.0 00:00:00     0 I    kworker/10:1-events
+1221578       2  0.0 00:00:00     0 I    kworker/u129:4-kvfree_rcu_reclaim
+1221580       2  0.0 00:00:00     0 I    kworker/u129:5-writeback
+1222135       2  0.0 00:00:00     0 I    kworker/u130:0-kvfree_rcu_reclaim
+1222244       2  0.0 00:00:00     0 I    kworker/25:1-mm_percpu_wq
+1222878       2  0.0 00:00:00     0 I    kworker/28:2
+1223116       2  0.0 00:00:00     0 I    kworker/26:1
+1223407       2  0.0 00:00:00     0 I    kworker/30:1-mm_percpu_wq
+1223476       2  0.0 00:00:00     0 I    kworker/22:0
+1223572       2  0.0 00:00:00     0 I    kworker/u130:4-flush-259:0
+1223633       2  0.0 00:00:00     0 I    kworker/8:2-events
+1223742       2  0.0 00:00:00     0 I    kworker/u129:0-kvfree_rcu_reclaim
+1224019       2  0.0 00:00:00     0 I    kworker/5:1
+1224138       2  0.0 00:00:00     0 I    kworker/4:1
+1224356       2  0.0 00:00:00     0 I    kworker/20:2
+1224940       2  0.0 00:00:00     0 I    kworker/23:1
+1225010       2  0.0 00:00:00     0 I    kworker/11:2
+1225042       2  0.0 00:00:00     0 I    kworker/1:0
+1225093    2581  0.0 00:00:00  4496 Ss   tmux: server
+1225094 1225093  0.0 00:00:00  3600 Ss+  bash
+1225100 1225094  0.0 00:00:00  2152 S    timeout
+1225101 1225100  0.0 00:00:00  4292 S    bash
+1225259       2  0.0 00:00:00     0 I    kworker/24:2
+1225424       2  0.0 00:00:00     0 I    kworker/u130:1-kvfree_rcu_reclaim
+1225434       2  0.0 00:00:00     0 I    kworker/25:0
+1226082       2  0.0 00:00:00     0 I    kworker/29:1
+1226560       2  0.0 00:00:00     0 I    kworker/0:2
+1226665    6142  0.0 00:00:00 79580 Sl   brave
+1226676       2  0.0 00:00:00     0 I    kworker/u129:1-kvfree_rcu_reclaim
+1227861       2  0.0 00:00:00     0 I    kworker/u130:5-kvfree_rcu_reclaim
+1228097    2581  0.0 00:00:00  2084 S    sleep
+1228150 1225101  0.0 00:00:00  2324 S    bash
+1228151 1225101  0.0 00:00:00  2156 S    timeout
+1228153 1228151  200 00:00:00 184760 R   flex_quality.bi
+1228156 1228150  0.0 00:00:00  4716 R    ps
+1289323    6142  0.2 00:22:30 425772 Sl  brave
+1651790    6142  0.1 00:15:51 320388 Sl  brave
+1719640    6142  0.2 00:18:20 451584 Sl  brave
+1748991    6142  0.0 00:04:42 307220 Sl  brave
+1764061    6142  0.1 00:12:47 314328 Sl  brave
+1775849    6142  0.0 00:08:08 270648 Sl  brave
+1793142    6142  0.0 00:01:55 351592 Sl  brave
+1793212    6142  0.0 00:02:36 375824 Sl  brave
+1793929    6142  0.0 00:01:56 383456 Sl  brave
+1819922    2876  0.0 00:00:00  9436 Sl   gvfsd-http
+1820040    6142  0.0 00:00:10 278944 Sl  brave
+1820778    6142  0.1 00:16:08 419048 Sl  brave
+1839254    6142  0.4 00:34:59 366328 Sl  brave
+2002585    6142  0.2 00:17:44 399684 Sl  brave
+2270826    6142  0.0 00:02:00 305308 Sl  brave
+2270901    6142  0.0 00:00:03 212612 Sl  brave
+2335805    6142  0.0 00:05:35 354892 Sl  brave
+2411309    6142  0.1 00:08:19 388352 Sl  brave
+2416558    6142  0.0 00:05:13 317596 Sl  brave
+2418906    6142  0.1 00:12:53 378100 Sl  brave
+2452982    2581  0.0 00:00:00  7808 Ssl  dart:firmware-n
+2525945    6142  0.3 00:26:24 476728 Sl  brave
+2593204  209306  0.0 00:00:00  5760 Ss   bash
+2593554 2593204  0.0 00:00:00 45776 Sl+  MainThread
+2593593 2593554  0.0 00:01:51 212712 Sl+ codex
+2594916 2593593  0.0 00:00:00 18864 Sl   codex-code-mode
+2626308    6142  0.1 00:08:10 243616 Sl  brave
+2635280    6142  0.2 00:16:38 485556 Sl  brave
+2686756    6142  0.0 00:00:04 176772 Sl  brave
+2687823    6142  0.0 00:00:02 155020 Sl  brave
+2687926    6142  0.0 00:00:02 142196 Sl  brave
+2687956    6142  0.0 00:01:24 215252 Sl  brave
+2688183    6142  0.0 00:00:11 248940 Sl  brave
+2688194    6142  0.0 00:00:08 141176 Sl  brave
+2688744    6142  0.0 00:00:02 200476 Sl  brave
+3065081    6142  0.1 00:10:45 369904 Sl  brave
+3121470    6142  0.0 00:00:03 164388 Sl  brave
+3122542    6142  0.0 00:00:04 136384 Sl  brave
+3131420    6142  0.2 00:11:40 415256 Sl  brave
+3134093    6142  0.0 00:00:04 172764 Sl  brave
+3135403    6142  0.0 00:00:09 171728 Sl  brave
+3142443    6142  0.0 00:00:01 141024 Sl  brave
+3144653    6142  0.0 00:00:01 141948 Sl  brave
+3148311    6142  0.0 00:00:01 141228 Sl  brave
+3154351    6142  0.4 00:24:03 384640 Sl  brave
+3294862    6142  0.4 00:22:24 416716 Sl  brave
+3296417    6142  0.2 00:11:20 477856 Sl  brave
+3577810    6142  0.4 00:21:53 601832 Sl  brave
+3598715  226601  3.9 03:20:39 349888 Sl  code
+3598797  226592  0.0 00:00:22 108668 Sl  code
+3654349    6142  0.0 00:00:01 152988 Sl  brave
+3657881    6142  0.0 00:00:02 151940 Sl  brave
+3657896    6142  0.0 00:00:08 280776 Sl  brave

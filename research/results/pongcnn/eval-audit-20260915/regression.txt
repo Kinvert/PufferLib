@@ -1,0 +1,4 @@
+/home/claude/cnn/build/pongcnn/hypers.jwyApeXS/flex_quality/checkpoints/pongcnn/sweep_1789435894587_0004/0000000002562048.bin: OK
+/home/claude/cnn/build/pongcnn/hypers.jwyApeXS/flex_quality/checkpoints/pongcnn/sweep_1789435919496_0006/0000000002332672.bin: OK
+CUDA_EVAL_PROGRESS steps=798720 games=454 requested=100000000 elapsed=5.009
+PASS: two original/patched saved-checkpoint evaluations match exactly; timeout progress retained.

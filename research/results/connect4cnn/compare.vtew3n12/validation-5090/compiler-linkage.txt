@@ -1,0 +1,45 @@
+Ubuntu clang version 18.1.3 (1ubuntu1)
+Target: x86_64-pc-linux-gnu
+Thread model: posix
+InstalledDir: /usr/bin
+gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+Copyright (C) 2023 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+Copyright (C) 2023 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+ccache version 4.9.1
+Features: file-storage http-storage redis+unix-storage redis-storage
+
+Copyright (C) 2002-2007 Andrew Tridgell
+Copyright (C) 2009-2024 Joel Rosdahl and other contributors
+
+See <https://ccache.dev/credits.html> for a complete list of contributors.
+
+This program is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation; either version 3 of the License, or (at your option) any later
+version.
+	linux-vdso.so.1 (0x000077f20a54c000)
+	libcudart.so.13 => /usr/local/cuda-13.1/lib64/libcudart.so.13 (0x000077f209e00000)
+	libnccl.so.2 => /home/keith/Git/ml/fzero-training/PufferLib-5.0/.venv/lib/python3.12/site-packages/nvidia/nccl/lib/libnccl.so.2 (0x000077f1f1200000)
+	libnvidia-ml.so.1 => /lib/x86_64-linux-gnu/libnvidia-ml.so.1 (0x000077f1f0200000)
+	libcublas.so.13 => /usr/local/cuda-13.1/lib64/libcublas.so.13 (0x000077f1ecc00000)
+	libcusolver.so.12 => /usr/local/cuda-13.1/lib64/libcusolver.so.12 (0x000077f1e4200000)
+	libcurand.so.10 => /usr/local/cuda-13.1/lib64/libcurand.so.10 (0x000077f1dba00000)
+	libomp.so.5 => /lib/x86_64-linux-gnu/libomp.so.5 (0x000077f20a0d3000)
+	libstdc++.so.6 => /lib/x86_64-linux-gnu/libstdc++.so.6 (0x000077f1db600000)
+	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x000077f209d17000)
+	libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 (0x000077f20a4fb000)
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x000077f1db200000)
+	libdl.so.2 => /lib/x86_64-linux-gnu/libdl.so.2 (0x000077f20a4f4000)
+	libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 (0x000077f20a4ef000)
+	librt.so.1 => /lib/x86_64-linux-gnu/librt.so.1 (0x000077f20a4ea000)
+	/lib64/ld-linux-x86-64.so.2 (0x000077f20a54e000)
+	libcublasLt.so.13 => /usr/local/cuda-13.1/lib64/libcublasLt.so.13 (0x000077f1b7800000)
+	libnvJitLink.so.13 => /usr/local/cuda-13.1/lib64/libnvJitLink.so.13 (0x000077f1b1800000)
+	libcusparse.so.12 => /usr/local/cuda-13.1/lib64/libcusparse.so.12 (0x000077f1a7200000)

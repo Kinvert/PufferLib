@@ -1,0 +1,1 @@
+PASS: all 10 representations, pixel/reset fixtures, 4096-step upstream parity each, repeats and invalid-ID rejection (ASan/UBSan).

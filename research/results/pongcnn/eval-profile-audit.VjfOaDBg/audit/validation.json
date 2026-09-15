@@ -1,0 +1,345 @@
+{
+  "passed": true,
+  "pairs": {
+    "flex_quality": "passed",
+    "nature_cnn": "passed",
+    "impala_cnn": "passed",
+    "impoola_cnn": "passed"
+  },
+  "intentional_timeout_passed": true,
+  "attempts": [
+    {
+      "name": "validation/flex_quality/old",
+      "group": "validation",
+      "label": "flex_quality",
+      "version": "old",
+      "id": "b-flex_quality-s31005",
+      "model": "flex_quality",
+      "recipe": "b",
+      "steps": 3145728,
+      "games": 32,
+      "cap": 30,
+      "original_status": "ok",
+      "original_eval_wall_s": 1.34,
+      "checkpoint": "/home/keith/Git/ml/cnn-5090/build/pongcnn/confirm-5090.full.JXYKB06r/b-flex_quality-s31005/checkpoints/pongcnn/trial/0000000003145728.bin",
+      "checkpoint_sha256": "1bbe4bfc4ec710b512a8229297af99233a74451acd95e2906cb37b5e3580d1b6",
+      "original_config": {
+        "pongcnn.ini": "38a0ee508f18962764a7a20b6906a2e6d35c6a17ea3ef3433a99fa3cb8df3527",
+        "default.ini": "f9eef1c5a7e2f690e261faab619cbcc508180fc477b9421eaba751fc1212c074"
+      },
+      "binary": "/home/keith/Git/ml/cnn-5090/build/pongcnn/confirm-5090.full.JXYKB06r/flex_quality.bin",
+      "exit_code": "0",
+      "final": [
+        [
+          "21.000000",
+          "1.000000",
+          "39",
+          "160224"
+        ]
+      ],
+      "progress": [],
+      "wall_s": 0.482347,
+      "log_sha256": "7883fd6049dd271e3f6684f2cebd785e7eed599fa62af503a225e7cbd2e5d153",
+      "checkpoint_unchanged": true,
+      "success": true,
+      "dashboards": 0,
+      "missing_key_error": false
+    },
+    {
+      "name": "validation/flex_quality/new",
+      "group": "validation",
+      "label": "flex_quality",
+      "version": "new",
+      "id": "b-flex_quality-s31005",
+      "model": "flex_quality",
+      "recipe": "b",
+      "steps": 3145728,
+      "games": 32,
+      "cap": 30,
+      "original_status": "ok",
+      "original_eval_wall_s": 1.34,
+      "checkpoint": "/home/keith/Git/ml/cnn-5090/build/pongcnn/confirm-5090.full.JXYKB06r/b-flex_quality-s31005/checkpoints/pongcnn/trial/0000000003145728.bin",
+      "checkpoint_sha256": "1bbe4bfc4ec710b512a8229297af99233a74451acd95e2906cb37b5e3580d1b6",
+      "original_config": {
+        "pongcnn.ini": "38a0ee508f18962764a7a20b6906a2e6d35c6a17ea3ef3433a99fa3cb8df3527",
+        "default.ini": "f9eef1c5a7e2f690e261faab619cbcc508180fc477b9421eaba751fc1212c074"
+      },
+      "binary": "/home/keith/Git/ml/cnn-5090/build/pongcnn/eval-profile-audit.VjfOaDBg/flex_quality.bin",
+      "exit_code": "0",
+      "final": [
+        [
+          "21.000000",
+          "1.000000",
+          "39",
+          "160224"
+        ]
+      ],
+      "progress": [],
+      "wall_s": 0.456553,
+      "log_sha256": "17cfa08fa9a953421cb65ca9dd630dee2d2cded6f16fb8c401cabae1a9563c39",
+      "checkpoint_unchanged": true,
+      "success": true,
+      "dashboards": 0,
+      "missing_key_error": false
+    },
+    {
+      "name": "validation/nature_cnn/old",
+      "group": "validation",
+      "label": "nature_cnn",
+      "version": "old",
+      "id": "b-nature_cnn-s31001",
+      "model": "nature_cnn",
+      "recipe": "b",
+      "steps": 3670016,
+      "games": 32,
+      "cap": 30,
+      "original_status": "ok",
+      "original_eval_wall_s": 2.0,
+      "checkpoint": "/home/keith/Git/ml/cnn-5090/build/pongcnn/confirm-5090.full.JXYKB06r/b-nature_cnn-s31001/checkpoints/pongcnn/trial/0000000003670016.bin",
+      "checkpoint_sha256": "77f7a66a0981e614b67ced5be25a4088697a86f92096a508564ce35092214d07",
+      "original_config": {
+        "pongcnn.ini": "24ad778d96ee05e8dbdd00f85452bf17eaeabcb8317a2d9d8c820cb35cf1e3c9",
+        "default.ini": "0aac5654e2f3dfa85b57586c0b24514a8fc8f079b7d04794000b78cb99204501"
+      },
+      "binary": "/home/keith/Git/ml/cnn-5090/build/pongcnn/confirm-5090.full.JXYKB06r/nature_cnn.bin",
+      "exit_code": "0",
+      "final": [
+        [
+          "21.000000",
+          "1.000000",
+          "35",
+          "138016"
+        ]
+      ],
+      "progress": [],
+      "wall_s": 0.495945,
+      "log_sha256": "1ad2e96fa86f264aa3772da07d8b90b356d6bcd611b8ae7aa43b08fd062b8e38",
+      "checkpoint_unchanged": true,
+      "success": true,
+      "dashboards": 0,
+      "missing_key_error": false
+    },
+    {
+      "name": "validation/nature_cnn/new",
+      "group": "validation",
+      "label": "nature_cnn",
+      "version": "new",
+      "id": "b-nature_cnn-s31001",
+      "model": "nature_cnn",
+      "recipe": "b",
+      "steps": 3670016,
+      "games": 32,
+      "cap": 30,
+      "original_status": "ok",
+      "original_eval_wall_s": 2.0,
+      "checkpoint": "/home/keith/Git/ml/cnn-5090/build/pongcnn/confirm-5090.full.JXYKB06r/b-nature_cnn-s31001/checkpoints/pongcnn/trial/0000000003670016.bin",
+      "checkpoint_sha256": "77f7a66a0981e614b67ced5be25a4088697a86f92096a508564ce35092214d07",
+      "original_config": {
+        "pongcnn.ini": "24ad778d96ee05e8dbdd00f85452bf17eaeabcb8317a2d9d8c820cb35cf1e3c9",
+        "default.ini": "0aac5654e2f3dfa85b57586c0b24514a8fc8f079b7d04794000b78cb99204501"
+      },
+      "binary": "/home/keith/Git/ml/cnn-5090/build/pongcnn/eval-profile-audit.VjfOaDBg/nature_cnn.bin",
+      "exit_code": "0",
+      "final": [
+        [
+          "21.000000",
+          "1.000000",
+          "35",
+          "138016"
+        ]
+      ],
+      "progress": [],
+      "wall_s": 0.493169,
+      "log_sha256": "22dc71ac9d1798ce5bc886ebb12cf3794a71a781347f1e9c03f51dd010fb9857",
+      "checkpoint_unchanged": true,
+      "success": true,
+      "dashboards": 0,
+      "missing_key_error": false
+    },
+    {
+      "name": "validation/impala_cnn/old",
+      "group": "validation",
+      "label": "impala_cnn",
+      "version": "old",
+      "id": "b-impala_cnn-s31003",
+      "model": "impala_cnn",
+      "recipe": "b",
+      "steps": 1572864,
+      "games": 32,
+      "cap": 30,
+      "original_status": "ok",
+      "original_eval_wall_s": 0.81,
+      "checkpoint": "/home/keith/Git/ml/cnn-5090/build/pongcnn/confirm-5090.full.JXYKB06r/b-impala_cnn-s31003/checkpoints/pongcnn/trial/0000000001572864.bin",
+      "checkpoint_sha256": "d8f6fa3f451de9118310745da277667a0ea64d0940f289d13b26a84c1301a7e7",
+      "original_config": {
+        "pongcnn.ini": "9cd856fe581c37d52cad1466959b2139a3500223b5e89ef97b5eb6b2aff7b07c",
+        "default.ini": "3b290a9e1d9d320d60e89196df185c2f847568d7bcc144885e4e63dd14fcd239"
+      },
+      "binary": "/home/keith/Git/ml/cnn-5090/build/pongcnn/confirm-5090.full.JXYKB06r/impala_cnn.bin",
+      "exit_code": "0",
+      "final": [
+        [
+          "-21.000000",
+          "0.000000",
+          "62",
+          "269984"
+        ]
+      ],
+      "progress": [],
+      "wall_s": 0.399313,
+      "log_sha256": "b921173edc6bbbb28ae23bf603fd388addde19a073cccdc19144ff4ac8d4fd5c",
+      "checkpoint_unchanged": true,
+      "success": true,
+      "dashboards": 0,
+      "missing_key_error": false
+    },
+    {
+      "name": "validation/impala_cnn/new",
+      "group": "validation",
+      "label": "impala_cnn",
+      "version": "new",
+      "id": "b-impala_cnn-s31003",
+      "model": "impala_cnn",
+      "recipe": "b",
+      "steps": 1572864,
+      "games": 32,
+      "cap": 30,
+      "original_status": "ok",
+      "original_eval_wall_s": 0.81,
+      "checkpoint": "/home/keith/Git/ml/cnn-5090/build/pongcnn/confirm-5090.full.JXYKB06r/b-impala_cnn-s31003/checkpoints/pongcnn/trial/0000000001572864.bin",
+      "checkpoint_sha256": "d8f6fa3f451de9118310745da277667a0ea64d0940f289d13b26a84c1301a7e7",
+      "original_config": {
+        "pongcnn.ini": "9cd856fe581c37d52cad1466959b2139a3500223b5e89ef97b5eb6b2aff7b07c",
+        "default.ini": "3b290a9e1d9d320d60e89196df185c2f847568d7bcc144885e4e63dd14fcd239"
+      },
+      "binary": "/home/keith/Git/ml/cnn-5090/build/pongcnn/eval-profile-audit.VjfOaDBg/impala_cnn.bin",
+      "exit_code": "0",
+      "final": [
+        [
+          "-21.000000",
+          "0.000000",
+          "62",
+          "269984"
+        ]
+      ],
+      "progress": [],
+      "wall_s": 0.416723,
+      "log_sha256": "258c638115ccd76b62727736e36638646358f492e4df200a62423d75774f0ced",
+      "checkpoint_unchanged": true,
+      "success": true,
+      "dashboards": 0,
+      "missing_key_error": false
+    },
+    {
+      "name": "validation/impoola_cnn/old",
+      "group": "validation",
+      "label": "impoola_cnn",
+      "version": "old",
+      "id": "b-impoola_cnn-s31001",
+      "model": "impoola_cnn",
+      "recipe": "b",
+      "steps": 1572864,
+      "games": 32,
+      "cap": 30,
+      "original_status": "ok",
+      "original_eval_wall_s": 1.58,
+      "checkpoint": "/home/keith/Git/ml/cnn-5090/build/pongcnn/confirm-5090.full.JXYKB06r/b-impoola_cnn-s31001/checkpoints/pongcnn/trial/0000000001572864.bin",
+      "checkpoint_sha256": "87dbe84fa7d728cd721021fe94d292d2ca0559a22d6747d593d631ca5890cb38",
+      "original_config": {
+        "pongcnn.ini": "ffc1431551818c864f9d8893f6dcec8f538eaa3a3becdb137c07ff4330f17c96",
+        "default.ini": "b6b60c921b65d936f92d44f11e2d040c84e1bbac5bdc619079841ce966d96190"
+      },
+      "binary": "/home/keith/Git/ml/cnn-5090/build/pongcnn/confirm-5090.full.JXYKB06r/impoola_cnn.bin",
+      "exit_code": "0",
+      "final": [
+        [
+          "-21.000000",
+          "0.000000",
+          "64",
+          "151200"
+        ]
+      ],
+      "progress": [],
+      "wall_s": 0.520997,
+      "log_sha256": "f13b2884d773a7b2d6ceb2b63be0d7ee03e36199c758e5844771fdef58d91543",
+      "checkpoint_unchanged": true,
+      "success": true,
+      "dashboards": 0,
+      "missing_key_error": false
+    },
+    {
+      "name": "validation/impoola_cnn/new",
+      "group": "validation",
+      "label": "impoola_cnn",
+      "version": "new",
+      "id": "b-impoola_cnn-s31001",
+      "model": "impoola_cnn",
+      "recipe": "b",
+      "steps": 1572864,
+      "games": 32,
+      "cap": 30,
+      "original_status": "ok",
+      "original_eval_wall_s": 1.58,
+      "checkpoint": "/home/keith/Git/ml/cnn-5090/build/pongcnn/confirm-5090.full.JXYKB06r/b-impoola_cnn-s31001/checkpoints/pongcnn/trial/0000000001572864.bin",
+      "checkpoint_sha256": "87dbe84fa7d728cd721021fe94d292d2ca0559a22d6747d593d631ca5890cb38",
+      "original_config": {
+        "pongcnn.ini": "ffc1431551818c864f9d8893f6dcec8f538eaa3a3becdb137c07ff4330f17c96",
+        "default.ini": "b6b60c921b65d936f92d44f11e2d040c84e1bbac5bdc619079841ce966d96190"
+      },
+      "binary": "/home/keith/Git/ml/cnn-5090/build/pongcnn/eval-profile-audit.VjfOaDBg/impoola_cnn.bin",
+      "exit_code": "0",
+      "final": [
+        [
+          "-21.000000",
+          "0.000000",
+          "64",
+          "151200"
+        ]
+      ],
+      "progress": [],
+      "wall_s": 0.499938,
+      "log_sha256": "a45fea9f32a4ac569d5b9c3c895dda96221f6ee3c3241f267a56622a28dd48f7",
+      "checkpoint_unchanged": true,
+      "success": true,
+      "dashboards": 0,
+      "missing_key_error": false
+    },
+    {
+      "name": "validation/intentional-timeout/new",
+      "group": "validation",
+      "label": "intentional-timeout",
+      "version": "new",
+      "id": "b-flex_quality-s31005",
+      "model": "flex_quality",
+      "recipe": "b",
+      "steps": 3145728,
+      "games": 2147483647,
+      "cap": 7,
+      "original_status": "ok",
+      "original_eval_wall_s": 1.34,
+      "checkpoint": "/home/keith/Git/ml/cnn-5090/build/pongcnn/confirm-5090.full.JXYKB06r/b-flex_quality-s31005/checkpoints/pongcnn/trial/0000000003145728.bin",
+      "checkpoint_sha256": "1bbe4bfc4ec710b512a8229297af99233a74451acd95e2906cb37b5e3580d1b6",
+      "original_config": {
+        "pongcnn.ini": "38a0ee508f18962764a7a20b6906a2e6d35c6a17ea3ef3433a99fa3cb8df3527",
+        "default.ini": "f9eef1c5a7e2f690e261faab619cbcc508180fc477b9421eaba751fc1212c074"
+      },
+      "binary": "/home/keith/Git/ml/cnn-5090/build/pongcnn/eval-profile-audit.VjfOaDBg/flex_quality.bin",
+      "exit_code": "124",
+      "final": [],
+      "progress": [
+        {
+          "steps": 3371008,
+          "games": 2253,
+          "requested": 2147483647,
+          "elapsed": 5.004
+        }
+      ],
+      "wall_s": 7.112069,
+      "log_sha256": "fdd7af61cdc97e8c2a97c705ea6dfd184a22f6b69847c8caf5e3e996859c743f",
+      "checkpoint_unchanged": true,
+      "success": false,
+      "dashboards": 0,
+      "missing_key_error": false
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0               🐡 GPU:  17%   VRAM:   5.3/31G    RAM:  0.5G     │
+│                                                                              │
+│ Env         connect4cnn    Evaluate        0ms   0%    Losses                │
+│ Params           151.7K      Model         0ms   0%    policy                │
+│ Steps              2.0K      Env           0ms   0%    value                 │
+│ SPS                 0.0      Copy          0ms   0%    entropy               │
+│ Epoch                 0    Train           0ms   0%    old_kl                │
+│ Uptime             72ms      Model         0ms   0%    kl                    │
+│ To go               0ms      Misc          0ms   0%    clipfrac              │
+│                                                                              │
+│ perf                          0.845   score                         0.690    │
+│ episode_return                0.690   episode_length               10.464    │
+│ invalids                      0.042                                          │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0              🐡  GPU:  17%   VRAM:   5.3/31G    RAM:  0.5G     │
+│                                                                              │
+│ Env         connect4cnn    Evaluate        0ms   0%    Losses                │
+│ Params           151.7K      Model         0ms   0%    policy                │
+│ Steps             12.3K      Env           0ms   0%    value                 │
+│ SPS                 0.0      Copy          0ms   0%    entropy               │
+│ Epoch                 0    Train           0ms   0%    old_kl                │
+│ Uptime            183ms      Model         0ms   0%    kl                    │
+│ To go               0ms      Misc          0ms   0%    clipfrac              │
+│                                                                              │
+│ perf                          0.828   score                         0.655    │
+│ episode_return                0.655   episode_length               10.623    │
+│ invalids                      0.036                                          │
+╰──────────────────────────────────────────────────────────────────────────────╯
+CUDA_EVAL env=connect4cnn score=0.655417 perf=0.827709 games=1126 params=151712

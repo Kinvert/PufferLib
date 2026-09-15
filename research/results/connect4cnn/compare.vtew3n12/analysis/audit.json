@@ -1,0 +1,20 @@
+{
+  "status": "receipt_audit_passed",
+  "archive_sha256": "ffd4e83fda2cb57ff5cc846115345a02af03adc910adfd0df5cab10d62c1da87",
+  "revision": "9b829e071f6d3d56064465dc8284a4b0f03c82a4",
+  "source_hashes_verified": 42,
+  "source_files_differing_from_git_revision": [],
+  "evaluation_logs_verified": 52,
+  "configurations_matched": 4,
+  "total_training_seconds": 1099.213711897144,
+  "binary_and_checkpoint_arrays": "Not present; remote audit claims retained, not independently repeated",
+  "remote_audit": {
+    "status": "ok",
+    "jobs": 4,
+    "evaluations": 52,
+    "finite_checkpoints": 52,
+    "source_hashes_verified": 42,
+    "binary_hashes_verified": 4,
+    "checkpoint_hashes_verified": 52
+  }
+}

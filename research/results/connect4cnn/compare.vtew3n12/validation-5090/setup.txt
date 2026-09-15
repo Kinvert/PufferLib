@@ -1,0 +1,18 @@
+9b829e071f6d3d56064465dc8284a4b0f03c82a4
+nvcc: NVIDIA (R) Cuda compiler driver
+Copyright (c) 2005-2025 NVIDIA Corporation
+Built on Tue_Dec_16_07:23:41_PM_PST_2025
+Cuda compilation tools, release 13.1, V13.1.115
+Build cuda_13.1.r13.1/compiler.37061995_0
+Python 3.12.3
+numpy==2.5.3
+CCACHE_DIR=/home/keith/Git/ml/cnn-5090/build/ccache
+CPATH=/home/keith/Git/ml/fzero-training/PufferLib-5.0/.venv/lib/python3.12/site-packages/nvidia/nccl/include
+CUDA_HOME=/usr/local/cuda-13.1
+LD_LIBRARY_PATH=/home/keith/Git/ml/fzero-training/PufferLib-5.0/.venv/lib/python3.12/site-packages/nvidia/nccl/lib:/usr/local/cuda-13.1/lib64:/usr/lib/wsl/lib
+LIBRARY_PATH=/home/keith/Git/ml/cnn-5090/build/connect4cnn/link-libs:/home/keith/Git/ml/fzero-training/PufferLib-5.0/.venv/lib/python3.12/site-packages/nvidia/nccl/lib:/usr/local/cuda-13.1/lib64/stubs
+NCCL_ROOT=/home/keith/Git/ml/fzero-training/PufferLib-5.0/.venv/lib/python3.12/site-packages/nvidia/nccl
+NVCC_ARCH=sm_120
+OPENBLAS_NUM_THREADS=1
+4b240a1fa79858ca8cdffcf5c2fc40aeaca8b3eaec61728213715f0902aba3a8  /home/keith/Git/ml/fzero-training/PufferLib-5.0/.venv/lib/python3.12/site-packages/nvidia/nccl/include/nccl.h
+1d9c10322efacde695cf640db1f29fc1586c929f1087f0e1202d2d5e70fb7168  /home/keith/Git/ml/fzero-training/PufferLib-5.0/.venv/lib/python3.12/site-packages/nvidia/nccl/lib/libnccl.so.2

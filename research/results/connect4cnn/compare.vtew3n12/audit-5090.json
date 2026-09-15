@@ -1,0 +1,9 @@
+{
+  "status": "ok",
+  "jobs": 4,
+  "evaluations": 52,
+  "finite_checkpoints": 52,
+  "source_hashes_verified": 42,
+  "binary_hashes_verified": 4,
+  "checkpoint_hashes_verified": 52
+}

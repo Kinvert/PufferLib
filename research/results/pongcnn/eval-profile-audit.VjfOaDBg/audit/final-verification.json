@@ -1,0 +1,15 @@
+{
+  "nsight_independent_summaries_matched": [
+    "a-flex_quality",
+    "a-nature_cnn",
+    "a-impala_cnn",
+    "a-impoola_cnn",
+    "b-flex_quality",
+    "b-nature_cnn",
+    "b-impala_cnn",
+    "b-impoola_cnn"
+  ],
+  "evaluation_control_pairs_identical": 8,
+  "all_57_attempt_receipts_present": true,
+  "original_identities_verified": 1927
+}

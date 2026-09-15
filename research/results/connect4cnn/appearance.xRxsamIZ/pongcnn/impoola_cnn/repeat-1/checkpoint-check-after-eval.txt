@@ -1,0 +1,2 @@
+checkpoints/pongcnn/trial/0000000000008192.bin: OK
+checkpoints/pongcnn/trial/0000000000016384.bin: OK

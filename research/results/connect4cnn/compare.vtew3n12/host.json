@@ -1,0 +1,8 @@
+{
+  "platform": "Linux-6.17.0-40-generic-x86_64-with-glibc2.39",
+  "machine": "x86_64",
+  "logical_cpus": 32,
+  "python": "3.12.3 (main, Jun 19 2026, 12:46:00) [GCC 13.3.0]",
+  "nvidia_smi": "/usr/bin/nvidia-smi",
+  "available_cpus": 32
+}

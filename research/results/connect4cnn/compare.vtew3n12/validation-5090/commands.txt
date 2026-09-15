@@ -1,0 +1,5 @@
+bash ocean/connect4cnn/tests/build_encoder_test.sh test_nature 
+.venv/bin/python ocean/connect4cnn/tests/test_nature.py --library build/connect4cnn/test_nature.so 
+.venv/bin/python ocean/connect4cnn/tests/test_flex.py --library build/connect4cnn/test_nature.so 
+bash ocean/connect4cnn/tests/build_encoder_test.sh test_impala 
+.venv/bin/python ocean/connect4cnn/tests/test_impala.py --library build/connect4cnn/test_impala.so 

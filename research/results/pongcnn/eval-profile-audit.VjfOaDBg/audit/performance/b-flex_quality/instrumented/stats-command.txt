@@ -1,0 +1,1 @@
+/usr/local/cuda/bin/nsys stats --report cuda_gpu_kern_sum --format csv --output - /home/keith/Git/ml/cnn-5090/build/pongcnn/eval-profile-audit.VjfOaDBg/performance/b-flex_quality/instrumented/profile.sqlite 

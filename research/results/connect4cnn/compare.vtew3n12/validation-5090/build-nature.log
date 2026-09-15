@@ -1,0 +1,39 @@
+In function ‘DictItem* dict_insert(Dict*, const char*)’,
+    inlined from ‘DictItem* dict_item(Dict*, const char*)’ at ./src/ini.h:79:19,
+    inlined from ‘DictItem* dict_set(Dict*, const char*, double)’ at ./src/ini.h:101:27,
+    inlined from ‘void vec_log(VecEnv*, Dict*, int)’ at ./src/pufferl.cu:1380:9:
+./src/ini.h:70:41: warning: ‘%s’ directive output may be truncated writing up to 255 bytes into a region of size 128 [-Wformat-truncation=]
+   70 |     snprintf(item->key, sizeof(item->key), "%s", key);
+      |                                         ^~~~
+In function ‘int snprintf(char*, size_t, const char*, ...)’,
+    inlined from ‘DictItem* dict_insert(Dict*, const char*)’ at ./src/ini.h:70:9,
+    inlined from ‘DictItem* dict_item(Dict*, const char*)’ at ./src/ini.h:79:19,
+    inlined from ‘DictItem* dict_set(Dict*, const char*, double)’ at ./src/ini.h:101:27,
+    inlined from ‘void vec_log(VecEnv*, Dict*, int)’ at ./src/pufferl.cu:1380:9:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:54:32: note: ‘__builtin_snprintf’ output between 1 and 256 bytes into a destination of size 128
+   54 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+      |        ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                                                  
+In function ‘void env_setup(PuffeRL*, VecEnv*, Dict*, Dict*)’,
+    inlined from ‘PuffeRL* create_pufferl(Ini*, TrainContext*)’ at ./src/pufferl.cu:1895:10:
+./src/pufferl.cu:1065:29: warning: argument 1 range [18446744071562067968, 18446744073709551615] exceeds maximum object size 9223372036854775807 [-Walloc-size-larger-than=]
+ 1065 |         int* cursors = (int*)calloc(vec->num_policies, sizeof(int));
+      |                       ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/stdlib.h: In function ‘PuffeRL* create_pufferl(Ini*, TrainContext*)’:
+/usr/include/stdlib.h:675:14: note: in a call to allocation function ‘void* calloc(size_t, size_t)’ declared here
+  675 | extern void *calloc (size_t __nmemb, size_t __size)
+      |              ^~~~~~
+In function ‘DictItem* dict_insert(Dict*, const char*)’,
+    inlined from ‘DictItem* dict_item(Dict*, const char*)’ at ./src/ini.h:79:19,
+    inlined from ‘DictItem* dict_set(Dict*, const char*, double)’ at ./src/ini.h:101:27,
+    inlined from ‘TrainResult run_train(Ini*, TrainContext*)’ at ./src/pufferl.cu:3175:9:
+./src/ini.h:70:41: warning: ‘%s’ directive output may be truncated writing up to 255 bytes into a region of size 128 [-Wformat-truncation=]
+   70 |     snprintf(item->key, sizeof(item->key), "%s", key);
+      |                                         ^~~~
+In function ‘int snprintf(char*, size_t, const char*, ...)’,
+    inlined from ‘DictItem* dict_insert(Dict*, const char*)’ at ./src/ini.h:70:9,
+    inlined from ‘DictItem* dict_item(Dict*, const char*)’ at ./src/ini.h:79:19,
+    inlined from ‘DictItem* dict_set(Dict*, const char*, double)’ at ./src/ini.h:101:27,
+    inlined from ‘TrainResult run_train(Ini*, TrainContext*)’ at ./src/pufferl.cu:3175:9:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:54:32: note: ‘__builtin_snprintf’ output between 1 and 256 bytes into a destination of size 128
+   54 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+      |        ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                                                  

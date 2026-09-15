@@ -1,0 +1,1 @@
+CUDA_EVAL env=pongcnn score=-20.984375 perf=0.000710 games=64 params=151200

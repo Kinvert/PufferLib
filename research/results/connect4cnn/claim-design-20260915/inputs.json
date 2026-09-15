@@ -1,0 +1,11 @@
+{
+  "status": "superseded_time_slice_development_planning_only",
+  "sha256": {
+    "research/results/connect4cnn/confirm.ol9tcj5k/analysis/observations.csv": "71780e430053c7c46694985767d96b92db8aff89f7e86ab5a692a35abd7931df",
+    "research/results/connect4cnn/compare.vtew3n12/analysis/observations.csv": "e510831dfa50e5c876d938825c29f8289f7ad40bea11c1777058fb8424807bbe"
+  },
+  "script_sha256": "ceec7d3070a53fc92f0cd6cd500da9260f471577568a71242e916b9d7521a86b",
+  "selection": "latest completed checkpoint <= budget; no interpolation or score maximization",
+  "missing": "no eligible checkpoint is missing, never zero",
+  "power_limit": "normal approximation with assumed SD/effect; not a coverage or power guarantee"
+}

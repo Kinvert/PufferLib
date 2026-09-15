@@ -1,0 +1,1 @@
+timeout -k 5 2615 bash ocean/pongcnn/eval_profile_audit.sh /home/keith/Git/ml/cnn-5090/build/pongcnn/eval-profile-audit.VjfOaDBg campaign > /home/keith/Git/ml/cnn-5090/build/pongcnn/eval-profile-audit.VjfOaDBg/campaign.log 2>&1

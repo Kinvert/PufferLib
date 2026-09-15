@@ -1,0 +1,49 @@
+Processing [/home/keith/Git/ml/cnn-5090/build/pongcnn/eval-profile-audit.VjfOaDBg/performance/a-flex_quality/instrumented/profile.sqlite] with [/opt/nvidia/nsight-systems/2025.5.2/host-linux-x64/reports/cuda_gpu_kern_sum.py]... 
+Time (%),Total Time (ns),Instances,Avg (ns),Med (ns),Min (ns),Max (ns),StdDev (ns),Name
+17.9,26774026,8256,3243.0,3008.0,2528,4448,613.5,void cutlass::Kernel2<cutlass_80_simt_sgemm_64x64_8x5_tn_align1>(T1::Params)
+16.8,25068513,64,391695.5,391092.0,389124,396900,1795.8,"void sgemm_largek_lds64<(bool)0, (bool)1, (int)5, (int)5, (int)4, (int)4, (int)4, (int)32>(float *, const float *, const float *, int, int, int, int, int, int, const float *, const float *, float, float, int, int, int *, int *)"
+10.5,15653697,6336,2470.6,1632.0,1120,49345,5026.2,"flex_patches(const float *, float *, NatureLayer, int, int, int)"
+10.0,14924954,11200,1332.6,1216.0,992,3744,306.4,"void cublasLt::splitKreduce_kernel<(int)32, (int)16, int, float, float, float, float, (bool)0, float, float, float, (bool)1, (bool)0, (bool)0, (bool)0>(cublasLt::cublasSplitKParams<T6>, const T4 *, const T10 *, T9 *, T5 *, const T6 *, const T6 *, const T11 *, const T4 *, T11 *, void *, long, T6 *, int *, T6 *, T6 *, const T6 *, const T6 *, const T6 *, const T6 *, const T6 *)"
+7.8,11586515,2368,4893.0,4896.0,4832,5248,37.3,void cutlass::Kernel2<cutlass_80_simt_sgemm_32x128_8x5_tn_align1>(T1::Params)
+6.1,9058455,192,47179.5,4032.0,3008,134882,61849.9,"nature_bias_backward(const float *, float *, int, int)"
+4.7,7035654,6336,1110.4,1024.0,960,7776,652.2,"nature_bias_relu(float *, const float *, int, int)"
+2.9,4353836,2048,2125.9,2112.0,2016,2624,61.4,"sample_logits(Prec, Prec, int *, float *, float *, float *, float *, curandStatePhilox4_32_10 *, float *, int)"
+2.5,3792709,1024,3703.8,3488.0,3360,5536,491.5,void cutlass::Kernel2<cutlass_80_simt_sgemm_128x32_8x5_nn_align1>(T1::Params)
+1.6,2456178,512,4797.2,3008.5,2944,11904,3142.9,void cutlass::Kernel2<cutlass_80_simt_sgemm_64x64_8x5_nt_align1>(T1::Params)
+1.6,2415191,960,2515.8,2496.0,2464,2688,36.2,void cutlass::Kernel2<cutlass_80_simt_sgemm_64x64_8x5_nn_align1>(T1::Params)
+1.6,2375404,2048,1159.9,1152.0,1088,1344,24.8,"mingru_gate(float *, float *, const float *, const float *, const float *, int, int)"
+1.4,2123384,64,33177.9,33184.0,32800,33984,162.9,"void magma_sgemmEx_kernel<float, float, float, (bool)1, (bool)0, (int)6, (int)4, (int)6, (int)3, (int)4>(int, int, int, BatchedTensor, int, BatchedTensor, int, BatchedTensor, int, BatchedTensor, int, int, int, const T1 *, const T1 *, T1, T1, int, cublasLtEpilogue_t, int, const void *, long)"
+1.4,2056527,2048,1004.2,992.0,960,1312,31.8,"zero_term_state(Prec, Float, int, int, int)"
+1.3,1941781,2048,948.1,928.0,864,1280,52.8,"cast_rew_term(float *, const float *, float *, const float *, int)"
+1.3,1939472,2048,947.0,928.0,896,1280,42.1,"cast(float *, unsigned char *, int)"
+1.3,1872314,1280,1462.7,1552.0,1120,1888,237.4,"void gemmSN_NN_kernel<float, (int)256, (int)4, (int)2, (int)8, (int)4, (int)4, (bool)0, cublasGemvTensorStridedBatched<const float>, cublasGemvTensorStridedBatched<const float>, cublasGemvTensorStridedBatched<float>>(cublasGemmSmallNParams<T9, T10, T11, T1>)"
+1.0,1461100,192,7609.9,8096.0,2592,12224,3838.3,void cutlass::Kernel2<cutlass_80_simt_sgemm_128x64_8x5_nn_align1>(T1::Params)
+0.9,1408371,128,11002.9,10976.0,2080,20096,8910.5,"flex_unpatch(const float *, float *, NatureLayer, int, int, int)"
+0.8,1168205,64,18253.2,18241.0,18080,18625,91.6,void cutlass::Kernel2<cutlass_80_simt_sgemm_128x128_8x4_tn_align1>(T1::Params)
+0.7,1019439,64,15928.7,15792.5,14976,17121,439.1,"void sgemm_largek_lds64<(bool)0, (bool)1, (int)6, (int)3, (int)4, (int)5, (int)2, (int)64>(float *, const float *, const float *, int, int, int, int, int, int, const float *, const float *, float, float, int, int, int *, int *)"
+0.6,883494,448,1972.1,1056.0,992,8448,2165.5,"transpose_102(float *, const float *, int, int, int)"
+0.6,853035,64,13328.7,13344.0,12641,13664,175.3,"mingru_scan_backward(PrefixScan, const float *, const float *)"
+0.5,708392,320,2213.7,2176.0,2144,2592,64.5,void cutlass::Kernel2<cutlass_80_simt_sgemm_128x64_8x5_nt_align1>(T1::Params)
+0.5,680868,64,10638.6,10640.5,10560,10720,38.2,mingru_scan_forward(PrefixScan)
+0.4,667687,64,10432.6,10432.0,10304,10560,46.2,void cutlass::Kernel2<cutlass_80_simt_sgemm_128x64_8x5_tn_align1>(T1::Params)
+0.4,614503,192,3200.5,1408.0,1024,7424,2754.5,"nature_relu_backward(float *, const float *, int)"
+0.4,540902,384,1408.6,1312.0,1216,2144,217.6,"muon_sum_sq_partials(float *, const float *, int)"
+0.4,540007,320,1687.5,1664.0,1632,1888,45.0,"void gemmSN_TN_kernel<float, (int)128, (int)16, (int)2, (int)4, (int)8, (int)9, (bool)0, cublasGemvTensorStridedBatched<const float>, cublasGemvTensorStridedBatched<const float>, cublasGemvTensorStridedBatched<float>>(cublasGemmSmallNParams<T9, T10, T11, T1>)"
+0.3,474596,384,1235.9,1248.0,1184,1472,27.6,"muon_sum_sq_reduce(float *, const float *, int)"
+0.3,416133,320,1300.4,1280.0,1248,1440,53.0,"void gemmSN_TN_kernel<float, (int)128, (int)16, (int)2, (int)4, (int)4, (int)4, (bool)1, cublasGemvTensorStridedBatched<const float>, cublasGemvTensorStridedBatched<const float>, cublasGemvTensorStridedBatched<float>>(cublasGemmSmallNParams<T9, T10, T11, T1>)"
+0.2,368928,320,1152.9,1120.0,1056,1376,70.6,"muon_l2_normalize(float *, const float *, float, int)"
+0.2,330690,64,5167.0,5152.0,5120,5568,73.9,void cutlass::Kernel2<cutlass_80_simt_sgemm_128x32_8x5_tn_align1>(T1::Params)
+0.2,307266,320,960.2,960.0,896,1152,41.9,"muon_store_update(float *, const float *, float, int)"
+0.2,242407,64,3787.6,3713.0,3680,4416,191.4,"puff_advantage(const float *, const float *, const float *, const float *, float *, float *, float, float, float, float, int, int)"
+0.1,169633,192,883.5,832.0,800,1056,78.9,puf_stamp(unsigned long long *)
+0.1,163042,64,2547.5,2528.0,2496,2688,47.9,"ppo_loss_compute(float *, PPOKernelArgs, PPOGraphArgs)"
+0.1,161732,64,2527.1,2496.0,2432,2784,76.0,"cache_imp_and_v(Prec, const float *, const float *, const float *, Prec, const int *, float *, float *, float *, float *)"
+0.1,133122,64,2080.0,2048.0,1952,2432,101.4,"muon_clip_nesterov(float *, float *, const float *, float, float, float, int)"
+0.1,115553,64,1805.5,1760.0,1408,2432,239.8,"add_kernel(float *, const float *, int)"
+0.1,115072,64,1798.0,1792.0,1728,1920,42.6,"ppo_loss_reduce(float *, const float *, int)"
+0.1,98306,64,1536.0,1504.0,1472,1824,79.2,"muon_weight_update(float *, const float *, const float *, float, int)"
+0.1,91074,128,711.5,736.0,544,928,76.9,"void scal_kernel<float, float, (int)1, (bool)1, (int)6, (int)5, (int)5, (int)3>(cublasTransposeParams<T2>, const T1 *, T1 *, const T2 *)"
+0.1,88419,64,1381.5,1376.0,1312,1696,69.9,"snapshot_state(Prec, Prec, int, int)"
+0.0,71777,64,1121.5,1120.0,1088,1249,18.5,"assemble_decoder_grad(float *, const float *, const float *, int, int, int)"
+0.0,61156,64,955.6,960.0,928,1024,16.0,"clamp_precision_kernel(float *, float, float, int)"
+

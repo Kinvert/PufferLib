@@ -1,0 +1,9 @@
+PASS: IMPALA gap=False finite differences for all 16 weight/bias pairs and all-cell coverage
+PASS: IMPALA gap=True finite differences for all 16 weight/bias pairs and all-cell coverage
+PASS: native SAME max-pool borders, negative values, ties and overlapping gradients
+PASS: native IMPALA gap=False forward/all gradients, rollout/train and eager/graph repeatability B=1 H=16
+PASS: native IMPALA gap=False forward/all gradients, rollout/train and eager/graph repeatability B=3 H=32
+PASS: native IMPALA gap=False forward/all gradients, rollout/train and eager/graph repeatability B=32 H=128
+PASS: native IMPALA gap=True forward/all gradients, rollout/train and eager/graph repeatability B=1 H=16
+PASS: native IMPALA gap=True forward/all gradients, rollout/train and eager/graph repeatability B=3 H=32
+PASS: native IMPALA gap=True forward/all gradients, rollout/train and eager/graph repeatability B=32 H=128

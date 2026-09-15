@@ -1,0 +1,2 @@
+PASS: 49,152 transitions match native Pong; repeat, pixel fixtures, rewards/reset, ASan/UBSan.
+PASS: all five fixed appearances and three mixed seeds preserve Pong physics/RNG; invalid settings rejected.

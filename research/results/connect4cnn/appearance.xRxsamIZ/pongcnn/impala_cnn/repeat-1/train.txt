@@ -1,0 +1,40 @@
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0               🐡 GPU:  60%   VRAM:    3.5/8G    RAM:  0.5G     │
+│                                                                              │
+│ Env             pongcnn    Evaluate      152ms  55%    Losses       2.252    │
+│ Params           270.0K      Model       145ms  52%    policy       1.390    │
+│ Steps              2.0K      Env           3ms   0%    value        1.726    │
+│ SPS                7.4K      Copy          2ms   0%    entropy      1.097    │
+│ Epoch                 1    Train         123ms  44%    old_kl       0.000    │
+│ Uptime            275ms      Model       123ms  44%    kl           0.000    │
+│ To go          1s 927ms      Misc          0ms   0%    clipfrac     0.000    │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0              🐡  GPU:  94%   VRAM:    3.5/8G    RAM:  0.5G     │
+│                                                                              │
+│ Env             pongcnn    Evaluate      216ms  30%    Losses       2.230    │
+│ Params           270.0K      Model       185ms  26%    policy       1.411    │
+│ Steps             10.2K      Env          11ms   1%    value        1.641    │
+│ SPS               11.5K      Copy          9ms   1%    entropy      1.097    │
+│ Epoch                 5    Train         494ms  69%    old_kl       0.000    │
+│ Uptime            990ms      Model       494ms  69%    kl          -0.000    │
+│ To go             536ms      Misc          0ms   0%    clipfrac     0.000    │
+│                                                                              │
+│ perf                          0.000   score                       -21.000    │
+│ episode_return              -21.000   episode_length                6.200    │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0             🐡   GPU:  96%   VRAM:    3.5/8G    RAM:  0.5G     │
+│                                                                              │
+│ Env             pongcnn    Evaluate      163ms  30%    Losses       1.870    │
+│ Params           270.0K      Model       139ms  26%    policy       1.219    │
+│ Steps             16.4K      Env           8ms   1%    value        1.304    │
+│ SPS               11.5K      Copy          7ms   1%    entropy      1.097    │
+│ Epoch                 8    Train         370ms  69%    old_kl      -0.000    │
+│ Uptime         1s 524ms      Model       370ms  69%    kl          -0.000    │
+│ To go               0ms      Misc          0ms   0%    clipfrac     0.000    │
+│                                                                              │
+│ perf                          0.000   score                       -21.000    │
+│ episode_return              -21.000   episode_length                9.755    │
+╰──────────────────────────────────────────────────────────────────────────────╯

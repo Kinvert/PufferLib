@@ -1,0 +1,8 @@
+bash build.sh connect4cnn /home/claude/cnn/build/connect4cnn/appearance.xRxsamIZ/connect4cnn/flex_quality/train --float 
+env NVCC_PREPEND_FLAGS=-DC4_NATURE_CNN bash build.sh connect4cnn /home/claude/cnn/build/connect4cnn/appearance.xRxsamIZ/connect4cnn/nature_cnn/train --float 
+env NVCC_PREPEND_FLAGS=-DC4_IMPALA_CNN bash build.sh connect4cnn /home/claude/cnn/build/connect4cnn/appearance.xRxsamIZ/connect4cnn/impala_cnn/train --float 
+env NVCC_PREPEND_FLAGS=-DC4_IMPOOLA_CNN bash build.sh connect4cnn /home/claude/cnn/build/connect4cnn/appearance.xRxsamIZ/connect4cnn/impoola_cnn/train --float 
+bash build.sh pongcnn /home/claude/cnn/build/connect4cnn/appearance.xRxsamIZ/pongcnn/flex_quality/train --float 
+env NVCC_PREPEND_FLAGS=-DC4_NATURE_CNN bash build.sh pongcnn /home/claude/cnn/build/connect4cnn/appearance.xRxsamIZ/pongcnn/nature_cnn/train --float 
+env NVCC_PREPEND_FLAGS=-DC4_IMPALA_CNN bash build.sh pongcnn /home/claude/cnn/build/connect4cnn/appearance.xRxsamIZ/pongcnn/impala_cnn/train --float 
+env NVCC_PREPEND_FLAGS=-DC4_IMPOOLA_CNN bash build.sh pongcnn /home/claude/cnn/build/connect4cnn/appearance.xRxsamIZ/pongcnn/impoola_cnn/train --float 
