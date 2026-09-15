@@ -2,6 +2,11 @@
 #include <assert.h>
 #include <inttypes.h>
 #include ENV_HEADER
+#include <stddef.h>
+
+static double representation = 0;
+static double representation_mode = 0;
+static double representation_seed = 0;
 
 typedef struct {
     Env env;
@@ -32,7 +37,14 @@ static void setup(Fixture* f, unsigned int seed, int frameskip, int continuous) 
     dict_set(&kwargs, "max_score", 21);
     dict_set(&kwargs, "frameskip", frameskip);
     dict_set(&kwargs, "continuous", continuous);
+#ifdef TEST_PIXELS
+    dict_set(&kwargs, "representation", representation);
+    dict_set(&kwargs, "representation_mode", representation_mode);
+    dict_set(&kwargs, "representation_seed", representation_seed);
+#endif
+    f->env.rng = seed;
     puf_init(&f->env, &kwargs);
+    assert(f->env.rng == seed);
     free(kwargs.items);
     f->env.rng = seed;
     puf_reset(&f->env);
@@ -113,7 +125,13 @@ static void fixtures(void) {
                 float expected = x < 2 && y >= 33 ? 0.5f
                     : x >= 42 && y < 5 ? 0.75f : 0;
                 if (x >= bx && x < bx + 2 && y >= by && y < by + 2) expected = 1;
-                assert(obs[y * 44 + x] == expected);
+                int tx = f.env.representation == 2 ? 43 - x : x;
+                int ty = f.env.representation == 3 ? 37 - y : y;
+                if (f.env.representation == 1) {
+                    if (expected == 0.5f) expected = 0.75f;
+                    else if (expected == 0.75f) expected = 0.5f;
+                } else if (f.env.representation == 4) expected = 1 - expected;
+                assert(obs[ty * 44 + tx] == expected);
             }
         }
         float saved[OBS_SIZE];
@@ -138,13 +156,17 @@ static uint64_t state_hash(Fixture* f) {
     memset(state.agents, 0, sizeof(state.agents));
     const unsigned char* bytes = (const unsigned char*)&state;
     uint64_t hash = UINT64_C(14695981039346656037);
-    for (size_t i = 0; i < sizeof(state); i++) {
+    // Compare the unchanged game fields, excluding appearance and tail padding.
+    for (size_t i = 0; i < offsetof(Env, rng) + sizeof(state.rng); i++) {
         hash = (hash ^ bytes[i]) * UINT64_C(1099511628211);
     }
     return hash;
 }
 
-int main(void) {
+int main(int argc, char** argv) {
+    if (argc > 1) representation = atof(argv[1]);
+    if (argc > 2) representation_mode = atof(argv[2]);
+    if (argc > 3) representation_seed = atof(argv[3]);
     fixtures();
     int skips[] = {1, 3, 8};
     for (int continuous = 0; continuous <= 1; continuous++) {
@@ -152,12 +174,18 @@ int main(void) {
             for (unsigned int seed = 1; seed <= 8; seed++) {
                 Fixture f;
                 setup(&f, seed, skips[k], continuous);
+#ifdef TEST_PIXELS
+                int assigned = f.env.representation;
+#endif
                 unsigned int rng = seed + 1000;
                 for (int step = 0; step < 1024; step++) {
                     rng = rng * 1664525u + 1013904223u;
                     f.action = continuous ? (float)(rng % 201) / 100 - 1 : (float)(rng % 3);
                     puf_step(&f.env);
                     check_observation(&f);
+#ifdef TEST_PIXELS
+                    assert(f.env.representation == assigned);
+#endif
                     printf("%d %d %u %d %016" PRIx64 " %a %a\n", continuous, skips[k],
                         seed, step, state_hash(&f), f.reward, f.terminal);
                 }

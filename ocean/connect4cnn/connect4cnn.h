@@ -7,6 +7,7 @@
 #include "raylib.h"
 typedef float obs_t;
 #include "pufferenv.h"
+#include "appearance.h"
 
 #define ACT_SIZES {7}
 #define CONNECT4CNN_CELL_PIXELS 6
@@ -493,13 +494,7 @@ void puf_init(Env* env, Dict* kwargs) {
     env->num_agents = 1;
     env->player_pieces = dict_get(kwargs, "player_pieces");
     env->env_pieces = dict_get(kwargs, "env_pieces");
-    DictItem* representation = dict_find(kwargs, "representation");
-    double value = representation ? representation->value : 0;
-    if (!(value >= 0 && value < CONNECT4CNN_NUM_REPRESENTATIONS && value == floor(value))) {
-        fprintf(stderr, "connect4cnn: representation must be an integer from 0 to 9\n");
-        exit(1);
-    }
-    env->representation = (int)value;
+    env->representation = cnn_appearance_init(kwargs, env->rng, CONNECT4CNN_NUM_REPRESENTATIONS);
     const int* spec = CONNECT4CNN_REPRESENTATIONS[env->representation];
     int cw = spec[0], ch = spec[1], width = spec[2], height = spec[3], style = spec[4];
     int left = (cw - width) / 2, top = (ch - height) / 2;

@@ -13,6 +13,17 @@ import wandb_sidecar as sidecar
 
 
 class ToolsTest(unittest.TestCase):
+    def test_mixed_appearance_cannot_sweep_inactive_id(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            recipe = sidecar.read_ini(sweep.HERE / "sweep_representation.ini")
+            recipe.set("env", "representation_mode", "1")
+            path = root / "mixed.ini"
+            with path.open("w") as f:
+                recipe.write(f)
+            with self.assertRaisesRegex(ValueError, "inactive"):
+                sweep.prepare(root, path, 2)
+
     def test_representation_sweep(self):
         with tempfile.TemporaryDirectory() as tmp:
             config = sweep.prepare(Path(tmp), sweep.HERE / "sweep_representation.ini", 2)
@@ -51,6 +62,15 @@ class ToolsTest(unittest.TestCase):
                 rows = list(csv.DictReader(f))
             self.assertEqual([r["representation"] for r in rows], ["5", "7"])
             self.assertEqual([r["pareto"] for r in rows], ["True", "True"])
+            mixed = {**trial, "index": 2, "representation_mode": 1,
+                     "representation_seed": 12, "score": 1, "cost": 1}
+            another = {**mixed, "index": 3, "representation_seed": 13,
+                       "score": .5, "cost": 4}
+            sweep.write_report(root, [trial, mixed, another], 5, "ok")
+            with (root / "results.csv").open() as f:
+                rows = list(csv.DictReader(f))
+            self.assertEqual([r["pareto"] for r in rows], ["True"] * 3)
+            self.assertEqual([r["representation_seed"] for r in rows], ["0", "12", "13"])
 
     def test_isolated_dimensions(self):
         original = (sweep.ROOT / "config/default.ini").read_bytes()

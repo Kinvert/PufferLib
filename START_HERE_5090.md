@@ -4,16 +4,18 @@ This file is the complete starting brief for an agent or person with **no prior 
 
 ## What we are doing
 
-We are researching efficient pixel-input CNNs in native PufferLib 5.0. The immediate job on this machine is a **fixed-model hardware comparison on the RTX 5090**, not a sweep or architecture redesign. Compare our existing quality CNN with adapted Nature, IMPALA and Impoola. All models train from scratch; none is pretrained.
+**Current task, September 15:** follow [NEXT_5090_VALIDATION.md](NEXT_5090_VALIDATION.md). Validate deterministic mixed appearances on Connect4CNN/PongCNN using the bounded native canary. The original hardware comparison and Pong replication/profile tasks are completed; their commands below are historical reproduction instructions, not instructions to repeat them now. The planned full-frontier confirmation still needs measurement/evaluation/inference gates before launch.
+
+We are researching efficient pixel-input CNNs in native PufferLib 5.0. Compare our existing quality CNN with adapted Nature, IMPALA and Impoola. All models train from scratch; none is pretrained. Keep the full observed frontier and identical per-panel learner settings; preserve outcomes where references win.
 
 The task is unchanged 7-column × 6-row Connect4 against the same scripted opponent, rendered as grayscale 1×36×44 pixels. Each cell occupies a solid 6×6 square (`env.representation=0`). All four models use the same hidden-128, one-layer recurrent core and learner recipe. Ours has one 16-channel 7×7/stride-4 SAME convolution and projection 64. Exact fixed selections are in `ocean/connect4cnn/confirmation.json`; the recipe is `ocean/connect4cnn/compare.ini`.
 
-G240 is a **different machine with an RTX 5060**. It is running a Pong research campaign; do not contact it to kill jobs, rerun its campaign, or assume its paths exist here. Its historical results and limitations are in [BENCHMARK_STATE.md](research/BENCHMARK_STATE.md). We have an encouraging Connect4 time frontier, not a proven general-purpose SOTA CNN. This 5090 run must report what it measures, including losses and failures.
+G240 is a **different machine with an RTX 5060**. Its old Pong campaign is finished; do not restart it or assume its paths exist here. Historical results and limitations are in [BENCHMARK_STATE.md](research/BENCHMARK_STATE.md). We have an encouraging Connect4 time frontier, not a proven general-purpose SOTA CNN. Report actual measurements, including losses and failures.
 
 ## 1. Get the right checkout
 
 ```bash
-git clone --branch cnn-research https://github.com/Kinvert/PufferLib.git cnn-5090
+git clone --branch cnn-research git@github.com:Kinvert/PufferLib.git cnn-5090
 cd cnn-5090
 git remote -v
 git rev-parse HEAD

@@ -30,16 +30,13 @@ echo prepared > "$out/status.txt"
 if [[ "${1:-}" == --prepare-only ]]; then exit 0; fi
 
 source ocean/connect4cnn/runtime_env.sh
+nvidia_smi=$(puffer_find_nvidia_smi)
 export OPENBLAS_NUM_THREADS=1
 if [[ -n "${NVCC_PREPEND_FLAGS:-}" ]]; then
     echo "Unset NVCC_PREPEND_FLAGS; the runner selects reference builds." >&2
     exit 2
 fi
-active=$(/usr/lib/wsl/lib/nvidia-smi --query-compute-apps=pid --format=csv,noheader)
-if [[ -n "${active//[[:space:]]/}" ]]; then
-    echo "GPU is busy; leave confirmation undisturbed and run this canary later." >&2
-    exit 1
-fi
+puffer_require_idle_gpu "$nvidia_smi"
 trap 'echo failed > "$out/status.txt"' EXIT
 run() {
     printf 'cwd=%q ' "$PWD" >> "$out/commands.txt"
@@ -47,7 +44,7 @@ run() {
     printf '\n' >> "$out/commands.txt"
     "$@"
 }
-/usr/lib/wsl/lib/nvidia-smi > "$out/gpu.txt"
+"$nvidia_smi" > "$out/gpu.txt"
 for variant in "${variants[@]}"; do
     env=pongcnn
     flags=()
@@ -69,12 +66,8 @@ for variant in "${variants[@]}"; do
     if [[ "$variant" == state ]]; then env=pong; fi
     if [[ "$variant" == flex_quality ]]; then encoder=4; fi
     trial="$out/$variant"
-    active=$(/usr/lib/wsl/lib/nvidia-smi --query-compute-apps=pid --format=csv,noheader)
-    if [[ -n "${active//[[:space:]]/}" ]]; then
-        echo "GPU became busy before $variant; stopping without interrupting it." >&2
-        exit 1
-    fi
-    /usr/lib/wsl/lib/nvidia-smi > "$trial/gpu-before.txt"
+    puffer_require_idle_gpu "$nvidia_smi"
+    "$nvidia_smi" > "$trial/gpu-before.txt"
     common=(--headless --policy.encoder="$encoder" --base.run_id=trial
         --base.checkpoint_dir="$trial/checkpoints" --base.log_dir="$trial/metrics")
     (

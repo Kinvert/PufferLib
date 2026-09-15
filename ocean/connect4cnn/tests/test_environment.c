@@ -4,6 +4,8 @@
 #include ENV_HEADER
 
 static double representation = 0;
+static double representation_mode = 0;
+static double representation_seed = 0;
 
 typedef struct {
     Env env;
@@ -25,8 +27,12 @@ static void setup(Fixture* f, unsigned int seed) {
 #ifdef TEST_PIXELS
     // Omitting zero also tests backward compatibility with old configs.
     if (representation != 0) dict_set(&kwargs, "representation", representation);
+    dict_set(&kwargs, "representation_mode", representation_mode);
+    dict_set(&kwargs, "representation_seed", representation_seed);
 #endif
+    f->env.rng = seed;
     puf_init(&f->env, &kwargs);
+    assert(f->env.rng == seed);
     // These entries have numeric values only; dict_set allocates the item array.
     free(kwargs.items);
     f->env.rng = seed;
@@ -38,7 +44,7 @@ static void check_observation(Fixture* f) {
     assert(f->buffer[OBS_SIZE + 1] == -12345.0f);
     const float* obs = f->env.agents[0].observations;
 #ifdef TEST_PIXELS
-    if (representation != 0) {
+    if (f->env.representation != 0) {
         // Independent literal masks: bit 0 is the leftmost pixel in each row.
         const int widths[] = {6,6,6,6,6,6,4,2,1,2};
         const int heights[] = {6,6,6,6,6,6,4,2,1,4};
@@ -48,7 +54,7 @@ static void check_observation(Fixture* f) {
             {15,15,15,15}, {3,3}, {1}, {3,3,3,3},
         };
         const unsigned char ring[] = {30,51,33,33,51,30};
-        int id = (int)representation, cw = widths[id], ch = heights[id];
+        int id = f->env.representation, cw = widths[id], ch = heights[id];
         int left = (44 - 7 * cw) / 2, top = (36 - 6 * ch) / 2;
         float expected[OBS_SIZE] = {0};
         for (int column = 0; column < 7; column++) {
@@ -147,17 +153,42 @@ static void check_fixtures(void) {
 
 int main(int argc, char** argv) {
     if (argc > 1) representation = atof(argv[1]);
+    if (argc > 2) representation_mode = atof(argv[2]);
+    if (argc > 3) representation_seed = atof(argv[3]);
     check_fixtures();
     for (unsigned int seed = 1; seed <= 16; seed++) {
         Fixture f;
         setup(&f, seed);
+#ifdef TEST_PIXELS
+        int assigned = f.env.representation;
+#endif
         unsigned int action_rng = seed + 1000;
+        int episode_steps = 0;
+        int completed_games = 0;
         for (int step = 0; step < 256; step++) {
             // Independent action RNG: policy does not consume the opponent RNG.
             action_rng = action_rng * 1664525u + 1013904223u;
             f.action = (float)(action_rng % 7);
+            int pieces_before = __builtin_popcountll(f.env.player_pieces | f.env.env_pieces);
+            episode_steps++;
             puf_step(&f.env);
+            assert(episode_steps <= 21);
+            if (f.terminal) {
+                completed_games++;
+                assert(f.env.player_pieces == 0 && f.env.env_pieces == 0);
+                assert(f.reward == -1 || f.reward == 0 || f.reward == 1);
+                episode_steps = 0;
+            } else {
+                // Two legal moves per nonterminal call; a full board must end.
+                int pieces_after = __builtin_popcountll(f.env.player_pieces | f.env.env_pieces);
+                assert(pieces_after == pieces_before + 2 && pieces_after < 42);
+                assert(episode_steps < 21);
+            }
+            assert(f.env.log.n == completed_games);
             check_observation(&f);
+#ifdef TEST_PIXELS
+            assert(f.env.representation == assigned);
+#endif
             printf("%u %d %.0f %" PRIu64 " %" PRIu64 " %" PRIu64
                    " %u %d %d %.0f %.0f %.0f %.0f %.0f %.0f %.0f %.0f\n",
                    seed, step, f.action, f.env.player_pieces, f.env.env_pieces,

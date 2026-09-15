@@ -44,4 +44,19 @@ for invalid in -1 10 1.5 nan; do
     fi
     rg -q 'representation must be an integer' build/connect4cnn/representation-invalid.txt
 done
+"${CC:-clang}" "${flags[@]}" ocean/connect4cnn/tests/test_appearance.c -lm \
+    -o build/connect4cnn/test_appearance
+build/connect4cnn/test_appearance
+for seed in 0 12345 4294967295; do
+    build/connect4cnn/test_connect4cnn 0 1 "$seed" > build/connect4cnn/mixed.trace
+    cmp build/connect4cnn/connect4.trace build/connect4cnn/mixed.trace
+done
+for option in '0 2 0' '0 1 -1' '0 1 4294967296' '0 1 nan' '0 1 1.5'; do
+    if build/connect4cnn/test_connect4cnn $option >/dev/null 2>build/connect4cnn/appearance-invalid.txt; then
+        echo "Invalid appearance options accepted: $option" >&2
+        exit 1
+    fi
+    rg -q 'must be an integer' build/connect4cnn/appearance-invalid.txt
+done
 echo "PASS: all 10 representations, pixel/reset fixtures, 4096-step upstream parity each, repeats and invalid-ID rejection (ASan/UBSan)."
+echo "PASS: mixed per-slot appearances, fixed assignment, independent RNG, golden IDs and invalid mode/seed rejection."

@@ -2,6 +2,8 @@
 
 **Goal:** deliver a clean, usable PufferLib tool that finds a useful CNN performance-versus-training-time frontier for each pixel environment and search budget. A winning fixed CNN remains a possible deliverable; this is an additional route, not a replacement for the existing research or an accepted upstream feature.
 
+September 15 sequencing: follow the [ordered milestones in the main paper plan](PAPER_PLAN.md#next-actions--ordered-implementation-milestones). The immediate [Connect4 protocol](CONNECT4_CLAIM_PROTOCOL.md) measures the full observed frontier with identical learner settings, decision budget and checkpoint cadence for all four fixed encoders. Validate timing/exact episode allocation, baseline fairness and simultaneous analysis, then confirm on fresh training seeds. Per-model hyperparameter selection and architecture search are separate later studies. Pong v2 remains necessary before further Pong quality claims; baseline attribution and portable image support remain delivery work. The [5090 audit](PONG_EVALUATION_AUDIT_RESULTS.md) found sparse match completion and substantial recipe dependence. The tool must expose reliable tradeoffs even when our current compact model loses; more architecture trials cannot repair a biased/incomplete evaluation protocol.
+
 ## User workflow
 
 1. Select an environment, search budget, and allowed architecture building blocks through normal numeric INI settings.
@@ -15,6 +17,7 @@ The output is a small menu of verified tradeoffs: low training cost, a chosen pe
 
 - Build on the existing native configurable CNN and PROTEIN integration. Expose depth, channels, kernels, strides, pooling, residual connections and projection width; add dilation as a separately validated extension. Keep architecture construction, optimization and training in C/CUDA, with minimal changes to `src/`. External W&B/reporting can remain optional.
 - Initially hold the recurrent core, environment representation and learner recipe fixed while searching architecture and training budget. Give finalists a separately declared hyperparameter-tuning allowance; joint architecture/learner search can follow once comparisons are dependable.
+- Treat any single fixed learner recipe as one controlled slice, not evidence of a generally inferior architecture. Pong's recipe-dependent ranking makes a small shared recipe panel or declared comparable finalist tuning necessary for broader claims. Separate architecture-search and learner-tuning resources and account for native effective replay updates.
 - Prefer small candidates initially, but retain broader exploration. Increasing complexity is optional, not a mandatory growth ladder. A larger model may learn enough faster to cost less overall.
 - Construct each trial's network before training and start from fresh weights. Growing a live network or transferring weights between architectures is outside the first version.
 - Validate legal shapes before launch, identify equivalent active architectures, and avoid repeating identical configuration/budget/seed trials. Record full configs, native timing, SPS, decisions, evaluation, failures and source/checkpoint hashes.

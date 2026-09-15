@@ -6,6 +6,7 @@
 #include "raylib.h"
 typedef float obs_t;
 #include "pufferenv.h"
+#include "../connect4cnn/appearance.h"
 
 #define ACT_SIZES {3}
 #define OBS_CHANNELS 1
@@ -15,6 +16,7 @@ typedef float obs_t;
 #define PONGCNN_SCORE_ROWS 2
 #define PONGCNN_MARGIN 2
 #define NUM_ATNS 1
+#define PONGCNN_NUM_REPRESENTATIONS 5
 
 typedef struct Log Log;
 struct Log {
@@ -62,6 +64,7 @@ struct Env {
     int frameskip;
     int continuous;
     unsigned int rng;
+    int representation;
 };
 typedef Env Pong;
 
@@ -117,6 +120,31 @@ void compute_observations(Pong* env) {
         OBS_HEIGHT - (env->ball_y + env->ball_height) * sy,
         PONGCNN_MARGIN + (env->ball_x + env->ball_width) * sx,
         OBS_HEIGHT - env->ball_y * sy, 1.0f);
+    // Reversible court-only transforms; scores, physics and actions stay fixed.
+    if (env->representation == 1 || env->representation == 4) {
+        for (int i = PONGCNN_SCORE_ROWS * OBS_WIDTH; i < OBS_SIZE; i++) {
+            if (env->representation == 4) obs[i] = 1 - obs[i];
+            else if (obs[i] == 0.5f) obs[i] = 0.75f;
+            else if (obs[i] == 0.75f) obs[i] = 0.5f;
+        }
+    } else if (env->representation == 2) {
+        for (int y = PONGCNN_SCORE_ROWS; y < OBS_HEIGHT; y++) {
+            for (int x = 0; x < OBS_WIDTH / 2; x++) {
+                float tmp = obs[y * OBS_WIDTH + x];
+                obs[y * OBS_WIDTH + x] = obs[y * OBS_WIDTH + OBS_WIDTH - 1 - x];
+                obs[y * OBS_WIDTH + OBS_WIDTH - 1 - x] = tmp;
+            }
+        }
+    } else if (env->representation == 3) {
+        for (int y = PONGCNN_SCORE_ROWS; y < (OBS_HEIGHT + PONGCNN_SCORE_ROWS) / 2; y++) {
+            for (int x = 0; x < OBS_WIDTH; x++) {
+                int other = OBS_HEIGHT + PONGCNN_SCORE_ROWS - 1 - y;
+                float tmp = obs[y * OBS_WIDTH + x];
+                obs[y * OBS_WIDTH + x] = obs[other * OBS_WIDTH + x];
+                obs[other * OBS_WIDTH + x] = tmp;
+            }
+        }
+    }
 }
 
 void reset_round(Pong* env) {
@@ -371,6 +399,7 @@ void puf_log(Log* log, Dict* out) {
 
 void puf_init(Env* env, Dict* kwargs) {
     env->num_agents = 1;
+    env->representation = cnn_appearance_init(kwargs, env->rng, PONGCNN_NUM_REPRESENTATIONS);
     env->width = dict_get(kwargs, "width");
     env->height = dict_get(kwargs, "height");
     env->paddle_width = dict_get(kwargs, "paddle_width");

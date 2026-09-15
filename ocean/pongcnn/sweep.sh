@@ -81,16 +81,15 @@ done
 echo prepared > "$out/status.txt"
 if [[ "$mode" == prepare ]]; then exit 0; fi
 source ocean/connect4cnn/runtime_env.sh
+nvidia_smi=$(puffer_find_nvidia_smi)
 export OPENBLAS_NUM_THREADS=1
 [[ -z "${NVCC_PREPEND_FLAGS:-}" ]]
 gpu_idle() {
-    local active
-    active=$(/usr/lib/wsl/lib/nvidia-smi --query-compute-apps=pid --format=csv,noheader)
-    [[ -z "${active//[[:space:]]/}" ]] || { echo 'GPU busy; stopping without interrupting other work.' >&2; return 1; }
+    puffer_require_idle_gpu "$nvidia_smi"
 }
 trap 'echo failed > "$out/status.txt"' EXIT
 gpu_idle
-/usr/lib/wsl/lib/nvidia-smi > "$out/gpu.txt"
+"$nvidia_smi" > "$out/gpu.txt"
 for variant in "${variants[@]}"; do
     flags=()
     case "$variant" in
@@ -107,7 +106,7 @@ for variant in "${variants[@]}"; do
     job="$out/$variant"
     sha256sum "$job/train" "$job/config/"*.ini > "$job/inputs.sha256"
     gpu_idle
-    /usr/lib/wsl/lib/nvidia-smi > "$job/gpu-before.txt"
+    "$nvidia_smi" > "$job/gpu-before.txt"
     echo running > "$job/status.txt"
     printf 'timeout -k 10 %q %q sweep --headless\n' "$wall_cap" "$job/train" > "$job/command.txt"
     code=0

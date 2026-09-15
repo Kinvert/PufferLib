@@ -1,5 +1,41 @@
 # CNN project notes
 
+## 2026-09-15 — Seeded mixed appearances and 5090 validation
+
+Added independent deterministic per-slot appearance assignment to both native pixel environments. Connect4 retains ten presets; Pong adds four reversible court transforms around its original raster. Mode 0/default preserves old observations. Slot assignments use explicit `representation_seed`, remain fixed on reset and never consume game RNG. CPU literal-pixel/parity/sanitizer checks pass fixed and mixed panels. [Native canary](research/results/connect4cnn/appearance.xRxsamIZ/REPORT.md): all four encoders on both games, 16 training runs/16 reload evaluations; paired checkpoint bytes and evaluation records identical across one/two CPU workers, weights finite. [Current 5090 handoff](NEXT_5090_VALIDATION.md) replaces stale completed-campaign launch directions. Exact-episode evaluation, Pong truncation handling and final full-frontier inference remain separate open gates; no new long training or quality claim.
+
+## 2026-09-15 — Full frontier and identical training regime
+
+Kinvert corrected the proposed three-time comparison: measure the entire observed frontier, keeping all four encoders on the same learner settings, 13.312M decisions, LR schedule and checkpoint steps. [Updated protocol](research/CONNECT4_CLAIM_PROTOCOL.md) removes the 80s cap and per-family recipe selection. Dense checkpointing, paired independent training seeds, multiple held-out evaluation seed blocks and simultaneous uncertainty must retain declines/failures and expose where larger models win. Forty seeds is now provisional resource planning; the old nine-contrast power calculation does not justify whole-frontier inference. The earlier design below is superseded and archived, not executed. No new GPU run or push.
+
+## 2026-09-15 — Strategic priority: focused Connect4 frontier claim
+
+Kinvert reaffirmed the objective of a defensible win in a bounded frontier region. [CONNECT4_CLAIM_PROTOCOL.md](research/CONNECT4_CLAIM_PROTOCOL.md) fixes a 60s quality target against three references at 30/45/60s, a shared six-recipe learner challenge, and 40 fresh paired confirmation seeds with nine adjusted contrasts. The initial design is ready for implementation gates, not a launch-ready/finally frozen source configuration. Reproducible historical selection/power tables and four CPU safeguards are added; finite-game/terminal checks pass native original/pixel parity and ASan/UBSan for all representations. Immediate code work is native checkpoint availability and exact episode allocation; Pong v2 remains supporting work. No new training or push was performed.
+
+## 2026-09-15 — Next implementation order consolidated
+
+[Main paper plan](research/PAPER_PLAN.md#next-actions--ordered-implementation-milestones) now contains the ordered tasks and acceptance gates: specify/implement evaluation v2; validate on saved checkpoints; attribute baseline costs; deliver portable native CNN construction; integrate an original external benchmark; compare search methods; then freeze final paper experiments. The immediate task is fixed episode allocation/seeding, match counters, decision-cap/truncation policy and native tests, without retraining. Numeric cap calibration remains an explicit design task. The constructor plan links to this sequence, and the paper-writing track distinguishes usable software from demonstrated research novelty. No implementation or GPU work was launched by this planning update.
+
+## 2026-09-15 — 5090 evaluation/profile handoff received
+
+[Audit results](research/PONG_EVALUATION_AUDIT_RESULTS.md): package and raw diagnostic receipts verified. Timeout checkpoints simulate quickly but complete few matches; telemetry cleanup did not solve this. Fixed episode allocation/caps/truncation accounting are proposed for evaluation v2. Shared GEMM and patch paths dominate measured residual-backend kernel time, with per-layer attribution unresolved. Original-context quality curves/review are now local, but full original raw/checkpoint/profiler databases are not. No archived code applied or executed; no new training. The next work needs a separately versioned evaluator and focused backend attribution, not another blind full sweep.
+
+## 2026-09-15 — Evaluation fixes verified; 5090 diagnostic handoff
+
+Native evaluation resource queries now occur at dashboard refreshes rather than every rollout; progress logs expose advancing decisions/completed matches. Portable Pong launchers reject busy GPUs and failed GPU queries. Ten CPU checks passed, and two original/patched checkpoint evaluations matched exactly; synthetic timeout progress verified. No training, game-rule changes or measured speedup claim. [Evidence](research/results/pongcnn/eval-audit-20260915/README.md) retains the initial dashboard regression and correction. [Next 5090 instructions](research/PONG_EVALUATION_AUDIT_HANDOFF.md) are self-contained: use existing local artifacts, diagnose eight timeouts with controls, profile fixed references, keep a 45-minute cap and preserve original results. No setup transfer or push required.
+
+## 2026-09-15 — RTX 5090 Pong replication finished remotely
+
+[Reported results](research/PONG_5090_RESULTS.md): all 40 training runs completed; eight of 320 evaluations timed out. Ours trained fastest, but Nature performed substantially better under recipe B; Impoola was most reliable under A. Evaluation took 1h50m of 3h13m total elapsed. Three final means remain unresolved. Raw evidence has not arrived locally, so remote audit claims and full curve analysis are not independently verified on G240. No additional local training or evaluation retries were started.
+
+## RTX 5090 Pong comparison handoff prepared
+
+[Full agent instructions](research/PONG_5090_HANDOFF.md) specify four locked architectures crossed with two shared development learner recipes and five fresh paired seeds: 40 runs, 4.194304M decisions each, eight checkpoints each. This is a bounded replication stage, not a powered superiority test. G240 discovery is now completed with two evaluation failures retained: ours/Nature 24 trials each, IMPALA/Impoola eight each at resource caps; all families found >99% evaluated point fraction. The handoff records unequal discovery coverage, exact shared recipe values, native runner work still needed, the WSL GPU-path portability fix, validation, full-frontier analysis and evidence transfer. No new Pong training was launched on G240 and no handoff source was pushed.
+
+## RTX 5090 first result received and audited
+
+Received and audited the four-model/52-evaluation hardware comparison at `9b829e07`; [results](research/HARDWARE_5090_RESULTS.md) preserve metrics, full curves and runtime provenance. All 42 source snapshots match Git; all 52 CSV observations match raw logs; four non-encoder configs match. Ours: final 71.78% wins, 77.819 s; Nature: 66.11%, 83.790 s. Total training 18m19.214s. The complete observed time frontier contains ours at low cost, Impoola in the middle, and IMPALA at high score; Nature contributes no points this seed. Binary/checkpoint arrays were not transferred, so their remote checks were not independently repeated. Single-seed evidence remains insufficient for score superiority; the historical 5060 run used different source/toolchain versions. No new GPU job was launched.
+
 ## 5090 hardware-comparison handoff
 
 Prepared `cnn-research` for the Kinvert-owned `Kinvert/PufferLib` fork only; official `PufferAI/PufferLib` pushing remains disabled. [Hardware comparison instructions](research/HARDWARE_COMPARISON.md) provide fresh-checkout/local-venv setup using the existing CUDA/NCCL toolchain, a four-model canary, and fixed full-budget comparison. Portable `nvidia-smi` lookup, optional competing-process rejection and host/compiler receipts were added to the reporting runner; native model/training code is unchanged. Twenty-one CPU configuration/sidecar/hardware tests passed. No additional GPU job was launched on G240, and the separate 5090 host has not yet been tested. A same-revision G240 run after Pong completes is needed for a controlled cross-host timing comparison.

@@ -1,6 +1,6 @@
 # Connect4CNN representations
 
-`env.representation` is an integer selector, 0–9, fixed for the lifetime of each environment instance. It can be selected by INI or native CLI (`--env.representation=5`) and swept by native PROTEIN. Missing values default to 0 for older configs; negative, fractional, nonfinite and out-of-range values are rejected at initialization.
+`env.representation` is an integer selector, 0–9. Default `representation_mode=0` uses this fixed ID for every environment. Mode 1 assigns an ID deterministically per environment slot, using `representation_seed`; that assignment stays fixed across all matches/resets. Missing settings default to zero for old configs. Invalid IDs, modes and seeds fail at initialization.
 
 All presets preserve the 7-column × 6-row game and float32 `[1,36,44]` input. Cell pitch means the width/height allocated per game location. Smaller boards are centered in the same black canvas: **this changes occupied pixel size, not tensor dimensions or encoder FLOPs**. Changing image dimensions remains separate work.
 
@@ -19,13 +19,36 @@ All presets preserve the 7-column × 6-row game and float32 `[1,36,44]` input. C
 
 Empty/background pixels are zero. Player pixels are 1 and opponent pixels 0.5 in every preset, including X/O, so ownership is unambiguous. Disk and ring boundaries are integer masks on a coarse grid, not antialiased graphics. Glyph masks are computed once at initialization, then observations use native buffer writes with no allocation, RNG, image library, or rendering context. ID 0 retains the original observation loop. Resets yield an empty black board in every preset. The human viewer continues to show the standard game; it is not an exact policy-image preview.
 
-## Sweeping
+## Deterministic mixed appearances
+
+```ini
+[env]
+representation = 0
+representation_mode = 1
+representation_seed = 12345
+```
+
+Mode 1 hashes the explicit unsigned 32-bit appearance seed and native environment slot with the versioned integer function in `appearance.h`. The native CPU environment constructor initializes `env.rng` to the slot before `puf_init`; selection reads that value without modifying it. Appearance does not use wall time, global `rand()`, worker order or the opponent RNG stream. It is selected once, not per frame, match or rollout. Equal seed/slot/count gives equal assignment for every encoder. Changing thread count does not reassign slots. Rank-local slots repeat across GPU ranks; only the one-GPU workflow is currently validated.
+
+`base.seed` controls model initialization/action sampling, **not this appearance seed**, and currently does not change the native CPU game's initial per-slot RNG. Record both seeds explicitly. Keep slot count/order and appearance settings on checkpoint reload: weight-only checkpoints do not contain environment assignment. Changing the appearance seed intentionally creates a new assignment; changing the fixed ID in mixed mode has no effect. The sweep preparer rejects sweeping that inactive ID. Modes/seeds are fixed experiment controls, not optimizer targets.
+
+Generate an assignment receipt after the CPU tests build the native helper:
+
+```bash
+build/connect4cnn/test_appearance connect4cnn 12345 64 > build/connect4cnn/appearance.csv
+```
+
+The first 16 IDs for seed 12345 are `0,0,7,8,6,4,4,4,6,4,7,3,8,8,1,5`. Golden-vector and interleaving checks pin this mapping. Finite random assignments need not balance categories or cover every ID. A mixed-training robustness study should evaluate fixed weights on **every fixed ID separately** with the same episode quotas; a pooled mixed score alone does not establish per-appearance robustness. Training separately per ID, mixed training, and transfer to unseen appearances are distinct experiments. The primary paper comparison remains fixed representation 0; mixed panels are separately labeled.
+
+## Sweeping fixed appearances
 
 Fixed appearance:
 
 ```ini
 [env]
 representation = 5
+representation_mode = 0
+representation_seed = 0
 ```
 
 Add this section to an architecture recipe to include representation in the search:
@@ -46,7 +69,7 @@ NVCC_ARCH=sm_120 bash ocean/connect4cnn/sweep.sh \
   --canary --max-runs 3 --wandb disabled
 ```
 
-The standard flexible architecture recipe explicitly fixes representation 0. Add the above sweep section when appearance should vary too. The temporary preparation layer accepts representation-only or joint searches for encoder families 1/2/3/4; native C/CUDA PROTEIN performs the search and training. W&B receives `env.representation` through each trial's saved configuration. CSV/Markdown/sidecar payloads carry a separate representation field; network architecture hashes remain independent of appearance. Old results without the setting are interpreted as representation 0.
+The standard flexible architecture recipe explicitly fixes representation 0. Add the above sweep section when appearance should vary too. The temporary preparation layer accepts representation-only or joint searches for encoder families 1/2/3/4; native C/CUDA PROTEIN performs the search and training. CSV/sidecar payloads retain representation, mode and seed separately from the architecture hash. Pareto flags group by fixed ID or mixed seed, never merging those experiment types. Old results without these settings mean fixed representation 0.
 
 ## Interpreting the results
 

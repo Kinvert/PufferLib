@@ -54,6 +54,12 @@ def prepare(out, recipe, max_runs):
             ini.remove_section(section)
     ini.read(recipe)
     dimensions = {s[6:] for s in ini.sections() if s.startswith("sweep.")}
+    mode = ini.getfloat("env", "representation_mode", fallback=0)
+    appearance_seed = ini.getfloat("env", "representation_seed", fallback=0)
+    if mode not in (0, 1) or not (0 <= appearance_seed <= 4294967295 and appearance_seed.is_integer()):
+        raise ValueError("Invalid fixed appearance mode/seed")
+    if mode == 1 and "env.representation" in dimensions:
+        raise ValueError("representation is inactive in mixed mode; do not sweep it")
     encoder = ini.getint("policy", "encoder")
     if encoder not in LIMITS or not dimensions or not dimensions <= set(LIMITS[encoder]) | {"train.total_timesteps", "env.representation"}:
         raise ValueError("Fix encoder to 1/2/3/4 and sweep a nonempty subset of architecture/budget/representation options")
@@ -121,10 +127,13 @@ def execute(command, cwd, log, timeout):
 
 
 def write_report(out, rows, wall, status):
-    fields = ["index", "run_id", "name", "family", "representation", "channels", "depth", "stride", "projection", "blocks", "global_pool", "architecture_json", "steps", "score", "cost", "native_avg_sps", "params", "random", "gp_obs", "architecture_sha256", "pareto"]
+    fields = ["index", "run_id", "name", "family", "representation", "representation_mode", "representation_seed", "channels", "depth", "stride", "projection", "blocks", "global_pool", "architecture_json", "steps", "score", "cost", "native_avg_sps", "params", "random", "gp_obs", "architecture_sha256", "pareto"]
+    def appearance(row):
+        mode = row.get("representation_mode", 0)
+        return (mode, row.get("representation_seed", 0) if mode else row.get("representation", 0))
     flat = []
     for row in rows:
-        dominated = any(r.get("representation", 0) == row.get("representation", 0) and
+        dominated = any(appearance(r) == appearance(row) and
                         r["cost"] <= row["cost"] and r["score"] >= row["score"] and
                         (r["cost"] < row["cost"] or r["score"] > row["score"]) for r in rows)
         shape = row["architecture"]
@@ -132,6 +141,8 @@ def write_report(out, rows, wall, status):
                      **{k: shape.get("policy.cnn_" + k, "") for k in ("channels", "depth", "stride", "projection", "blocks", "global_pool")},
                      "name": display_name(out, row["index"]), "family": shape["version"],
                      "representation": row.get("representation", 0),
+                     "representation_mode": row.get("representation_mode", 0),
+                     "representation_seed": row.get("representation_seed", 0),
                      "architecture_json": json.dumps(shape, sort_keys=True), "pareto": not dominated})
     with (out / "results.csv").open("w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fields)
@@ -139,12 +150,13 @@ def write_report(out, rows, wall, status):
     lines = ["# Experimental CNN native PROTEIN sweep", "", f"Status: {status}. Sweep process wall: {wall:.3f} seconds.",
              "Same Connect4 rules and image dimensions; representation, architecture and budget follow the saved config. Learner/core recipe is locked.",
              "Training metrics, not held-out evaluation. Cost is native adjusted uptime rounded by PROTEIN stdout; SPS = actual decisions / that cost.",
-             "Training observations guide discovery; held-out evaluation and repeated seeds are required to confirm finalists. Report Pareto flags use rounded final observations within each representation; native PROTEIN still optimizes the joint search objective.", "",
+             "Training observations guide discovery; held-out evaluation and repeated seeds are required to confirm finalists. Report Pareto flags use rounded final observations within each appearance assignment (fixed ID or mixed seed); native PROTEIN still optimizes the joint search objective. CSV retains mode and seed.", "",
              "| Run | Family | Representation | Architecture settings | Steps | Training wins | Cost s | Native avg SPS | Parameters | GP proposal | Pareto |",
              "|---|---|---:|---|---:|---:|---:|---:|---:|---|---|"]
     for r in flat:
         shape = ", ".join(f"{k.removeprefix('policy.cnn_')}={v}" for k, v in json.loads(r["architecture_json"]).items() if k.startswith("policy.cnn_")) or "fixed Nature"
-        lines.append(f"| {r['name']} | {r['family']} | {r['representation']} | {shape} | {r['steps']:,} | {r['score']:.2%} | {r['cost']:.2f} | {r['native_avg_sps']:,.0f} | {r['params']:,} | {bool(r['gp_obs'])} | {r['pareto']} |")
+        appearance_label = f"mixed seed {r['representation_seed']}" if r['representation_mode'] else str(r['representation'])
+        lines.append(f"| {r['name']} | {r['family']} | {appearance_label} | {shape} | {r['steps']:,} | {r['score']:.2%} | {r['cost']:.2f} | {r['native_avg_sps']:,.0f} | {r['params']:,} | {bool(r['gp_obs'])} | {r['pareto']} |")
     lines += ["", "Source/config/binary hashes: protocol.json. Effective frozen config: config/default.ini.",
               "Per-trial INIs and checkpoints retain exact shapes; sidecar JSON joins these with final native observations.",
               "Whole sweep wall includes PROTEIN search and worker startup, but excludes compilation and final W&B synchronization. Online logging runs concurrently on CPU.", ""]

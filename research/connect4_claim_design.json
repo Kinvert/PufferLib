@@ -1,0 +1,43 @@
+{
+  "version": "connect4-full-frontier-design-v3",
+  "status": "design_pending_measurement_and_inference_validation_not_launch_ready",
+  "supersedes": "connect4-low-time-design-v2",
+  "environment": "connect4cnn",
+  "representation": 0,
+  "hardware": "RTX 5090 on the existing dedicated host",
+  "variants": ["flex_quality", "nature_cnn", "impala_cnn", "impoola_cnn"],
+  "comparison": "full observed score-versus-time frontier with identical training regime",
+  "common_recipe": "ocean/connect4cnn/compare.ini",
+  "per_model_learner_selection": false,
+  "training_decisions_per_model_seed": 13312000,
+  "annealing_schedule": "identical linear step schedule over 13312000 decisions",
+  "precision": "float32",
+  "core_hidden_size": 128,
+  "core_num_layers": 1,
+  "proposed_checkpoint_interval_decisions": 262144,
+  "include_final_checkpoint": true,
+  "proposed_checkpoints_per_run": 51,
+  "timing_origin": "monotonic launcher timestamp immediately before native process starts",
+  "checkpoint_cost": "elapsed time until checkpoint is fully written; includes startup and writes",
+  "short_training_wall_cap": null,
+  "confirmation": {
+    "training_seeds": null,
+    "provisional_training_seeds_for_resource_estimate_only": 40,
+    "seed_mapping": "freeze unused paired training and multiple held-out evaluation seed blocks before launch",
+    "proposed_evaluation_games_per_checkpoint": 1024,
+    "evaluation_allocation": "exact assigned episode IDs and slot quotas; same allocation across models",
+    "recipe_rule": "one identical resolved learner recipe for all four models",
+    "analysis_unit": "paired independent training-seed block retaining all models, checkpoints, times and scores",
+    "analysis_gate": "calibrated simultaneous uncertainty over full model/checkpoint panel, including time and score; selection-aware frontier inference",
+    "sample_size_gate": "development-only variance/precision calibration for whole-frontier inference",
+    "failure_rule": "preserve failures and missing outcomes; no silent complete-case superiority claim",
+    "stopping": "freeze sample size and rules before confirmation; no significance-driven additions or seed substitutions"
+  },
+  "gates": [
+    "reconcile source and audit baseline identities and backend fairness",
+    "validate native completion-time receipts and shared step checkpoint cadence",
+    "validate exact-allocation evaluation and multiple seed-block mapping",
+    "calibrate full-frontier inference and freeze replication design",
+    "freeze complete shared recipe, sources, seeds, analysis and failure rules before confirmation"
+  ]
+}

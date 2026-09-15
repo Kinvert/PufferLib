@@ -9,6 +9,9 @@ ocean/osrs/data/
 # Build dir
 build/
 
+# Received raw handoff; reviewed small receipts are under research/results/.
+/eval-profile-handoff.*.tar.gz
+
 # hipified cuda extensions dir [HIP/ROCM]
 pufferlib/extensions/hip/
 

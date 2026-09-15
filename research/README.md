@@ -6,6 +6,8 @@ On September 12, the checkout was fast-forwarded eight commits to `89414204ce850
 
 ## Start here
 
+- [Current 5090 validation task](../NEXT_5090_VALIDATION.md): deterministic mixed appearances, bounded native canary and remaining exact-evaluation gates; historical campaigns must not be relaunched.
+
 - [Complete 5090 session handoff](../START_HERE_5090.md): context and executable checklist from fresh clone through tests, training, tables and evidence transfer.
 
 - [5090 fixed-model hardware comparison](HARDWARE_COMPARISON.md): Kinvert-fork checkout, existing-toolchain setup, canary/full commands and same-revision timing requirements.

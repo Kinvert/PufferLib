@@ -121,6 +121,8 @@ def trials(root):
                 raise ValueError("Evaluation checkpoint does not match completed trial")
         result.append(dict(index=index, run_id=path.stem, config=config, architecture=spec, evaluation=evaluation,
                            representation=config.get("env.representation", 0),
+                           representation_mode=config.get("env.representation_mode", 0),
+                           representation_seed=config.get("env.representation_seed", 0),
                            architecture_sha256=identity, checkpoint=str(checkpoint.relative_to(root)),
                            checkpoint_sha256=hashlib.sha256(checkpoint.read_bytes()).hexdigest(),
                            params=checkpoint.stat().st_size // 4, history=history,

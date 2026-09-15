@@ -1,8 +1,46 @@
 # Paper plan: practical compute-efficient visual RL encoders
 
-Status: research plan, September 14, 2026. No additional training, new architecture search, installation, or publication is triggered by this document. Kinvert wants the project treated as a paper backed by usable software and verifiable comparisons. Architecture innovation is paused while measurement, portability, and confirmation are established.
+Status: research plan, updated September 15, 2026 after the 5090 Pong evaluation/backend audit. Kinvert wants usable native PufferLib software and an arXiv paper with defensible evidence. Architecture innovation is paused while measurement, portability, and confirmation are established. The ordered implementation milestones below supersede older proposed sequencing; editing this plan does not launch experiments.
 
 Working title: **Practical Compute-Efficient Visual Encoders for Reinforcement Learning**. Keep the title neutral until the experiments establish the contribution. The main question is: **Can a fixed compact encoder, trained from scratch on each task, improve the score-versus-training-time tradeoff across diverse pixel environments under fair tuning and reliable evaluation?** A useful result could be a small set of budget-specific encoders; one universal winner is not a required conclusion.
+
+The practical delivery target is the [native CNN constructor and search workflow](CNN_CONSTRUCTOR_PLAN.md). There are two distinguishable research claims: a frozen encoder's tradeoff advantage, and a search procedure finding better configurations for a declared resource budget. Neither is established yet. The software should remain useful when the existing compact model loses; the paper must not depend on forcing that model to win.
+
+## Next actions — ordered implementation milestones
+
+**Current priority after Kinvert's full-frontier clarification:** execute the gates in [CONNECT4_CLAIM_PROTOCOL.md](CONNECT4_CLAIM_PROTOCOL.md). Compare all four complete curves under one identical learner recipe, 13.312M-decision budget and checkpoint cadence. No three-time restriction, short wall cap or per-family recipe selection. Native checkpoint completion receipts, exact evaluation allocation and calibrated simultaneous frontier analysis precede fresh-seed confirmation; the replication count remains to be justified and frozen. Pong v2 remains supporting work and must precede further Pong quality claims.
+
+**Current evidence:** Connect4 five-seed confirmation and the 5090 Pong replication/profile work are complete. The [received audit](PONG_EVALUATION_AUDIT_RESULTS.md) establishes sparse Pong match completion despite high throughput; telemetry cleanup preserves results but has no measured speed advantage. Nature beats ours under Pong recipe B; a quality advantage is not established. Original missing outcomes remain missing. Full 5090 trace/checkpoint bytes are retained remotely; transferred summary/diagnostic receipt checks are separately identified.
+
+| Order | Work | Concrete result and completion check |
+|---|---|---|
+| 1 | Implement Connect4 timing and evaluation gates | Native fully-written checkpoint times, identical dense step cadence, deterministic exact episode allocation and saved-model tests |
+| 2 | Audit fairness and freeze the full-frontier protocol | Review backend/architecture adaptations; freeze one shared resolved learner recipe/source; calibrate simultaneous analysis and independent training-seed count |
+| 3 | Measure the complete Connect4 frontier | All four models finish the same 13.312M decisions; retain every checkpoint/seed, declines and failures; report supported and unresolved regions without significance-driven additions |
+| 4 | Deliver a portable constructor | Ordinary numeric INIs, configurable image channels/dimensions, validated shapes, native build/train/eval/reload and export; another clean checkout reproduces the workflow |
+| 5 | Integrate an established benchmark | Original environment semantics and train/validation/test splits preserved; first native original-Procgen feasibility result before committing to a broader suite; shared 64x64 RGB input tested |
+| 6 | Run the search-method study | Small-first PROTEIN versus random/unrestricted search and competitive references under declared tuning resources; full search costs, failures, recipe effects and exported configurations retained |
+| 7 | Freeze and run final paper confirmation | Candidate selection, budget schedules, test tasks, seed count/stopping and analysis fixed in advance; paired uncertainty and complete results support only the claims actually demonstrated |
+
+### Supporting task: Pong evaluation v2, with saved models
+
+Use the [received proposal](results/pongcnn/eval-profile-audit.VjfOaDBg/audit/PONG_EVALUATION_POLICY_PROPOSAL.md) as design input, not an already implemented specification. Finish a short v2 protocol before writing the implementation:
+
+- Assign exactly 512 episode IDs, eight per each of 64 slots, and an explicit deterministic seed mapping. Fast slots cannot contribute extra sampled episodes. Finished-slot masking must preserve active-slot behavior and recurrent state/reset semantics; test interactions with action RNG and vector execution rather than assuming isolation.
+- Record whole-match decisions, current-rally decisions, score, seed/ID, completion/truncation status and slot contribution. Current Pong `tick` resets at each point, so it is insufficient as a match counter.
+- Choose the numeric per-match decision cap from a declared duration-only calibration on existing development checkpoints, with an explicit compute ceiling; freeze it before new comparative quality evaluation. Record the cap rationale and check how truncation affects the usefulness of the result. A short cap that leaves broad score bounds is not a solved quality benchmark.
+- At a cap, record truncation without awarding a win or inventing a final score. Preserve current environment physics, scoring and observations. Report completion fraction plus identification bounds for the complete-match estimand; do not claim an unbiased complete-case mean. Keep a separate infrastructure/process timeout and distinguish it from planned episode truncation.
+- Specify reset/seeding behavior and a fixture-based comparison of genuinely matched completed trajectories. New episode allocation is a new estimator; it need not reproduce v1's pooled score, and its scores must not replace v1 entries.
+
+Implement native accounting/masking using existing interfaces, with minimal changes to `src/`; inspect the 5090 runner changes before duplicating or merging them. Preserve archived source as evidence instead of blindly applying a whole archive. Keep ordinary training and unrelated environments on their existing paths. Package the tested telemetry/portability fixes and v2 work as reviewable changes with exact source identity; reconcile both machines before their next shared experiment.
+
+Acceptance tests: unique/exact episode allocation; repeatable ID/seed mapping and results; cap/terminal boundary precedence; recurrent reset correctness; inactive-slot isolation; complete/truncated/error distinction; correct bounds; no loss of assigned episodes on process failure; deterministic repeated checkpoint evaluation. Use fixtures and bounded saved-model checks first. Then freeze one balanced diagnostic checkpoint panel with common rules for every family, including previously slow examples. **This milestone requires no full training rerun.** Store v2 results in new directories and preserve all v1 failures/declines.
+
+Only after v2 is dependable should it be used for further quality comparisons. Baseline layer attribution can proceed independently; kernel rewrites should follow measured attribution. Connect4 rendering variants are useful regression/appearance tests but are secondary to this evaluation milestone and do not substitute for held-out game identities.
+
+### Paper writing alongside implementation
+
+Draft motivation, contribution alternatives, native software design, experimental protocol and limitations now. Keep current Connect4/Pong findings as development evidence with explicit source and evaluation versions. Add final results after the method/protocol is frozen; do not retrofit the primary claim to a favorable test checkpoint. Refresh related work before making a novelty/SOTA claim. A useful software artifact and a scientifically novel search result are separate requirements; neither guarantees the other.
 
 ## Action checklist
 
@@ -10,7 +48,7 @@ Additional potential software contribution: [native CNN constructor and per-envi
 
 1. **Confirm current results — completed:** all 30 jobs and 390 evaluations passed; checkpoint/config/source audit and full paired-seed frontier analysis are in [CONFIRMATION_RESULTS.md](CONFIRMATION_RESULTS.md). Our models occupy the low-cost mean frontier and IMPALA the high-performance region; the quality-versus-Nature score advantage remains uncertain with five seeds.
 2. **Establish a defensible advantage over Nature — open:** substantially reduce uncertainty using the thesis-defense standard below, and separate controlled identical-learner comparisons from comparable per-family tuning allowances. Completing item 1 did not establish this claim.
-3. **Test architecture generalization:** select on development environments and freeze before retraining on untouched game identities; see generalization and environment strategy.
+3. **Test architecture generalization — partial development evidence:** the Connect4-selected architecture has been retrained on Pong, with strong recipe dependence and no demonstrated advantage over Nature. Untouched-game confirmation remains open; see generalization and environment strategy.
 4. **Integrate an established external benchmark:** proposed original Procgen; its native integration remains unverified here.
 5. **Deliver a usable native PufferLib component:** standard configuration, portable pixel contract, reproducible build/train/eval commands; see practical deliverable.
 6. **Report the whole tradeoff:** all curves, uncertainty, failures, search cost, and tasks where a method loses; see measurement and analysis requirements.
@@ -39,7 +77,7 @@ The paper may claim a reliable improvement in a useful, explicitly bounded porti
 | Claim | Required evidence | Current status |
 |---|---|---|
 | Better observed Connect4 time/score tradeoff | Matched protocol, whole curves, repeated independent training seeds | Five-seed confirmation complete: low-cost mean advantage for ours; broad score uncertainty; IMPALA leads sample efficiency/high scores |
-| Encoder architecture generalizes across environments | Shape selected on development tasks, frozen before training on unseen tasks, fresh weights per task | Not tested |
+| Encoder architecture generalizes across environments | Shape selected on development tasks, frozen before training on unseen tasks, fresh weights per task | Connect4-selected shape retrained on Pong; recipe dependence and seed failures measured, advantage unproven; further untouched-task confirmation open |
 | Efficient practical PufferLib component | Standard configuration/build path, documented pixel contract, multiple actual environments, reproducible commands | Native trainer/encoders work for Connect4CNN; input assumptions and temporary sweep glue remain |
 | Faster implementation of a given architecture | Same model/math/precision/data across implementations with numerical checks and realistic timing | Native correctness checks exist; controlled implementation-speed comparison not established |
 | Optimal encoder/recurrent-core allocation | Separate controlled sweep of both components across visual and memory demands | Not tested; current core is fixed at 128 |
@@ -84,7 +122,7 @@ Rotate/interleave model order while running serially on an otherwise available G
 
 ## Environment strategy
 
-September 14 implementation: user authorized adding native **PongCNN**, then its fixed-architecture training-hyperparameter search. See [PongCNN](../ocean/pongcnn/README.md) and [search protocol](PONG_HYPER_SWEEP.md). It is a development/integration task, not ALE Pong or an untouched test game. CPU transition/pixel checks, five-model native GPU train/reload, and eight-trial online search canary pass. The common-recipe quality pilot scored zero after 13.312M decisions; learning transfer is not established. State/pixel information differences and Pong's point-fraction metric are documented. This does not replace the proposed external benchmark.
+September 14–15 implementation: native **PongCNN**, fixed-architecture learner search and the 5090 two-recipe/five-seed replication are complete. See [PongCNN](../ocean/pongcnn/README.md), [search protocol](PONG_HYPER_SWEEP.md), [replication](PONG_5090_RESULTS.md) and [evaluation audit](PONG_EVALUATION_AUDIT_RESULTS.md). The initial common-recipe quality pilot scored zero after 13.312M decisions; subsequent learning depends strongly on recipe and seed, and eight replication evaluations remain incomplete. Pong is a development/integration task, not ALE Pong or a pristine test game. State/pixel information differences and the point-fraction metric remain documented. This does not replace the proposed external benchmark.
 
 **Stage A — Connect4 confirmation:** validate the measurement pipeline, train the frozen panel across fresh seeds, and reproduce the full-frontier analysis with equal checkpoint density. Preserve the existing sweep as development evidence. Keep the stock state baseline as a separately tuned practical reference; a pixel/state comparison alone is not a CNN-architecture comparison.
 

@@ -1,5 +1,7 @@
 # Run the fixed CNN comparison on the RTX 5090
 
+The [first 5090 results and complete frontier](HARDWARE_5090_RESULTS.md) are received and audited on G240: 42 source files match the revision, 52 evaluations match raw logs, and four non-encoder configs match. Binary/checkpoint arrays were not transferred. The instructions below remain the reproduction procedure.
+
 For a fresh session with no conversation context, follow **[START_HERE_5090.md](../START_HERE_5090.md)**. It includes the full setup, CPU/GPU tests, build/train instructions, expected completion counts, result-table definitions and evidence packaging.
 
 Purpose: measure ours, Nature, IMPALA and Impoola on the 5090 using one fixed recipe. No new architecture search. Use the **Kinvert/PufferLib** fork, branch **cnn-research**; never push this research to PufferAI/PufferLib. Record the exact `git rev-parse HEAD` on both machines.
@@ -30,7 +32,7 @@ Set `CUDA_HOME` only if the existing toolkit is elsewhere than `/usr/local/cuda`
 export NCCL_ROOT=/path/to/existing/venv/lib/python3.12/site-packages/nvidia/nccl
 ```
 
-The runtime helper reads those files and sets process-local paths. It also discovers NCCL in this checkout's `.venv` if present; the G240 fallback path is not assumed to exist on the 5090. GPU inspection now finds `nvidia-smi` in PATH, with a WSL fallback. These steps have not yet been executed on the separate 5090 host.
+The runtime helper reads those files and sets process-local paths. It also discovers NCCL in this checkout's `.venv` if present; the G240 fallback path is not assumed to exist on the 5090. GPU inspection finds `nvidia-smi` in PATH, with a WSL fallback. The completed 5090 run's exact helper is preserved with its evidence.
 
 ## Run
 
@@ -47,7 +49,7 @@ mkdir -p build/connect4cnn
 tmux new-session -d -s cnn-hardware 'bash ocean/connect4cnn/hardware_compare.sh --full > build/connect4cnn/hardware-launch.log 2>&1'
 ```
 
-The full preset trains **four models × one seed (173)** for **13,312,000 decisions each**, with 13 checkpoints and 1,024 requested evaluation games per checkpoint on seed 20173. It uses the frozen quality model, the common H128/L1 core, original Connect4 representation 0, and float32. Each training job has a 2,400-second safety cap. Actual 5090 runtime is unmeasured. W&B is disabled for this initial local comparison. `--print-command` displays the full command without using the GPU.
+The full preset trains **four models × one seed (173)** for **13,312,000 decisions each**, with 13 checkpoints and 1,024 requested evaluation games per checkpoint on seed 20173. It uses the frozen quality model, the common H128/L1 core, original Connect4 representation 0, and float32. Each training job has a 2,400-second safety cap. The first 5090 run took 18m19.214s summed training time, excluding builds/tests/evaluations. W&B is disabled for this initial local comparison. `--print-command` displays the full command without using the GPU.
 
 The runner refuses existing compute processes before builds and each training job. These checks are not a GPU reservation; keep other jobs off that GPU during measurement. Let the run finish unattended. Results appear in a new `build/connect4cnn/compare.*` directory; the launcher prints its exact path.
 
