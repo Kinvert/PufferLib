@@ -6,6 +6,17 @@ On September 12, the checkout was fast-forwarded eight commits to `89414204ce850
 
 ## Start here
 
+- [Completed five-seed confirmation](CONFIRMATION_RESULTS.md): all 390 checkpoint evaluations, whole time/step frontiers, uncertainty, and audit receipts for ours versus Nature/IMPALA/Impoola.
+
+- [Connect4 representation presets](../ocean/connect4cnn/REPRESENTATIONS.md): integer-sweepable squares, circles, gaps, X/O and compact boards, with validation and robustness interpretation.
+
+- [PongCNN implementation and validation](../ocean/pongcnn/README.md): second native development task, direct pixels, original-Pong parity checks, shared encoders and prepared matched GPU canary.
+
+- [Frozen confirmation protocol](CONFIRMATION_PROTOCOL.md): six existing encoders × five fresh seeds, equal 13-checkpoint curves, and separate held-out/W&B metrics.
+- [Paper and practical-delivery plan](PAPER_PLAN.md): claims, apples-to-apples comparisons, architecture transfer to unseen environments, and native PufferLib acceptance criteria.
+- [CNN2 complete frontier comparison](CNN2_RESULTS.md): all 128 final checkpoints evaluated against Nature/IMPALA/Impoola, interactive time/step frontiers, and search coverage limitations.
+- [Flexible small CNN controls](FLEX_CNN_SWEEP.md): per-stage kernels, widths, strides, skips, pooling, and arbitrary fixed/swept subsets in INI.
+- [Compact CNN search](COMPACT_CNN_SWEEP.md): cheaper strided architectures, an exact Nature control, shared kernels, and the first matched sweep recipes.
 - [Experiment log](EXPERIMENT_LOG.md): persistent learning/speed results across code and configuration changes, including SPS definitions and linked artifacts.
 - [Connect4CNN implementation plan](CONNECT4CNN_PLAN.md): the first pixel environment and staged end-to-end workflow.
 - [CNN sweep integration](CNN_SWEEP_INTEGRATION.md): current INI-to-network construction path, minimal proposed core changes, and native PROTEIN constraints for architecture search.

@@ -104,6 +104,7 @@ def trials(root):
                     row[key] = values[j]
             history.append(row)
         result.append(dict(index=index, run_id=path.stem, config=config, architecture=spec,
+                           representation=config.get("env.representation", 0),
                            architecture_sha256=identity, checkpoint=str(checkpoint.relative_to(root)),
                            checkpoint_sha256=hashlib.sha256(checkpoint.read_bytes()).hexdigest(),
                            params=checkpoint.stat().st_size // 4, history=history,

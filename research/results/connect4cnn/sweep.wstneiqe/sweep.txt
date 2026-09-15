@@ -1,0 +1,3 @@
+sweep run=0 score=0.0002 cost=0.52 steps=32768 random=0 gp_obs=0 pareto=0
+sweep run=1 score=0.0002 cost=0.49 steps=32768 random=1 gp_obs=0 pareto=0
+sweep run=2 score=0.0004 cost=0.48 steps=32768 random=1 gp_obs=0 pareto=0

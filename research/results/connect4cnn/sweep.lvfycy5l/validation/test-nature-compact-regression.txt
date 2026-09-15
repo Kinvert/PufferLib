@@ -1,0 +1,4 @@
+PASS: Nature CPU reference weight/bias finite differences and all 42 board cells
+PASS: Nature native forward/all parameter gradients, rollout/train parity, eager/graph repeatability B=1 H=16
+PASS: Nature native forward/all parameter gradients, rollout/train parity, eager/graph repeatability B=3 H=32
+PASS: Nature native forward/all parameter gradients, rollout/train parity, eager/graph repeatability B=32 H=128

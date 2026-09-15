@@ -5,8 +5,8 @@ Native Connect4 copied at upstream revision `89414204`, with direct grayscale pi
 ## Observation contract
 
 - Float32, single channel, top-to-bottom row-major `[1,36,44]`, flattened to 1,584 values by the native environment API.
-- Every board cell is a solid 6×6 block: empty=0, player=1, opponent=0.5.
-- One black pixel column on each side. Nature's valid convolutions need width 44 to cover the seventh board column; width 42 would fit the network but discard that column.
+- With default `env.representation=0`, every board cell is a solid 6×6 block: empty=0, player=1, opponent=0.5. Other presets are documented in [REPRESENTATIONS.md](REPRESENTATIONS.md).
+- The default has one black pixel column on each side. Nature's valid convolutions need width 44 to cover the seventh board column; width 42 would fit the network but discard that column.
 - Pixels are written directly from the bitboard in C. No graphics capture, resizing library, window, or Raylib drawing is used to generate observations.
 - The optional human viewer retains the original decorated board and reads the bitboard directly. It is not the policy's input image.
 
@@ -256,3 +256,6 @@ All 18 shapes passed native float32 forward/all-gradient comparisons, rollout/tr
 - Two identical seeded training smoke runs saved byte-identical final checkpoints. All 151,680 weights were finite; both CNN parameter matrices changed between the 32,768- and 65,536-step checkpoints. Their common final SHA256 is `3f009967923e06bc48ea092a8339693cc651d0dff54619eeb09b6e735b4f894e`.
 - First run: `build/connect4cnn/smoke.a0cFzy`; repeat: `build/connect4cnn/smoke.EMKokT`. Checkpoint evaluation reported score −0.944056 and zero wins over 286 completed games (128 requested; batched evaluation overshoots). This short check verifies training/checkpoint plumbing.
 - Longer matched comparison: `build/connect4cnn/compare.we7qgdcg`, 13,279,232 decisions per run, three seeds per policy, all six runs and 24 checkpoint evaluations successful. Mean evaluation wins: state 18.51%, tiny CNN 64.04%. Mean process SPS: state 108,831, tiny CNN 97,733. This demonstrates learning with the common recipe; parameter counts differ and convergence has not been established. See [the experiment history](../../research/EXPERIMENT_LOG.md) for full measurements and provenance.
+## Pixel representation selector
+
+`[env] representation = 0` preserves the original image. Integer IDs 0–9 select filled squares, gaps, disks, X/O marks and smaller centered boards down to one pixel per cell, all within the same 36×44 tensor. See [REPRESENTATIONS.md](REPRESENTATIONS.md) for the exact mapping, native PROTEIN recipe and robustness caveats. `sweep_representation.ini` fixes the CNN and sweeps only appearance; adding its `[sweep.env.representation]` section to another recipe enables joint search. Reports retain representation separately from network identity.

@@ -1,6 +1,119 @@
 # CNN experiment history
 
+## 2026-09-14 — Frozen confirmation full-frontier analysis
+
+Audited completed `confirm.ol9tcj5k`: all 30 jobs, 390 checkpoint evaluations and W&B uploads passed. Verified every checkpoint hash/parameter count/finiteness, 38 source hashes, binary hashes, full seed/checkpoint coverage, paired evaluation seeds and matched non-encoder configs. No GPU compute process appeared in pre-job snapshots; snapshots were not continuous, and brief CPU-only development/tests occurred during the campaign. No new training or evaluation was launched for this analysis. [Interpretation](CONFIRMATION_RESULTS.md) · [Interactive whole-frontier chart](results/connect4cnn/confirm.ol9tcj5k/analysis/frontier.html) · [Complete numerical report](results/connect4cnn/confirm.ol9tcj5k/analysis/REPORT.md).
+
+Final five-seed means: quality 79.66% / 144.47 s / 92,382 native SPS; small 78.01% / 143.28 s / 93,134 SPS; fast 71.66% / 147.12 s / 90,687 SPS; Nature 73.35% / 158.71 s / 84,066 SPS; IMPALA 97.45% / 1,231.81 s / 10,811 SPS; Impoola 80.09% / 1,229.68 s / 10,830 SPS. Wall values here are complete training-process means. The complete mean wall-time frontier contains ours at low cost and IMPALA at high performance; Nature/Impoola contribute no mean-frontier points. The mean step-count frontier consists entirely of IMPALA checkpoints. Quality's final paired advantage over Nature is +6.31 pp, pointwise percentile-bootstrap interval −0.07 to +13.00 pp, based on all 3,125 ordered five-seed resamples. This does not establish statistical dominance. Only 1/5 quality seeds reached 90% at any measured checkpoint, versus 5/5 IMPALA seeds.
+
+All 390 observations, 78 checkpoint means, per-seed/per-model/combined frontiers on time and steps, paired differences and exploratory threshold non-achievement are archived. Graph/JavaScript checks passed 48 view combinations and empty selection; no automated real-browser rendering test was available. Native training/source/checkpoint arrays remain in the local campaign directory; small receipts and analysis are archived. Paper-plan item 1 is complete; cross-game generalization, equally tuned references and native delivery remain open.
+
+## 2026-09-14 — Connect4 representation selector and native canary
+
+Added `env.representation` IDs 0–9 with original ID 0 unchanged: piece-size/gap variations, raster disks, X/O glyphs and centered smaller boards down to one pixel per location. All retain the original game and 1×36×44 tensor, so there is no encoder FLOP reduction from smaller occupied regions. Masks are prepared once; native C observation generation consumes no RNG. Invalid IDs fail at initialization. The human viewer is still the standard board view. [Exact preset/config mapping](../ocean/connect4cnn/REPRESENTATIONS.md).
+
+Validation: all ten presets passed independent pixel fixtures, dirty-buffer/reset checks, 4,096 original-state transition comparisons each, repeated traces and ASan/UBSan. Twelve sweep/config/report tests and two existing confirmation config tests passed. The native PROTEIN canary [sweep.wstneiqe](results/connect4cnn/sweep.wstneiqe/REPORT.md) completed all three trials, 98,304 total decisions, 2.720293 seconds sweep-process wall excluding compilation. Selected IDs 0/2/4 were correctly saved in native INIs, CSV and disabled-sidecar payloads; all checkpoints had 160,736 finite float32 parameters and the same architecture hash. Canary native cost/SPS were respectively 0.52 s/63,015, 0.49 s/66,873 and 0.48 s/68,267, from rounded PROTEIN costs; these startup-heavy 32K-step measurements are not speed or learning conclusions. W&B disabled; no learning-scale representation sweep launched. Source/config/binary hashes, raw logs and small test receipts are archived with the run.
+
+The new representation-only recipe locks CNN/core/learner/budget and sweeps the integer appearance choice. Existing architecture recipes may opt into the same sweep section. Reports retain appearance separately and calculate Pareto flags within each representation; PROTEIN itself still optimizes the joint objective. Equal representation coverage and paired seeds are necessary before calling an architecture robust; selecting only an easy appearance is insufficient.
+
+## 2026-09-14 — PongCNN CPU validation and GPU canary preparation
+
+Added native PongCNN while the Connect4 frozen confirmation continued. The copied native Pong physics/opponent/rewards are unchanged; observations are direct C-generated float32 `[1,36,44]` pixels. Shared encoder factory selection adds PongCNN through two existing conditional branches, without kernel edits. CPU validation passed 49,152 complete state-hash/reward/terminal trace entries against native Pong across eight seeds, frame skips 1/3/8 and both action modes; repeated pixel traces matched. ASan/UBSan, image corner/clipping/score fixtures, reset/reward checks and buffer guards passed. Command: `bash ocean/pongcnn/tests/run_all.sh`; [small validation evidence](results/pongcnn/environment-20260914/README.md).
+
+Prepared `build/pongcnn/canary.NH9AYFJK` using `bash ocean/pongcnn/canary.sh --prepare-only`. All five isolated effective configs matched, with active Flex construction keys present and environment values identical to original Pong. This preparation contains no native trainer build or GPU work. The future fixed canary tests state, existing Flex quality shape, Nature, IMPALA and Impoola at 65,536 decisions each, hidden-128/one-layer core and the same untuned learner recipe. Source/config/checkpoint/build receipts and native SPS/uptime will be saved automatically when it is actually run; no SPS, learned performance, or GPU correctness result exists yet. GPU validation is deferred until confirmation finishes. See [PongCNN README](../ocean/pongcnn/README.md) for exact controls and native commands.
+
+Pong metric caution: `perf` is episode-averaged fraction of points won, not match wins. State Pong supplies velocity; single-frame pixels require temporal inference. Original state score components use integer division and remain zero during play, whereas the new visible score bars expose current score. Preserve and disclose these differences. This task is native PufferLib Pong, not Atari/ALE, and is now a development environment rather than a held-out test.
+
+## 2026-09-14 — Complete CNN2 frontier and reference comparison
+
+Analyzed completed `sweep._u86vi03`: 128 trials, 40 active architectures, 1,355,720,704 decisions, 14,950.940 s native sweep wall. All 128 final arrays finite, binary hash verified, and all fixed learner/core/vec/env settings matched the nine archived Nature/IMPALA/Impoola runs. No worker failures. Evaluated all 128 final checkpoints plus 12 earlier checkpoints of the training-selected winner using evaluation seed 10073 and 1,024 requested games. No new training. Exact commands, actual games, checkpoint hashes and raw native evaluation outputs are archived.
+
+[Full analysis](CNN2_RESULTS.md) · [Interactive Pareto frontiers](results/connect4cnn/sweep._u86vi03/analysis/frontier.html) · [All observations](results/connect4cnn/sweep._u86vi03/analysis/observations.csv) · [Evaluation receipts](results/connect4cnn/sweep._u86vi03/analysis/evaluations.csv) · [Sweep report](results/connect4cnn/sweep._u86vi03/REPORT.md).
+
+Final Flex winner `brave-comet-51`: 92.00% held-out wins, 12,662,784 decisions, 160,736 parameters, 137.37 native seconds / 92,180 native SPS; approximate launch-to-checkpoint wall 137.57 s. Its earlier 8.192M checkpoint achieved 90.53% at 90.56 wall seconds, and 10.24M checkpoint 92.05% at 112.11 s. These are checkpoints within a longer annealing schedule, not independently short-budget runs. All Flex training uses one seed; references have three. Current observations favor Flex's middle score/time region, while IMPALA retains the roughly 98–99% region. Impoola has no combined frontier points in the matched-seed view. The report distinguishes final-trial frontiers from the optional winner learning curve and provides both time and step axes.
+
+Search limitations: 120 single-stage trials; all eight deeper trials only 2.19–2.79M steps. Twenty-one repeated active configuration/budget/seed trials added no new coverage and produced byte-identical checkpoints within groups. Last-window training scores varied despite identical weights; fixed held-out evaluation avoids that reporting-window variation. These are not independently optimized reference-family frontiers or multi-seed confirmation of Flex superiority.
+
+## 2026-09-13 — cnn2 timestep range extended to 2.10M–13.28M
+
+User requested roughly 2M–13M searchable timesteps. Updated `sweep_flex.ini` to 2,097,152–13,279,232 requested decisions and initial budget 13,279,232, retaining all eighteen architecture dimensions and 128 trials. Raised the predicted suggestion-cost ceiling from 300 to 600 seconds to accommodate longer trials. Native PROTEIN still selects budgets; the upper-budget first observation does not guarantee later proposals will cover that end of the range. Actual steps follow native rounding, and learning-rate annealing depends on each trial's total budget. Ten existing CPU configuration/tooling tests passed; no native implementation changed.
+
+Previous campaign `sweep.3la4j4n2` finished naturally before replacement: 128 trials, 41 active architectures, 2,507.759 seconds native sweep wall, no failed workers, successful sidecar completion. Its artifacts and W&B runs remain intact. Short-budget results provide throughput observations but weak learning evidence; no new checkpoint or held-out validation was performed for this completion check.
+
+Replacement campaign `build/connect4cnn/sweep._u86vi03`, tmux session `cnn2-budget-20260913`, launch log `build/connect4cnn/cnn2-budget-launch-20260913.log`, W&B [kinvert-k/cnn2](https://wandb.ai/kinvert-k/cnn2), group `sweep._u86vi03`. GPU was idle before launch. Same float32 common learner/core, seed 73, concurrent online sidecar, `NVCC_ARCH=sm_120 OPENBLAS_NUM_THREADS=1`, and 43,200-second whole-sweep safety deadline. Exact source/config snapshots are saved per campaign. Startup verified detached execution; results pending. No active monitoring.
+
+## 2026-09-13 — Flexible CNN discovery launched in cnn2
+
+Campaign `build/connect4cnn/sweep.3la4j4n2`, detached tmux session `cnn2-flex-20260913`, launcher log `build/connect4cnn/cnn2-launch-20260913.log`. W&B: [kinvert-k/cnn2](https://wandb.ai/kinvert-k/cnn2), group `sweep.3la4j4n2`. User selected this project for the next sweep. GPU inspection immediately before launch showed the RTX 5060 idle, with 503 MiB display memory.
+
+Recipe `ocean/connect4cnn/sweep_flex.ini`: 128 sequential native PROTEIN trials, encoder 4, eighteen architecture dimensions and requested budgets 829,952–6,639,616 decisions; initial budget 3,319,808. Common learner and hidden-128 single-layer recurrent core remain fixed, seed 73, float32. Predicted suggestion-cost ceiling is 300 s, not a hard per-trial limit. Whole native sweep deadline is 43,200 s (12 hours), a safety cap rather than a runtime estimate. Launch uses `NVCC_ARCH=sm_120 OPENBLAS_NUM_THREADS=1`, `--wandb online --project cnn2 --entity kinvert-k`. Source is the current uncommitted implementation on `9ed6bc2a`; exact source/config snapshots and hashes are captured in the campaign.
+
+One startup check confirmed live detached execution, five completed native trials, and successful online uploads with friendly names (including `happy-cat-5`). Native SPS, uptime, agent steps, performance, score, and losses are logged by the existing concurrent sidecar. Leave training detached without active monitoring; reports and completion receipts are generated automatically. This is architecture discovery only. Fixed longer-budget Nature controls and held-out, multiple-seed finalist evaluation remain necessary before claiming a learning/time advantage. Results are pending.
+
+## 2026-09-13 — Expanded INI architecture controls
+
+Added encoder ID 4 with independent stage channels/kernels/strides, optional residual convolutions, none/max/average pooling, flatten/GAP readout, and projection widths 16–128. Existing IDs and kernel paths retain their meanings. All families now allow any nonempty subset of legal sweep dimensions; omitted sections hold their configured values fixed, including optional fixed training budgets. The full recipe offers 18 shape dimensions plus budget and defaults to 128 trials. No learning-scale 128-trial run was launched. See [control documentation](FLEX_CNN_SWEEP.md).
+
+Validation: 78 targeted flexible configurations passed independent float64 forward/all-parameter-gradient checks, eager/graph repeatability, and rollout parity. Tests cover mixed kernels and stages, pooling/skip gradients, tied max-pool values, tiny maps, and boundary layouts; seven nonblank configurations also passed per-array finite differences. Nature's existing regression suite and all 54 compact cases passed. Ten CPU tooling tests passed, including one-knob selection, fixed budgets, invalid fixed-value rejection, and fingerprints ignoring inactive stages.
+
+[Full flexible canary](results/connect4cnn/sweep.jfu9hfqr/REPORT.md): 12 trials, 12 active architectures, **7.532 s** native sweep-process wall. [One-knob/fixed-budget canary](results/connect4cnn/sweep.jd06qqgp/REPORT.md): four distinct first kernels, all at exactly 32,768 decisions, **3.221 s** wall. No failed workers. All 16 final checkpoint arrays were finite and their parameter counts matched independent architecture calculations. SDK logging was disabled for these canaries; native metrics and complete architecture JSON were saved locally.
+
+The largest-workspace allowed layout (three stages, channels 32 throughout, kernels 8/5/5, strides 4/1/1, all skips enabled, no pooling, flatten and projection 128) trained twice at 16,384 steps using the common 2,048-decision training batch on the 8 GB RTX 5060. Both final checkpoints were byte-identical: SHA256 `42fb1d331d863026967aaf6eb42fd069ebfd5371e783136746abca0760c78939`. Its 536,896-parameter checkpoint reloaded and completed 292 evaluation games (128 requested), with zero wins at this plumbing budget. Memory fitness and repeatability are established for the common recipe; these runs do not establish learning quality or speed rankings. Validation receipts are archived with the full canary.
+
+## 2026-09-13 — Compact versus Nature discovery results
+
+Completed [Nature sweep](results/connect4cnn/sweep.4h5iffsm/REPORT.md): 12 trials, 191.242 s native sweep-process wall. Completed [compact sweep](results/connect4cnn/sweep.od0_6e75/REPORT.md): 24 trials, 10 shapes, 919.912 s wall. All 36 final checkpoint arrays were finite; resolved non-budget learner, recurrent core, vectorization, environment, and selfplay settings matched across all trials. Both runners finished successfully, including online sidecars. Small evidence is archived with each report.
+
+| Run | Family / shape | Actual decisions | Final training wins | Native cost | Native average SPS |
+|---|---|---:|---:|---:|---:|
+| bright-tree-1 | Nature | 3,317,760 | 0.11% | 43.18 s | 76,836 |
+| bright-badger-1 | Compact C8 / depth1 / stride4 / projection32 | 3,317,760 | 0.33% | 38.03 s | 87,241 |
+| gentle-cedar-18 | Same compact shape | 6,074,368 | 9.70% | 68.48 s | 88,703 |
+| merry-maple-23 | Same compact shape | 6,639,616 | 22.76% | 72.66 s | 91,379 |
+
+The matched initial-budget pair shows **13.54% higher native average SPS** and **11.93% shorter native training time** for compact. The selected shape has 75,432 total parameters versus Nature's 138,528. Compact's roughly 91K longer-run SPS is about ten times the previous high-return residual model's 9K SPS, but its best final training win rate here was only 22.76%. Speed improved; a learning/time advantage over Nature is unestablished.
+
+The control sweep's actual budgets were 868,352–3,317,760 decisions, mostly near 1M. Compact's extended to 6,639,616. Nature therefore has no same-budget observation for the promising longer compact runs, even though both recipes allowed the same range. PROTEIN's adaptive choices do not ensure adequate baseline coverage. Fixed longer-budget Nature controls are needed. These final training rates also cannot be compared directly with the earlier 78.71% held-out Nature result at 13.3M steps. Repeated compact trials used the same seed, not independent seed confirmation. Next: fixed-budget Nature/compact runs with matched evaluation and several seeds before claiming a learning-quality winner.
+
+## 2026-09-13 — Compact family and Nature control validation
+
+Learning-scale pair launched after validation in tmux session `cnn-small-20260913`; parent campaign `build/connect4cnn/fast-search.o61nFcx4`, launcher log `build/connect4cnn/small-launch-20260913.log`. The `nature.log` and subsequent `compact.log` identify child campaign directories/W&B groups. Nature runs 12 budget trials, then compact runs 24 shape/budget trials, serially. Shared 829,952–6,639,616 requested decisions, seed 73, learner/core, float32, 25 history points, checkpoint interval 500, predicted-cost ceiling 300 s, and four-hour hard deadline per campaign. GPU was idle (0% utilization, 503 MiB display memory) immediately before launch. Startup confirmed a live native sweep/worker. Results are pending; no active monitoring. Exact source/config snapshots are saved per child campaign. Local research index refreshed to 13,761 chunks before launch.
+
+Added encoder ID 2 (exact existing adapted Nature) and 3 (compact valid-strided convolutions), keeping IDs 0/1. Compact varies channels 8/16/32, depth 1/2/3, initial stride 2/4, and projection 32/64/128: 54 configurations. Nature kernels are shared, with dynamic layer count; no new kernel algorithm or system CUDA changes. Recurrent width remains 128. See [the plan](COMPACT_CNN_SWEEP.md).
+
+All 54 configurations passed independent float64 forward/all-parameter-gradient comparison, repeated eager/graph checks, and rollout parity. Six small configurations also passed finite differences across every parameter array. Nature's existing reference/regression checks passed. The Nature-equivalent compact shape matched Nature bit-for-bit; an old-binary Nature training run matched the new path's 32,768-decision checkpoint exactly (SHA256 `c7ef5d77ac701f5a1be0f24c567ea4810fbb20a8c3ac850ba65138baccf258c4`). Eight CPU tooling tests passed, including matching Nature/compact learner and budget settings, shape-specific dimensions, and inactive-field handling.
+
+[Nature canary](results/connect4cnn/sweep.9sl0k5ll/REPORT.md): 12 completed trials, 7.932 s native sweep-process wall. [Compact canary](results/connect4cnn/sweep.lvfycy5l/REPORT.md): 12 completed trials, 9 shapes, 8.033 s wall. No failed workers. All compact final checkpoint arrays were finite. Largest sampled compact checkpoint (380,064 parameters) reloaded and completed 288 evaluation games (128 requested), with zero wins at its 16,384-decision plumbing budget. These timings/scores are not learning or speed rankings. The canaries preceded removal of inactive inherited CNN keys from effective INIs; the active shapes and kernels were unchanged by that reporting cleanup.
+
+## 2026-09-13 — Discovery sweep completed
+
+[Archived report](results/connect4cnn/sweep.co1g6diu/REPORT.md): all 24 trials completed, no failed native workers, **11,611.189 s (3 h 13 m 31 s)** total sweep wall. Eight distinct architectures, 13 model-guided proposals, and 127,352,832 actual training decisions. All 24 final checkpoint arrays were finite. W&B API verification found exactly 24 finished runs in group `sweep.co1g6diu`, all with native `SPS`, `uptime`, `agent_steps`, and `env/perf` summaries.
+
+Notable points on the observed training-score/time frontier:
+
+| W&B run | Channels / blocks / GAP | Decisions | Final training wins | Native cost | Native average SPS |
+|---|---|---:|---:|---:|---:|
+| golden-tree-1 | 8 / 0 / 0 | 6,639,616 | 14.83% | 165.30 s | 40,167 |
+| swift-owl-16 | 16 / 1 / 0 | 5,588,992 | 62.00% | 349.62 s | 15,986 |
+| cosmic-fox-17 | 16 / 1 / 0 | 6,356,992 | 69.00% | 397.20 s | 16,005 |
+| clever-river-24 | 32 / 1 / 0 | 5,595,136 | 96.59% | 619.05 s | 9,038 |
+| lucky-maple-21 | 32 / 1 / 0 | 5,785,600 | 100.00% | 641.40 s | 9,020 |
+
+PROTEIN concentrated later proposals on channels 32, one residual block per stage, and flatten readout (518,016 parameters). The fastest observed 100% final training point was `lucky-maple-21`. This is a final training measurement against the existing opponent, not a held-out estimate or a solved-game claim. Discovery used one seed and variable budgets (including budget-dependent learning-rate schedules). Repeated seeds and held-out evaluations are required before ranking finalists or comparing with reference results. Suggested confirmation candidates are the best high-return 32-channel configuration and the faster 16-channel configuration.
+
+The launcher emitted the expected error for the original sidecar that was deliberately replaced during training. Native completion is successful; the replacement sidecar completed all uploads. Both the launcher receipt and replacement sidecar log are archived, preserving the distinction. No new training or evaluation was launched during this completion check.
+
+## 2026-09-13 — First learning-scale custom-CNN discovery sweep (launched)
+
+Campaign: `build/connect4cnn/sweep.co1g6diu`; launch log: `build/connect4cnn/discovery-launch.nqVXJ7.log`; persistent tmux session: `cnn-discovery-20260913`. Source baseline `9ed6bc2a` plus recipe/concurrent-sidecar changes, with exact source/config hashes and snapshots saved in the campaign. No `src/` or CUDA-stack changes for this launch.
+
+Native PROTEIN: 24 sequential trials on the idle RTX 5060, float32, seed 73, the same 18 custom-CNN shapes and fixed hidden-128/one-layer core and learner. Requested budget range 3,319,808–13,279,232 decisions; initial candidate 6,639,616. Predicted suggestion-cost ceiling 3,600 s; whole-sweep hard deadline 43,200 s. Checkpoints every 1,000 updates plus final. `OPENBLAS_NUM_THREADS=1` bounds numerical-library CPU threads. Trial SPS, native cost, training wins, actual timesteps, parameters, and provenance are saved automatically. This is discovery; held-out evaluation and multi-seed confirmation remain pending.
+
+W&B project: https://wandb.ai/kinvert-k/puffer-cnn, run group `sweep.co1g6diu`. Online CPU sidecar uploads completed trials during training; possible CPU/I/O timing overhead is part of this protocol. The 12 finalized canary trials were successfully uploaded first. Five CPU tooling tests passed, followed by a fresh two-trial concurrent-online canary (`sweep.effs260q`, 2.625 s native sweep wall, no worker failures). Startup inspection confirmed one launcher, one sidecar, and one native sweep/worker pair. No long-run performance results are claimed yet. After completion, archive small reports/configs/metrics/provenance using the existing results convention.
+
 Latest infrastructure milestone: the September 13 [custom-CNN native PROTEIN canary](results/connect4cnn/sweep.7s4ovb72/REPORT.md) completed 12 trials, 8 architectures, and offline W&B logging. Canary training scores are excluded from the held-out baseline table below.
+
+September 13 presentation correction during discovery: sidecar schema 2 uses friendly adjective/noun/trial names and the original native metric names (`SPS`, `uptime`, `agent_steps`, `env/perf`, `env/score`, losses), plotting against agent steps. Existing online runs are updated in place with the same W&B IDs. Native numeric history and the five-point downsampling are unchanged. Six CPU tests passed; W&B API readback confirmed corrected names, summaries, and history on the two logging-canary runs. The original discovery sidecar PID 3542239 was terminated and replaced in tmux session `cnn-wandb-20260913`; native training was not stopped or modified. Replacement logging is in `build/connect4cnn/sweep.co1g6diu/sidecar-v2.log`. The original launcher will report its old sidecar's nonzero exit after training completes; assess native `finished.json`/reports and the replacement sidecar log separately. This expected logger-replacement message is not a failed training trial.
 
 Persistent results across code and configuration changes. The comparison runner appends a dated entry after each comparison; keep earlier results, including failures. Each entry links the exact protocol, source/binary hashes, recipe, hardware record, raw logs, and checkpoints. Add interpretation below an entry rather than rewriting its measured numbers.
 
@@ -222,3 +335,85 @@ All completed checkpoint arrays were finite and had the expected parameter count
 Both canaries generated 12 offline W&B runs. Re-ingestion of the finalized canary left that count unchanged. Sidecar JSON preserves final PROTEIN observations separately from binned INI histories, plus architecture/checkpoint hashes. Reported final score/cost use native stdout rounding (four score decimals, two time decimals); SPS divides actual steps by that cost. Training win rates at these canary budgets were near zero and establish no learning advantage.
 
 Temporary Python preparation/reporting glue is permitted only for this first end-to-end proof; native tooling is the delivery target. The search, worker scheduler, CNN, and training are already C/CUDA. Online W&B, BF16, larger-budget performance, other architecture families, and other environments remain unvalidated in this workflow.
+
+## 2026-09-14T18:34:07+00:00 — confirm-canary.hdq_fms8
+
+Change/purpose: Confirmation CANARY; plumbing only
+
+Revision `9ed6bc2a192e`; recipe SHA256 `5dc685bea68d293cbce8a2cc367584dab252d2eb5d33d344d5dcb8dfd8bbad4b`. [Report](results/connect4cnn/confirm-canary.hdq_fms8/REPORT.md) · [CSV](results/connect4cnn/confirm-canary.hdq_fms8/results.csv) · [Source/build hashes](results/connect4cnn/confirm-canary.hdq_fms8/protocol.json) · [GPU](results/connect4cnn/confirm-canary.hdq_fms8/gpu.txt)
+
+| Policy | Seed | Steps | Win rate | Score | Parameters | Wall s | Process SPS | Native avg SPS | Native last SPS | VRAM last GB |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| flex_quality | 9173 | — | FAILED | — | — | — | — | — | — | — |
+| nature_cnn | 9173 | 65,536 | 0.00% | -0.9549 | 138,528 | 1.267 | 51,723 | 71,619 | 80,814 | 1.552 |
+| flex_fast | 9173 | — | FAILED | — | — | — | — | — | — | — |
+| impala_cnn | 9173 | 65,536 | 0.00% | -0.9615 | 270,496 | 6.629 | 9,887 | 10,565 | 10,750 | 3.503 |
+| flex_small | 9173 | — | FAILED | — | — | — | — | — | — | — |
+| impoola_cnn | 9173 | 65,536 | 0.00% | -0.9593 | 151,712 | 6.579 | 9,961 | 10,580 | 10,778 | 3.496 |
+
+Matched learner/core recipe; state and CNN parameter counts differ.
+See the report for checkpoint curves and actual evaluation counts.
+
+## 2026-09-14T18:58:40+00:00 — confirm-canary._0y3shor
+
+All six native jobs, 24 checkpoint evaluations and six online W&B uploads passed. The preceding attempt failed for Flex because newer architecture INI keys were absent; isolated per-job configs fixed it without native source changes. Both attempts are archived. CPU frozen-selection/history tests and sidecar payload checks passed; canary performance is not a learning benchmark.
+
+After validation, the authorized full confirmation was queued in tmux `cnn2-confirm-20260914`; launcher log: `build/connect4cnn/confirmation-launch-20260914.txt`. Startup verification found GoldenEye evaluation PID 937816 using the GPU, so `confirm_when_idle.sh` waits up to one hour before starting. No other process was interrupted. Planned 30 jobs × 13,312,000 decisions, 390 checkpoint evaluations; fixed [protocol](CONFIRMATION_PROTOCOL.md), online project `kinvert-k/cnn2`. The generated `confirm.*` group/path will appear in the launcher log. This is a launch record, not confirmation completion; preserve any later contention/failures when analyzing timing.
+
+Change/purpose: Confirmation CANARY; plumbing only
+
+Revision `9ed6bc2a192e`; recipe SHA256 `5dc685bea68d293cbce8a2cc367584dab252d2eb5d33d344d5dcb8dfd8bbad4b`. [Report](results/connect4cnn/confirm-canary._0y3shor/REPORT.md) · [CSV](results/connect4cnn/confirm-canary._0y3shor/results.csv) · [Source/build hashes](results/connect4cnn/confirm-canary._0y3shor/protocol.json) · [GPU](results/connect4cnn/confirm-canary._0y3shor/gpu.txt)
+
+| Policy | Seed | Steps | Win rate | Score | Parameters | Wall s | Process SPS | Native avg SPS | Native last SPS | VRAM last GB |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| flex_quality | 9173 | 65,536 | 0.00% | -0.9599 | 160,736 | 1.267 | 51,720 | 73,646 | 85,645 | 1.431 |
+| nature_cnn | 9173 | 65,536 | 0.00% | -0.9549 | 138,528 | 1.267 | 51,736 | 69,956 | 81,777 | 1.552 |
+| flex_fast | 9173 | 65,536 | 0.00% | -0.9571 | 261,856 | 1.267 | 51,729 | 70,717 | 83,343 | 1.459 |
+| impala_cnn | 9173 | 65,536 | 0.00% | -0.9615 | 270,496 | 6.680 | 9,811 | 10,488 | 10,715 | 3.503 |
+| flex_small | 9173 | 65,536 | 0.00% | -0.9539 | 109,768 | 1.267 | 51,735 | 72,901 | 83,689 | 1.418 |
+| impoola_cnn | 9173 | 65,536 | 0.00% | -0.9593 | 151,712 | 6.630 | 9,885 | 10,517 | 10,712 | 3.496 |
+
+Matched learner/core recipe; state and CNN parameter counts differ.
+See the report for checkpoint curves and actual evaluation counts.
+
+## 2026-09-14T23:26:40+00:00 — confirm.ol9tcj5k
+
+Change/purpose: Frozen five-seed Connect4CNN architecture confirmation v1
+
+Revision `9ed6bc2a192e`; recipe SHA256 `5dc685bea68d293cbce8a2cc367584dab252d2eb5d33d344d5dcb8dfd8bbad4b`. [Report](results/connect4cnn/confirm.ol9tcj5k/REPORT.md) · [CSV](results/connect4cnn/confirm.ol9tcj5k/results.csv) · [Source/build hashes](results/connect4cnn/confirm.ol9tcj5k/protocol.json) · [GPU](results/connect4cnn/confirm.ol9tcj5k/gpu.txt)
+
+| Policy | Seed | Steps | Win rate | Score | Parameters | Wall s | Process SPS | Native avg SPS | Native last SPS | VRAM last GB |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| flex_quality | 173 | 13,312,000 | 66.73% | 0.3346 | 160,736 | 145.820 | 91,290 | 91,513 | 94,263 | 1.431 |
+| nature_cnn | 173 | 13,312,000 | 60.89% | 0.2408 | 138,528 | 159.652 | 83,382 | 83,564 | 83,733 | 1.552 |
+| flex_fast | 173 | 13,312,000 | 65.35% | 0.3104 | 261,856 | 148.894 | 89,406 | 89,594 | 91,831 | 1.459 |
+| impala_cnn | 173 | 13,312,000 | 96.30% | 0.9260 | 270,496 | 1227.800 | 10,842 | 10,846 | 10,794 | 3.503 |
+| flex_small | 173 | 13,312,000 | 87.09% | 0.7417 | 109,768 | 146.226 | 91,037 | 91,247 | 94,278 | 1.418 |
+| impoola_cnn | 173 | 13,312,000 | 78.50% | 0.5700 | 151,712 | 1228.714 | 10,834 | 10,838 | 10,826 | 3.496 |
+| nature_cnn | 174 | 13,312,000 | 85.96% | 0.7202 | 138,528 | 158.501 | 83,987 | 84,180 | 85,108 | 1.552 |
+| flex_fast | 174 | 13,312,000 | 58.20% | 0.1649 | 261,856 | 146.831 | 90,662 | 90,844 | 93,577 | 1.459 |
+| impala_cnn | 174 | 13,312,000 | 97.69% | 0.9537 | 270,496 | 1230.243 | 10,821 | 10,824 | 10,838 | 3.503 |
+| flex_small | 174 | 13,312,000 | 67.98% | 0.3596 | 109,768 | 142.466 | 93,440 | 93,662 | 97,504 | 1.418 |
+| impoola_cnn | 174 | 13,312,000 | 95.82% | 0.9165 | 151,712 | 1236.616 | 10,765 | 10,771 | 10,760 | 3.496 |
+| flex_quality | 174 | 13,312,000 | 90.82% | 0.8172 | 160,736 | 141.965 | 93,770 | 94,000 | 96,612 | 1.431 |
+| flex_fast | 175 | 13,312,000 | 78.39% | 0.5677 | 261,856 | 146.427 | 90,912 | 91,122 | 90,837 | 1.459 |
+| impala_cnn | 175 | 13,312,000 | 97.21% | 0.9442 | 270,496 | 1235.913 | 10,771 | 10,775 | 10,795 | 3.503 |
+| flex_small | 175 | 13,312,000 | 87.27% | 0.7454 | 109,768 | 142.930 | 93,136 | 93,360 | 96,411 | 1.418 |
+| impoola_cnn | 175 | 13,312,000 | 73.05% | 0.4610 | 151,712 | 1224.228 | 10,874 | 10,878 | 10,929 | 3.496 |
+| flex_quality | 175 | 13,312,000 | 82.29% | 0.6459 | 160,736 | 143.821 | 92,559 | 92,787 | 95,148 | 1.431 |
+| nature_cnn | 175 | 13,312,000 | 74.67% | 0.4934 | 138,528 | 158.265 | 84,112 | 84,296 | 85,142 | 1.552 |
+| impala_cnn | 176 | 13,312,000 | 99.18% | 0.9837 | 270,496 | 1233.977 | 10,788 | 10,792 | 10,823 | 3.503 |
+| flex_small | 176 | 13,312,000 | 89.25% | 0.7851 | 109,768 | 143.017 | 93,080 | 93,293 | 95,366 | 1.418 |
+| impoola_cnn | 176 | 13,312,000 | 77.54% | 0.5508 | 151,712 | 1230.621 | 10,817 | 10,821 | 10,828 | 3.496 |
+| flex_quality | 176 | 13,312,000 | 87.58% | 0.7515 | 160,736 | 144.569 | 92,080 | 92,322 | 95,937 | 1.431 |
+| nature_cnn | 176 | 13,312,000 | 69.81% | 0.3962 | 138,528 | 158.051 | 84,226 | 84,407 | 86,887 | 1.552 |
+| flex_fast | 176 | 13,312,000 | 74.57% | 0.4914 | 261,856 | 146.334 | 90,970 | 91,197 | 94,300 | 1.459 |
+| flex_small | 177 | 13,312,000 | 58.45% | 0.1690 | 109,768 | 141.761 | 93,904 | 94,110 | 98,694 | 1.418 |
+| impoola_cnn | 177 | 13,312,000 | 75.56% | 0.5111 | 151,712 | 1228.198 | 10,839 | 10,842 | 10,849 | 3.496 |
+| flex_quality | 177 | 13,312,000 | 70.91% | 0.4181 | 160,736 | 146.168 | 91,073 | 91,291 | 92,496 | 1.431 |
+| nature_cnn | 177 | 13,312,000 | 75.43% | 0.5216 | 138,528 | 159.056 | 83,694 | 83,885 | 84,296 | 1.552 |
+| flex_fast | 177 | 13,312,000 | 81.80% | 0.6361 | 261,856 | 147.123 | 90,482 | 90,681 | 94,826 | 1.459 |
+| impala_cnn | 177 | 13,312,000 | 96.87% | 0.9374 | 270,496 | 1231.117 | 10,813 | 10,817 | 10,817 | 3.503 |
+
+Matched learner/core recipe; state and CNN parameter counts differ.
+See the report for checkpoint curves and actual evaluation counts.

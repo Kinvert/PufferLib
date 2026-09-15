@@ -1,0 +1,1 @@
+PASS: 49,152 transitions match native Pong; repeat, pixel fixtures, rewards/reset, ASan/UBSan.

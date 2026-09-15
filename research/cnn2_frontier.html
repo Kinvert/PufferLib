@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CNN2 observed Pareto frontiers</title>
+<style>
+body{font:16px system-ui;margin:24px auto;padding:0 20px;max-width:1180px;color:#18202a;background:#fafbfc}h1{font-size:25px}p{line-height:1.5}.controls{display:flex;gap:20px;flex-wrap:wrap;align-items:center;background:white;padding:16px;border:1px solid #dde1e6;border-radius:8px}select{font:inherit}svg{width:100%;background:white;margin-top:15px;border:1px solid #dde1e6}#detail{min-height:70px;padding:14px;background:#eef2f7;white-space:pre-wrap}table{border-collapse:collapse;width:100%;font-size:14px}td,th{padding:7px;border-bottom:1px solid #ddd;text-align:right}td:first-child,th:first-child{text-align:left}.legend{display:flex;gap:25px;margin:15px 0}.note{font-size:14px;color:#485361}button{font:inherit}
+</style>
+<h1>CNN2: observed score versus training cost</h1>
+<p>All 128 Flex final checkpoints, 12 additional checkpoints from the training-selected winner, and all 36 reference checkpoints. Scores are held-out evaluations against the same scripted Connect4 opponent.</p>
+<div class="controls">
+<label>Reference comparison <select id="view"><option value="seed73">Same training seed (73)</option><option value="mean">Reference three-seed means</option></select></label>
+<label>Cost <select id="axis"><option value="seconds">Wall time</option><option value="steps">Timesteps</option></select></label>
+<label><input type="checkbox" id="curve"> Include winner's earlier checkpoints</label>
+<label><input type="checkbox" id="only"> Frontier points only</label>
+<label><input type="checkbox" id="zoom"> Zoom to first 180 seconds</label>
+</div>
+<div class="legend" id="legend"></div>
+<svg id="plot" viewBox="0 0 1100 530" role="img" aria-label="Held-out win rate against training cost"></svg>
+<div id="detail">Hover or focus a point for its score, cost, size, and architecture.</div>
+<p class="note">Colored lines connect each family's observed nondominated points. Black rings mark the combined observed frontier. Lines are guides, not predictions. Reference means average three training seeds; Flex uses one training seed after an adaptive search. Evaluation counts do not substitute for independent training seeds.</p>
+<p class="note">Wall time is approximately launch-to-checkpoint: original comparison-run receipts for reference models; native launch timestamp and checkpoint modification time for Flex. It includes startup and saved checkpoints. Native SPS uses the trainer's adjusted uptime and is displayed separately. Builds, search overhead, and later evaluation are excluded from point costs. The Flex search itself took 4h 9m.</p>
+<h2>Combined observed frontier</h2><table><thead><tr><th>Point</th><th>Steps</th><th>Wall seconds</th><th>Held-out wins</th><th>Parameters</th></tr></thead><tbody id="table"></tbody></table>
+<p class="note">These are empirical frontiers within measured checkpoints and recipes, not optimized reference-family sweeps. Evaluation density differs: only the Flex winner has its full checkpoint curve here. All finalist choices preceded evaluation; this complete evaluation set must not be reused as fresh test data after further tuning.</p>
+<script>
+const data=__FRONTIER_DATA__;
+const colors={Flex:'#1767c0',Nature:'#d07a00',IMPALA:'#22833b',Impoola:'#9c42ae'};
+const ns='http://www.w3.org/2000/svg';
+const $=id=>document.getElementById(id);
+function front(points,axis){return points.filter(p=>!points.some(q=>q[axis]<=p[axis]&&q.wins>=p.wins&&(q[axis]<p[axis]||q.wins>p.wins))).sort((a,b)=>a[axis]-b[axis]);}
+function el(tag,attrs,text){const e=document.createElementNS(ns,tag);for(const[k,v]of Object.entries(attrs))e.setAttribute(k,v);if(text!==undefined)e.textContent=text;$('plot').appendChild(e);return e;}
+for(const[f,c]of Object.entries(colors)){const span=document.createElement('span');span.style.color=c;span.textContent='● '+f;$('legend').appendChild(span);}
+function draw(){
+ const axis=$('axis').value;
+ const flex=data.points.filter(p=>p.family==='Flex'&&($('curve').checked||p.kind==='final'));
+ const refs=$('view').value==='mean'?data.means:data.points.filter(p=>p.family!=='Flex'&&p.seed===73);
+ const points=[...flex,...refs], global=front(points,axis);
+ const xmax=axis==='steps'?14000000:($('zoom').checked?180:1300);
+ const X=v=>75+v/xmax*990,Y=v=>465-v*410;
+ $('plot').replaceChildren();
+ for(let i=0;i<=10;i++){const y=Y(i/10);el('line',{x1:75,x2:1065,y1:y,y2:y,stroke:'#e6e8eb'});el('text',{x:65,y:y+5,'text-anchor':'end','font-size':13},i*10+'%');}
+ for(let i=0;i<=7;i++){const v=xmax*i/7,x=X(v);el('text',{x,y:489,'text-anchor':'middle','font-size':13},axis==='steps'?(v/1e6).toFixed(1)+'M':v.toFixed(0));}
+ el('text',{x:560,y:519,'text-anchor':'middle','font-size':15},axis==='steps'?'Training agent decisions':'Wall seconds to checkpoint (approx.)');
+ el('text',{x:75,y:28,'font-size':15},'Held-out win rate');
+ for(const family of Object.keys(colors)){
+  const group=points.filter(p=>p.family===family), edge=front(group,axis), visible=edge.filter(p=>p[axis]<=xmax);
+  el('polyline',{points:visible.map(p=>X(p[axis])+','+Y(p.wins)).join(' '),fill:'none',stroke:colors[family],'stroke-width':2,'stroke-dasharray':'5 3'});
+  for(const p of ($('only').checked?edge:group)){
+   if(p[axis]>xmax)continue;
+   const c=el('circle',{cx:X(p[axis]),cy:Y(p.wins),r:global.includes(p)?6:4,fill:colors[family],opacity:edge.includes(p)?1:.28,stroke:global.includes(p)?'#111':'none','stroke-width':2,tabindex:0});
+   const details=()=>{$('detail').textContent=`${p.name} — ${p.kind}\n${(p.wins*100).toFixed(2)}% wins | ${p.steps.toLocaleString()} steps | ${p.seconds.toFixed(2)} wall seconds | ${p.params.toLocaleString()} parameters${p.native_sps?' | '+Math.round(p.native_sps).toLocaleString()+' native SPS':''}\n`+Object.entries(p.architecture).filter(([k])=>k.startsWith('policy.cnn_')).map(([k,v])=>k.replace('policy.cnn_','')+'='+v).join(', ');};
+   c.addEventListener('mouseenter',details);c.addEventListener('focus',details);
+   const title=document.createElementNS(ns,'title');title.textContent=p.name+' '+(p.wins*100).toFixed(2)+'%';c.appendChild(title);
+  }
+ }
+ $('table').replaceChildren();
+ for(const p of global){const tr=document.createElement('tr');for(const t of [p.name+(p.kind==='winner checkpoint'?' (checkpoint)':''),p.steps.toLocaleString(),p.seconds.toFixed(2),(p.wins*100).toFixed(2)+'%',p.params.toLocaleString()]){const td=document.createElement('td');td.textContent=t;tr.appendChild(td);}$('table').appendChild(tr);}
+}
+for(const id of ['view','axis','curve','only','zoom'])$(id).addEventListener('change',draw);draw();
+</script></html>

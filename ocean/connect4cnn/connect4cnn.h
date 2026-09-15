@@ -18,6 +18,16 @@ typedef float obs_t;
 #define NUM_ATNS 1
 #define HOLD_FRAMES 30
 
+// Cell pitch, occupied shape size, glyph: square=0, disk=1, X/O=2.
+// Every preset fits the same 36x44 observation. ID 0 is the original layout.
+static const int CONNECT4CNN_REPRESENTATIONS[][5] = {
+    {6, 6, 6, 6, 0}, {6, 6, 4, 4, 0}, {6, 6, 2, 2, 0},
+    {6, 6, 6, 6, 1}, {6, 6, 4, 4, 1}, {6, 6, 6, 6, 2},
+    {4, 4, 4, 4, 0}, {2, 2, 2, 2, 0}, {1, 1, 1, 1, 0},
+    {2, 4, 2, 4, 0},
+};
+#define CONNECT4CNN_NUM_REPRESENTATIONS 10
+
 #define WIN_CONDITION 4
 const int PLAYER_WIN = 1.0;
 const int ENV_WIN = -1.0;
@@ -61,6 +71,8 @@ struct Env {
 
     int tick;
     unsigned int rng;
+    int representation;
+    uint64_t glyph[2];
 };
 typedef Env Connect4;
 
@@ -219,6 +231,29 @@ int compute_env_move(Connect4* env) {
 
 void compute_observation(Connect4* env) {
     obs_t* obs = env->agents[0].observations;
+    if (env->representation != 0) {
+        const int* spec = CONNECT4CNN_REPRESENTATIONS[env->representation];
+        int cw = spec[0], ch = spec[1];
+        int left = (OBS_WIDTH - COLUMNS * cw) / 2;
+        int top = (OBS_HEIGHT - ROWS * ch) / 2;
+        memset(obs, 0, OBS_SIZE * sizeof(obs_t));
+        for (int row = 0; row < ROWS; row++) {
+            for (int column = 0; column < COLUMNS; column++) {
+                uint64_t bit = UINT64_C(1) << (column * (ROWS + 1) + row);
+                int owner = env->player_pieces & bit ? 0 : env->env_pieces & bit ? 1 : -1;
+                if (owner < 0) continue;
+                float pixel = owner == 0 ? 1.0f : 0.5f;
+                int base = (top + (ROWS - 1 - row) * ch) * OBS_WIDTH + left + column * cw;
+                uint64_t mask = env->glyph[owner];
+                for (int y = 0; y < ch; y++) {
+                    for (int x = 0; x < cw; x++) {
+                        if ((mask >> (y * cw + x)) & 1) obs[base + y * OBS_WIDTH + x] = pixel;
+                    }
+                }
+            }
+        }
+        return;
+    }
     // Normalized grayscale, row-major [1,36,44], top row first.
     // 6x6 cells, with one black column on each side. Without the padding,
     // Nature's valid strided convolutions would ignore the seventh column.
@@ -458,6 +493,31 @@ void puf_init(Env* env, Dict* kwargs) {
     env->num_agents = 1;
     env->player_pieces = dict_get(kwargs, "player_pieces");
     env->env_pieces = dict_get(kwargs, "env_pieces");
+    DictItem* representation = dict_find(kwargs, "representation");
+    double value = representation ? representation->value : 0;
+    if (!(value >= 0 && value < CONNECT4CNN_NUM_REPRESENTATIONS && value == floor(value))) {
+        fprintf(stderr, "connect4cnn: representation must be an integer from 0 to 9\n");
+        exit(1);
+    }
+    env->representation = (int)value;
+    const int* spec = CONNECT4CNN_REPRESENTATIONS[env->representation];
+    int cw = spec[0], ch = spec[1], width = spec[2], height = spec[3], style = spec[4];
+    int left = (cw - width) / 2, top = (ch - height) / 2;
+    env->glyph[0] = env->glyph[1] = 0;
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            int dx = 2 * x - width + 1, dy = 2 * y - height + 1;
+            int disk = dx * dx + dy * dy <= width * width;
+            uint64_t bit = UINT64_C(1) << ((y + top) * cw + x + left);
+            if (style == 2) {
+                if (x == y || x + y == width - 1) env->glyph[0] |= bit;
+                if (disk && dx * dx + dy * dy >= (width - 2) * (width - 2)) env->glyph[1] |= bit;
+            } else if (style == 0 || disk) {
+                env->glyph[0] |= bit;
+                env->glyph[1] |= bit;
+            }
+        }
+    }
     env->agents[0].action_mask = NULL;
     env->agents[0].policy = 0;
     init(env);

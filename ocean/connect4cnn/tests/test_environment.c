@@ -3,6 +3,8 @@
 #include <inttypes.h>
 #include ENV_HEADER
 
+static double representation = 0;
+
 typedef struct {
     Env env;
     float buffer[OBS_SIZE + 2];
@@ -20,6 +22,10 @@ static void setup(Fixture* f, unsigned int seed) {
     Dict kwargs = {0};
     dict_set(&kwargs, "player_pieces", 0);
     dict_set(&kwargs, "env_pieces", 0);
+#ifdef TEST_PIXELS
+    // Omitting zero also tests backward compatibility with old configs.
+    if (representation != 0) dict_set(&kwargs, "representation", representation);
+#endif
     puf_init(&f->env, &kwargs);
     // These entries have numeric values only; dict_set allocates the item array.
     free(kwargs.items);
@@ -31,6 +37,36 @@ static void check_observation(Fixture* f) {
     assert(f->buffer[0] == 12345.0f);
     assert(f->buffer[OBS_SIZE + 1] == -12345.0f);
     const float* obs = f->env.agents[0].observations;
+#ifdef TEST_PIXELS
+    if (representation != 0) {
+        // Independent literal masks: bit 0 is the leftmost pixel in each row.
+        const int widths[] = {6,6,6,6,6,6,4,2,1,2};
+        const int heights[] = {6,6,6,6,6,6,4,2,1,4};
+        const unsigned char masks[][6] = {
+            {63,63,63,63,63,63}, {0,30,30,30,30,0}, {0,0,12,12,0,0},
+            {30,63,63,63,63,30}, {0,12,30,30,12,0}, {33,18,12,12,18,33},
+            {15,15,15,15}, {3,3}, {1}, {3,3,3,3},
+        };
+        const unsigned char ring[] = {30,51,33,33,51,30};
+        int id = (int)representation, cw = widths[id], ch = heights[id];
+        int left = (44 - 7 * cw) / 2, top = (36 - 6 * ch) / 2;
+        float expected[OBS_SIZE] = {0};
+        for (int column = 0; column < 7; column++) {
+            for (int row = 0; row < 6; row++) {
+                uint64_t bit = UINT64_C(1) << (column * 7 + row);
+                float value = f->env.player_pieces & bit ? 1 : f->env.env_pieces & bit ? 0.5f : 0;
+                const unsigned char* mask = id == 5 && value == 0.5f ? ring : masks[id];
+                for (int y = 0; y < ch; y++) {
+                    for (int x = 0; x < cw; x++) {
+                        if ((mask[y] >> x) & 1) expected[(top + (5-row)*ch + y)*44 + left + column*cw + x] = value;
+                    }
+                }
+            }
+        }
+        assert(memcmp(obs, expected, sizeof(expected)) == 0);
+        return;
+    }
+#endif
     for (int column = 0; column < 7; column++) {
         for (int row = 0; row < 6; row++) {
             uint64_t bit = UINT64_C(1) << (column * 7 + row);
@@ -109,7 +145,8 @@ static void check_fixtures(void) {
     puf_close(&f.env);
 }
 
-int main(void) {
+int main(int argc, char** argv) {
+    if (argc > 1) representation = atof(argv[1]);
     check_fixtures();
     for (unsigned int seed = 1; seed <= 16; seed++) {
         Fixture f;

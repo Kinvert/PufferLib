@@ -1,0 +1,180 @@
+{
+  "steps": 65536,
+  "stock": false,
+  "variants": {
+    "flex_quality": "connect4cnn",
+    "nature_cnn": "connect4cnn",
+    "flex_fast": "connect4cnn",
+    "impala_cnn": "connect4cnn",
+    "flex_small": "connect4cnn",
+    "impoola_cnn": "connect4cnn"
+  },
+  "seeds": [
+    9173
+  ],
+  "eval_seed": 29173,
+  "eval_games": 128,
+  "checkpoints": 4,
+  "timeout": 120,
+  "confirmation": true,
+  "canary": true,
+  "wandb": "online",
+  "project": "cnn2",
+  "entity": "kinvert-k",
+  "recipe": "/home/claude/cnn/ocean/connect4cnn/compare.ini",
+  "note": "Confirmation CANARY; plumbing only",
+  "precision": "float32",
+  "completed_steps": 65536,
+  "checkpoint_steps": [
+    16384,
+    32768,
+    49152,
+    65536
+  ],
+  "revision": "9ed6bc2a192e87c9b006667f2b06392d049a9ab9",
+  "source_sha256": {
+    "build.sh": "3682a835ef989391b11ab53cc02bede0551b46d9302e32e2f98758d598cb879a",
+    "config/default.ini": "7f493977f49f2537a59c18c2a283f062e5d6063d9e130c2d15f6be075cda1084",
+    "config/connect4.ini": "cdb2fd371d14d5821fb2edddc380120239177fbbfced7ae55bafe80999521eeb",
+    "config/connect4cnn.ini": "ed673d142493f5c2cb54c216231b536acfa4a430c9a4ac502b6f9c87997a0634",
+    "src/protein.cu": "7127fe4fa3e9b0ab76ae0b8a4703357318366b1292f835f02b23bd98a6c90538",
+    "src/pufferenv.h": "3324a670791e2b3e46cbe7d10d9233d52fbc258e0d7e37d5b0c470e580de880c",
+    "src/ocean.cu": "dccb562ab65d7ee3bb66a1a9adff6916ab36d59732753237677eeadb114ff789",
+    "src/constellation.c": "deda12600fb99755994dcb0a9b84c442dac76259b15910eea83e398150c1f6c4",
+    "src/algo.cu": "96830389a720ac8eaa4923713e3212e7b010caebd61773513e6fb8603660ef3a",
+    "src/pufferl.cu": "39667597d09bb8cf76fa2544f032d4d4aba41985e257ca58489041572787097d",
+    "src/puffercpu.c": "6bbcd2d5f37e133972f9bb6df45e3412b8b856893c23764e1ce77582550a7adf",
+    "src/ini.h": "cd4c83ba12ba40a7bef03ad810246cc0a5880f81e8566f6ac5a089b5c598859f",
+    "ocean/connect4/connect4.h": "762228ea574cfff52002873bd75ebccd82ea91eef0bc24422503539301d13ed9",
+    "ocean/connect4cnn/sweep.sh": "344493e8047daef82d2675a55f28ea8e1107dbd7524c23a3d8eb2e9ace538332",
+    "ocean/connect4cnn/compare.py": "4e6611e04e5f2f81a01c745facb3a1360a621c4d3f215633317303a364d86d6c",
+    "ocean/connect4cnn/confirmation.json": "4b97190c2d953cbf7579dfdb735f6c228c16e9505ab11157cc37e4fb2aa328bd",
+    "ocean/connect4cnn/nature.cu": "92096f104e8e6c021e24581de075b20e493772f13cf19df1a8367747c066950e",
+    "ocean/connect4cnn/sweep.py": "f2c973d0e9f63c7a0feaca997329a94c4298953f2ec083a75fcf3a601d5310ba",
+    "ocean/connect4cnn/confirm.sh": "37aa64dbc427862b7c57f96d761be660506df113194d6b9b627c09a2326dd2d8",
+    "ocean/connect4cnn/sweep_compact.ini": "03885fe5dfbfeba82bce0c2a7e56c6b2fda04aca5e1d4caa79b62c973a2f2f36",
+    "ocean/connect4cnn/README.md": "9b94229f859b7acfb78cd6bc0046a138a20889c12fca844ed87c0719695d1dcf",
+    "ocean/connect4cnn/compare.ini": "6cdd8042d7c848923d119aa65062adfe4c52a8cb5bf85ce4ab8e503b5a6b34cf",
+    "ocean/connect4cnn/sweep_discovery.ini": "dfcb5df87416c5e0d96f96b166505b295841542523d5d670046518c6ae09ac9c",
+    "ocean/connect4cnn/smoke.sh": "6bf5da4a4940c1312e0eacb340004fe1e6e81498cbdc6312a81c5a8827453339",
+    "ocean/connect4cnn/connect4cnn.cu": "6e4532ad5b089e75a62df51332b85b0213ea88ae253c9a7e72fbf57e5ef04547",
+    "ocean/connect4cnn/flex.cu": "477cb646c1dcc03f9c61b81480fa8df3ee7fa43f211ac3b9dfef85b00040ba73",
+    "ocean/connect4cnn/compare_sidecar.py": "b73a266c4d801f50dd091066c589db7464712bfdac76c68bd05d2af874f4272c",
+    "ocean/connect4cnn/connect4cnn.h": "cfb1be91f1e6c8489e7f9155634a53f033d33b5793dcda65c2c8be6229563e79",
+    "ocean/connect4cnn/sweep_flex.ini": "573c201b1bd2c87ef3056104624d5298d2dac4cb8ccaaa640cf8feeef474bc3a",
+    "ocean/connect4cnn/wandb_sidecar.py": "cb9f3f71471f1003e7d1b1ec1ff88bdce3ff221db819d8c859e2116bc5b35520",
+    "ocean/connect4cnn/runtime_env.sh": "ec2612244cb94cc40904772f9ef58828cd3121594b48a1a205157cc9cf516ef1",
+    "ocean/connect4cnn/sweep.ini": "7c6d465c6d7f2801b0c920538ca77dbbb829bd6b29b281dd17117c29f698e23b",
+    "ocean/connect4cnn/sweep_nature.ini": "36720823a88fcb064e3402df25a3c6ad6ba7a1ebaa86f42773b8d7f53516eb57",
+    "ocean/connect4cnn/sweep_small.sh": "f4788828a1d41a9cf1ae4071d6d793af8b9317ce47d52538267c9f7fa7e14bb5",
+    "ocean/connect4cnn/compare.sh": "a38ee8286c89090e1e1eae870b551d65bcbb8dc9b4e525550a9a234443b6f5aa",
+    "ocean/connect4cnn/cnn.cu": "d8413b2c7ae72d4e0d08fb63188affa3e1f72fe1d61427d6646ce3bc6d709745",
+    "ocean/connect4cnn/impala.cu": "16775e05607f521229d09b9c869190e008f65e4530983ddb22b12e25af74455e"
+  },
+  "build_arch": "sm_120",
+  "binary_sha256": {
+    "flex_quality": "b5062e97a1dae27c3cde9813c273f5a3f397e913fe7a060ac52d573933dca880",
+    "nature_cnn": "9ec57da011f5dccc80db9ecb4190c9b30388c68b1c9c4119f4c81f2fc3cc468b",
+    "flex_fast": "b5062e97a1dae27c3cde9813c273f5a3f397e913fe7a060ac52d573933dca880",
+    "impala_cnn": "fa75d2c1fd9ae6539009861c5ba65334e7afe36b48bab8b3f78ebf671dea1d09",
+    "flex_small": "b5062e97a1dae27c3cde9813c273f5a3f397e913fe7a060ac52d573933dca880",
+    "impoola_cnn": "d349bdfa5c38864c918f2324921944b33c3c9c210295e1ec28e49c0508fcb977"
+  },
+  "recipe_sha256": "5dc685bea68d293cbce8a2cc367584dab252d2eb5d33d344d5dcb8dfd8bbad4b",
+  "started_utc": "2026-09-14T18:57:30.682654+00:00",
+  "confirmation_manifest": {
+    "version": "connect4-confirmation-v1",
+    "purpose": "Frozen architecture confirmation; no adaptive search or per-model learner tuning",
+    "development_campaign": "sweep._u86vi03",
+    "steps": 13312000,
+    "checkpoints": 13,
+    "seeds": [
+      173,
+      174,
+      175,
+      176,
+      177
+    ],
+    "eval_seed": 20173,
+    "eval_games": 1024,
+    "timeout": 2400,
+    "canary": {
+      "steps": 65536,
+      "checkpoints": 4,
+      "seeds": [
+        9173
+      ],
+      "eval_seed": 29173,
+      "eval_games": 128,
+      "timeout": 120
+    },
+    "variants": [
+      "flex_quality",
+      "nature_cnn",
+      "flex_fast",
+      "impala_cnn",
+      "flex_small",
+      "impoola_cnn"
+    ],
+    "selection": {
+      "flex_quality": "brave-comet-51: maximum development training score",
+      "flex_fast": "cosmic-wolf-116: minimum native cost with development training score >= 0.8",
+      "flex_small": "clever-otter-60: minimum parameters with development training score >= 0.85"
+    },
+    "parameters": {
+      "flex_quality": 160736,
+      "flex_fast": 261856,
+      "flex_small": 109768,
+      "nature_cnn": 138528,
+      "impala_cnn": 270496,
+      "impoola_cnn": 151712
+    },
+    "policies": {
+      "flex_quality": {
+        "encoder": 4,
+        "cnn_depth": 1,
+        "cnn_projection": 64,
+        "cnn_global_pool": 0,
+        "cnn_channels_1": 16,
+        "cnn_kernel_1": 7,
+        "cnn_stride_1": 4,
+        "cnn_pool_1": 0,
+        "cnn_residual_1": 0
+      },
+      "flex_fast": {
+        "encoder": 4,
+        "cnn_depth": 1,
+        "cnn_projection": 64,
+        "cnn_global_pool": 0,
+        "cnn_channels_1": 32,
+        "cnn_kernel_1": 4,
+        "cnn_stride_1": 4,
+        "cnn_pool_1": 0,
+        "cnn_residual_1": 0
+      },
+      "flex_small": {
+        "encoder": 4,
+        "cnn_depth": 1,
+        "cnn_projection": 64,
+        "cnn_global_pool": 0,
+        "cnn_channels_1": 8,
+        "cnn_kernel_1": 8,
+        "cnn_stride_1": 4,
+        "cnn_pool_1": 0,
+        "cnn_residual_1": 0
+      }
+    }
+  },
+  "confirmation_manifest_sha256": "4b97190c2d953cbf7579dfdb735f6c228c16e9505ab11157cc37e4fb2aa328bd",
+  "order": [
+    [
+      "flex_quality",
+      "nature_cnn",
+      "flex_fast",
+      "impala_cnn",
+      "flex_small",
+      "impoola_cnn"
+    ]
+  ],
+  "effective_sha256": "9fc6503b400395ebd8ed6e5c58d621e8359c975626f49d14810d278b9a1e4c86"
+}

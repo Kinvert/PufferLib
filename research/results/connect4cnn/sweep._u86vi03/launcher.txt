@@ -1,0 +1,2 @@
+Sweep: /home/claude/cnn/build/connect4cnn/sweep._u86vi03
+ok: 128 trials, 40 architectures; report: /home/claude/cnn/build/connect4cnn/sweep._u86vi03/REPORT.md

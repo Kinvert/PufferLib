@@ -1,0 +1,967 @@
+/home/claude/cnn/.venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py:2274: UnsupportedFieldAttributeWarning: The 'repr' attribute with value False was provided to the `Field()` function, which has no effect in the context it was used. 'repr' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/home/claude/cnn/.venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py:2274: UnsupportedFieldAttributeWarning: The 'frozen' attribute with value True was provided to the `Field()` function, which has no effect in the context it was used. 'frozen' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+wandb: Currently logged in as: kinvert (kinvert-k) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.21.4
+wandb: Run data is saved locally in /home/claude/cnn/build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_112414-c3084a4a585644f83427fe25
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Resuming run golden-tree-1
+wandb: ⭐️ View project at https://wandb.ai/kinvert-k/puffer-cnn
+wandb: 🚀 View run at https://wandb.ai/kinvert-k/puffer-cnn/runs/c3084a4a585644f83427fe25
+wandb: updating run metadata; uploading summary; uploading requirements.txt; uploading wandb-metadata.json
+wandb: uploading history steps 5-9, summary
+wandb: 
+wandb: Run history:
+wandb:                SPS ▁▃▇██
+wandb:        agent_steps ▁▃▅▇█
+wandb: env/episode_length ▁▃▇██
+wandb: env/episode_return ▁▁▄▇█
+wandb:       env/invalids ▁▅██▇
+wandb:              env/n █▅▁▁▁
+wandb:           env/perf ▁▁▄▇█
+wandb:          env/score ▁▁▄▇█
+wandb:              epoch ▁▃▅▇█
+wandb:         importance ▁▁▁▁▁
+wandb:                +12 ...
+wandb: 
+wandb: Run summary:
+wandb:                 SPS 41125.91272
+wandb:         agent_steps 6639616
+wandb: architecture_sha256 b678177c2dbbfec7c0f1...
+wandb:  env/episode_length 12.74019
+wandb:  env/episode_return -0.6689
+wandb:        env/invalids 0.16364
+wandb:               env/n 2090
+wandb:            env/perf 0.14833
+wandb:           env/score -0.6689
+wandb:               epoch 3242
+wandb:                 +23 ...
+wandb: 
+wandb: 🚀 View run golden-tree-1 at: https://wandb.ai/kinvert-k/puffer-cnn/runs/c3084a4a585644f83427fe25
+wandb: ⭐️ View project at: https://wandb.ai/kinvert-k/puffer-cnn
+wandb: Synced 4 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_112414-c3084a4a585644f83427fe25/logs
+wandb: creating run
+wandb: Tracking run with wandb version 0.21.4
+wandb: Run data is saved locally in /home/claude/cnn/build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_112416-fe6edb50caab0845de94cf2b
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Resuming run happy-tree-2
+wandb: ⭐️ View project at https://wandb.ai/kinvert-k/puffer-cnn
+wandb: 🚀 View run at https://wandb.ai/kinvert-k/puffer-cnn/runs/fe6edb50caab0845de94cf2b
+wandb: uploading summary; updating run metadata; uploading wandb-metadata.json; uploading requirements.txt
+wandb: uploading history steps 5-9, summary
+wandb: 
+wandb: Run history:
+wandb:                SPS ▁██▇▂
+wandb:        agent_steps ▁▃▅▇█
+wandb: env/episode_length ▁▃▆██
+wandb: env/episode_return ▁▂▅▇█
+wandb:       env/invalids ▁▄▇██
+wandb:              env/n ██▇▇▁
+wandb:           env/perf ▁▃▇█▇
+wandb:          env/score ▁▂▅▇█
+wandb:              epoch ▁▃▅▇█
+wandb:         importance ▁▁▁▁▁
+wandb:                +12 ...
+wandb: 
+wandb: Run summary:
+wandb:                 SPS 39164.34145
+wandb:         agent_steps 3690496
+wandb: architecture_sha256 b678177c2dbbfec7c0f1...
+wandb:  env/episode_length 7.43525
+wandb:  env/episode_return -0.95144
+wandb:        env/invalids 0.07014
+wandb:               env/n 556
+wandb:            env/perf 0.0018
+wandb:           env/score -0.95144
+wandb:               epoch 1802
+wandb:                 +23 ...
+wandb: 
+wandb: 🚀 View run happy-tree-2 at: https://wandb.ai/kinvert-k/puffer-cnn/runs/fe6edb50caab0845de94cf2b
+wandb: ⭐️ View project at: https://wandb.ai/kinvert-k/puffer-cnn
+wandb: Synced 4 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_112416-fe6edb50caab0845de94cf2b/logs
+wandb: Tracking run with wandb version 0.21.4
+wandb: Run data is saved locally in /home/claude/cnn/build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_112418-ec3f8b7929cdc268d811457f
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Resuming run sunny-panda-3
+wandb: ⭐️ View project at https://wandb.ai/kinvert-k/puffer-cnn
+wandb: 🚀 View run at https://wandb.ai/kinvert-k/puffer-cnn/runs/ec3f8b7929cdc268d811457f
+wandb: uploading summary; updating run metadata; uploading wandb-metadata.json; uploading requirements.txt
+wandb: uploading history steps 5-9, summary
+wandb: 
+wandb: Run history:
+wandb:                SPS ▄█▁▄▁
+wandb:        agent_steps ▁▃▅▇█
+wandb: env/episode_length ▁▃▆██
+wandb: env/episode_return ▄▃▃▁█
+wandb:       env/invalids ▁▄▆█▇
+wandb:              env/n ██▇▇▁
+wandb:           env/perf ▁▄▅▇█
+wandb:          env/score ▄▃▃▁█
+wandb:              epoch ▁▃▅▇█
+wandb:         importance ▁▁▁▁▁
+wandb:                +12 ...
+wandb: 
+wandb: Run summary:
+wandb:                 SPS 15730.87712
+wandb:         agent_steps 3868672
+wandb: architecture_sha256 3e45dfd989e528787e7b...
+wandb:  env/episode_length 7.21251
+wandb:  env/episode_return -0.95632
+wandb:        env/invalids 0.05313
+wandb:               env/n 847
+wandb:            env/perf 0.00118
+wandb:           env/score -0.95632
+wandb:               epoch 1889
+wandb:                 +23 ...
+wandb: 
+wandb: 🚀 View run sunny-panda-3 at: https://wandb.ai/kinvert-k/puffer-cnn/runs/ec3f8b7929cdc268d811457f
+wandb: ⭐️ View project at: https://wandb.ai/kinvert-k/puffer-cnn
+wandb: Synced 4 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_112418-ec3f8b7929cdc268d811457f/logs
+wandb: Tracking run with wandb version 0.21.4
+wandb: Run data is saved locally in /home/claude/cnn/build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_112419-68b0b098767e3e31b7019967
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Resuming run clever-tiger-4
+wandb: ⭐️ View project at https://wandb.ai/kinvert-k/puffer-cnn
+wandb: 🚀 View run at https://wandb.ai/kinvert-k/puffer-cnn/runs/68b0b098767e3e31b7019967
+wandb: updating run metadata; uploading wandb-metadata.json; uploading requirements.txt
+wandb: uploading history steps 5-9, summary
+wandb: 
+wandb: Run history:
+wandb:                SPS ▁▃▆▇█
+wandb:        agent_steps ▁▃▅▇█
+wandb: env/episode_length ▁▂▆██
+wandb: env/episode_return ▁▁▃▇█
+wandb:       env/invalids ▁▂▆▇█
+wandb:              env/n █▇▄▂▁
+wandb:           env/perf ▁▁▃▇█
+wandb:          env/score ▁▁▃▇█
+wandb:              epoch ▁▃▅▇█
+wandb:         importance ▁▁▁▁▁
+wandb:                +12 ...
+wandb: 
+wandb: Run summary:
+wandb:                 SPS 16066.79384
+wandb:         agent_steps 3850240
+wandb: architecture_sha256 5b81bf75d601a4ecd271...
+wandb:  env/episode_length 12.87304
+wandb:  env/episode_return -0.55799
+wandb:        env/invalids 0.24451
+wandb:               env/n 638
+wandb:            env/perf 0.21317
+wandb:           env/score -0.55799
+wandb:               epoch 1880
+wandb:                 +23 ...
+wandb: 
+wandb: 🚀 View run clever-tiger-4 at: https://wandb.ai/kinvert-k/puffer-cnn/runs/68b0b098767e3e31b7019967
+wandb: ⭐️ View project at: https://wandb.ai/kinvert-k/puffer-cnn
+wandb: Synced 4 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_112419-68b0b098767e3e31b7019967/logs
+Sidecar: recorded 4 completed trials (online)
+wandb: creating run
+wandb: Tracking run with wandb version 0.21.4
+wandb: Run data is saved locally in /home/claude/cnn/build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_112546-6cad783e91bc6ba45dfcb111
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run brave-bear-5
+wandb: ⭐️ View project at https://wandb.ai/kinvert-k/puffer-cnn
+wandb: 🚀 View run at https://wandb.ai/kinvert-k/puffer-cnn/runs/6cad783e91bc6ba45dfcb111
+wandb: updating run metadata
+wandb: 
+wandb: Run history:
+wandb:                SPS ▁▄▆██
+wandb:        agent_steps ▁▃▅▇█
+wandb: env/episode_length ▁▂▅██
+wandb: env/episode_return ▁▁▂▇█
+wandb:       env/invalids ▁▂▆█▇
+wandb:              env/n █▇▅▄▁
+wandb:           env/perf ▁▁▂▇█
+wandb:          env/score ▁▁▂▇█
+wandb:              epoch ▁▃▅▇█
+wandb:         importance ▁▁▁▁▁
+wandb:                +12 ...
+wandb: 
+wandb: Run summary:
+wandb:                 SPS 16065.56182
+wandb:         agent_steps 3856384
+wandb: architecture_sha256 5b81bf75d601a4ecd271...
+wandb:  env/episode_length 13.42809
+wandb:  env/episode_return -0.76923
+wandb:        env/invalids 0.31438
+wandb:               env/n 299
+wandb:            env/perf 0.10702
+wandb:           env/score -0.76923
+wandb:               epoch 1883
+wandb:                 +23 ...
+wandb: 
+wandb: 🚀 View run brave-bear-5 at: https://wandb.ai/kinvert-k/puffer-cnn/runs/6cad783e91bc6ba45dfcb111
+wandb: ⭐️ View project at: https://wandb.ai/kinvert-k/puffer-cnn
+wandb: Synced 4 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_112546-6cad783e91bc6ba45dfcb111/logs
+Sidecar: recorded 1 completed trials (online)
+wandb: creating run
+wandb: Tracking run with wandb version 0.21.4
+wandb: Run data is saved locally in /home/claude/cnn/build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_112923-654a08ebd401a4feb1e5018d
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run happy-wolf-6
+wandb: ⭐️ View project at https://wandb.ai/kinvert-k/puffer-cnn
+wandb: 🚀 View run at https://wandb.ai/kinvert-k/puffer-cnn/runs/654a08ebd401a4feb1e5018d
+wandb: updating run metadata
+wandb: uploading config.yaml
+wandb: 
+wandb: Run history:
+wandb:                SPS ▅█▂▄▁
+wandb:        agent_steps ▁▃▅▇█
+wandb: env/episode_length ▁▃▅▆█
+wandb: env/episode_return ████▁
+wandb:       env/invalids ▁▆███
+wandb:              env/n ████▁
+wandb:           env/perf ▄█▇█▁
+wandb:          env/score ████▁
+wandb:              epoch ▁▃▅▇█
+wandb:         importance ▁▁▁▁▁
+wandb:                +12 ...
+wandb: 
+wandb: Run summary:
+wandb:                 SPS 15712.02078
+wandb:         agent_steps 3434496
+wandb: architecture_sha256 3e45dfd989e528787e7b...
+wandb:  env/episode_length 7.13841
+wandb:  env/episode_return -0.97232
+wandb:        env/invalids 0.04844
+wandb:               env/n 289
+wandb:            env/perf 0
+wandb:           env/score -0.97232
+wandb:               epoch 1677
+wandb:                 +23 ...
+wandb: 
+wandb: 🚀 View run happy-wolf-6 at: https://wandb.ai/kinvert-k/puffer-cnn/runs/654a08ebd401a4feb1e5018d
+wandb: ⭐️ View project at: https://wandb.ai/kinvert-k/puffer-cnn
+wandb: Synced 4 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_112923-654a08ebd401a4feb1e5018d/logs
+Sidecar: recorded 1 completed trials (online)
+wandb: creating run
+wandb: Tracking run with wandb version 0.21.4
+wandb: Run data is saved locally in /home/claude/cnn/build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_113250-f60217eef11d432741ea5866
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run mystic-tree-7
+wandb: ⭐️ View project at https://wandb.ai/kinvert-k/puffer-cnn
+wandb: 🚀 View run at https://wandb.ai/kinvert-k/puffer-cnn/runs/f60217eef11d432741ea5866
+wandb: updating run metadata
+wandb: 
+wandb: Run history:
+wandb:                SPS ▁▆▇█▄
+wandb:        agent_steps ▁▃▅▇█
+wandb: env/episode_length ▁▃▆██
+wandb: env/episode_return ▁▂▄▆█
+wandb:       env/invalids ▁▃▇██
+wandb:              env/n █▇▅▄▁
+wandb:           env/perf ▁▂▄▆█
+wandb:          env/score ▁▂▄▆█
+wandb:              epoch ▁▃▅▇█
+wandb:         importance ▁▁▁▁▁
+wandb:                +12 ...
+wandb: 
+wandb: Run summary:
+wandb:                 SPS 17435.03676
+wandb:         agent_steps 3596288
+wandb: architecture_sha256 dbf9af40832d307328d9...
+wandb:  env/episode_length 10.27563
+wandb:  env/episode_return -0.90924
+wandb:        env/invalids 0.18655
+wandb:               env/n 595
+wandb:            env/perf 0.01849
+wandb:           env/score -0.90924
+wandb:               epoch 1756
+wandb:                 +23 ...
+wandb: 
+wandb: 🚀 View run mystic-tree-7 at: https://wandb.ai/kinvert-k/puffer-cnn/runs/f60217eef11d432741ea5866
+wandb: ⭐️ View project at: https://wandb.ai/kinvert-k/puffer-cnn
+wandb: Synced 4 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_113250-f60217eef11d432741ea5866/logs
+Sidecar: recorded 1 completed trials (online)
+wandb: creating run
+wandb: Tracking run with wandb version 0.21.4
+wandb: Run data is saved locally in /home/claude/cnn/build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_113547-b75c2b396155b8533345c877
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run wild-otter-8
+wandb: ⭐️ View project at https://wandb.ai/kinvert-k/puffer-cnn
+wandb: 🚀 View run at https://wandb.ai/kinvert-k/puffer-cnn/runs/b75c2b396155b8533345c877
+wandb: updating run metadata; uploading history steps 0-0, summary
+wandb: uploading history steps 1-4, summary
+wandb: 
+wandb: Run history:
+wandb:                SPS █▄▁▅▅
+wandb:        agent_steps ▁▃▅▇█
+wandb: env/episode_length ▁▅▇█▇
+wandb: env/episode_return ████▁
+wandb:       env/invalids ▁▄▇█▄
+wandb:              env/n ████▁
+wandb:           env/perf ▄▇▇█▁
+wandb:          env/score ████▁
+wandb:              epoch ▁▃▅▇█
+wandb:         importance ▁▁▁▁▁
+wandb:                +12 ...
+wandb: 
+wandb: Run summary:
+wandb:                 SPS 19579.35876
+wandb:         agent_steps 3457024
+wandb: architecture_sha256 2def837783a51a1273b2...
+wandb:  env/episode_length 6.7557
+wandb:  env/episode_return -0.97394
+wandb:        env/invalids 0.04235
+wandb:               env/n 307
+wandb:            env/perf 0
+wandb:           env/score -0.97394
+wandb:               epoch 1688
+wandb:                 +23 ...
+wandb: 
+wandb: 🚀 View run wild-otter-8 at: https://wandb.ai/kinvert-k/puffer-cnn/runs/b75c2b396155b8533345c877
+wandb: ⭐️ View project at: https://wandb.ai/kinvert-k/puffer-cnn
+wandb: Synced 4 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_113547-b75c2b396155b8533345c877/logs
+Sidecar: recorded 1 completed trials (online)
+wandb: creating run
+wandb: Tracking run with wandb version 0.21.4
+wandb: Run data is saved locally in /home/claude/cnn/build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_114651-bb4a894b7f64b1c603877ae4
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run sunny-tree-9
+wandb: ⭐️ View project at https://wandb.ai/kinvert-k/puffer-cnn
+wandb: 🚀 View run at https://wandb.ai/kinvert-k/puffer-cnn/runs/bb4a894b7f64b1c603877ae4
+wandb: updating run metadata
+wandb: 
+wandb: Run history:
+wandb:                SPS ▅▆██▁
+wandb:        agent_steps ▁▃▅▇█
+wandb: env/episode_length ▁▆██▇
+wandb: env/episode_return ▁▂▇██
+wandb:       env/invalids ▁█▃▂▂
+wandb:              env/n █▃▁▁▁
+wandb:           env/perf ▁▂▇██
+wandb:          env/score ▁▂▇██
+wandb:              epoch ▁▃▅▇█
+wandb:         importance ▁▁▁▁▁
+wandb:                +12 ...
+wandb: 
+wandb: Run summary:
+wandb:                 SPS 5806.95846
+wandb:         agent_steps 3885056
+wandb: architecture_sha256 ac34d018e13497ff8925...
+wandb:  env/episode_length 12.21791
+wandb:  env/episode_return 0.11343
+wandb:        env/invalids 0.0597
+wandb:               env/n 335
+wandb:            env/perf 0.52537
+wandb:           env/score 0.11343
+wandb:               epoch 1897
+wandb:                 +23 ...
+wandb: 
+wandb: 🚀 View run sunny-tree-9 at: https://wandb.ai/kinvert-k/puffer-cnn/runs/bb4a894b7f64b1c603877ae4
+wandb: ⭐️ View project at: https://wandb.ai/kinvert-k/puffer-cnn
+wandb: Synced 4 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_114651-bb4a894b7f64b1c603877ae4/logs
+Sidecar: recorded 1 completed trials (online)
+wandb: Tracking run with wandb version 0.21.4
+wandb: Run data is saved locally in /home/claude/cnn/build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_114828-367ac97a47a545e3b92593d5
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run cosmic-wolf-10
+wandb: ⭐️ View project at https://wandb.ai/kinvert-k/puffer-cnn
+wandb: 🚀 View run at https://wandb.ai/kinvert-k/puffer-cnn/runs/367ac97a47a545e3b92593d5
+wandb: updating run metadata; uploading history steps 0-0, summary
+wandb: 
+wandb: Run history:
+wandb:                SPS ▁▆▇▇█
+wandb:        agent_steps ▁▃▅▇█
+wandb: env/episode_length ▁▅▇█▇
+wandb: env/episode_return ▁▃▄▅█
+wandb:       env/invalids ▁▄██▇
+wandb:              env/n ▃█▃▁▂
+wandb:           env/perf ▄▆▅█▁
+wandb:          env/score ▁▃▄▅█
+wandb:              epoch ▁▃▅▇█
+wandb:         importance ▁▁▁▁▁
+wandb:                +12 ...
+wandb: 
+wandb: Run summary:
+wandb:                 SPS 39853.55027
+wandb:         agent_steps 3762176
+wandb: architecture_sha256 8c0869c8809e965a4e6b...
+wandb:  env/episode_length 6.79033
+wandb:  env/episode_return -0.95773
+wandb:        env/invalids 0.05331
+wandb:               env/n 3620
+wandb:            env/perf 0.00028
+wandb:           env/score -0.95773
+wandb:               epoch 1837
+wandb:                 +23 ...
+wandb: 
+wandb: 🚀 View run cosmic-wolf-10 at: https://wandb.ai/kinvert-k/puffer-cnn/runs/367ac97a47a545e3b92593d5
+wandb: ⭐️ View project at: https://wandb.ai/kinvert-k/puffer-cnn
+wandb: Synced 4 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_114828-367ac97a47a545e3b92593d5/logs
+Sidecar: recorded 1 completed trials (online)
+wandb: creating run
+wandb: Tracking run with wandb version 0.21.4
+wandb: Run data is saved locally in /home/claude/cnn/build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_115205-ccff0196ea58f9c900b25ce9
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run swift-cedar-11
+wandb: ⭐️ View project at https://wandb.ai/kinvert-k/puffer-cnn
+wandb: 🚀 View run at https://wandb.ai/kinvert-k/puffer-cnn/runs/ccff0196ea58f9c900b25ce9
+wandb: updating run metadata; uploading history steps 0-0, summary
+wandb: 
+wandb: Run history:
+wandb:                SPS ▄▆██▁
+wandb:        agent_steps ▁▃▅▇█
+wandb: env/episode_length ▁▂▅██
+wandb: env/episode_return ▁▃▆█▄
+wandb:       env/invalids ▁▂▅██
+wandb:              env/n █▇▆▅▁
+wandb:           env/perf ▁▂▄██
+wandb:          env/score ▁▃▆█▄
+wandb:              epoch ▁▃▅▇█
+wandb:         importance ████▁
+wandb:                +12 ...
+wandb: 
+wandb: Run summary:
+wandb:                 SPS 15692.64576
+wandb:         agent_steps 3424256
+wandb: architecture_sha256 5b81bf75d601a4ecd271...
+wandb:  env/episode_length 10.335
+wandb:  env/episode_return -0.95
+wandb:        env/invalids 0.215
+wandb:               env/n 200
+wandb:            env/perf 0.01
+wandb:           env/score -0.95
+wandb:               epoch 1672
+wandb:                 +23 ...
+wandb: 
+wandb: 🚀 View run swift-cedar-11 at: https://wandb.ai/kinvert-k/puffer-cnn/runs/ccff0196ea58f9c900b25ce9
+wandb: ⭐️ View project at: https://wandb.ai/kinvert-k/puffer-cnn
+wandb: Synced 4 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_115205-ccff0196ea58f9c900b25ce9/logs
+Sidecar: recorded 1 completed trials (online)
+wandb: creating run
+wandb: Tracking run with wandb version 0.21.4
+wandb: Run data is saved locally in /home/claude/cnn/build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_120740-4ccbb28c386a5af6fbd3e86e
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run lucky-river-12
+wandb: ⭐️ View project at https://wandb.ai/kinvert-k/puffer-cnn
+wandb: 🚀 View run at https://wandb.ai/kinvert-k/puffer-cnn/runs/4ccbb28c386a5af6fbd3e86e
+wandb: updating run metadata
+wandb: 
+wandb: Run history:
+wandb:                SPS ▅▆█▇▁
+wandb:        agent_steps ▁▃▅▇█
+wandb: env/episode_length ▁█▅▅▅
+wandb: env/episode_return ▁▄▇██
+wandb:       env/invalids ██▂▁▁
+wandb:              env/n █▄▅▅▁
+wandb:           env/perf ▁▄▇██
+wandb:          env/score ▁▄▇██
+wandb:              epoch ▁▃▅▇█
+wandb:         importance ▁▁▁▁▁
+wandb:                +12 ...
+wandb: 
+wandb: Run summary:
+wandb:                 SPS 5798.29384
+wandb:         agent_steps 5459968
+wandb: architecture_sha256 ac34d018e13497ff8925...
+wandb:  env/episode_length 10.28718
+wandb:  env/episode_return 0.94872
+wandb:        env/invalids 0
+wandb:               env/n 195
+wandb:            env/perf 0.97436
+wandb:           env/score 0.94872
+wandb:               epoch 2666
+wandb:                 +23 ...
+wandb: 
+wandb: 🚀 View run lucky-river-12 at: https://wandb.ai/kinvert-k/puffer-cnn/runs/4ccbb28c386a5af6fbd3e86e
+wandb: ⭐️ View project at: https://wandb.ai/kinvert-k/puffer-cnn
+wandb: Synced 4 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_120740-4ccbb28c386a5af6fbd3e86e/logs
+Sidecar: recorded 1 completed trials (online)
+wandb: creating run
+wandb: Tracking run with wandb version 0.21.4
+wandb: Run data is saved locally in /home/claude/cnn/build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_122140-9cdaf10e3a9c9094e30c96c2
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run gentle-comet-13
+wandb: ⭐️ View project at https://wandb.ai/kinvert-k/puffer-cnn
+wandb: 🚀 View run at https://wandb.ai/kinvert-k/puffer-cnn/runs/9cdaf10e3a9c9094e30c96c2
+wandb: updating run metadata; uploading history steps 0-0, summary
+wandb: 
+wandb: Run history:
+wandb:                SPS ▁█▆▆▁
+wandb:        agent_steps ▁▃▅▇█
+wandb: env/episode_length ▁█▇▇▇
+wandb: env/episode_return ▁▇███
+wandb:       env/invalids █▄▁▁▁
+wandb:              env/n █▅▅▅▁
+wandb:           env/perf ▁▇███
+wandb:          env/score ▁▇███
+wandb:              epoch ▁▃▅▇█
+wandb:         importance ████▁
+wandb:                +12 ...
+wandb: 
+wandb: Run summary:
+wandb:                 SPS 8987.741
+wandb:         agent_steps 7579648
+wandb: architecture_sha256 404428fcadfc24fb51ea...
+wandb:  env/episode_length 11.42857
+wandb:  env/episode_return 1
+wandb:        env/invalids 0
+wandb:               env/n 182
+wandb:            env/perf 1
+wandb:           env/score 1
+wandb:               epoch 3701
+wandb:                 +23 ...
+wandb: 
+wandb: 🚀 View run gentle-comet-13 at: https://wandb.ai/kinvert-k/puffer-cnn/runs/9cdaf10e3a9c9094e30c96c2
+wandb: ⭐️ View project at: https://wandb.ai/kinvert-k/puffer-cnn
+wandb: Synced 4 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_122140-9cdaf10e3a9c9094e30c96c2/logs
+Sidecar: recorded 1 completed trials (online)
+wandb: creating run
+wandb: Tracking run with wandb version 0.21.4
+wandb: Run data is saved locally in /home/claude/cnn/build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_124042-0aef148cf71691386a9ab845
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run gentle-tiger-14
+wandb: ⭐️ View project at https://wandb.ai/kinvert-k/puffer-cnn
+wandb: 🚀 View run at https://wandb.ai/kinvert-k/puffer-cnn/runs/0aef148cf71691386a9ab845
+wandb: updating run metadata; uploading history steps 0-0, summary
+wandb: uploading history steps 1-4, summary
+wandb: 
+wandb: Run history:
+wandb:                SPS ▃█▇█▁
+wandb:        agent_steps ▁▃▅▇█
+wandb: env/episode_length ▁█▇▇▆
+wandb: env/episode_return ▁▇███
+wandb:       env/invalids █▃▁▁▁
+wandb:              env/n █▄▄▄▁
+wandb:           env/perf ▁▇███
+wandb:          env/score ▁▇███
+wandb:              epoch ▁▃▅▇█
+wandb:         importance ▁▁▁▁▁
+wandb:                +12 ...
+wandb: 
+wandb: Run summary:
+wandb:                 SPS 8988.72852
+wandb:         agent_steps 10352640
+wandb: architecture_sha256 404428fcadfc24fb51ea...
+wandb:  env/episode_length 12.11446
+wandb:  env/episode_return 0.9759
+wandb:        env/invalids 0.00301
+wandb:               env/n 332
+wandb:            env/perf 0.98795
+wandb:           env/score 0.9759
+wandb:               epoch 5055
+wandb:                 +23 ...
+wandb: 
+wandb: 🚀 View run gentle-tiger-14 at: https://wandb.ai/kinvert-k/puffer-cnn/runs/0aef148cf71691386a9ab845
+wandb: ⭐️ View project at: https://wandb.ai/kinvert-k/puffer-cnn
+wandb: Synced 4 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_124042-0aef148cf71691386a9ab845/logs
+Sidecar: recorded 1 completed trials (online)
+wandb: creating run
+wandb: Tracking run with wandb version 0.21.4
+wandb: Run data is saved locally in /home/claude/cnn/build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_125147-1f2c320c19271cbeeacef4dd
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run golden-tree-15
+wandb: ⭐️ View project at https://wandb.ai/kinvert-k/puffer-cnn
+wandb: 🚀 View run at https://wandb.ai/kinvert-k/puffer-cnn/runs/1f2c320c19271cbeeacef4dd
+wandb: updating run metadata
+wandb: uploading history steps 1-4, summary
+wandb: 
+wandb: Run history:
+wandb:                SPS ▄█▇█▁
+wandb:        agent_steps ▁▃▅▇█
+wandb: env/episode_length ▁█▇▇▆
+wandb: env/episode_return ▁▄███
+wandb:       env/invalids ▄█▁▁▁
+wandb:              env/n █▃▃▃▁
+wandb:           env/perf ▁▄███
+wandb:          env/score ▁▄███
+wandb:              epoch ▁▃▅▇█
+wandb:         importance ▁▁▁▁▁
+wandb:                +12 ...
+wandb: 
+wandb: Run summary:
+wandb:                 SPS 8958.39331
+wandb:         agent_steps 6039552
+wandb: architecture_sha256 404428fcadfc24fb51ea...
+wandb:  env/episode_length 11.07527
+wandb:  env/episode_return 0.96237
+wandb:        env/invalids 0.00538
+wandb:               env/n 372
+wandb:            env/perf 0.98118
+wandb:           env/score 0.96237
+wandb:               epoch 2949
+wandb:                 +23 ...
+wandb: 
+wandb: 🚀 View run golden-tree-15 at: https://wandb.ai/kinvert-k/puffer-cnn/runs/1f2c320c19271cbeeacef4dd
+wandb: ⭐️ View project at: https://wandb.ai/kinvert-k/puffer-cnn
+wandb: Synced 4 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_125147-1f2c320c19271cbeeacef4dd/logs
+Sidecar: recorded 1 completed trials (online)
+wandb: creating run
+wandb: Tracking run with wandb version 0.21.4
+wandb: Run data is saved locally in /home/claude/cnn/build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_125741-289da1e1d171bc4b3a131569
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run swift-owl-16
+wandb: ⭐️ View project at https://wandb.ai/kinvert-k/puffer-cnn
+wandb: 🚀 View run at https://wandb.ai/kinvert-k/puffer-cnn/runs/289da1e1d171bc4b3a131569
+wandb: updating run metadata
+wandb: 
+wandb: Run history:
+wandb:                SPS ▁▆██▇
+wandb:        agent_steps ▁▃▅▇█
+wandb: env/episode_length ▁▅███
+wandb: env/episode_return ▁▃▇██
+wandb:       env/invalids ▁▆█▆▆
+wandb:              env/n █▄▃▃▁
+wandb:           env/perf ▁▃▇██
+wandb:          env/score ▁▃▇██
+wandb:              epoch ▁▃▅▇█
+wandb:         importance ▁▁▁▁▁
+wandb:                +12 ...
+wandb: 
+wandb: Run summary:
+wandb:                 SPS 16114.67821
+wandb:         agent_steps 5588992
+wandb: architecture_sha256 5b81bf75d601a4ecd271...
+wandb:  env/episode_length 14.45843
+wandb:  env/episode_return 0.2399
+wandb:        env/invalids 0.16865
+wandb:               env/n 421
+wandb:            env/perf 0.61995
+wandb:           env/score 0.2399
+wandb:               epoch 2729
+wandb:                 +23 ...
+wandb: 
+wandb: 🚀 View run swift-owl-16 at: https://wandb.ai/kinvert-k/puffer-cnn/runs/289da1e1d171bc4b3a131569
+wandb: ⭐️ View project at: https://wandb.ai/kinvert-k/puffer-cnn
+wandb: Synced 4 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_125741-289da1e1d171bc4b3a131569/logs
+Sidecar: recorded 1 completed trials (online)
+wandb: creating run
+wandb: Tracking run with wandb version 0.21.4
+wandb: Run data is saved locally in /home/claude/cnn/build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_130415-60e4c0f00780bd1b51930a55
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run cosmic-fox-17
+wandb: ⭐️ View project at https://wandb.ai/kinvert-k/puffer-cnn
+wandb: 🚀 View run at https://wandb.ai/kinvert-k/puffer-cnn/runs/60e4c0f00780bd1b51930a55
+wandb: updating run metadata
+wandb: 
+wandb: Run history:
+wandb:                SPS ▁▇██▇
+wandb:        agent_steps ▁▃▅▇█
+wandb: env/episode_length ▁▇███
+wandb: env/episode_return ▁▄▇██
+wandb:       env/invalids ▁█▆▆▅
+wandb:              env/n █▄▃▃▁
+wandb:           env/perf ▁▄▇██
+wandb:          env/score ▁▄▇██
+wandb:              epoch ▁▃▅▇█
+wandb:         importance ▁▁▁▁▁
+wandb:                +12 ...
+wandb: 
+wandb: Run summary:
+wandb:                 SPS 16050.77226
+wandb:         agent_steps 6356992
+wandb: architecture_sha256 5b81bf75d601a4ecd271...
+wandb:  env/episode_length 13.87557
+wandb:  env/episode_return 0.38009
+wandb:        env/invalids 0.13575
+wandb:               env/n 442
+wandb:            env/perf 0.69005
+wandb:           env/score 0.38009
+wandb:               epoch 3104
+wandb:                 +23 ...
+wandb: 
+wandb: 🚀 View run cosmic-fox-17 at: https://wandb.ai/kinvert-k/puffer-cnn/runs/60e4c0f00780bd1b51930a55
+wandb: ⭐️ View project at: https://wandb.ai/kinvert-k/puffer-cnn
+wandb: Synced 4 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_130415-60e4c0f00780bd1b51930a55/logs
+Sidecar: recorded 1 completed trials (online)
+wandb: creating run
+wandb: Tracking run with wandb version 0.21.4
+wandb: Run data is saved locally in /home/claude/cnn/build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_131621-8cf52f4794a8d54c60cfa097
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run happy-owl-18
+wandb: ⭐️ View project at https://wandb.ai/kinvert-k/puffer-cnn
+wandb: 🚀 View run at https://wandb.ai/kinvert-k/puffer-cnn/runs/8cf52f4794a8d54c60cfa097
+wandb: updating run metadata
+wandb: 
+wandb: Run history:
+wandb:                SPS ▆█▇▇▁
+wandb:        agent_steps ▁▃▅▇█
+wandb: env/episode_length ▁█▇▇▇
+wandb: env/episode_return ▁▆███
+wandb:       env/invalids ▆█▁▁▁
+wandb:              env/n █▁▂▂▂
+wandb:           env/perf ▁▆███
+wandb:          env/score ▁▆███
+wandb:              epoch ▁▃▅▇█
+wandb:         importance ▁▁▁▁▁
+wandb:                +12 ...
+wandb: 
+wandb: Run summary:
+wandb:                 SPS 8878.07243
+wandb:         agent_steps 6508544
+wandb: architecture_sha256 404428fcadfc24fb51ea...
+wandb:  env/episode_length 11.50284
+wandb:  env/episode_return 1
+wandb:        env/invalids 0
+wandb:               env/n 529
+wandb:            env/perf 1
+wandb:           env/score 1
+wandb:               epoch 3178
+wandb:                 +23 ...
+wandb: 
+wandb: 🚀 View run happy-owl-18 at: https://wandb.ai/kinvert-k/puffer-cnn/runs/8cf52f4794a8d54c60cfa097
+wandb: ⭐️ View project at: https://wandb.ai/kinvert-k/puffer-cnn
+wandb: Synced 4 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_131621-8cf52f4794a8d54c60cfa097/logs
+Sidecar: recorded 1 completed trials (online)
+wandb: creating run
+wandb: Tracking run with wandb version 0.21.4
+wandb: Run data is saved locally in /home/claude/cnn/build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_132748-213936146c074dcd6d9a5b5d
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run quiet-tree-19
+wandb: ⭐️ View project at https://wandb.ai/kinvert-k/puffer-cnn
+wandb: 🚀 View run at https://wandb.ai/kinvert-k/puffer-cnn/runs/213936146c074dcd6d9a5b5d
+wandb: updating run metadata
+wandb: 
+wandb: Run history:
+wandb:                SPS ▄▇▇█▁
+wandb:        agent_steps ▁▃▅▇█
+wandb: env/episode_length ▁███▇
+wandb: env/episode_return ▁▄███
+wandb:       env/invalids ▄█▂▁▁
+wandb:              env/n █▄▄▄▁
+wandb:           env/perf ▁▄███
+wandb:          env/score ▁▄███
+wandb:              epoch ▁▃▅▇█
+wandb:         importance ▁▁▁▁▁
+wandb:                +12 ...
+wandb: 
+wandb: Run summary:
+wandb:                 SPS 8909.51904
+wandb:         agent_steps 6215680
+wandb: architecture_sha256 404428fcadfc24fb51ea...
+wandb:  env/episode_length 12.3758
+wandb:  env/episode_return 0.88535
+wandb:        env/invalids 0.01274
+wandb:               env/n 157
+wandb:            env/perf 0.94268
+wandb:           env/score 0.88535
+wandb:               epoch 3035
+wandb:                 +23 ...
+wandb: 
+wandb: 🚀 View run quiet-tree-19 at: https://wandb.ai/kinvert-k/puffer-cnn/runs/213936146c074dcd6d9a5b5d
+wandb: ⭐️ View project at: https://wandb.ai/kinvert-k/puffer-cnn
+wandb: Synced 4 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_132748-213936146c074dcd6d9a5b5d/logs
+Sidecar: recorded 1 completed trials (online)
+wandb: creating run
+wandb: Tracking run with wandb version 0.21.4
+wandb: Run data is saved locally in /home/claude/cnn/build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_133839-8b1509972f2fee067bfe5525
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run clever-comet-20
+wandb: ⭐️ View project at https://wandb.ai/kinvert-k/puffer-cnn
+wandb: 🚀 View run at https://wandb.ai/kinvert-k/puffer-cnn/runs/8b1509972f2fee067bfe5525
+wandb: updating run metadata
+wandb: 
+wandb: Run history:
+wandb:                SPS ▁█▆▇▁
+wandb:        agent_steps ▁▃▅▇█
+wandb: env/episode_length ▁█▇▇▇
+wandb: env/episode_return ▁▄███
+wandb:       env/invalids ▃█▁▁▁
+wandb:              env/n █▃▃▃▁
+wandb:           env/perf ▁▄███
+wandb:          env/score ▁▄███
+wandb:              epoch ▁▃▅▇█
+wandb:         importance ▁▁▁▁▁
+wandb:                +12 ...
+wandb: 
+wandb: Run summary:
+wandb:                 SPS 8965.72862
+wandb:         agent_steps 5867520
+wandb: architecture_sha256 404428fcadfc24fb51ea...
+wandb:  env/episode_length 11.24523
+wandb:  env/episode_return 0.9564
+wandb:        env/invalids 0.00545
+wandb:               env/n 367
+wandb:            env/perf 0.9782
+wandb:           env/score 0.9564
+wandb:               epoch 2865
+wandb:                 +23 ...
+wandb: 
+wandb: 🚀 View run clever-comet-20 at: https://wandb.ai/kinvert-k/puffer-cnn/runs/8b1509972f2fee067bfe5525
+wandb: ⭐️ View project at: https://wandb.ai/kinvert-k/puffer-cnn
+wandb: Synced 4 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_133839-8b1509972f2fee067bfe5525/logs
+Sidecar: recorded 1 completed trials (online)
+wandb: creating run
+wandb: Tracking run with wandb version 0.21.4
+wandb: Run data is saved locally in /home/claude/cnn/build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_134921-1f34583245b8c89281de40d2
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run lucky-maple-21
+wandb: ⭐️ View project at https://wandb.ai/kinvert-k/puffer-cnn
+wandb: 🚀 View run at https://wandb.ai/kinvert-k/puffer-cnn/runs/1f34583245b8c89281de40d2
+wandb: updating run metadata
+wandb: 
+wandb: Run history:
+wandb:                SPS ▂█▅▅▁
+wandb:        agent_steps ▁▃▅▇█
+wandb: env/episode_length ▁█▆▆▆
+wandb: env/episode_return ▁▄███
+wandb:       env/invalids ▃█▁▁▁
+wandb:              env/n █▄▅▅▁
+wandb:           env/perf ▁▄███
+wandb:          env/score ▁▄███
+wandb:              epoch ▁▃▅▇█
+wandb:         importance ▁▁▁▁▁
+wandb:                +12 ...
+wandb: 
+wandb: Run summary:
+wandb:                 SPS 8938.7794
+wandb:         agent_steps 5785600
+wandb: architecture_sha256 404428fcadfc24fb51ea...
+wandb:  env/episode_length 11.52198
+wandb:  env/episode_return 1
+wandb:        env/invalids 0
+wandb:               env/n 182
+wandb:            env/perf 1
+wandb:           env/score 1
+wandb:               epoch 2825
+wandb:                 +23 ...
+wandb: 
+wandb: 🚀 View run lucky-maple-21 at: https://wandb.ai/kinvert-k/puffer-cnn/runs/1f34583245b8c89281de40d2
+wandb: ⭐️ View project at: https://wandb.ai/kinvert-k/puffer-cnn
+wandb: Synced 4 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_134921-1f34583245b8c89281de40d2/logs
+Sidecar: recorded 1 completed trials (online)
+wandb: creating run
+wandb: Tracking run with wandb version 0.21.4
+wandb: Run data is saved locally in /home/claude/cnn/build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_140133-8ffb38e671498be583ab071f
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run calm-bear-22
+wandb: ⭐️ View project at https://wandb.ai/kinvert-k/puffer-cnn
+wandb: 🚀 View run at https://wandb.ai/kinvert-k/puffer-cnn/runs/8ffb38e671498be583ab071f
+wandb: updating run metadata
+wandb: 
+wandb: Run history:
+wandb:                SPS ▄█▆▆▁
+wandb:        agent_steps ▁▃▅▇█
+wandb: env/episode_length ▁█▆▆▇
+wandb: env/episode_return ▁▆███
+wandb:       env/invalids ▆█▁▁▁
+wandb:              env/n █▄▅▅▁
+wandb:           env/perf ▁▆███
+wandb:          env/score ▁▆███
+wandb:              epoch ▁▃▅▇█
+wandb:         importance ▁▁▁▁▁
+wandb:                +12 ...
+wandb: 
+wandb: Run summary:
+wandb:                 SPS 8935.99903
+wandb:         agent_steps 6633472
+wandb: architecture_sha256 404428fcadfc24fb51ea...
+wandb:  env/episode_length 11.56977
+wandb:  env/episode_return 1
+wandb:        env/invalids 0
+wandb:               env/n 172
+wandb:            env/perf 1
+wandb:           env/score 1
+wandb:               epoch 3239
+wandb:                 +23 ...
+wandb: 
+wandb: 🚀 View run calm-bear-22 at: https://wandb.ai/kinvert-k/puffer-cnn/runs/8ffb38e671498be583ab071f
+wandb: ⭐️ View project at: https://wandb.ai/kinvert-k/puffer-cnn
+wandb: Synced 4 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_140133-8ffb38e671498be583ab071f/logs
+Sidecar: recorded 1 completed trials (online)
+wandb: creating run
+wandb: Tracking run with wandb version 0.21.4
+wandb: Run data is saved locally in /home/claude/cnn/build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_141226-0253c5114029d1f1ef25838c
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run sunny-owl-23
+wandb: ⭐️ View project at https://wandb.ai/kinvert-k/puffer-cnn
+wandb: 🚀 View run at https://wandb.ai/kinvert-k/puffer-cnn/runs/0253c5114029d1f1ef25838c
+wandb: updating run metadata
+wandb: 
+wandb: Run history:
+wandb:                SPS ▁▆█▇█
+wandb:        agent_steps ▁▃▅▇█
+wandb: env/episode_length ▁▇███
+wandb: env/episode_return ▁▄▇██
+wandb:       env/invalids ▃█▁▁▁
+wandb:              env/n █▃▃▃▁
+wandb:           env/perf ▁▄▇██
+wandb:          env/score ▁▄▇██
+wandb:              epoch ▁▃▅▇█
+wandb:         importance ▁▁▁▁▁
+wandb:                +12 ...
+wandb: 
+wandb: Run summary:
+wandb:                 SPS 9105.53554
+wandb:         agent_steps 5904384
+wandb: architecture_sha256 404428fcadfc24fb51ea...
+wandb:  env/episode_length 14.23693
+wandb:  env/episode_return 0.81185
+wandb:        env/invalids 0.02439
+wandb:               env/n 287
+wandb:            env/perf 0.90592
+wandb:           env/score 0.81185
+wandb:               epoch 2883
+wandb:                 +23 ...
+wandb: 
+wandb: 🚀 View run sunny-owl-23 at: https://wandb.ai/kinvert-k/puffer-cnn/runs/0253c5114029d1f1ef25838c
+wandb: ⭐️ View project at: https://wandb.ai/kinvert-k/puffer-cnn
+wandb: Synced 4 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_141226-0253c5114029d1f1ef25838c/logs
+Sidecar: recorded 1 completed trials (online)
+wandb: creating run
+wandb: Tracking run with wandb version 0.21.4
+wandb: Run data is saved locally in /home/claude/cnn/build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_142248-fbddd3577a1318d4a64472d1
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run clever-river-24
+wandb: ⭐️ View project at https://wandb.ai/kinvert-k/puffer-cnn
+wandb: 🚀 View run at https://wandb.ai/kinvert-k/puffer-cnn/runs/fbddd3577a1318d4a64472d1
+wandb: updating run metadata
+wandb: uploading history steps 0-4, summary
+wandb: 
+wandb: Run history:
+wandb:                SPS ▆▇█▇▁
+wandb:        agent_steps ▁▃▅▇█
+wandb: env/episode_length ▁█▇▇▆
+wandb: env/episode_return ▁▃███
+wandb:       env/invalids ▃█▂▂▁
+wandb:              env/n █▄▄▄▁
+wandb:           env/perf ▁▃███
+wandb:          env/score ▁▃███
+wandb:              epoch ▁▃▅▇█
+wandb:         importance ▁▁▁▁▁
+wandb:                +12 ...
+wandb: 
+wandb: Run summary:
+wandb:                 SPS 8823.70996
+wandb:         agent_steps 5595136
+wandb: architecture_sha256 404428fcadfc24fb51ea...
+wandb:  env/episode_length 11.46591
+wandb:  env/episode_return 0.93182
+wandb:        env/invalids 0
+wandb:               env/n 176
+wandb:            env/perf 0.96591
+wandb:           env/score 0.93182
+wandb:               epoch 2732
+wandb:                 +23 ...
+wandb: 
+wandb: 🚀 View run clever-river-24 at: https://wandb.ai/kinvert-k/puffer-cnn/runs/fbddd3577a1318d4a64472d1
+wandb: ⭐️ View project at: https://wandb.ai/kinvert-k/puffer-cnn
+wandb: Synced 4 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./build/connect4cnn/sweep.co1g6diu/sidecar/wandb/run-20260913_142248-fbddd3577a1318d4a64472d1/logs
+Sidecar: recorded 1 completed trials (online)

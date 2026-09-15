@@ -1,0 +1,135 @@
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0               🐡 GPU:  67%   VRAM:    3.5/8G    RAM:  0.5G     │
+│                                                                              │
+│ Env         connect4cnn    Evaluate      203ms  62%    Losses       1.197    │
+│ Params           270.5K      Model       181ms  55%    policy       0.454    │
+│ Steps              2.0K      Env          16ms   4%    value        0.149    │
+│ SPS                6.3K      Copy          2ms   0%    entropy      1.934    │
+│ Epoch                 1    Train         123ms  37%    old_kl      -0.000    │
+│ Uptime            326ms      Model       123ms  37%    kl           0.000    │
+│ To go         10s 121ms      Misc          0ms   0%    clipfrac     0.000    │
+│                                                                              │
+│ perf                          0.000   score                        -0.965    │
+│ episode_return               -0.965   episode_length                6.534    │
+│ invalids                      0.014                                          │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0              🐡  GPU:  89%   VRAM:    3.5/8G    RAM:  0.5G     │
+│                                                                              │
+│ Env         connect4cnn    Evaluate      267ms  35%    Losses       1.134    │
+│ Params           270.5K      Model       185ms  24%    policy       0.437    │
+│ Steps             10.2K      Env          61ms   8%    value        0.139    │
+│ SPS               10.7K      Copy          8ms   1%    entropy      1.934    │
+│ Epoch                 5    Train         494ms  64%    old_kl       0.000    │
+│ Uptime         1s 092ms      Model       494ms  64%    kl           0.000    │
+│ To go          5s 167ms      Misc          0ms   0%    clipfrac     0.000    │
+│                                                                              │
+│ perf                          0.000   score                        -0.964    │
+│ episode_return               -0.964   episode_length                6.752    │
+│ invalids                      0.039                                          │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0             🐡   GPU:  87%   VRAM:    3.5/8G    RAM:  0.5G     │
+│                                                                              │
+│ Env         connect4cnn    Evaluate      267ms  35%    Losses       0.979    │
+│ Params           270.5K      Model       185ms  24%    policy       0.395    │
+│ Steps             18.4K      Env          61ms   7%    value        0.117    │
+│ SPS               10.7K      Copy          8ms   1%    entropy      1.933    │
+│ Epoch                 9    Train         493ms  64%    old_kl       0.000    │
+│ Uptime         1s 856ms      Model       493ms  64%    kl          -0.000    │
+│ To go          4s 393ms      Misc          0ms   0%    clipfrac     0.000    │
+│                                                                              │
+│ perf                          0.001   score                        -0.963    │
+│ episode_return               -0.963   episode_length                6.701    │
+│ invalids                      0.040                                          │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0            🐡    GPU:  88%   VRAM:    3.5/8G    RAM:  0.5G     │
+│                                                                              │
+│ Env         connect4cnn    Evaluate      268ms  35%    Losses       0.810    │
+│ Params           270.5K      Model       185ms  24%    policy       0.343    │
+│ Steps             26.6K      Env          60ms   7%    value        0.093    │
+│ SPS               10.7K      Copy          9ms   1%    entropy      1.932    │
+│ Epoch                13    Train         493ms  64%    old_kl      -0.000    │
+│ Uptime         2s 619ms      Model       493ms  64%    kl           0.000    │
+│ To go          3s 622ms      Misc          0ms   0%    clipfrac     0.000    │
+│                                                                              │
+│ perf                          0.001   score                        -0.963    │
+│ episode_return               -0.963   episode_length                6.747    │
+│ invalids                      0.037                                          │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0           🐡     GPU:  89%   VRAM:    3.5/8G    RAM:  0.5G     │
+│                                                                              │
+│ Env         connect4cnn    Evaluate      268ms  35%    Losses       0.699    │
+│ Params           270.5K      Model       185ms  24%    policy       0.310    │
+│ Steps             34.8K      Env          60ms   7%    value        0.078    │
+│ SPS               10.7K      Copy          8ms   1%    entropy      1.931    │
+│ Epoch                17    Train         494ms  64%    old_kl       0.000    │
+│ Uptime         3s 384ms      Model       494ms  64%    kl           0.000    │
+│ To go          2s 869ms      Misc          0ms   0%    clipfrac     0.000    │
+│                                                                              │
+│ perf                          0.000   score                        -0.963    │
+│ episode_return               -0.963   episode_length                6.728    │
+│ invalids                      0.043                                          │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0          🐡      GPU:  89%   VRAM:    3.5/8G    RAM:  0.5G     │
+│                                                                              │
+│ Env         connect4cnn    Evaluate      267ms  35%    Losses       0.614    │
+│ Params           270.5K      Model       185ms  24%    policy       0.280    │
+│ Steps             43.0K      Env          61ms   7%    value        0.067    │
+│ SPS               10.7K      Copy          8ms   1%    entropy      1.930    │
+│ Epoch                21    Train         494ms  64%    old_kl      -0.000    │
+│ Uptime         4s 146ms      Model       493ms  64%    kl           0.000    │
+│ To go          2s 097ms      Misc          0ms   0%    clipfrac     0.000    │
+│                                                                              │
+│ perf                          0.000   score                        -0.968    │
+│ episode_return               -0.968   episode_length                6.765    │
+│ invalids                      0.039                                          │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0         🐡       GPU:  89%   VRAM:    3.5/8G    RAM:  0.5G     │
+│                                                                              │
+│ Env         connect4cnn    Evaluate      269ms  35%    Losses       0.569    │
+│ Params           270.5K      Model       185ms  24%    policy       0.264    │
+│ Steps             51.2K      Env          61ms   8%    value        0.061    │
+│ SPS               10.7K      Copy          9ms   1%    entropy      1.930    │
+│ Epoch                25    Train         494ms  64%    old_kl       0.000    │
+│ Uptime         4s 913ms      Model       494ms  64%    kl           0.000    │
+│ To go          1s 342ms      Misc          0ms   0%    clipfrac     0.000    │
+│                                                                              │
+│ perf                          0.000   score                        -0.972    │
+│ episode_return               -0.972   episode_length                6.739    │
+│ invalids                      0.040                                          │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0        🐡        GPU:  89%   VRAM:    3.5/8G    RAM:  0.5G     │
+│                                                                              │
+│ Env         connect4cnn    Evaluate      267ms  35%    Losses       0.542    │
+│ Params           270.5K      Model       185ms  24%    policy       0.254    │
+│ Steps             59.4K      Env          60ms   7%    value        0.057    │
+│ SPS               10.7K      Copy          8ms   1%    entropy      1.930    │
+│ Epoch                29    Train         493ms  64%    old_kl       0.000    │
+│ Uptime         5s 676ms      Model       493ms  64%    kl           0.000    │
+│ To go             572ms      Misc          0ms   0%    clipfrac     0.000    │
+│                                                                              │
+│ perf                          0.000   score                        -0.963    │
+│ episode_return               -0.963   episode_length                6.705    │
+│ invalids                      0.039                                          │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0       🐡         GPU:  88%   VRAM:    3.5/8G    RAM:  0.5G     │
+│                                                                              │
+│ Env         connect4cnn    Evaluate      200ms  34%    Losses       0.548    │
+│ Params           270.5K      Model       139ms  24%    policy       0.256    │
+│ Steps             65.5K      Env          45ms   7%    value        0.058    │
+│ SPS               10.7K      Copy          6ms   1%    entropy      1.930    │
+│ Epoch                32    Train         371ms  65%    old_kl       0.000    │
+│ Uptime         6s 249ms      Model       371ms  64%    kl           0.000    │
+│ To go               0ms      Misc          0ms   0%    clipfrac     0.000    │
+│                                                                              │
+│ perf                          0.000   score                        -0.969    │
+│ episode_return               -0.969   episode_length                6.671    │
+│ invalids                      0.043                                          │
+╰──────────────────────────────────────────────────────────────────────────────╯

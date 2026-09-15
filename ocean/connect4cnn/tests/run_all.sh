@@ -31,4 +31,17 @@ done
 cmp build/connect4cnn/connect4.trace build/connect4cnn/connect4cnn.trace
 build/connect4cnn/test_connect4cnn > build/connect4cnn/connect4cnn.repeat.trace
 cmp build/connect4cnn/connect4cnn.trace build/connect4cnn/connect4cnn.repeat.trace
-echo "PASS: pixel fixtures, reset/terminal checks, 4096-step upstream parity, repeated trace (ASan/UBSan)."
+for representation in {1..9}; do
+    build/connect4cnn/test_connect4cnn "$representation" > "build/connect4cnn/representation-$representation.trace"
+    cmp build/connect4cnn/connect4.trace "build/connect4cnn/representation-$representation.trace"
+    build/connect4cnn/test_connect4cnn "$representation" > build/connect4cnn/representation.repeat.trace
+    cmp "build/connect4cnn/representation-$representation.trace" build/connect4cnn/representation.repeat.trace
+done
+for invalid in -1 10 1.5 nan; do
+    if build/connect4cnn/test_connect4cnn "$invalid" > /dev/null 2> build/connect4cnn/representation-invalid.txt; then
+        echo "Invalid representation accepted: $invalid" >&2
+        exit 1
+    fi
+    rg -q 'representation must be an integer' build/connect4cnn/representation-invalid.txt
+done
+echo "PASS: all 10 representations, pixel/reset fixtures, 4096-step upstream parity each, repeats and invalid-ID rejection (ASan/UBSan)."

@@ -1,0 +1,59 @@
+[
+  {
+    "variant": "flex_quality",
+    "seed": 9173,
+    "status": "failed",
+    "error": "Command '['/home/claude/cnn/build/connect4cnn/confirm-canary.hdq_fms8/flex_quality', 'train', '--base.env_name=connect4cnn', '--base.gpu_offset=0', '--base.profile=0', '--base.checkpoint_dir=checkpoints', '--base.log_dir=logs', '--base.checkpoint_interval=500', '--base.eval_episodes=0', '--base.eval_agents=-1', '--base.load_model_path=None', \"--base.load_enemy_model_path='None'\", \"--base.run_id='None'\", '--base.result_fd=0', '--base.cudagraphs=1', '--base.seed=73', '--base.reset_every_horizon=0', '--base.async=0', '--vec.total_agents=64', '--vec.num_buffers=1', '--vec.num_threads=2', '--vec.num_policies=1', '--vec.hist_policy_hidden_size=0', '--vec.hist_policy_num_layers=0', '--vec.hist_policy_percent=0', '--selfplay.enabled=0', '--selfplay.max_size=16', '--selfplay.seed=42', '--selfplay.opp_timeout_steps=500_000_000', '--selfplay.eval_pool_size=8', '--selfplay.eval_games=0', '--selfplay.eval_bot_games=0', '--selfplay.eval_bots=0', '--selfplay.eval_bot_envs=8192', '--selfplay.eval_bot_threads=0', '--env.dr=0', '--env.num_agents=1', '--env.num_bots=0', '--env.player_pieces=0', '--env.env_pieces=0', '--policy.hidden_size=128', '--policy.num_layers=1', '--policy.encoder=0', '--policy.cnn_channels=16', '--policy.cnn_blocks=1', '--policy.cnn_global_pool=0', '--train.gpus=1', '--train.total_timesteps=13272299', '--train.learning_rate=0.001', '--train.anneal_lr=1', '--train.min_lr_ratio=0', '--train.gamma=0.8', '--train.gae_lambda=0.962627', '--train.replay_ratio=1', '--train.clip_coef=0.511829', '--train.vf_coef=5', '--train.vf_clip_coef=1.99178', '--train.max_grad_norm=0.552251', '--train.ent_coef=3.24222e-05', '--train.anneal_ent_coef=0', '--train.min_ent_coef_ratio=0', '--train.momentum=0.878636', '--train.minibatch_size=2048', '--train.horizon=32', '--train.vtrace=0', '--train.vtrace_rho_clip=1', '--train.vtrace_c_clip=1', '--train.verb_eps=0', '--train.verb_eps_anneal_start=0.4', '--train.verb_eps_anneal_end=1.0', '--sweep.metric=score', '--sweep.metric_distribution=linear', '--sweep.goal=maximize', '--sweep.max_suggestion_cost=3600', '--sweep.max_runs=1200', '--sweep.gpus=-1', '--sweep.downsample=25', '--sweep.prune_pareto=1', '--sweep.early_stop_quantile=0.3', '--policy.encoder=4', '--policy.cnn_depth=1', '--policy.cnn_projection=64', '--policy.cnn_global_pool=0', '--policy.cnn_channels_1=16', '--policy.cnn_kernel_1=7', '--policy.cnn_stride_1=4', '--policy.cnn_pool_1=0', '--policy.cnn_residual_1=0', '--headless', '--base.seed=9173', '--base.run_id=trial', '--train.total_timesteps=65536', '--base.eval_episodes=0', '--base.checkpoint_interval=8', '--base.checkpoint_dir=/home/claude/cnn/build/connect4cnn/confirm-canary.hdq_fms8/flex_quality-s9173/checkpoints', '--base.log_dir=/home/claude/cnn/build/connect4cnn/confirm-canary.hdq_fms8/flex_quality-s9173/metrics']' returned non-zero exit status 1."
+  },
+  {
+    "variant": "nature_cnn",
+    "seed": 9173,
+    "status": "ok",
+    "train_process_wall_s": 1.2670547739835456,
+    "checkpoint_sha256": {
+      "0000000000016384.bin": "364292274d1e21d6adc502bafd0d0c685e8a02d5753b5776c55ad9a3140c989d",
+      "0000000000032768.bin": "d7f2dd254ca91555e3e3353169d96bf1bd6dd69d7e63dffe54a980159529c5cc",
+      "0000000000049152.bin": "e12fd0dcefb8d2662df716d4c6784942eab46d3f86074e49f8814baf077a512c",
+      "0000000000065536.bin": "cc90676ecb65ed52aeac4a75ac721da6daa084763f962e85d8e504f0f8f01762"
+    },
+    "wandb_status": "ok"
+  },
+  {
+    "variant": "flex_fast",
+    "seed": 9173,
+    "status": "failed",
+    "error": "Command '['/home/claude/cnn/build/connect4cnn/confirm-canary.hdq_fms8/flex_quality', 'train', '--base.env_name=connect4cnn', '--base.gpu_offset=0', '--base.profile=0', '--base.checkpoint_dir=checkpoints', '--base.log_dir=logs', '--base.checkpoint_interval=500', '--base.eval_episodes=0', '--base.eval_agents=-1', '--base.load_model_path=None', \"--base.load_enemy_model_path='None'\", \"--base.run_id='None'\", '--base.result_fd=0', '--base.cudagraphs=1', '--base.seed=73', '--base.reset_every_horizon=0', '--base.async=0', '--vec.total_agents=64', '--vec.num_buffers=1', '--vec.num_threads=2', '--vec.num_policies=1', '--vec.hist_policy_hidden_size=0', '--vec.hist_policy_num_layers=0', '--vec.hist_policy_percent=0', '--selfplay.enabled=0', '--selfplay.max_size=16', '--selfplay.seed=42', '--selfplay.opp_timeout_steps=500_000_000', '--selfplay.eval_pool_size=8', '--selfplay.eval_games=0', '--selfplay.eval_bot_games=0', '--selfplay.eval_bots=0', '--selfplay.eval_bot_envs=8192', '--selfplay.eval_bot_threads=0', '--env.dr=0', '--env.num_agents=1', '--env.num_bots=0', '--env.player_pieces=0', '--env.env_pieces=0', '--policy.hidden_size=128', '--policy.num_layers=1', '--policy.encoder=0', '--policy.cnn_channels=16', '--policy.cnn_blocks=1', '--policy.cnn_global_pool=0', '--train.gpus=1', '--train.total_timesteps=13272299', '--train.learning_rate=0.001', '--train.anneal_lr=1', '--train.min_lr_ratio=0', '--train.gamma=0.8', '--train.gae_lambda=0.962627', '--train.replay_ratio=1', '--train.clip_coef=0.511829', '--train.vf_coef=5', '--train.vf_clip_coef=1.99178', '--train.max_grad_norm=0.552251', '--train.ent_coef=3.24222e-05', '--train.anneal_ent_coef=0', '--train.min_ent_coef_ratio=0', '--train.momentum=0.878636', '--train.minibatch_size=2048', '--train.horizon=32', '--train.vtrace=0', '--train.vtrace_rho_clip=1', '--train.vtrace_c_clip=1', '--train.verb_eps=0', '--train.verb_eps_anneal_start=0.4', '--train.verb_eps_anneal_end=1.0', '--sweep.metric=score', '--sweep.metric_distribution=linear', '--sweep.goal=maximize', '--sweep.max_suggestion_cost=3600', '--sweep.max_runs=1200', '--sweep.gpus=-1', '--sweep.downsample=25', '--sweep.prune_pareto=1', '--sweep.early_stop_quantile=0.3', '--policy.encoder=4', '--policy.cnn_depth=1', '--policy.cnn_projection=64', '--policy.cnn_global_pool=0', '--policy.cnn_channels_1=32', '--policy.cnn_kernel_1=4', '--policy.cnn_stride_1=4', '--policy.cnn_pool_1=0', '--policy.cnn_residual_1=0', '--headless', '--base.seed=9173', '--base.run_id=trial', '--train.total_timesteps=65536', '--base.eval_episodes=0', '--base.checkpoint_interval=8', '--base.checkpoint_dir=/home/claude/cnn/build/connect4cnn/confirm-canary.hdq_fms8/flex_fast-s9173/checkpoints', '--base.log_dir=/home/claude/cnn/build/connect4cnn/confirm-canary.hdq_fms8/flex_fast-s9173/metrics']' returned non-zero exit status 1."
+  },
+  {
+    "variant": "impala_cnn",
+    "seed": 9173,
+    "status": "ok",
+    "train_process_wall_s": 6.62879263603827,
+    "checkpoint_sha256": {
+      "0000000000016384.bin": "6a21f7dd595c57af561225bf3aa8b99978f694548321a76f413c1ad9312ec36f",
+      "0000000000032768.bin": "d8dc852e68d847ed710fbf920ec4daa7e788bb38e6739db896452aee5f26fe7e",
+      "0000000000049152.bin": "01e9aa17e99bed473c5d71ad1a7182b3bf50268c964841a00d6550ee164cbdf5",
+      "0000000000065536.bin": "2c70e4639259d96b31fa856297ac158ce2d147ae33d12ce034833ad08301b39f"
+    },
+    "wandb_status": "ok"
+  },
+  {
+    "variant": "flex_small",
+    "seed": 9173,
+    "status": "failed",
+    "error": "Command '['/home/claude/cnn/build/connect4cnn/confirm-canary.hdq_fms8/flex_quality', 'train', '--base.env_name=connect4cnn', '--base.gpu_offset=0', '--base.profile=0', '--base.checkpoint_dir=checkpoints', '--base.log_dir=logs', '--base.checkpoint_interval=500', '--base.eval_episodes=0', '--base.eval_agents=-1', '--base.load_model_path=None', \"--base.load_enemy_model_path='None'\", \"--base.run_id='None'\", '--base.result_fd=0', '--base.cudagraphs=1', '--base.seed=73', '--base.reset_every_horizon=0', '--base.async=0', '--vec.total_agents=64', '--vec.num_buffers=1', '--vec.num_threads=2', '--vec.num_policies=1', '--vec.hist_policy_hidden_size=0', '--vec.hist_policy_num_layers=0', '--vec.hist_policy_percent=0', '--selfplay.enabled=0', '--selfplay.max_size=16', '--selfplay.seed=42', '--selfplay.opp_timeout_steps=500_000_000', '--selfplay.eval_pool_size=8', '--selfplay.eval_games=0', '--selfplay.eval_bot_games=0', '--selfplay.eval_bots=0', '--selfplay.eval_bot_envs=8192', '--selfplay.eval_bot_threads=0', '--env.dr=0', '--env.num_agents=1', '--env.num_bots=0', '--env.player_pieces=0', '--env.env_pieces=0', '--policy.hidden_size=128', '--policy.num_layers=1', '--policy.encoder=0', '--policy.cnn_channels=16', '--policy.cnn_blocks=1', '--policy.cnn_global_pool=0', '--train.gpus=1', '--train.total_timesteps=13272299', '--train.learning_rate=0.001', '--train.anneal_lr=1', '--train.min_lr_ratio=0', '--train.gamma=0.8', '--train.gae_lambda=0.962627', '--train.replay_ratio=1', '--train.clip_coef=0.511829', '--train.vf_coef=5', '--train.vf_clip_coef=1.99178', '--train.max_grad_norm=0.552251', '--train.ent_coef=3.24222e-05', '--train.anneal_ent_coef=0', '--train.min_ent_coef_ratio=0', '--train.momentum=0.878636', '--train.minibatch_size=2048', '--train.horizon=32', '--train.vtrace=0', '--train.vtrace_rho_clip=1', '--train.vtrace_c_clip=1', '--train.verb_eps=0', '--train.verb_eps_anneal_start=0.4', '--train.verb_eps_anneal_end=1.0', '--sweep.metric=score', '--sweep.metric_distribution=linear', '--sweep.goal=maximize', '--sweep.max_suggestion_cost=3600', '--sweep.max_runs=1200', '--sweep.gpus=-1', '--sweep.downsample=25', '--sweep.prune_pareto=1', '--sweep.early_stop_quantile=0.3', '--policy.encoder=4', '--policy.cnn_depth=1', '--policy.cnn_projection=64', '--policy.cnn_global_pool=0', '--policy.cnn_channels_1=8', '--policy.cnn_kernel_1=8', '--policy.cnn_stride_1=4', '--policy.cnn_pool_1=0', '--policy.cnn_residual_1=0', '--headless', '--base.seed=9173', '--base.run_id=trial', '--train.total_timesteps=65536', '--base.eval_episodes=0', '--base.checkpoint_interval=8', '--base.checkpoint_dir=/home/claude/cnn/build/connect4cnn/confirm-canary.hdq_fms8/flex_small-s9173/checkpoints', '--base.log_dir=/home/claude/cnn/build/connect4cnn/confirm-canary.hdq_fms8/flex_small-s9173/metrics']' returned non-zero exit status 1."
+  },
+  {
+    "variant": "impoola_cnn",
+    "seed": 9173,
+    "status": "ok",
+    "train_process_wall_s": 6.579488878021948,
+    "checkpoint_sha256": {
+      "0000000000016384.bin": "f7828fcd79ee5235b3824ec19df924f0f554b11131153ed03c1878a560762ab9",
+      "0000000000032768.bin": "c28f6960781b79d0994aa2e9b57495493dce7a703448da66757ad8c82aff4a31",
+      "0000000000049152.bin": "a4c335db975bd64ccaaa542c4304034d7dd59ab38a84e5ea10885325d66cf08c",
+      "0000000000065536.bin": "aadef3068fe2f68a3d3ff13c22050e9722d1996e885f83fba3fe717339c0011a"
+    },
+    "wandb_status": "ok"
+  }
+]

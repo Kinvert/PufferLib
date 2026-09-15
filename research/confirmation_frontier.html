@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Connect4 frozen confirmation — complete Pareto curves</title>
+<style>
+body{font:16px system-ui;margin:24px auto;padding:0 20px;max-width:1180px;color:#17202a;background:#fafbfc}h1{font-size:26px}p{line-height:1.5}.controls,#legend{display:flex;gap:18px;flex-wrap:wrap;align-items:center;padding:14px;background:white;border:1px solid #dbe1e8;margin:10px 0}select{font:inherit}svg{width:100%;background:white;border:1px solid #dbe1e8}#detail{min-height:70px;padding:12px;background:#eaf0f6;white-space:pre-wrap}table{border-collapse:collapse;width:100%;font-size:14px}td,th{padding:7px;border-bottom:1px solid #ddd;text-align:right}td:first-child,th:first-child{text-align:left}.note{font-size:14px;color:#495462}
+</style>
+<h1>Connect4: frozen five-seed confirmation</h1>
+<p>Six fixed architectures × five fresh training seeds × 13 equally spaced checkpoints. All 390 held-out evaluations are included. The three “ours” names describe their original selection roles, not their confirmed ranking.</p>
+<div class="controls">
+<label>View <select id="view"><option value="mean">Five-seed means</option><option>173</option><option>174</option><option>175</option><option>176</option><option>177</option></select></label>
+<label>Cost <select id="axis"><option value="seconds">Training wall time</option><option value="steps">Agent decisions</option></select></label>
+<label><input type="checkbox" id="zoom" checked> First 180 seconds</label>
+<label><input type="checkbox" id="ci" checked> Pointwise 95% intervals</label>
+<label><input type="checkbox" id="raw"> Individual curves behind means</label>
+</div>
+<div id="legend"></div>
+<svg id="plot" viewBox="0 0 1100 530" role="img" aria-label="Held-out performance versus training cost with seed uncertainty"></svg>
+<div id="detail">Hover or focus a point for its model, checkpoint, performance, uncertainty and cost.</div>
+<p class="note">Colored curves connect successive measured checkpoints, including declines. Black rings and a dashed black line show the observed Pareto front among the visible models. Connections are visual guides, not interpolation estimates. Use the controls to inspect every paired seed and the full time range.</p>
+<p class="note">Means pair checkpoints at equal decision counts and average their wall times. Error bars are pointwise percentile bootstrap intervals, enumerating all 5⁵ seed resamples. They are not simultaneous curve bands or proof of dominance; five seeds give limited uncertainty estimates. Individual seeds are never pooled to manufacture a best-seed frontier.</p>
+<h2>Observed frontier among visible models</h2>
+<table><thead><tr><th>Model</th><th>Decisions</th><th>Wall seconds</th><th>Held-out wins</th><th>Pointwise 95% interval</th></tr></thead><tbody id="table"></tbody></table>
+<p class="note">Wall times use recorded launch-to-checkpoint times, including startup/checkpoint writes; native SPS has a different timer. Build, evaluation and W&B upload time is excluded. GPU snapshots were taken before jobs, not continuously. Brief CPU-only development tests occurred during the campaign. This is a matched-learner Connect4 comparison, not equally tuned family searches, an unseen-game test, or a proven universal frontier. Checkpoints share the full 13.312M-step learning-rate schedule.</p>
+<script>
+const data=__DATA__;
+const colors={'Ours quality':'#1767c0','Ours fast':'#7784cc','Ours small':'#008b8b',Nature:'#cb7700',IMPALA:'#22833b',Impoola:'#a13baa'};
+const $=id=>document.getElementById(id), ns='http://www.w3.org/2000/svg';
+const visible=new Set(Object.keys(colors));
+function front(points,axis){return points.filter(p=>!points.some(q=>q[axis]<=p[axis]&&q.wins>=p.wins&&(q[axis]<p[axis]||q.wins>p.wins))).sort((a,b)=>a[axis]-b[axis]);}
+function el(tag,attrs,text){const e=document.createElementNS(ns,tag);for(const[k,v]of Object.entries(attrs))e.setAttribute(k,v);if(text!==undefined)e.textContent=text;$('plot').appendChild(e);return e;}
+for(const[f,c]of Object.entries(colors)){const label=document.createElement('label'),input=document.createElement('input');input.type='checkbox';input.checked=true;input.addEventListener('change',()=>{if(input.checked)visible.add(f);else visible.delete(f);draw();});label.appendChild(input);label.appendChild(document.createTextNode(' '+f));label.style.color=c;$('legend').appendChild(label);}
+function draw(){
+ const axis=$('axis').value, mean=$('view').value==='mean';
+ const points=(mean?data.means:data.points.filter(p=>p.seed===Number($('view').value))).filter(p=>visible.has(p.family));
+ const edge=front(points,axis), xmax=axis==='steps'?14000000:($('zoom').checked?180:1300);
+ const X=v=>75+v/xmax*990,Y=v=>465-v*410;
+ $('plot').replaceChildren();
+ for(let i=0;i<=10;i++){const y=Y(i/10);el('line',{x1:75,x2:1065,y1:y,y2:y,stroke:'#e6e8eb'});el('text',{x:65,y:y+5,'text-anchor':'end','font-size':13},i*10+'%');}
+ for(let i=0;i<=7;i++){const v=xmax*i/7;el('text',{x:X(v),y:489,'text-anchor':'middle','font-size':13},axis==='steps'?(v/1e6).toFixed(1)+'M':v.toFixed(0));}
+ el('text',{x:560,y:519,'text-anchor':'middle','font-size':15},axis==='steps'?'Training agent decisions':'Wall seconds to checkpoint (approx.)');
+ el('text',{x:75,y:28,'font-size':15},'Held-out win rate');
+ if(mean&&$('raw').checked){for(const family of visible){for(const seed of [173,174,175,176,177]){const group=data.points.filter(p=>p.family===family&&p.seed===seed&&p[axis]<=xmax).sort((a,b)=>a.steps-b.steps);el('polyline',{points:group.map(p=>X(p[axis])+','+Y(p.wins)).join(' '),fill:'none',stroke:colors[family],opacity:.17,'stroke-width':1});}}}
+ for(const family of visible){
+  const group=points.filter(p=>p.family===family&&p[axis]<=xmax).sort((a,b)=>a.steps-b.steps);
+  el('polyline',{points:group.map(p=>X(p[axis])+','+Y(p.wins)).join(' '),fill:'none',stroke:colors[family],'stroke-width':2});
+  for(const p of group){
+   if(mean&&$('ci').checked)el('line',{x1:X(p[axis]),x2:X(p[axis]),y1:Y(p.low),y2:Y(p.high),stroke:colors[family],opacity:.3,'stroke-width':3});
+   const c=el('circle',{cx:X(p[axis]),cy:Y(p.wins),r:edge.includes(p)?5:3.5,fill:colors[family],stroke:edge.includes(p)?'#111':'none','stroke-width':2,tabindex:0});
+   const detail=()=>{$('detail').textContent=`${p.family} | ${mean?'five-seed mean':'seed '+p.seed}\n${(p.wins*100).toFixed(2)}% wins${mean?' | pointwise 95% interval '+(p.low*100).toFixed(2)+'–'+(p.high*100).toFixed(2)+'%':''}\n${p.steps.toLocaleString()} decisions | ${p.seconds.toFixed(2)} wall seconds | ${p.params.toLocaleString()} parameters | ${Math.round(p.native_sps).toLocaleString()} full-run native SPS`;};
+   c.addEventListener('mouseenter',detail);c.addEventListener('focus',detail);
+   const title=document.createElementNS(ns,'title');title.textContent=p.family+' '+(p.wins*100).toFixed(2)+'%';c.appendChild(title);
+  }
+ }
+ el('polyline',{points:edge.filter(p=>p[axis]<=xmax).map(p=>X(p[axis])+','+Y(p.wins)).join(' '),fill:'none',stroke:'#111','stroke-dasharray':'4 5',opacity:.5,'pointer-events':'none'});
+ $('table').replaceChildren();
+ for(const p of edge){const tr=document.createElement('tr');for(const t of [p.family,p.steps.toLocaleString(),p.seconds.toFixed(2),(p.wins*100).toFixed(2)+'%',mean?(p.low*100).toFixed(2)+'–'+(p.high*100).toFixed(2)+'%':'—']){const td=document.createElement('td');td.textContent=t;tr.appendChild(td);}$('table').appendChild(tr);}
+}
+for(const id of ['view','axis','zoom','ci','raw'])$(id).addEventListener('change',draw);draw();
+</script></html>

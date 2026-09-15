@@ -18,12 +18,12 @@ static Allocator params, acts, grads, rollout;
 static Prec input, upstream;
 static cudaStream_t test_stream;
 
-extern "C" int naturetest_init(int B, int hidden) {
+static int test_init(int B, int hidden, Dict* policy = NULL) {
     cublas_init_handle();
     CUDA_CHECK(cudaStreamCreate(&test_stream));
     enc.in_dim = OBS_SIZE; enc.out_dim = hidden;
-    create_custom_encoder(&enc);
-    assert(enc.forward == nature_forward);
+    create_custom_encoder(&enc, policy);
+    assert(enc.forward == nature_forward || enc.forward == flex_forward);
     weights = (NatureWeights*)enc.create_weights(&enc);
     enc.reg_params(weights, &params);
     enc.reg_train(weights, &train_acts, &acts, &grads, B);
@@ -35,6 +35,36 @@ extern "C" int naturetest_init(int B, int hidden) {
     alloc_create(&params); alloc_create(&acts); alloc_create(&grads); alloc_create(&rollout);
     CUDA_CHECK(cudaDeviceSynchronize());
     return params.total_elems;
+}
+
+extern "C" int naturetest_init(int B, int hidden) { return test_init(B, hidden); }
+
+extern "C" int compacttest_init(int B, int hidden, int channels, int depth, int stride, int projection) {
+    Dict policy = {};
+    dict_set(&policy, "encoder", 3);
+    dict_set(&policy, "cnn_channels", channels);
+    dict_set(&policy, "cnn_depth", depth);
+    dict_set(&policy, "cnn_stride", stride);
+    dict_set(&policy, "cnn_projection", projection);
+    int n = test_init(B, hidden, &policy);
+    dict_clear(&policy); enc.config = NULL;
+    return n;
+}
+
+extern "C" int flextest_init(int B, int hidden, int* settings) {
+    Dict policy = {};
+    dict_set(&policy, "encoder", 4);
+    dict_set(&policy, "cnn_depth", settings[0]);
+    dict_set(&policy, "cnn_projection", settings[1]);
+    dict_set(&policy, "cnn_global_pool", settings[2]);
+    const char* names[] = {"channels", "kernel", "stride", "pool", "residual"};
+    for (int stage = 1; stage <= 3; stage++) for (int j = 0; j < 5; j++) {
+        char key[64]; snprintf(key, sizeof(key), "cnn_%s_%d", names[j], stage);
+        dict_set(&policy, key, settings[3 + (stage-1)*5 + j]);
+    }
+    int n = test_init(B, hidden, &policy);
+    dict_clear(&policy); enc.config = NULL;
+    return n;
 }
 
 extern "C" void naturetest_run(float* obs, float* values, float* grad,
@@ -62,7 +92,7 @@ extern "C" void naturetest_run(float* obs, float* values, float* grad,
     CUDA_CHECK(cudaStreamSynchronize(test_stream));
     std::vector<float> actor_values(numel(actor.shape));
     CUDA_CHECK(cudaMemcpy(actor_values.data(), actor.data, actor_values.size() * sizeof(float), cudaMemcpyDeviceToHost));
-    CUDA_CHECK(cudaMemcpy(output, train_acts.output[3].data, actor_values.size() * sizeof(float), cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(output, train_acts.output[weights->count - 1].data, actor_values.size() * sizeof(float), cudaMemcpyDeviceToHost));
     assert(memcmp(output, actor_values.data(), actor_values.size() * sizeof(float)) == 0);
     CUDA_CHECK(cudaMemcpy(parameter_grad, grads.mem, grads.total_bytes, cudaMemcpyDeviceToHost));
 }

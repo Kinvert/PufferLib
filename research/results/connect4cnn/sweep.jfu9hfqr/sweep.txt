@@ -1,0 +1,12 @@
+sweep run=0 score=0.0009 cost=0.54 steps=32768 random=0 gp_obs=0 pareto=0
+sweep run=1 score=0.0005 cost=0.32 steps=16384 random=1 gp_obs=0 pareto=0
+sweep run=2 score=0.0008 cost=0.32 steps=18432 random=1 gp_obs=0 pareto=0
+sweep run=3 score=0.0000 cost=0.36 steps=18432 random=1 gp_obs=0 pareto=0
+sweep run=4 score=0.0008 cost=0.32 steps=18432 random=1 gp_obs=0 pareto=0
+sweep run=5 score=0.0000 cost=0.29 steps=16384 random=1 gp_obs=0 pareto=0
+sweep run=6 score=0.0000 cost=0.28 steps=16384 random=1 gp_obs=0 pareto=0
+sweep run=7 score=0.0000 cost=0.31 steps=16384 random=1 gp_obs=0 pareto=0
+sweep run=8 score=0.0000 cost=0.31 steps=18432 random=1 gp_obs=0 pareto=0
+sweep run=9 score=0.0008 cost=0.31 steps=18432 random=1 gp_obs=0 pareto=0
+sweep run=10 score=0.0000 cost=0.29 steps=16384 random=1 gp_obs=0 pareto=0
+sweep run=11 score=0.0008 cost=0.35 steps=18432 random=0 gp_obs=11 pareto=4

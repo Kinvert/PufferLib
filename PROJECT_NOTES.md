@@ -1,5 +1,27 @@
 # CNN project notes
 
+## 2026-09-14 — Five-seed confirmation complete and audited
+
+`confirm.ol9tcj5k` completed all 30 jobs, 390 evaluations and W&B uploads without failures. [Full analysis and interactive curves](research/CONFIRMATION_RESULTS.md). Means at 13.312M: ours quality 79.66%/144.47 s, small 78.01%/143.28 s, fast 71.66%/147.12 s; Nature 73.35%/158.71 s; IMPALA 97.45%/1,231.81 s; Impoola 80.09%/1,229.68 s. All 390 checkpoint hashes/counts/finiteness and source/config/binary receipts were audited. The combined mean wall-time frontier contains ours at lower costs and IMPALA at higher scores; Nature/Impoola contribute no mean points. IMPALA owns the mean decision-count frontier. Quality's paired final advantage over Nature is +6.31 pp with pointwise 95% bootstrap interval −0.07 to +13.00 pp: promising but unresolved. The development winner's 92% score is not typical across fresh seeds. No new training was launched for this analysis. Paper-plan item 1 is complete; broader fairness/generalization/delivery remain open.
+
+## 2026-09-14 — Sweepable Connect4 representations
+
+Added native integer `env.representation` IDs 0–9, default 0 preserving the old observation. Presets cover square sizes/gaps, circles, X/O, and smaller centered boards (including one pixel per cell), all in the same 36×44 tensor with unchanged rules and encoder kernels. [Exact presets and sweep usage](ocean/connect4cnn/REPRESENTATIONS.md). CPU fixtures and 4,096 original-game parity transitions per preset, repeats, invalid-ID rejection and ASan/UBSan passed. Native canary `sweep.wstneiqe` completed three 32,768-decision trials, representations 0/2/4, same 160,736-parameter architecture, all weights finite. Twelve tooling tests and two confirmation tests passed. No long sweep or online W&B run was launched. Appearance is recorded separately from architecture; robust performance requires coverage across representations rather than letting the optimizer pick only the easiest rendering.
+
+## 2026-09-14 — PongCNN development task
+
+Added native `ocean/pongcnn/pongcnn.h`, copied from original Pong with unchanged rules/opponent/rewards. Synthetic float32 1×36×44 images include paddles, ball and two score bars; direct C buffer writes, one observation per decision, no renderer dependency in training. Two native factory conditions now also accept `PUFFER_PONGCNN`, reusing all existing CNN kernels. Original Pong is untouched. CPU tests passed 49,152 state/RNG/reward/reset transitions against the original, repeatability and pixel fixtures under ASan/UBSan. Five isolated common-config canary inputs were prepared and checked; no GPU build or training was run during Connect4 confirmation. Details, pending native validation, information differences and commands: [PongCNN README](ocean/pongcnn/README.md). This is a development task; no cnn3 sweep was started.
+
+## 2026-09-14 — Frozen confirmation queued
+
+User authorized paper-plan item 1. The fixed panel, fresh seeds and matched measurement schedule are in [CONFIRMATION_PROTOCOL.md](research/CONFIRMATION_PROTOCOL.md); all six paper actions are explicitly listed in [PAPER_PLAN.md](research/PAPER_PLAN.md). Corrected six-model canary `confirm-canary._0y3shor` passed 24 evaluations and six online W&B uploads. Both canary attempts are archived, including the first missing-INI-key failure. No native training/kernel source changes were needed for this confirmation tooling.
+
+Full confirmation is queued in tmux `cnn2-confirm-20260914`, launcher log `build/connect4cnn/confirmation-launch-20260914.txt`. At startup verification it was waiting for GoldenEye evaluation PID 937816 to release the GPU; the automatic wait has a one-hour cap. Once free, it runs 30 serial jobs (six fixed models × five seeds), 13.312M decisions each, 13 checkpoints each, with online `kinvert-k/cnn2` logging between jobs. Estimated training time is roughly four hours after starting. The campaign's generated `confirm.*` path will appear in the launcher log. Do not actively monitor or launch a duplicate; check on user request. Completion and valid uncontended timing remain to be established from receipts.
+
+## 2026-09-14 — Paper with a practical software contribution
+
+Kinvert wants to treat the project as a paper backed by real use, clear evidence, and apples-to-apples comparisons. Current Connect4-only support is an acknowledged weakness; the next research goal is architecture generalization across environments. Architecture invention remains paused while measurement and verification improve. [PAPER_PLAN.md](research/PAPER_PLAN.md) records the proposed claim/evidence matrix, matched versus equally tuned comparisons, fresh seeds and held-out game/level splits, complete uncertain Pareto frontiers, native pixel-input portability, and runnable PufferLib delivery criteria. Architecture transfer means freezing the design before retraining it from scratch on unseen tasks; policy transfer with the same weights is a separate claim. The plan is not a completed study or authorization to launch an unspecified large experiment.
+
 ## 2026-09-11 — Project intent and workspace
 
 ### User context
@@ -141,3 +163,24 @@ Joseph's question concerns the compute-efficient convolutional encoder for pixel
 - All 18 shapes passed native float32 numerical/repeatability tests; CPU configuration/sidecar tests passed. Default tiny-encoder checkpoints matched the old binary exactly. Vanilla state Connect4 trained and reloaded successfully; the 684,224-parameter CNN variant reloaded/evaluated successfully. These are plumbing checks, not new learning baselines.
 - Both canaries produced 12 offline W&B runs. Repeating the sidecar did not create duplicate offline runs. W&B 0.21.4 and compatible protobuf 6.33.6 are pinned in the project-only venv lock; LanceDB/FastEmbed versions are unchanged. No Torch or system CUDA modifications. Online logging remains untested.
 - Small evidence is archived under `research/results/connect4cnn/sweep.*/`. Binaries, full source snapshots, checkpoints, and W&B binary artifacts remain local under `build/connect4cnn/`. The first canary preceded final metadata/validation refinements; the second is the reproducible tooling reference.
+
+## 2026-09-13 — Flexible architecture controls
+
+- Encoder ID 4 adds 18 architecture knobs: depth, independent stage widths/kernels/strides/pools/skips, readout and projection. Any legal subset can now be swept, including fixed-budget searches. Full recipe: `ocean/connect4cnn/sweep_flex.ini`; usage and semantics: `research/FLEX_CNN_SWEEP.md`. Existing IDs/checkpoints retain their meanings.
+- Numerical checks passed for 78 targeted flexible configurations, Nature regression, and all 54 old compact cases. Ten tooling tests passed. Full and one-knob canaries completed (12 and four trials); finite checkpoints and parameter counts verified. Maximum-workspace layout fit the common 2,048-decision batch, produced identical repeated checkpoints, and reloaded successfully. Evidence is archived in `sweep.jfu9hfqr` and `sweep.jd06qqgp`.
+- Only bounded validation was run. The default 128-trial recipe has not been launched, and no new learning-quality advantage is claimed.
+
+## 2026-09-13 — Compact search and Nature control (results)
+
+- Completed: 12 Nature trials in 191.242 s and 24 compact trials in 919.912 s. All 36 final checkpoints finite; fixed learner/core/env settings matched. At the same 3,317,760 steps, compact C8/depth1/stride4/projection32 reached 87,241 SPS versus Nature 76,836 (+13.54%). Best compact final training score was 22.76% at 6,639,616 steps, 72.66 s, 91,379 SPS. Nature's adaptive sweep never exceeded 3,317,760 steps, so learning/time superiority is unestablished. Fixed longer-budget controls and held-out multi-seed checks are next. Reports are archived under `research/results/connect4cnn/sweep.4h5iffsm` and `sweep.od0_6e75`.
+
+- Implemented a shared-kernel compact family: depth 1/2/3, channels 8/16/32, first stride 2/4, projection 32/64/128, while keeping the recurrent core fixed at 128. Numeric encoder 2 selects exact Nature; 3 selects compact. Existing IDs 0/1 remain available. Native source changes are limited to Connect4CNN selection in `src/ocean.cu`; the implementation stays in `ocean/connect4cnn/nature.cu`.
+- All 54 compact configurations and Nature regressions passed. Nature-equivalent compact outputs/gradients and old/new Nature training checkpoints matched exactly. Both 12-trial canaries completed and compact checkpoint reload passed; evidence is archived. Eight CPU tooling tests passed.
+- Launched the serial 12-Nature/24-compact campaign under `build/connect4cnn/fast-search.o61nFcx4`, tmux `cnn-small-20260913`, with online `kinvert-k/puffer-cnn` logging. Same learner/core/budget range, 25 history points. Read `research/COMPACT_CNN_SWEEP.md` and the experiment log for commands, limits, validation, and future confirmation requirements. Leave training unattended.
+
+## 2026-09-13 — Learning-scale discovery launch
+
+- Completed: all 24 trials, eight shapes, 13 model-guided proposals, no native failures, 3 h 13 m 31 s sweep wall. All final checkpoints finite and all 24 W&B runs finished with corrected names/native metrics. Fastest observed 100% final training point: `lucky-maple-21`, channels 32 / blocks 1 / flatten, 5,785,600 decisions, 641.40 s native cost, 9,020 average SPS. Held-out and multi-seed confirmation remain pending. Evidence is archived under `research/results/connect4cnn/sweep.co1g6diu/`; see the experiment log for interpretation and the expected original-sidecar replacement error.
+
+- Launched `build/connect4cnn/sweep.co1g6diu` in tmux session `cnn-discovery-20260913`: 24 native PROTEIN trials, about 3.3M–13.3M decisions, existing 18-shape family, fixed learner/core, checkpoint interval 1,000, 12-hour whole-sweep deadline. See `research/EXPERIMENT_LOG.md` for launch provenance and pending evaluation. Do not actively monitor it.
+- Verified online W&B with all 12 finalized canary trials, then a two-trial concurrent-sidecar canary. Online campaigns now upload completed trials automatically to https://wandb.ai/kinvert-k/puffer-cnn; discovery group is `sweep.co1g6diu`. These appear as grouped runs because PROTEIN owns the sweep. All five CPU tooling tests passed. Native source and system CUDA are unchanged.

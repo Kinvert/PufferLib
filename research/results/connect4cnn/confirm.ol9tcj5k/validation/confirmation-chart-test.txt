@@ -1,0 +1,1 @@
+PASS: generated JavaScript, 48 chart views, six model controls and empty selection. Browser appearance not tested.

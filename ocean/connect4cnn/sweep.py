@@ -55,8 +55,8 @@ def prepare(out, recipe, max_runs):
     ini.read(recipe)
     dimensions = {s[6:] for s in ini.sections() if s.startswith("sweep.")}
     encoder = ini.getint("policy", "encoder")
-    if encoder not in LIMITS or not dimensions or not dimensions <= set(LIMITS[encoder]) | {"train.total_timesteps"}:
-        raise ValueError("Fix encoder to 1/2/3/4 and sweep a nonempty subset of its architecture/budget options")
+    if encoder not in LIMITS or not dimensions or not dimensions <= set(LIMITS[encoder]) | {"train.total_timesteps", "env.representation"}:
+        raise ValueError("Fix encoder to 1/2/3/4 and sweep a nonempty subset of architecture/budget/representation options")
     for key in list(ini["policy"]):
         if key.startswith("cnn_") and "policy." + key not in LIMITS[encoder]:
             ini.remove_option("policy", key)
@@ -70,7 +70,7 @@ def prepare(out, recipe, max_runs):
         raise ValueError("max-runs must be positive")
     if ini.get("sweep", "metric") != "perf":
         raise ValueError("Use sweep.metric=perf (training win rate)")
-    limits = LIMITS[encoder]
+    limits = {**LIMITS[encoder], "env.representation": ("int_uniform", set(range(10)))}
     for key, (distribution, allowed) in limits.items():
         section = "sweep." + key
         base_section, name = key.split(".")
@@ -121,28 +121,30 @@ def execute(command, cwd, log, timeout):
 
 
 def write_report(out, rows, wall, status):
-    fields = ["index", "run_id", "name", "family", "channels", "depth", "stride", "projection", "blocks", "global_pool", "architecture_json", "steps", "score", "cost", "native_avg_sps", "params", "random", "gp_obs", "architecture_sha256", "pareto"]
+    fields = ["index", "run_id", "name", "family", "representation", "channels", "depth", "stride", "projection", "blocks", "global_pool", "architecture_json", "steps", "score", "cost", "native_avg_sps", "params", "random", "gp_obs", "architecture_sha256", "pareto"]
     flat = []
     for row in rows:
-        dominated = any(r["cost"] <= row["cost"] and r["score"] >= row["score"] and
+        dominated = any(r.get("representation", 0) == row.get("representation", 0) and
+                        r["cost"] <= row["cost"] and r["score"] >= row["score"] and
                         (r["cost"] < row["cost"] or r["score"] > row["score"]) for r in rows)
         shape = row["architecture"]
         flat.append({**{k: row[k] for k in fields if k in row},
                      **{k: shape.get("policy.cnn_" + k, "") for k in ("channels", "depth", "stride", "projection", "blocks", "global_pool")},
                      "name": display_name(out, row["index"]), "family": shape["version"],
+                     "representation": row.get("representation", 0),
                      "architecture_json": json.dumps(shape, sort_keys=True), "pareto": not dominated})
     with (out / "results.csv").open("w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fields)
         writer.writeheader(); writer.writerows(flat)
     lines = ["# Experimental CNN native PROTEIN sweep", "", f"Status: {status}. Sweep process wall: {wall:.3f} seconds.",
-             "Same Connect4CNN pixels and locked learner/core recipe; architecture and training budget vary.",
+             "Same Connect4 rules and image dimensions; representation, architecture and budget follow the saved config. Learner/core recipe is locked.",
              "Training metrics, not held-out evaluation. Cost is native adjusted uptime rounded by PROTEIN stdout; SPS = actual decisions / that cost.",
-             "Training observations guide discovery; held-out evaluation and repeated seeds are required to confirm finalists. Pareto flags use rounded final observations.", "",
-             "| Run | Family | Architecture settings | Steps | Training wins | Cost s | Native avg SPS | Parameters | GP proposal | Pareto |",
-             "|---|---|---|---:|---:|---:|---:|---:|---|---|"]
+             "Training observations guide discovery; held-out evaluation and repeated seeds are required to confirm finalists. Report Pareto flags use rounded final observations within each representation; native PROTEIN still optimizes the joint search objective.", "",
+             "| Run | Family | Representation | Architecture settings | Steps | Training wins | Cost s | Native avg SPS | Parameters | GP proposal | Pareto |",
+             "|---|---|---:|---|---:|---:|---:|---:|---:|---|---|"]
     for r in flat:
         shape = ", ".join(f"{k.removeprefix('policy.cnn_')}={v}" for k, v in json.loads(r["architecture_json"]).items() if k.startswith("policy.cnn_")) or "fixed Nature"
-        lines.append(f"| {r['name']} | {r['family']} | {shape} | {r['steps']:,} | {r['score']:.2%} | {r['cost']:.2f} | {r['native_avg_sps']:,.0f} | {r['params']:,} | {bool(r['gp_obs'])} | {r['pareto']} |")
+        lines.append(f"| {r['name']} | {r['family']} | {r['representation']} | {shape} | {r['steps']:,} | {r['score']:.2%} | {r['cost']:.2f} | {r['native_avg_sps']:,.0f} | {r['params']:,} | {bool(r['gp_obs'])} | {r['pareto']} |")
     lines += ["", "Source/config/binary hashes: protocol.json. Effective frozen config: config/default.ini.",
               "Per-trial INIs and checkpoints retain exact shapes; sidecar JSON joins these with final native observations.",
               "Whole sweep wall includes PROTEIN search and worker startup, but excludes compilation and final W&B synchronization. Online logging runs concurrently on CPU.", ""]

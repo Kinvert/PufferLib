@@ -26,7 +26,7 @@ void puf_normal_init(Prec* dst, float std, ulong seed, cudaStream_t stream) {
 #ifdef PUFFER_ASTEROIDS
 #include "../ocean/asteroids/asteroids.cu"
 #endif
-#ifdef PUFFER_CONNECT4CNN
+#if defined(PUFFER_CONNECT4CNN) || defined(PUFFER_PONGCNN)
 #include "../ocean/connect4cnn/cnn.cu"
 #include "../ocean/connect4cnn/nature.cu"
 #include "../ocean/connect4cnn/flex.cu"
@@ -82,7 +82,7 @@ static void create_custom_encoder(Encoder* enc, Dict* policy = NULL) {
 #endif
 #elif defined(PUFFER_ASTEROIDS)
     create_asteroids_encoder(enc);
-#elif defined(PUFFER_CONNECT4CNN)
+#elif defined(PUFFER_CONNECT4CNN) || defined(PUFFER_PONGCNN)
     DictItem* type = policy ? dict_find(policy, "encoder") : NULL;
     if (type && type->value == 1) {
         c4_cnn::create_connect4_encoder(enc);

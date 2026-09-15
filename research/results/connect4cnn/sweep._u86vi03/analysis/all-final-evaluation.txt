@@ -1,0 +1,555 @@
+{
+  "campaign": "sweep._u86vi03",
+  "completion": {
+    "status": "ok",
+    "error": null,
+    "completed": 128,
+    "wall_seconds": 14950.939541509026,
+    "worker_failures": []
+  },
+  "binary_sha256": "236aeffcea3aac08ccb10410d69bc1f281dfa2f98659314ed40057aec70b2726",
+  "analysis_source_sha256": "1566363707774a73faf8c3496bfdbdb929eb8d47de65c8d334e7549d637c45e1",
+  "finite_final_checkpoints": 128,
+  "fixed_config_differences": {
+    "research/results/connect4cnn/compare.2s__8t8l/nature_cnn-s73/metrics/connect4cnn/trial.ini": {},
+    "research/results/connect4cnn/compare.2s__8t8l/nature_cnn-s74/metrics/connect4cnn/trial.ini": {},
+    "research/results/connect4cnn/compare.2s__8t8l/nature_cnn-s75/metrics/connect4cnn/trial.ini": {},
+    "research/results/connect4cnn/compare.l6d5sbk2/impala_cnn-s73/metrics/connect4cnn/trial.ini": {},
+    "research/results/connect4cnn/compare.l6d5sbk2/impala_cnn-s74/metrics/connect4cnn/trial.ini": {},
+    "research/results/connect4cnn/compare.l6d5sbk2/impala_cnn-s75/metrics/connect4cnn/trial.ini": {},
+    "research/results/connect4cnn/compare.l6d5sbk2/impoola_cnn-s73/metrics/connect4cnn/trial.ini": {},
+    "research/results/connect4cnn/compare.l6d5sbk2/impoola_cnn-s74/metrics/connect4cnn/trial.ini": {},
+    "research/results/connect4cnn/compare.l6d5sbk2/impoola_cnn-s75/metrics/connect4cnn/trial.ini": {}
+  },
+  "unique_architectures": 40,
+  "total_decisions": 1355720704,
+  "depth_counts": {
+    "1": 120,
+    "2": 6,
+    "3": 2
+  },
+  "budget_counts": {
+    "under_6.6M": 14,
+    "at_least_6.6M": 114
+  },
+  "score_counts": {
+    "0.5": 100,
+    "0.8": 41,
+    "0.85": 22,
+    "0.9": 1
+  },
+  "selected_before_evaluation": [
+    {
+      "name": "brave-comet-51",
+      "index": 50,
+      "run_id": "sweep_1789366661625_0050",
+      "steps": 12662784,
+      "score": 0.902,
+      "cost": 137.37,
+      "native_avg_sps": 92180.12666521074,
+      "params": 160736,
+      "architecture": {
+        "version": "connect4-flex-v1",
+        "observation": [
+          1,
+          36,
+          44
+        ],
+        "policy.cnn_depth": 1,
+        "policy.cnn_projection": 64,
+        "policy.cnn_global_pool": 0,
+        "policy.hidden_size": 128,
+        "policy.num_layers": 1,
+        "policy.cnn_channels_1": 16,
+        "policy.cnn_kernel_1": 7,
+        "policy.cnn_stride_1": 4,
+        "policy.cnn_pool_1": 0,
+        "policy.cnn_residual_1": 0
+      },
+      "checkpoint_sha256": "e0fd1a88c0fe602f654a80d0bd051a6f51749603b8dd981f2496798b9a9e52b1"
+    },
+    {
+      "name": "cosmic-wolf-116",
+      "index": 115,
+      "run_id": "sweep_1789374995477_0115",
+      "steps": 9484288,
+      "score": 0.8128,
+      "cost": 103.54,
+      "native_avg_sps": 91600.23179447556,
+      "params": 261856,
+      "architecture": {
+        "version": "connect4-flex-v1",
+        "observation": [
+          1,
+          36,
+          44
+        ],
+        "policy.cnn_depth": 1,
+        "policy.cnn_projection": 64,
+        "policy.cnn_global_pool": 0,
+        "policy.hidden_size": 128,
+        "policy.num_layers": 1,
+        "policy.cnn_channels_1": 32,
+        "policy.cnn_kernel_1": 4,
+        "policy.cnn_stride_1": 4,
+        "policy.cnn_pool_1": 0,
+        "policy.cnn_residual_1": 0
+      },
+      "checkpoint_sha256": "ce70c37f2dd36a56a1b16718bb5f3f61948b3069509deccf3bdc9c0f8db587eb"
+    },
+    {
+      "name": "clever-otter-60",
+      "index": 59,
+      "run_id": "sweep_1789367858773_0059",
+      "steps": 12431360,
+      "score": 0.873,
+      "cost": 136.22,
+      "native_avg_sps": 91259.43326971076,
+      "params": 109768,
+      "architecture": {
+        "version": "connect4-flex-v1",
+        "observation": [
+          1,
+          36,
+          44
+        ],
+        "policy.cnn_depth": 1,
+        "policy.cnn_projection": 64,
+        "policy.cnn_global_pool": 0,
+        "policy.hidden_size": 128,
+        "policy.num_layers": 1,
+        "policy.cnn_channels_1": 8,
+        "policy.cnn_kernel_1": 8,
+        "policy.cnn_stride_1": 4,
+        "policy.cnn_pool_1": 0,
+        "policy.cnn_residual_1": 0
+      },
+      "checkpoint_sha256": "bef79b4da7df7ff48df2a4ce4d174bea3886523681b75a48b348a27385131038"
+    }
+  ],
+  "winner_checkpoint_wall": [
+    {
+      "steps": 1024000,
+      "mtime": 1789366673.8423011,
+      "seconds_from_launch_id": 12.2173011302948
+    },
+    {
+      "steps": 2048000,
+      "mtime": 1789366685.6624238,
+      "seconds_from_launch_id": 24.037423849105835
+    },
+    {
+      "steps": 3072000,
+      "mtime": 1789366697.3425446,
+      "seconds_from_launch_id": 35.71754455566406
+    },
+    {
+      "steps": 4096000,
+      "mtime": 1789366708.7666647,
+      "seconds_from_launch_id": 47.14166474342346
+    },
+    {
+      "steps": 5120000,
+      "mtime": 1789366719.8347828,
+      "seconds_from_launch_id": 58.20978283882141
+    },
+    {
+      "steps": 6144000,
+      "mtime": 1789366730.6508942,
+      "seconds_from_launch_id": 69.02589416503906
+    },
+    {
+      "steps": 7168000,
+      "mtime": 1789366741.4270053,
+      "seconds_from_launch_id": 79.80200529098511
+    },
+    {
+      "steps": 8192000,
+      "mtime": 1789366752.1871245,
+      "seconds_from_launch_id": 90.56212449073792
+    },
+    {
+      "steps": 9216000,
+      "mtime": 1789366762.9352355,
+      "seconds_from_launch_id": 101.3102355003357
+    },
+    {
+      "steps": 10240000,
+      "mtime": 1789366773.7353537,
+      "seconds_from_launch_id": 112.11035370826721
+    },
+    {
+      "steps": 11264000,
+      "mtime": 1789366784.5154657,
+      "seconds_from_launch_id": 122.89046573638916
+    },
+    {
+      "steps": 12288000,
+      "mtime": 1789366795.2555838,
+      "seconds_from_launch_id": 133.63058376312256
+    },
+    {
+      "steps": 12662784,
+      "mtime": 1789366799.1996272,
+      "seconds_from_launch_id": 137.574627161026
+    }
+  ],
+  "selection_rules": [
+    "maximum training score",
+    "minimum cost with training score >= .8",
+    "minimum parameters with training score >= .85; score breaks ties"
+  ],
+  "exact_active_configuration_repeats": [
+    {
+      "count": 6,
+      "distinct_checkpoints": 1,
+      "indices": [
+        21,
+        27,
+        36,
+        38,
+        85,
+        111
+      ],
+      "requested_steps": 13279226
+    },
+    {
+      "count": 3,
+      "distinct_checkpoints": 1,
+      "indices": [
+        28,
+        37,
+        96
+      ],
+      "requested_steps": 13279226
+    },
+    {
+      "count": 14,
+      "distinct_checkpoints": 1,
+      "indices": [
+        34,
+        39,
+        41,
+        57,
+        62,
+        70,
+        73,
+        81,
+        83,
+        91,
+        93,
+        98,
+        106,
+        116
+      ],
+      "requested_steps": 13279226
+    },
+    {
+      "count": 2,
+      "distinct_checkpoints": 1,
+      "indices": [
+        120,
+        124
+      ],
+      "requested_steps": 13279226
+    }
+  ],
+  "baseline_final": [
+    {
+      "variant": "nature_cnn",
+      "seed": 73,
+      "eval_seed": 10073,
+      "steps": 13279232,
+      "win_rate": 0.770985,
+      "score": 0.541971,
+      "games": 1096,
+      "params": 138528,
+      "checkpoint_wall_s": 162.45772981643677,
+      "train_process_wall_s": 162.55211340400274,
+      "eval_wall_s": 0.565321975009283,
+      "process_sps": 81692.15226993787,
+      "native_uptime_s": 162.14002561569214,
+      "native_avg_sps": 81899.7773657365,
+      "native_last_sps": 82192.54850107369,
+      "vram_last_gb": 1.55230712890625,
+      "checkpoint": "nature_cnn-s73/checkpoints/connect4cnn/trial/0000000013279232.bin"
+    },
+    {
+      "variant": "nature_cnn",
+      "seed": 74,
+      "eval_seed": 10074,
+      "steps": 13279232,
+      "win_rate": 0.883317,
+      "score": 0.768563,
+      "games": 1037,
+      "params": 138528,
+      "checkpoint_wall_s": 164.01972341537476,
+      "train_process_wall_s": 164.11660413301433,
+      "eval_wall_s": 0.5159253059828188,
+      "process_sps": 80913.39733813501,
+      "native_uptime_s": 163.78654408454895,
+      "native_avg_sps": 81076.4527343899,
+      "native_last_sps": 83865.44903713698,
+      "vram_last_gb": 1.55230712890625,
+      "checkpoint": "nature_cnn-s74/checkpoints/connect4cnn/trial/0000000013279232.bin"
+    },
+    {
+      "variant": "nature_cnn",
+      "seed": 75,
+      "eval_seed": 10075,
+      "steps": 13279232,
+      "win_rate": 0.706849,
+      "score": 0.445662,
+      "games": 1095,
+      "params": 138528,
+      "checkpoint_wall_s": 166.07737803459167,
+      "train_process_wall_s": 166.1677619619877,
+      "eval_wall_s": 0.565515841008164,
+      "process_sps": 79914.6106513593,
+      "native_uptime_s": 165.8502643108368,
+      "native_avg_sps": 80067.5962452013,
+      "native_last_sps": 81721.64464397273,
+      "vram_last_gb": 1.55230712890625,
+      "checkpoint": "nature_cnn-s75/checkpoints/connect4cnn/trial/0000000013279232.bin"
+    },
+    {
+      "variant": "impala_cnn",
+      "seed": 73,
+      "eval_seed": 10073,
+      "steps": 13279232,
+      "win_rate": 0.989908,
+      "score": 0.979816,
+      "games": 1090,
+      "params": 270496,
+      "checkpoint_wall_s": 1227.1115837097168,
+      "train_process_wall_s": 1227.2282123169862,
+      "eval_wall_s": 0.915962920000311,
+      "process_sps": 10820.507438407918,
+      "native_uptime_s": 1226.806696653366,
+      "native_avg_sps": 10824.225231427836,
+      "native_last_sps": 10734.354476326549,
+      "vram_last_gb": 3.50347900390625,
+      "checkpoint": "impala_cnn-s73/checkpoints/connect4cnn/trial/0000000013279232.bin"
+    },
+    {
+      "variant": "impoola_cnn",
+      "seed": 73,
+      "eval_seed": 10073,
+      "steps": 13279232,
+      "win_rate": 0.617486,
+      "score": 0.234973,
+      "games": 1098,
+      "params": 151712,
+      "checkpoint_wall_s": 1224.0536894798279,
+      "train_process_wall_s": 1224.2015626399952,
+      "eval_wall_s": 0.9659044079890009,
+      "process_sps": 10847.259475280596,
+      "native_uptime_s": 1223.7491159439087,
+      "native_avg_sps": 10851.26994331464,
+      "native_last_sps": 10891.53343814982,
+      "vram_last_gb": 3.49566650390625,
+      "checkpoint": "impoola_cnn-s73/checkpoints/connect4cnn/trial/0000000013279232.bin"
+    },
+    {
+      "variant": "impoola_cnn",
+      "seed": 74,
+      "eval_seed": 10074,
+      "steps": 13279232,
+      "win_rate": 0.735902,
+      "score": 0.471804,
+      "games": 1064,
+      "params": 151712,
+      "checkpoint_wall_s": 1228.4469065666199,
+      "train_process_wall_s": 1228.5833647889958,
+      "eval_wall_s": 0.8659821530163754,
+      "process_sps": 10808.572198338901,
+      "native_uptime_s": 1228.1517260074615,
+      "native_avg_sps": 10812.370913786692,
+      "native_last_sps": 10813.817863203532,
+      "vram_last_gb": 3.49566650390625,
+      "checkpoint": "impoola_cnn-s74/checkpoints/connect4cnn/trial/0000000013279232.bin"
+    },
+    {
+      "variant": "impala_cnn",
+      "seed": 74,
+      "eval_seed": 10074,
+      "steps": 13279232,
+      "win_rate": 0.990058,
+      "score": 0.980116,
+      "games": 1207,
+      "params": 270496,
+      "checkpoint_wall_s": 1232.3933491706848,
+      "train_process_wall_s": 1232.5047389179817,
+      "eval_wall_s": 0.8659221249981783,
+      "process_sps": 10774.183320104605,
+      "native_uptime_s": 1232.1229159832,
+      "native_avg_sps": 10777.522134959676,
+      "native_last_sps": 10743.57789132436,
+      "vram_last_gb": 3.50347900390625,
+      "checkpoint": "impala_cnn-s74/checkpoints/connect4cnn/trial/0000000013279232.bin"
+    },
+    {
+      "variant": "impala_cnn",
+      "seed": 75,
+      "eval_seed": 10075,
+      "steps": 13279232,
+      "win_rate": 0.995723,
+      "score": 0.991446,
+      "games": 1169,
+      "params": 270496,
+      "checkpoint_wall_s": 1228.9828577041626,
+      "train_process_wall_s": 1229.1026594490104,
+      "eval_wall_s": 0.9662425610003993,
+      "process_sps": 10804.00558725737,
+      "native_uptime_s": 1228.6879613399506,
+      "native_avg_sps": 10807.652079148134,
+      "native_last_sps": 10835.269755281655,
+      "vram_last_gb": 3.50347900390625,
+      "checkpoint": "impala_cnn-s75/checkpoints/connect4cnn/trial/0000000013279232.bin"
+    },
+    {
+      "variant": "impoola_cnn",
+      "seed": 75,
+      "eval_seed": 10075,
+      "steps": 13279232,
+      "win_rate": 0.731413,
+      "score": 0.462825,
+      "games": 1076,
+      "params": 151712,
+      "checkpoint_wall_s": 1224.581300497055,
+      "train_process_wall_s": 1224.7133623500122,
+      "eval_wall_s": 0.9165327670052648,
+      "process_sps": 10842.726476438096,
+      "native_uptime_s": 1224.3005361557007,
+      "native_avg_sps": 10846.382573429839,
+      "native_last_sps": 10721.171198479637,
+      "vram_last_gb": 3.49566650390625,
+      "checkpoint": "impoola_cnn-s75/checkpoints/connect4cnn/trial/0000000013279232.bin"
+    }
+  ]
+}
+calm-otter-1 steps=13277184 eval=72.50% games=1062
+wild-maple-2 steps=2414592 eval=0.17% games=1165
+clever-cat-3 steps=2570240 eval=0.00% games=1182
+lucky-otter-4 steps=2553856 eval=0.00% games=1183
+merry-robin-5 steps=2560000 eval=0.00% games=1190
+wild-maple-6 steps=2193408 eval=0.00% games=1203
+lucky-robin-7 steps=2332672 eval=0.17% games=1167
+swift-maple-8 steps=2211840 eval=0.08% games=1208
+silver-river-9 steps=2584576 eval=0.17% games=1194
+silver-tiger-10 steps=2476032 eval=0.00% games=1180
+swift-fox-11 steps=2185216 eval=0.00% games=1196
+gentle-fox-12 steps=13017088 eval=75.07% games=1135
+silver-robin-13 steps=11954176 eval=69.04% games=1053
+calm-river-14 steps=12357632 eval=75.68% games=1143
+gentle-panda-15 steps=8880128 eval=20.92% games=1219
+mystic-cedar-16 steps=11335680 eval=71.11% games=1080
+brave-badger-17 steps=8437760 eval=40.59% games=1148
+quiet-tree-18 steps=13277184 eval=58.72% games=1078
+sunny-comet-19 steps=4411392 eval=0.38% games=1051
+golden-river-20 steps=8321024 eval=55.57% games=1069
+golden-owl-21 steps=10907648 eval=0.00% games=1074
+cosmic-falcon-22 steps=13277184 eval=81.63% games=1056
+cosmic-cat-23 steps=9947136 eval=18.96% games=1187
+merry-maple-24 steps=9701376 eval=62.02% games=1148
+lucky-falcon-25 steps=5955584 eval=7.31% games=1080
+golden-tiger-26 steps=10053632 eval=32.97% games=1089
+calm-tree-27 steps=11024384 eval=82.92% games=1171
+silver-comet-28 steps=13277184 eval=81.63% games=1056
+lucky-badger-29 steps=13277184 eval=80.33% games=1027
+merry-cat-30 steps=10088448 eval=54.62% games=1159
+golden-panda-31 steps=9889792 eval=64.24% games=1029
+cosmic-bear-32 steps=10975232 eval=62.21% games=1114
+silver-wolf-33 steps=10156032 eval=62.58% games=1085
+happy-bear-34 steps=7239680 eval=15.75% games=1181
+sunny-bear-35 steps=13277184 eval=89.30% games=1112
+brave-cat-36 steps=5969920 eval=1.91% games=1100
+gentle-falcon-37 steps=13277184 eval=81.63% games=1056
+silver-panda-38 steps=13277184 eval=80.33% games=1027
+brave-tiger-39 steps=13277184 eval=81.63% games=1056
+swift-comet-40 steps=13277184 eval=89.30% games=1112
+lucky-maple-41 steps=10432512 eval=64.36% games=1184
+sunny-maple-42 steps=13277184 eval=89.30% games=1112
+silver-cedar-43 steps=12439552 eval=85.46% games=1121
+silver-tiger-44 steps=10817536 eval=78.77% games=1140
+lucky-cat-45 steps=9777152 eval=59.88% games=1184
+clever-cedar-46 steps=12154880 eval=83.87% games=1079
+merry-maple-47 steps=13277184 eval=50.54% games=1120
+wild-tree-48 steps=11325440 eval=85.43% games=1091
+cosmic-robin-49 steps=9035776 eval=67.72% games=1134
+wild-falcon-50 steps=2791424 eval=0.25% games=1180
+calm-owl-52 steps=13189120 eval=86.60% games=1112
+merry-river-53 steps=13047808 eval=83.48% games=1132
+quiet-tiger-54 steps=11702272 eval=81.91% games=1161
+happy-comet-55 steps=9093120 eval=41.93% games=1066
+lucky-robin-56 steps=11507712 eval=64.24% games=1057
+golden-panda-57 steps=10909696 eval=74.09% games=1096
+quiet-cat-58 steps=13277184 eval=89.30% games=1112
+mystic-robin-59 steps=12732416 eval=71.89% games=1046
+calm-otter-61 steps=13119488 eval=85.05% games=1110
+cosmic-tree-62 steps=9299968 eval=48.60% games=1142
+lucky-fox-63 steps=13277184 eval=89.30% games=1112
+cosmic-fox-64 steps=11448320 eval=65.55% games=1077
+lucky-badger-65 steps=13236224 eval=84.39% games=1102
+brave-robin-66 steps=12652544 eval=83.41% games=1145
+mystic-comet-67 steps=7933952 eval=44.06% games=1137
+golden-falcon-68 steps=13277184 eval=72.81% games=1151
+merry-badger-69 steps=11530240 eval=80.34% games=1119
+calm-fox-70 steps=10737664 eval=64.97% games=1079
+quiet-maple-71 steps=13277184 eval=89.30% games=1112
+golden-fox-72 steps=12650496 eval=78.59% games=1037
+golden-river-73 steps=11237376 eval=70.87% games=1174
+brave-otter-74 steps=13277184 eval=89.30% games=1112
+bright-fox-75 steps=10317824 eval=63.98% games=1141
+mystic-otter-76 steps=12412928 eval=65.27% games=1077
+cosmic-bear-77 steps=10366976 eval=73.66% games=1067
+brave-bear-78 steps=12148736 eval=77.25% games=1046
+wild-cat-79 steps=11489280 eval=71.29% games=1125
+silver-robin-80 steps=11126784 eval=85.63% games=1162
+merry-fox-81 steps=8706048 eval=45.32% games=1174
+bright-river-82 steps=13277184 eval=89.30% games=1112
+clever-fox-83 steps=12531712 eval=82.50% games=1063
+bright-owl-84 steps=13277184 eval=89.30% games=1112
+brave-panda-85 steps=11800576 eval=63.93% games=1120
+brave-bear-86 steps=13277184 eval=81.63% games=1056
+cosmic-wolf-87 steps=8167424 eval=36.05% games=1090
+brave-robin-88 steps=10375168 eval=62.00% games=1092
+brave-tiger-89 steps=10827776 eval=73.05% games=1065
+golden-robin-90 steps=10692608 eval=69.51% games=1056
+calm-otter-91 steps=12730368 eval=88.21% games=1026
+sunny-tiger-92 steps=13277184 eval=89.30% games=1112
+clever-bear-93 steps=11980800 eval=76.62% games=1082
+brave-otter-94 steps=13277184 eval=89.30% games=1112
+brave-wolf-95 steps=9748480 eval=67.53% games=1152
+gentle-otter-96 steps=10448896 eval=70.80% games=1041
+lucky-maple-97 steps=13277184 eval=80.33% games=1027
+golden-tiger-98 steps=11823104 eval=70.11% games=1027
+golden-maple-99 steps=13277184 eval=89.30% games=1112
+quiet-owl-100 steps=8654848 eval=54.33% games=1062
+sunny-river-101 steps=10383360 eval=75.20% games=1125
+gentle-bear-102 steps=11413504 eval=77.70% games=1063
+merry-badger-103 steps=11134976 eval=78.85% games=1078
+happy-wolf-104 steps=11481088 eval=76.30% games=1038
+lucky-maple-105 steps=10960896 eval=67.27% games=1112
+lucky-owl-106 steps=8896512 eval=59.75% games=1123
+swift-fox-107 steps=13277184 eval=89.30% games=1112
+sunny-owl-108 steps=10655744 eval=80.81% games=1115
+silver-owl-109 steps=12013568 eval=87.80% games=1066
+gentle-tree-110 steps=10854400 eval=82.94% games=1067
+swift-fox-111 steps=12513280 eval=80.50% games=1041
+golden-falcon-112 steps=13277184 eval=81.63% games=1056
+bright-robin-113 steps=11939840 eval=75.94% games=1143
+swift-robin-114 steps=10651648 eval=76.50% games=1030
+swift-cedar-115 steps=12326912 eval=77.70% games=1054
+lucky-cedar-117 steps=13277184 eval=89.30% games=1112
+swift-otter-118 steps=10719232 eval=80.55% games=1064
+cosmic-cedar-119 steps=10164224 eval=72.80% games=1066
+mystic-panda-120 steps=10174464 eval=74.14% games=1133
+cosmic-wolf-121 steps=13277184 eval=89.81% games=1060
+mystic-fox-122 steps=8708096 eval=65.16% games=1171
+wild-otter-123 steps=13277184 eval=40.82% games=1078
+swift-tree-124 steps=9476096 eval=57.61% games=1071
+cosmic-wolf-125 steps=13277184 eval=89.81% games=1060
+wild-cat-126 steps=12568576 eval=0.10% games=1053
+cosmic-cedar-127 steps=7942144 eval=19.36% games=1152
+lucky-maple-128 steps=11988992 eval=78.35% games=1044
