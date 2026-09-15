@@ -7,13 +7,15 @@ struct NatureLayer {
 };
 
 struct NatureWeights {
-    NatureLayer layer[4];
-    Prec weight[4], bias[4];
+    NatureLayer layer[12];
+    Prec weight[12], bias[12];
+    int count;
 };
 
 struct NatureActivations {
-    Prec patches[4], output[4], grad_output[4], grad_patches[4];
-    Prec weight_grad[4], bias_grad[4];
+    Prec patches[12], output[12], grad_output[12], grad_patches[12];
+    Prec weight_grad[12], bias_grad[12];
+    Int winner[12]; // Used only by the flexible family's max-pool layers.
 };
 
 __global__ void nature_im2col(const precision_t* input, precision_t* patches,
@@ -82,8 +84,8 @@ static Prec nature_forward(void* weights, void* activations, Prec input, cudaStr
     NatureWeights* w = (NatureWeights*)weights;
     NatureActivations* a = (NatureActivations*)activations;
     int B = (int)(numel(input.shape) / OBS_SIZE);
-    assert(numel(input.shape) == (int64_t)B * OBS_SIZE && B == a->output[3].shape[0]);
-    for (int i = 0; i < 4; i++) {
+    assert(numel(input.shape) == (int64_t)B * OBS_SIZE && B == a->output[w->count - 1].shape[0]);
+    for (int i = 0; i < w->count; i++) {
         NatureLayer d = w->layer[i];
         int n = B * d.oh * d.ow * d.k * d.k * d.ci;
         nature_im2col<<<grid_size(n), BLOCK_SIZE, 0, stream>>>(input.data, a->patches[i].data, d, B);
@@ -92,16 +94,16 @@ static Prec nature_forward(void* weights, void* activations, Prec input, cudaStr
         nature_bias_relu<<<grid_size(n), BLOCK_SIZE, 0, stream>>>(a->output[i].data, w->bias[i].data, n, d.co);
         input = a->output[i];
     }
-    return a->output[3];
+    return a->output[w->count - 1];
 }
 
 static void nature_backward(void* weights, void* activations, Prec grad, cudaStream_t stream) {
     NatureWeights* w = (NatureWeights*)weights;
     NatureActivations* a = (NatureActivations*)activations;
-    int B = (int)a->output[3].shape[0];
-    assert(numel(grad.shape) == numel(a->grad_output[3].shape));
-    puf_copy(&a->grad_output[3], &grad, stream);
-    for (int i = 3; i >= 0; i--) {
+    int last = w->count - 1, B = (int)a->output[last].shape[0];
+    assert(numel(grad.shape) == numel(a->grad_output[last].shape));
+    puf_copy(&a->grad_output[last], &grad, stream);
+    for (int i = last; i >= 0; i--) {
         NatureLayer d = w->layer[i];
         int rows = B * d.oh * d.ow;
         nature_relu_backward<<<grid_size(rows * d.co), BLOCK_SIZE, 0, stream>>>(a->grad_output[i].data, a->output[i].data, rows * d.co);
@@ -117,7 +119,7 @@ static void nature_backward(void* weights, void* activations, Prec grad, cudaStr
 
 static void nature_init_weights(void* weights, ulong* seed, cudaStream_t stream) {
     NatureWeights* w = (NatureWeights*)weights;
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < w->count; i++) {
         puf_kaiming_init(&w->weight[i], sqrtf(2.0f), (*seed)++, stream);
         cudaMemsetAsync(w->bias[i].data, 0, numel(w->bias[i].shape) * sizeof(precision_t), stream);
     }
@@ -125,7 +127,7 @@ static void nature_init_weights(void* weights, ulong* seed, cudaStream_t stream)
 
 static void nature_reg_params(void* weights, Allocator* alloc) {
     NatureWeights* w = (NatureWeights*)weights;
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < w->count; i++) {
         NatureLayer d = w->layer[i];
         w->weight[i] = {.shape = {d.co, d.k * d.k * d.ci}};
         w->bias[i] = {.shape = {d.co}};
@@ -138,7 +140,7 @@ static void nature_reg_rollout(void* weights, void* activations, Allocator* allo
     NatureWeights* w = (NatureWeights*)weights;
     NatureActivations* a = (NatureActivations*)activations;
     *a = {};
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < w->count; i++) {
         NatureLayer d = w->layer[i];
         a->patches[i] = {.shape = {B * d.oh * d.ow, d.k * d.k * d.ci}};
         a->output[i] = {.shape = {B * d.oh * d.ow, d.co}};
@@ -151,7 +153,7 @@ static void nature_reg_train(void* weights, void* activations, Allocator* acts, 
     NatureWeights* w = (NatureWeights*)weights;
     NatureActivations* a = (NatureActivations*)activations;
     nature_reg_rollout(w, activations, acts, B);
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < w->count; i++) {
         a->grad_output[i] = {.shape = {a->output[i].shape[0], a->output[i].shape[1]}};
         alloc_register(acts, &a->grad_output[i]);
         if (i > 0) {
@@ -171,6 +173,7 @@ static void* nature_create_weights(void* self) {
     static_assert(OBS_CHANNELS == 1 && OBS_HEIGHT == 36 && OBS_WIDTH == 44, "Nature Connect4 input contract");
     assert(enc->in_dim == OBS_SIZE && enc->out_dim > 0);
     NatureWeights* w = (NatureWeights*)calloc(1, sizeof(*w));
+    w->count = 4;
     w->layer[0] = {36, 44, 1, 32, 8, 4, 8, 10};
     w->layer[1] = {8, 10, 32, 64, 4, 2, 3, 4};
     w->layer[2] = {3, 4, 64, 64, 3, 1, 1, 2};
@@ -179,7 +182,7 @@ static void* nature_create_weights(void* self) {
     return w;
 }
 
-static void create_connect4_encoder(Encoder* enc) {
+static void create_nature_encoder(Encoder* enc) {
     *enc = Encoder{
         .forward = nature_forward, .backward = nature_backward,
         .init_weights = nature_init_weights, .reg_params = nature_reg_params,
@@ -188,4 +191,39 @@ static void create_connect4_encoder(Encoder* enc) {
         .in_dim = enc->in_dim, .out_dim = enc->out_dim,
         .activation_size = sizeof(NatureActivations),
     };
+}
+
+// Compact strided family shares Nature's validated convolution kernels.
+static void* compact_create_weights(void* self) {
+    Encoder* enc = (Encoder*)self;
+    assert(enc->in_dim == OBS_SIZE && enc->out_dim >= 8 && enc->out_dim % 8 == 0);
+    int c = dict_get(enc->config, "cnn_channels");
+    int depth = dict_get(enc->config, "cnn_depth");
+    int stride = dict_get(enc->config, "cnn_stride");
+    int projection = dict_get(enc->config, "cnn_projection");
+    assert((c == 8 || c == 16 || c == 32) && depth >= 1 && depth <= 3);
+    assert((stride == 2 || stride == 4) && (projection == 32 || projection == 64 || projection == 128));
+    NatureWeights* w = (NatureWeights*)calloc(1, sizeof(*w));
+    int H = 36, W = 44, ci = 1;
+    for (int i = 0; i < depth; i++) {
+        int k = i == 0 ? 8 : (i == 1 ? 4 : 3);
+        int s = i == 0 ? stride : (i == 1 ? 2 : 1);
+        int co = i == 0 ? c : 2 * c;
+        int oh = (H - k) / s + 1, ow = (W - k) / s + 1;
+        assert(H >= k && W >= k);
+        w->layer[i] = {H, W, ci, co, k, s, oh, ow};
+        H = oh; W = ow; ci = co;
+    }
+    w->layer[depth] = {1, 1, H * W * ci, projection, 1, 1, 1, 1};
+    w->count = depth + 1;
+    if (projection != enc->out_dim) {
+        w->layer[w->count++] = {1, 1, projection, enc->out_dim, 1, 1, 1, 1};
+    }
+    return w;
+}
+
+static void create_compact_encoder(Encoder* enc, Dict* policy) {
+    create_nature_encoder(enc);
+    enc->create_weights = compact_create_weights;
+    enc->config = policy;
 }

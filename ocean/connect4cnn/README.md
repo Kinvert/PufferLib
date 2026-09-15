@@ -170,9 +170,25 @@ The [full-budget comparison](../../research/results/connect4cnn/compare.l6d5sbk2
 
 ## Experimental CNN native sweeps
 
-`policy.encoder=1` selects [cnn.cu](cnn.cu); `0` preserves the existing compiled reference/default encoder. No other IDs are implemented yet. The new family has three SAME Conv3/MaxPool3-s2 stages, channels `[c,2c,2c]`, zero to two preactivation residual blocks per stage, and flatten or GAP before Linear/ReLU to the existing core width. `cnn_channels` accepts 8/16/32, `cnn_blocks` accepts 0/1/2, and `cnn_global_pool` accepts 0/1. Input remains the same 36×44 pixel board. Core width/layers are separate settings. All weights start fresh and train jointly.
+### Flexible stage controls
 
-The actual optimizer, trial selection/launch, CNN, and training are native C/CUDA. `sweep.py` is **temporary configuration/reporting scaffolding**, authorized for the first end-to-end canary. Replacing that glue with native tooling is a delivery requirement. It does not implement its own search algorithm. The external Python W&B sidecar stays outside training. Reference-family comparisons and randomized environments are not included in this first sweep tool.
+`policy.encoder=4` selects [flex.cu](flex.cu), with independent per-stage channels, kernels, strides, residual switches, and pooling; depth 1–3, flatten/GAP, and projection widths 16–128. All shape settings live in [sweep_flex.ini](sweep_flex.ini). It defaults to 128 trials but is not automatically launched. The runner now accepts any nonempty subset of a family's sweep sections: omit an option's section to fix its `[policy]` value, or omit the timestep sweep to fix training duration. Existing IDs and checkpoint meanings are preserved. Full ranges, operator semantics, and validation scope: [flexible search controls](../../research/FLEX_CNN_SWEEP.md).
+
+For a bounded canary, use `NVCC_ARCH=sm_120 OPENBLAS_NUM_THREADS=1 bash ocean/connect4cnn/sweep.sh --recipe ocean/connect4cnn/sweep_flex.ini --canary --max-runs 12 --wandb disabled`. The one-knob example `tests/flex_kernel.ini` sweeps kernel size while fixing every other option and the budget. New reports retain every active option in `architecture_json`; inactive stages do not change the architecture fingerprint.
+
+### Compact search with a Nature control
+
+Run `NVCC_ARCH=sm_120 OPENBLAS_NUM_THREADS=1 bash ocean/connect4cnn/sweep_small.sh` detached for 12 Nature budget trials followed by 24 compact architecture/budget trials. Both use the same native training/PROTEIN path, online W&B project `kinvert-k/puffer-cnn`, fixed learner/core, and 829,952–6,639,616 decision range. Histories retain 25 points, checkpoints every 500 updates plus final. The 300-second predicted-cost ceiling is not a hard worker limit; each campaign has a four-hour hard deadline. Do not actively monitor it.
+
+Numeric `policy.encoder=2` selects the existing adapted Nature exactly; `3` selects the compact family. Compact supports `cnn_depth=1/2/3`, `cnn_channels=8/16/32`, `cnn_stride=2/4` for the first convolution, and `cnn_projection=32/64/128`. The recurrent core stays at 128 units: smaller projections add a final linear mapping into it. There are 54 configurations. ID 0 retains the compiled default and ID 1 retains the residual family. Each campaign fixes its family; Nature sweeps only budget. Full rationale and limitations: [compact search plan](../../research/COMPACT_CNN_SWEEP.md).
+
+Both paths share the validated kernels in `nature.cu`; Nature's operations and parameter layout are preserved. The Nature-equivalent compact setting (32 channels, 3 layers, stride 4, projection 128) matches its outputs/gradients bit-for-bit. All 54 shapes passed float32/float64 reference and eager/graph checks; Nature's old and new training checkpoints matched exactly. Run `build_encoder_test.sh test_nature`, then `test_nature.py` and `test_compact.py` against `build/connect4cnn/test_nature.so`. Two 12-trial canaries passed (`sweep.9sl0k5ll`, `sweep.lvfycy5l`); compact checkpoint reload passed. Use `sweep.sh --recipe ocean/connect4cnn/sweep_compact.ini --canary --max-runs 12 --wandb disabled` for another bounded plumbing check.
+
+### Original residual family
+
+`policy.encoder=1` selects [cnn.cu](cnn.cu); `0` preserves the existing compiled reference/default encoder. This family has three SAME Conv3/MaxPool3-s2 stages, channels `[c,2c,2c]`, zero to two preactivation residual blocks per stage, and flatten or GAP before Linear/ReLU to the existing core width. `cnn_channels` accepts 8/16/32, `cnn_blocks` accepts 0/1/2, and `cnn_global_pool` accepts 0/1. Input remains the same 36×44 pixel board. Core width/layers are separate settings. All weights start fresh and train jointly.
+
+The actual optimizer, trial selection/launch, CNN, and training are native C/CUDA. `sweep.py` is **temporary configuration/reporting scaffolding**. Replacing that glue with native tooling is a delivery requirement. It does not implement its own search algorithm. The external Python W&B sidecar stays outside training. Nature now has a control campaign; other reference-family sweeps and randomized environments remain future work.
 
 ```bash
 # Run outside the sandbox, after checking that the GPU is available.
@@ -187,17 +203,29 @@ NVCC_ARCH=sm_120 bash ocean/connect4cnn/sweep.sh --wandb online --project puffer
 
 Defaults: 12 trials, 600-second hard deadline for the entire sweep process group, float32, one GPU, offline W&B. The first candidate is the base INI configuration; PROTEIN then explores before making a model-guided proposal. These short budgets test plumbing, not useful learning or a speed ranking.
 
+For the first learning-scale discovery campaign:
+
+```bash
+NVCC_ARCH=sm_120 bash ocean/connect4cnn/sweep.sh \
+    --recipe ocean/connect4cnn/sweep_discovery.ini --timeout 43200 \
+    --wandb online --project puffer-cnn --entity kinvert-k
+```
+
+This recipe uses 24 trials, 3,319,808–13,279,232 requested decisions, a 6,639,616-decision initial candidate, and the same 18 shapes and fixed learner/core. Checkpoints are saved every 1,000 updates plus the final update. PROTEIN's predicted-cost ceiling is 3,600 seconds; this is not a per-trial hard timeout. The command gives the entire sweep a 12-hour hard deadline, not an expected duration. Launch long campaigns detached with their stdout saved, and let them run without active monitoring. Confirm finalists later with held-out evaluation and repeated seeds.
+
 The runner merges the original defaults, Connect4CNN config, common `compare.ini`, and [sweep.ini](sweep.ini). It removes inherited sweep sections and retains only the four ranges declared in `sweep.ini`: channels, blocks, pooling, and timesteps. It writes an isolated `build/connect4cnn/sweep.*/config/` and runs one freshly built binary from that directory. **The checkout's `config/default.ini` is never rewritten.** Use `--recipe PATH`, `--max-runs N`, and `--timeout SECONDS` for a bounded custom campaign. The first version deliberately validates this limited shape space.
 
 Every campaign saves its source snapshots/hashes, binary hash, effective configuration, GPU record, native sweep log, trial INIs, checkpoints, CSV, Markdown report, completion status, and sidecar JSON. The architecture fingerprint includes the construction version, observation shape, channels/blocks/readout, and core dimensions. Sidecar payloads also hash the final checkpoint. Load checkpoints with the corresponding campaign config; the native checkpoint itself is still a raw FP32 array.
 
-Native `sweep.metric=perf` is **training win rate**, not the held-out evaluation used in the reference reports. Final score/cost/steps come from PROTEIN stdout (four score decimals, two cost decimals), while INI histories are binned means and are labeled `binned/*`. Native cost excludes trainer setup and graph-capture time. Reported trial SPS is actual decisions divided by that rounded native cost; whole sweep wall time additionally includes worker startup and search. Log-sampled budgets are truncated by native integer/batch handling, including possible lower-bound floating-point rounding; report actual completed decisions rather than the requested budget.
+Native `sweep.metric=perf` is **training win rate**, not the held-out evaluation used in the reference reports. Final score/cost/steps come from PROTEIN stdout (four score decimals, two cost decimals), while INI histories are downsampled means. W&B preserves native names: `SPS`, `uptime`, `agent_steps`, `env/perf`, `env/score`, `loss/*`, and the other recorded metrics, with `agent_steps` as the plot axis. Native cost excludes trainer setup and graph-capture time. Reported trial average SPS is actual decisions divided by that rounded native cost; the `SPS` curve retains the trainer's recorded values. Whole sweep wall time additionally includes worker startup and search. Log-sampled budgets are truncated by native integer/batch handling, including possible lower-bound floating-point rounding; report actual completed decisions rather than the requested budget.
 
 The current native observation loop overwrites earlier points sharing the same parameter vector; the optimizer effectively retains the final observation. Five-point summaries remain in artifacts. This implementation preserves that existing PROTEIN behavior.
 
 ### W&B sidecar
 
-The sidecar follows the F-Zero/Admiral saved-INI pattern. It joins complete native logs with final PROTEIN output, creates one W&B run per completed trial, and tracks successful ingestion locally so rerunning it does not re-upload completed runs to the same destination. The runner invokes it after training so SDK work does not affect trial timing. Use `--follow` separately to ingest completed trials as the sweep proceeds; it exits after `finished.json` appears. It does not stream per-step training metrics that the native trainer does not write.
+Display names use stable adjective/noun/trial names such as `happy-cat-1`; internal native IDs remain in metadata and filenames for provenance. Schema 2 updates existing W&B runs in place, restores native metric names, hides the legacy `binned/*` metrics from automatic plots, and removes their obsolete summary entries. Successful migration is recorded locally so repeated syncs do not append the same history again. Historical archive payloads retain their original schema.
+
+The sidecar follows the F-Zero/Admiral saved-INI pattern. It joins complete native logs with final PROTEIN output, creates one W&B run per completed trial, and tracks successful ingestion locally so rerunning it does not re-upload completed runs to the same destination. Online mode automatically runs the CPU sidecar concurrently and uploads each completed trial; that CPU/I/O activity may affect timing slightly. Offline/disabled modes ingest after training. The follower exits after `finished.json` appears. It does not stream per-step training metrics that the native trainer does not write. Results appear as grouped runs in the project's Runs view, not as a W&B-managed sweep: PROTEIN owns the search. Online upload was verified on September 13 at https://wandb.ai/kinvert-k/puffer-cnn using the 12 completed canary trials.
 
 ```bash
 .venv/bin/python ocean/connect4cnn/wandb_sidecar.py build/connect4cnn/sweep.RUN \

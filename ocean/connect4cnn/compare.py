@@ -1,6 +1,7 @@
 """Compare state/pixel policies with a common recipe, or measure stock Connect4 separately."""
 import argparse
 import configparser
+import copy
 import csv
 from datetime import datetime, timezone
 import fcntl
@@ -9,15 +10,18 @@ import json
 import os
 from pathlib import Path
 import re
+import signal
 import shutil
 import subprocess
+import sys
 import tempfile
 import time
 
 ROOT = Path(__file__).resolve().parents[2]
 HERE = Path(__file__).resolve().parent
 VARIANTS = {"state": "connect4", "tiny_cnn": "connect4cnn", "nature_cnn": "connect4cnn",
-            "impala_cnn": "connect4cnn", "impoola_cnn": "connect4cnn"}
+            "impala_cnn": "connect4cnn", "impoola_cnn": "connect4cnn",
+            "flex_quality": "connect4cnn", "flex_fast": "connect4cnn", "flex_small": "connect4cnn"}
 EVAL = re.compile(r"CUDA_EVAL env=(\S+) score=([-+\d.eE]+) perf=([-+\d.eE]+) games=(\d+) params=(\d+)")
 
 
@@ -32,13 +36,23 @@ def overrides(ini):
     return [f"--{section}.{key}={value}" for section in ini for key, value in ini[section].items()]
 
 
-def run(command, log, timeout, commands):
+def run(command, log, timeout, commands, cwd=ROOT):
     with commands.open("a") as f:
-        f.write(json.dumps({"argv": command, "log": str(log)}) + "\n")
+        f.write(json.dumps({"argv": command, "log": str(log), "cwd": str(cwd)}) + "\n")
     started = time.perf_counter()
     with log.open("w") as output:
-        subprocess.run(command, cwd=ROOT, stdout=output, stderr=subprocess.STDOUT,
-                       check=True, timeout=timeout)
+        child = subprocess.Popen(command, cwd=cwd, stdout=output, stderr=subprocess.STDOUT, start_new_session=True)
+        try:
+            code = child.wait(timeout=timeout)
+            if code:
+                raise subprocess.CalledProcessError(code, command)
+        except BaseException:
+            try:
+                os.killpg(child.pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+            child.wait()
+            raise
     return time.perf_counter() - started
 
 
@@ -83,7 +97,7 @@ def report(out, rows, jobs, protocol):
                    "Evaluation uses the common 64-agent setup. This is a separately configured baseline, not a matched-hyperparameter comparison."
                    if protocol["stock"] else
                    "Same 7-column × 6-row game, opponent, learner recipe and core. Float32, one GPU, serial trials. "
-                   "The input representation and encoder differ; parameters/FLOPs are not matched. State uses a modified configuration.")
+                   "Encoders differ; parameters/FLOPs are not matched. State, if included, uses a modified configuration.")
     lines = ["# Connect4 training results", "", description,
              f"Requested decisions: {protocol['steps']:,}; expected completed decisions: {protocol['completed_steps']:,}.", "",
              "## Final results by training seed", "",
@@ -106,7 +120,7 @@ def report(out, rows, jobs, protocol):
               "- Train wall time includes process startup and checkpoint writing; builds and later evaluations are excluded. Per-checkpoint time uses file modification time relative to process launch, so it is approximate.",
               "- Process SPS = full training steps / process wall time. Native average SPS = full training steps / the trainer's final logged uptime. Native last SPS is the last logged SPS sample/bin, not a whole-run average. These training-run statistics repeat on checkpoint rows; they are not checkpoint-specific throughput.",
               "- Evaluation happens after training at fixed saved checkpoints. It does not affect training timing or select a best checkpoint.",
-              "- When several policies are selected, trials alternate policy order by seed. Separate invocations are not interleaved. Short smoke timings are not steady-state speed benchmarks.",
+              "- Confirmation rotates model order by seed according to protocol.json; other comparisons alternate forward/reverse order. Short smoke timings are not steady-state speed benchmarks.",
               "- CSV retains each checkpoint result. `protocol.json`, `source/`, `commands.jsonl`, resolved INIs, logs, hashes, and checkpoints preserve the run context.",
               "- A short run or one training seed cannot establish a reliable performance ranking. Use the same longer budget and several seeds before drawing conclusions."]
     (out / "REPORT.md").write_text("\n".join(lines) + "\n")
@@ -117,14 +131,35 @@ def main():
     parser.add_argument("--steps", type=int)
     parser.add_argument("--stock", action="store_true", help="Run only original Connect4 with stock training settings; float32 and common evaluation")
     parser.add_argument("--variants", nargs="+", choices=VARIANTS, default=None)
-    parser.add_argument("--seeds", type=int, nargs="+", default=[73, 74, 75])
-    parser.add_argument("--eval-seed", type=int, default=10073)
-    parser.add_argument("--eval-games", type=int, default=1024)
-    parser.add_argument("--checkpoints", type=int, default=4)
-    parser.add_argument("--timeout", type=int, default=120, help="Seconds per training or evaluation process")
+    parser.add_argument("--seeds", type=int, nargs="+")
+    parser.add_argument("--eval-seed", type=int)
+    parser.add_argument("--eval-games", type=int)
+    parser.add_argument("--checkpoints", type=int)
+    parser.add_argument("--timeout", type=int, help="Seconds per training process; evaluation capped at 60 seconds")
+    parser.add_argument("--confirmation", action="store_true", help="Use the frozen six-model/five-seed confirmation manifest")
+    parser.add_argument("--canary", action="store_true", help="Use the manifest's short one-seed confirmation validation")
+    parser.add_argument("--wandb", choices=("disabled", "offline", "online"), default="disabled")
+    parser.add_argument("--project", default="cnn2")
+    parser.add_argument("--entity", default="kinvert-k")
     parser.add_argument("--recipe", type=Path)
     parser.add_argument("--note", help="Change or purpose recorded in the experiment history")
     args = parser.parse_args()
+    manifest = json.loads((HERE / "confirmation.json").read_text())
+    controlled = ("steps", "seeds", "eval_seed", "eval_games", "checkpoints", "timeout")
+    if args.canary and not args.confirmation:
+        parser.error("--canary requires --confirmation")
+    if args.confirmation:
+        if args.stock or args.recipe or args.variants or any(getattr(args, k) is not None for k in controlled):
+            parser.error("Confirmation settings are frozen in confirmation.json; omit individual overrides")
+        chosen = manifest["canary"] if args.canary else manifest
+        for key in controlled:
+            setattr(args, key, chosen[key])
+        args.variants = manifest["variants"]
+        args.note = args.note or ("Confirmation CANARY; plumbing only" if args.canary else "Frozen five-seed Connect4CNN architecture confirmation v1")
+    else:
+        for key, value in dict(seeds=[73, 74, 75], eval_seed=10073, eval_games=1024, checkpoints=4, timeout=120).items():
+            if getattr(args, key) is None:
+                setattr(args, key, value)
     if args.stock and (args.recipe is not None or args.steps is not None or args.variants is not None):
         parser.error("--stock preserves the stock training recipe and budget; omit --recipe, --steps and --variants")
     args.recipe = args.recipe or HERE / "compare.ini"
@@ -156,7 +191,8 @@ def main():
         parser.error("Training and evaluation seed lists must not overlap")
     os.chdir(ROOT)
     (ROOT / "build/connect4cnn").mkdir(parents=True, exist_ok=True)
-    out = Path(tempfile.mkdtemp(prefix="compare.", dir=ROOT / "build/connect4cnn"))
+    prefix = ("confirm-canary." if args.canary else "confirm.") if args.confirmation else "compare."
+    out = Path(tempfile.mkdtemp(prefix=prefix, dir=ROOT / "build/connect4cnn"))
     commands = out / "commands.jsonl"
     print(f"Comparison: {out}", flush=True)
     sources = ["build.sh", "config/default.ini", "config/connect4.ini", "config/connect4cnn.ini"]
@@ -176,11 +212,32 @@ def main():
                 "source_sha256": {p: sha256(ROOT / p) for p in sources},
                 "build_arch": os.environ.get("NVCC_ARCH", "native"), "binary_sha256": {},
                 "recipe_sha256": sha256(out / "recipe.ini"), "started_utc": datetime.now(timezone.utc).isoformat()}
+    if args.confirmation:
+        protocol["confirmation_manifest"] = manifest
+        protocol["confirmation_manifest_sha256"] = sha256(HERE / "confirmation.json")
+        protocol["order"] = [list(variants)[i % len(variants):] + list(variants)[:i % len(variants)] for i in range(len(args.seeds))]
+    # Freeze the effective defaults in CLI overrides before any training starts.
+    if args.confirmation:
+        frozen = read_ini(ROOT / "config/default.ini")
+        frozen.read([ROOT / "config/connect4cnn.ini", args.recipe])
+        for section in list(frozen.sections()):
+            if section.startswith("sweep."):
+                frozen.remove_section(section)
+        frozen.set("sweep", "downsample", "25")
+        with (out / "effective.ini").open("w") as f:
+            frozen.write(f)
+        protocol["effective_sha256"] = sha256(out / "effective.ini")
     (out / "protocol.json").write_text(json.dumps(protocol, indent=2) + "\n")
     run(["/usr/lib/wsl/lib/nvidia-smi"], out / "gpu.txt", 20, commands)
     binaries = {}
+    if os.environ.get("NVCC_PREPEND_FLAGS"):
+        parser.error("Unset NVCC_PREPEND_FLAGS so reference build selection is controlled")
     # Always build from the current source. PufferLib's ccache handles reuse.
     for variant, env in variants.items():
+        if variant.startswith("flex_") and "flex_quality" in binaries:
+            binaries[variant] = binaries["flex_quality"]
+            protocol["binary_sha256"][variant] = sha256(binaries[variant])
+            continue
         binaries[variant] = str(out / variant)
         build = ["bash", "build.sh", env, binaries[variant], "--float"]
         if variant in ("nature_cnn", "impala_cnn", "impoola_cnn"):
@@ -188,25 +245,44 @@ def main():
         run(build, out / f"build-{variant}.log", 300, commands)
         protocol["binary_sha256"][variant] = sha256(binaries[variant])
     (out / "protocol.json").write_text(json.dumps(protocol, indent=2) + "\n")
+    for name, expected in protocol["source_sha256"].items():
+        if sha256(ROOT / name) != expected:
+            raise ValueError(f"Source changed during build: {name}; start a fresh campaign")
     rows, jobs = [], []
-    settings = [] if args.stock else overrides(recipe)
+    settings = [] if args.stock else overrides(frozen if args.confirmation else recipe)
     effective = None
     for index, seed in enumerate(args.seeds):
-        order = list(variants) if index % 2 == 0 else list(reversed(variants))
+        order = protocol["order"][index] if args.confirmation else (list(variants) if index % 2 == 0 else list(reversed(variants)))
         for variant in order:
             env = variants[variant]
             trial = out / f"{variant}-s{seed}"
             trial.mkdir()
-            common = settings + ["--headless", f"--base.seed={seed}", "--base.run_id=trial",
+            policy = manifest["policies"].get(variant, {"encoder": 0})
+            policy_args = [f"--policy.{k}={v}" for k, v in policy.items()] if env == "connect4cnn" else []
+            common = settings + policy_args + ["--headless", f"--base.seed={seed}", "--base.run_id=trial",
                 f"--train.total_timesteps={args.steps}",
                 "--base.eval_episodes=0",
                 f"--base.checkpoint_interval={checkpoint_interval}",
                 f"--base.checkpoint_dir={trial}/checkpoints", f"--base.log_dir={trial}/metrics"]
             job = {"variant": variant, "seed": seed, "status": "running"}
+            runtime_cwd = ROOT
+            if args.confirmation or variant.startswith("flex_"):
+                trial_config = copy.deepcopy(frozen) if args.confirmation else read_ini(ROOT / "config/default.ini")
+                if not args.confirmation:
+                    trial_config.read([ROOT / "config/connect4cnn.ini", args.recipe])
+                for key, value in policy.items():
+                    trial_config.set("policy", key, str(value))
+                (trial / "config").mkdir()
+                with (trial / "config/default.ini").open("w") as f:
+                    trial_config.write(f)
+                (trial / f"config/{env}.ini").write_text("# Frozen effective settings are in default.ini.\n")
+                job["config_sha256"] = sha256(trial / "config/default.ini")
+                runtime_cwd = trial
             jobs.append(job)
             try:
+                run(["/usr/lib/wsl/lib/nvidia-smi"], trial / "gpu-before.txt", 20, commands)
                 start_wall = time.time()
-                elapsed = run([binaries[variant], "train", *common], trial / "train.log", args.timeout, commands)
+                elapsed = run([binaries[variant], "train", *common], trial / "train.log", args.timeout, commands, runtime_cwd)
                 job["train_process_wall_s"] = elapsed
                 resolved = read_ini(trial / "metrics" / env / "trial.ini")
                 metrics = resolved["metrics"]
@@ -222,8 +298,9 @@ def main():
                 current = {s: dict(resolved[s]) for s in resolved if s != "metrics"}
                 current["base"] = {k: v for k, v in current["base"].items() if k not in ignore}
                 if env == "connect4cnn":
-                    if resolved.getint("policy", "encoder", fallback=0) != 0:
-                        raise ValueError("Reference comparison requires encoder=0; use sweep.sh for the experimental CNN")
+                    for key, value in policy.items():
+                        if resolved.getfloat("policy", key, fallback=0) != value:
+                            raise ValueError(f"Wrong frozen encoder setting: {variant} {key}")
                     # These construction settings are inactive for reference encoders.
                     current["policy"] = {k: v for k, v in current["policy"].items()
                                          if k != "encoder" and not k.startswith("cnn_")}
@@ -242,6 +319,11 @@ def main():
                 if [int(p.stem) for p in paths] != checkpoint_steps:
                     raise ValueError("Missing or unexpected checkpoint schedule")
                 for checkpoint in paths:
+                    if args.confirmation:
+                        import numpy as np
+                        weights = np.fromfile(checkpoint, dtype=np.float32)
+                        if weights.size != manifest["parameters"][variant] or not np.isfinite(weights).all():
+                            raise ValueError(f"Malformed/nonfinite checkpoint: {checkpoint}")
                     checkpoint_wall = checkpoint.stat().st_mtime - start_wall
                     log = trial / f"eval-{checkpoint.stem}.log"
                     eval_seed = args.eval_seed + index
@@ -249,9 +331,9 @@ def main():
                                           f"--base.load_model_path={checkpoint}"]
                     if args.stock:
                         eval_args += ["--vec.total_agents=64", "--vec.num_buffers=1", "--vec.num_threads=2", "--base.async=0"]
-                    eval_wall = run([binaries[variant], "eval", *eval_args], log, args.timeout, commands)
+                    eval_wall = run([binaries[variant], "eval", *eval_args], log, min(args.timeout, 60), commands, runtime_cwd)
                     match = EVAL.search(log.read_text())
-                    if not match or match[1] != env:
+                    if not match or match[1] != env or (args.confirmation and int(match[5]) != manifest["parameters"][variant]):
                         raise ValueError(f"Missing native evaluation result in {log}")
                     rows.append(dict(variant=variant, seed=seed, eval_seed=eval_seed,
                         steps=int(checkpoint.stem), win_rate=float(match[3]), score=float(match[2]),
@@ -259,13 +341,26 @@ def main():
                         train_process_wall_s=elapsed, eval_wall_s=eval_wall,
                         **timing, checkpoint=str(checkpoint.relative_to(out))))
                 job["status"] = "ok"
+                job["checkpoint_sha256"] = {p.name: sha256(p) for p in paths}
                 print(f"{variant} seed={seed}: {rows[-1]['win_rate']:.2%} wins, {elapsed:.3f}s training wall, {timing['process_sps']:,.0f} process SPS", flush=True)
             except (subprocess.SubprocessError, OSError, ValueError) as exc:
                 job.update(status="failed", error=str(exc))
                 print(f"FAILED {variant} seed={seed}: {exc}; see {trial}", flush=True)
             report(out, rows, jobs, protocol)
+            if job["status"] == "ok" and args.wandb != "disabled":
+                sidecar = [sys.executable, str(out / "source/ocean/connect4cnn/compare_sidecar.py"), str(out),
+                           "--mode", args.wandb, "--project", args.project, "--entity", args.entity]
+                try:
+                    run(sidecar, trial / "sidecar.log", 180, commands)
+                    job["wandb_status"] = "ok"
+                except (subprocess.SubprocessError, OSError) as exc:
+                    job.update(wandb_status="failed", wandb_error=str(exc))
+                    print(f"W&B upload failed; native results preserved: {trial}", flush=True)
+                report(out, rows, jobs, protocol)
     print(f"Report: {out / 'REPORT.md'}", flush=True)
     append_history(out, rows, jobs, protocol)
+    (out / "finished.json").write_text(json.dumps({"status": "ok" if all(j["status"] == "ok" for j in jobs) else "failed",
+        "jobs": len(jobs), "evaluations": len(rows), "logging_failures": sum(j.get("wandb_status") == "failed" for j in jobs)}, indent=2) + "\n")
     if any(j["status"] != "ok" for j in jobs):
         raise SystemExit(1)
 

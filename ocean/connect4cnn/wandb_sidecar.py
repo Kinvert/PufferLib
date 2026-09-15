@@ -15,6 +15,16 @@ import time
 
 
 RESULT = re.compile(r"sweep run=(\d+) score=([-+\d.eE]+) cost=([-+\d.eE]+) steps=([-+\d.eE]+) random=(\d+) gp_obs=(\d+) pareto=(\d+)")
+SCHEMA = 2
+
+
+def display_name(root, index):
+    adjectives = ("happy", "mystic", "brave", "gentle", "bright", "quiet", "swift", "lucky",
+                  "cosmic", "golden", "clever", "merry", "calm", "wild", "silver", "sunny")
+    nouns = ("cat", "tree", "fox", "otter", "owl", "river", "panda", "wolf",
+             "falcon", "cedar", "badger", "comet", "tiger", "maple", "robin", "bear")
+    digest = hashlib.sha256(f"{Path(root).name}/{index}".encode()).digest()
+    return f"{adjectives[digest[0] % len(adjectives)]}-{nouns[digest[1] % len(nouns)]}-{index + 1}"
 
 
 def read_ini(path):
@@ -31,6 +41,27 @@ def scalar(value):
         return int(number) if number.is_integer() else number
     except ValueError:
         return value
+
+
+def architecture(config):
+    encoder = config["policy.encoder"]
+    common = ("policy.hidden_size", "policy.num_layers")
+    if encoder == 1:
+        version = "connect4-cnn-v1"
+        keys = ("policy.cnn_channels", "policy.cnn_blocks", "policy.cnn_global_pool") + common
+    elif encoder == 2:
+        version, keys = "connect4-nature-v1", common
+    elif encoder == 3:
+        version = "connect4-compact-v1"
+        keys = ("policy.cnn_channels", "policy.cnn_depth", "policy.cnn_stride", "policy.cnn_projection") + common
+    elif encoder == 4:
+        version = "connect4-flex-v1"
+        keys = ("policy.cnn_depth", "policy.cnn_projection", "policy.cnn_global_pool") + common
+        keys += tuple(f"policy.cnn_{key}_{stage}" for stage in range(1, int(config["policy.cnn_depth"]) + 1)
+                      for key in ("channels", "kernel", "stride", "pool", "residual"))
+    else:
+        raise ValueError("Unsupported sweep encoder")
+    return {"version": version, "observation": [1, 36, 44], **{k: config[k] for k in keys}}
 
 
 def trials(root):
@@ -57,10 +88,7 @@ def trials(root):
         if not ini.has_section("metrics") or ini.get("base", "env_name") != "connect4cnn":
             raise ValueError(f"Invalid completed native log: {path}")
         config = {f"{s}.{k}": scalar(v) for s in ini.sections() if s != "metrics" for k, v in ini[s].items()}
-        if config["policy.encoder"] != 1:
-            raise ValueError("This campaign accepts only the experimental CNN")
-        spec = {"version": "connect4-cnn-v1", "observation": [1, 36, 44],
-                **{k: config[k] for k in ("policy.cnn_channels", "policy.cnn_blocks", "policy.cnn_global_pool", "policy.hidden_size", "policy.num_layers")}}
+        spec = architecture(config)
         identity = hashlib.sha256(json.dumps(spec, sort_keys=True).encode()).hexdigest()
         checkpoint = root / "checkpoints/connect4cnn" / path.stem / f"{final['steps']:016d}.bin"
         if not checkpoint.is_file() or checkpoint.stat().st_size % 4:
@@ -69,11 +97,11 @@ def trials(root):
         steps = columns.pop("agent_steps")
         history = []
         for i, step in enumerate(steps):
-            row = {"agent_steps": step}
+            row = {"agent_steps": int(round(step))}
             for key, values in columns.items():
                 j = i - (len(steps) - len(values))
                 if 0 <= j < len(values) and math.isfinite(values[j]):
-                    row["binned/" + key] = values[j]
+                    row[key] = values[j]
             history.append(row)
         result.append(dict(index=index, run_id=path.stem, config=config, architecture=spec,
                            architecture_sha256=identity, checkpoint=str(checkpoint.relative_to(root)),
@@ -99,30 +127,37 @@ def sync(root, mode, project, entity=None, client=None):
         run_id = trial["run_id"]
         content = json.dumps(trial, indent=2, sort_keys=True) + "\n"
         (payloads / f"{run_id}.json").write_text(content)
-        if run_id in state:
+        if isinstance(state.get(run_id), dict) and state[run_id].get("schema") == SCHEMA:
             continue
         wandb_id = hashlib.sha256(f"{root.name}/{run_id}".encode()).hexdigest()[:24]
         if mode != "disabled":
-            run = client.init(project=project, entity=entity, id=wandb_id, name=run_id,
+            run = client.init(project=project, entity=entity, id=wandb_id, name=display_name(root, trial["index"]),
                               group=root.name, mode=mode, dir=str(payloads), config=trial["config"],
                               resume="allow" if mode == "online" else None,
                               settings=client.Settings(console="off", disable_git=True, x_disable_stats=True))
             try:
                 run.define_metric("agent_steps")
-                run.define_metric("binned/*", step_metric="agent_steps")
+                run.define_metric("*", step_metric="agent_steps")
+                run.define_metric("binned/*", hidden=True)
                 for row in trial["history"]:
-                    run.log(row)
+                    run.log(row, step=row["agent_steps"])
+                for key in list(run.summary.keys()):
+                    if key.startswith("binned/"):
+                        del run.summary[key]
+                run.summary.update(trial["history"][-1])
                 run.summary.update({"protein/score": trial["score"], "protein/cost_seconds": trial["cost"],
                                     "protein/random": trial["random"], "protein/gp_observations": trial["gp_obs"],
                                     "native/agent_steps": trial["steps"], "native/average_sps": trial["native_avg_sps"],
                                     "native/parameters": trial["params"], "native/checkpoint": trial["checkpoint"],
+                                    "native/run_id": run_id,
+                                    "architecture": trial["architecture"]["version"],
                                     "architecture_sha256": trial["architecture_sha256"],
-                                    "metric_scope": "training; final PROTEIN stdout rounded to 4 score / 2 cost decimals"})
+                                    "metric_scope": "native training history (downsampled); final PROTEIN stdout rounded to 4 score / 2 cost decimals"})
                 run.finish()
             except BaseException:
                 run.finish(exit_code=1)
                 raise
-        state[run_id] = wandb_id
+        state[run_id] = {"id": wandb_id, "schema": SCHEMA}
         tmp = state_path.with_suffix(".tmp")
         tmp.write_text(json.dumps(state, indent=2) + "\n")
         tmp.replace(state_path)

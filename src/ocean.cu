@@ -28,11 +28,11 @@ void puf_normal_init(Prec* dst, float std, ulong seed, cudaStream_t stream) {
 #endif
 #ifdef PUFFER_CONNECT4CNN
 #include "../ocean/connect4cnn/cnn.cu"
-#ifdef C4_NATURE_CNN
 #include "../ocean/connect4cnn/nature.cu"
-#elif defined(C4_IMPALA_CNN) || defined(C4_IMPOOLA_CNN)
+#include "../ocean/connect4cnn/flex.cu"
+#if defined(C4_IMPALA_CNN) || defined(C4_IMPOOLA_CNN)
 #include "../ocean/connect4cnn/impala.cu"
-#else
+#elif !defined(C4_NATURE_CNN)
 #include "../ocean/connect4cnn/connect4cnn.cu"
 #endif
 #endif
@@ -87,9 +87,19 @@ static void create_custom_encoder(Encoder* enc, Dict* policy = NULL) {
     if (type && type->value == 1) {
         c4_cnn::create_connect4_encoder(enc);
         enc->config = policy;
+    } else if (type && type->value == 2) {
+        create_nature_encoder(enc);
+    } else if (type && type->value == 3) {
+        create_compact_encoder(enc, policy);
+    } else if (type && type->value == 4) {
+        create_flex_encoder(enc, policy);
     } else {
         assert((!type || type->value == 0) && "unsupported Connect4CNN encoder ID");
+#ifdef C4_NATURE_CNN
+        create_nature_encoder(enc);
+#else
         create_connect4_encoder(enc);
+#endif
     }
 #elif defined(PUFFER_OSRS_COLOSSEUM)
     create_osrs_entity_encoder<&OSRS_COLOSSEUM_ENTITY_DESCRIPTOR>(enc);
