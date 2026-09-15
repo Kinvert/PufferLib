@@ -1,5 +1,9 @@
 # CNN project notes
 
+## 2026-09-14 — Benchmark source and later work committed separately
+
+Measured-source commit `b2fa7787a754d36362374ac271ea6c7b23beeb25` matches all 38 captured file hashes for `confirm.ol9tcj5k`; it retrospectively reconstructs the captured files from the dirty launch state based on `9ed6bc2a`. Later features and archived results are in `5352d24ec1b740ed05ebe11e01126c8e3886cfb0`. [Benchmark state and recovery instructions](research/BENCHMARK_STATE.md) records the distinction, measured settings and performance. No push or new training was performed for these commits.
+
 ## 2026-09-14 — Five-seed confirmation complete and audited
 
 `confirm.ol9tcj5k` completed all 30 jobs, 390 evaluations and W&B uploads without failures. [Full analysis and interactive curves](research/CONFIRMATION_RESULTS.md). Means at 13.312M: ours quality 79.66%/144.47 s, small 78.01%/143.28 s, fast 71.66%/147.12 s; Nature 73.35%/158.71 s; IMPALA 97.45%/1,231.81 s; Impoola 80.09%/1,229.68 s. All 390 checkpoint hashes/counts/finiteness and source/config/binary receipts were audited. The combined mean wall-time frontier contains ours at lower costs and IMPALA at higher scores; Nature/Impoola contribute no mean points. IMPALA owns the mean decision-count frontier. Quality's paired final advantage over Nature is +6.31 pp with pointwise 95% bootstrap interval −0.07 to +13.00 pp: promising but unresolved. The development winner's 92% score is not typical across fresh seeds. No new training was launched for this analysis. Paper-plan item 1 is complete; broader fairness/generalization/delivery remain open.

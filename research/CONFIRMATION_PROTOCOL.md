@@ -1,5 +1,7 @@
 # Connect4CNN frozen confirmation v1
 
+Post-experiment provenance: [BENCHMARK_STATE.md](BENCHMARK_STATE.md) records a Git revision matching all 38 captured source/config hashes and distinguishes later additions. The original launch receipt remains unchanged.
+
 Completed and audited: `confirm.ol9tcj5k`, 30 jobs and 390 checkpoint evaluations, no failures. Results and the complete uncertain Pareto curves are in [CONFIRMATION_RESULTS.md](CONFIRMATION_RESULTS.md). The specification below is retained as the pre-result protocol.
 
 Specified September 14, 2026, before inspecting confirmation results. User authorized item 1 of the paper plan: freeze existing architectures and confirm them across fresh paired seeds with equal learning-curve measurement. This is a fixed comparison, not a new architecture sweep.

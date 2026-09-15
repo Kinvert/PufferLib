@@ -6,6 +6,8 @@ On September 12, the checkout was fast-forwarded eight commits to `89414204ce850
 
 ## Start here
 
+- [Benchmark source revisions and recovery](BENCHMARK_STATE.md): exact captured implementation for the five-seed results, distinguished from later Pong and representation work.
+
 - [Completed five-seed confirmation](CONFIRMATION_RESULTS.md): all 390 checkpoint evaluations, whole time/step frontiers, uncertainty, and audit receipts for ours versus Nature/IMPALA/Impoola.
 
 - [Connect4 representation presets](../ocean/connect4cnn/REPRESENTATIONS.md): integer-sweepable squares, circles, gaps, X/O and compact boards, with validation and robustness interpretation.

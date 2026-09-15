@@ -1,5 +1,7 @@
 # Connect4CNN: frozen five-seed confirmation
 
+**Measured source:** `b2fa7787a754d36362374ac271ea6c7b23beeb25`, reconstructed and verified against all 38 captured file hashes. [Exact source state, later feature revision, and recovery instructions](BENCHMARK_STATE.md).
+
 Completed September 14, 2026: `confirm.ol9tcj5k`, all **30 training jobs and 390 held-out checkpoint evaluations**, no native failures or W&B upload failures. This is the confirmation requested in paper-plan item 1, not another architecture search. All models used the original square representation, the same learner/core settings, five fresh paired seeds and the same 13 checkpoints through 13,312,000 decisions. [Frozen protocol](CONFIRMATION_PROTOCOL.md).
 
 **Observed mean time/score tradeoff:** our fixed models form the low-cost frontier; IMPALA forms the high-performance frontier. Nature and Impoola have no points on the combined frontier of five-seed checkpoint means. This is a descriptive mean frontier, not a statistically established dominance result. The final quality-model advantage over Nature is promising but its paired uncertainty interval narrowly includes zero.
@@ -59,7 +61,7 @@ Intervals enumerate all 3,125 ordered bootstrap resamples of five seeds; differe
 - No competing compute process appeared in the pre-job GPU snapshots. Those snapshots are not continuous resource monitoring. Brief CPU-only development/tests occurred during the campaign; no strict exclusive-host claim is made. The comparison uses this RTX 5060 and these native float32 implementations.
 - Model adaptation, initialization, common recipe and fixed recurrent core are those in the frozen protocol. Equal learner settings are not equal per-family hyperparameter tuning budgets, parameters or FLOPs. These correctness-oriented CUDA convolution implementations have not undergone a comprehensive backend optimization comparison.
 - Original square rendering only. No new Pong or representation experiment is mixed into these results. This is one development game, not evidence of architecture transfer across games.
-- Small receipt files are archived. Full source snapshots, binaries and checkpoint arrays remain in the original local build directory; the archive is not a complete downloadable model/source bundle. The original working tree was uncommitted, so the recorded base commit alone cannot reproduce every build.
+- Small receipt files are archived, and all captured source/config files are recoverable from measured-source commit `b2fa7787a754d36362374ac271ea6c7b23beeb25`. Full binaries and checkpoint arrays remain in the original local build directory. The original launch base had uncommitted work; see the [provenance note](BENCHMARK_STATE.md) for the retrospective reconstruction and its limits.
 
 Analysis code: [analyze_confirmation.py](analyze_confirmation.py), [chart template](confirmation_frontier.html). Reproduce from the original local campaign with `.venv/bin/python research/analyze_confirmation.py build/connect4cnn/confirm.ol9tcj5k`. The generated JavaScript passed a DOM smoke check across 48 view combinations and empty-model selection; actual browser appearance was not automatically tested.
 
