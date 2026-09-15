@@ -1,0 +1,3 @@
+name,run_id,variant,steps,train_perf,native_cost_s,native_avg_sps,params,eval_perf,eval_score,eval_games,eval_status,training_pareto,architecture_sha256,checkpoint_sha256
+quiet-badger-1,sweep_1789435075255_0000,impoola_cnn,32768,0.0024,2.94,11145.578231292517,151200,0.0,-21.0,66,ok,True,6c2b7b88b110481149d8755a5e0f3e48454f565b83a36139bd4ff52cce444726,0383d98ba603d12d3f86c50e637a27ecc40ed0150137d4297a1b2885e5b2d164
+sunny-maple-2,sweep_1789435078540_0001,impoola_cnn,32768,0.0,4.9,6687.346938775509,151200,0.0,-21.0,65,ok,False,6c2b7b88b110481149d8755a5e0f3e48454f565b83a36139bd4ff52cce444726,ac5bb23f63718d683b29a142632fb2003bdb79b268a98aa07af86a0aa7cf081f

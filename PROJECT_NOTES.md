@@ -1,5 +1,27 @@
 # CNN project notes
 
+## 5090 hardware-comparison handoff
+
+Prepared `cnn-research` for the Kinvert-owned `Kinvert/PufferLib` fork only; official `PufferAI/PufferLib` pushing remains disabled. [Hardware comparison instructions](research/HARDWARE_COMPARISON.md) provide fresh-checkout/local-venv setup using the existing CUDA/NCCL toolchain, a four-model canary, and fixed full-budget comparison. Portable `nvidia-smi` lookup, optional competing-process rejection and host/compiler receipts were added to the reporting runner; native model/training code is unchanged. Twenty-one CPU configuration/sidecar/hardware tests passed. No additional GPU job was launched on G240, and the separate 5090 host has not yet been tested. A same-revision G240 run after Pong completes is needed for a controlled cross-host timing comparison.
+
+## Additional potential deliverable — CNN constructor and search tool
+
+Kinvert proposed delivering a native PufferLib CNN constructor that starts with small, fast candidates and explores more expensive features to find useful per-environment Pareto frontiers. [Brief plan](research/CNN_CONSTRUCTOR_PLAN.md) records the workflow, staged implementation, exportable INIs, search-cost accounting and required comparisons. This complements the fixed-CNN research; it does not assume official acceptance, global optimality or a completed SOTA result.
+
+## 2026-09-14 — Pong campaign recovery
+
+`hypers.jwyApeXS` stopped after 24 ours and 24 Nature training trials because one Nature evaluation timed out at 180 seconds. Original failure retained; no selective extended retry. Recovery tmux `pong-cnn3-resume-20260914`, log `build/pongcnn/cnn3-hypers-resume.log`, uploads Nature's completed results and continues only unstarted IMPALA/Impoola using original binaries/configs/caps. Completed training is not repeated. [Protocol](research/PONG_HYPER_SWEEP.md) records the revised failure-reporting behavior and provenance. Do not restart the original whole campaign or actively poll the recovery.
+
+## 2026-09-14 — Pong frozen-model training search launched in cnn3
+
+User authorized Pong experiments while locking our CNN architecture and searching training hypers. [Protocol](research/PONG_HYPER_SWEEP.md): Connect4-selected quality shape and H128/L1 core fixed, with fixed Nature/IMPALA/Impoola references receiving the same nine training/budget dimensions. Native C/CUDA PROTEIN and training, Bash runner, external reporting/W&B; no core/kernel/system/dependency changes. Five-model train/reload canary and eight-trial online sweep canary passed; 16 CPU safeguards/regressions passed. A 13.312M-decision quality pilot scored zero at 61.82 seconds, retained as negative evidence.
+
+Launched detached campaign `build/pongcnn/hypers.jwyApeXS`, tmux `pong-cnn3-hypers-20260914`, log `build/pongcnn/cnn3-hypers-launch.log`, W&B `kinvert-k/cnn3`. Limits are 24 completed trials and 3,600 native sweep-process seconds per family, four families serially. Separate evaluation of every completed final checkpoint and W&B upload follow each family, so runs appear online in batches. Startup session verified; full results pending. Do not launch a duplicate or actively monitor. This is development search, not fresh-seed confirmation or a Nature/SOTA claim.
+
+## 2026-09-14 — Thesis-defense standard for the Nature advantage
+
+Kinvert explicitly requires substantially more certainty that our advantage over Nature is real, with claims in the arXiv paper verified as rigorously as a thesis defense. [The paper plan](research/PAPER_PLAN.md#required-evidence-standard-defend-the-claim-like-a-thesis) now requires predeclared claims and statistical design, adequate independent replication, frontier-appropriate uncertainty, fair and efficient baselines, checks of alternative explanations, and independently reproducible evidence. The current five-seed score interval includes zero; the completed confirmation is not proof of superiority. Preserve negative and inconclusive evidence, and restrict claims to the tasks and budget region actually supported.
+
 ## 2026-09-14 — Benchmark source and later work committed separately
 
 Measured-source commit `b2fa7787a754d36362374ac271ea6c7b23beeb25` matches all 38 captured file hashes for `confirm.ol9tcj5k`; it retrospectively reconstructs the captured files from the dirty launch state based on `9ed6bc2a`. Later features and archived results are in `5352d24ec1b740ed05ebe11e01126c8e3886cfb0`. [Benchmark state and recovery instructions](research/BENCHMARK_STATE.md) records the distinction, measured settings and performance. No push or new training was performed for these commits.

@@ -1,0 +1,8 @@
+Pong hyperparameter campaign: /home/claude/cnn/build/pongcnn/hypers.l6li6thO
+Traceback (most recent call last):
+  File "/home/claude/cnn/build/pongcnn/hypers.l6li6thO/source/ocean/pongcnn/report.py", line 132, in <module>
+    report(args.root, args.require_evals)
+  File "/home/claude/cnn/build/pongcnn/hypers.l6li6thO/source/ocean/pongcnn/report.py", line 65, in report
+    assert row["config"].get(full) == scalar(value), (row["run_id"], full, "changed")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('sweep_1789434850533_0000', 'base.load_enemy_model_path', 'changed')

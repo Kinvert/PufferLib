@@ -1,0 +1,1 @@
+env NVCC_PREPEND_FLAGS=-DC4_IMPALA_CNN bash build.sh pongcnn /home/claude/cnn/build/pongcnn/hypers.hF7MhfRo/impala_cnn/train --float 

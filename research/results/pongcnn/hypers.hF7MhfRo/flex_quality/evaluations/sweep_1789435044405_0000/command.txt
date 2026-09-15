@@ -1,0 +1,1 @@
+/home/claude/cnn/build/pongcnn/hypers.hF7MhfRo/flex_quality/train eval --headless --base.seed=29173 --base.eval_episodes=64 --base.result_fd=0 --sweep.metric=score --base.load_model_path=/home/claude/cnn/build/pongcnn/hypers.hF7MhfRo/flex_quality/checkpoints/pongcnn/sweep_1789435044405_0000/0000000000032768.bin 

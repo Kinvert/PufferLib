@@ -1,0 +1,179 @@
+diff --git a/AGENTS.md b/AGENTS.md
+index ff3904f8..4e42fe16 100644
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -53,6 +53,8 @@ IMPALA/Impoola share `ocean/connect4cnn/impala.cu`, selected with per-build `C4_
+ 
+ ## Experimental CNN canaries
+ 
++Paper evidence requirement: Kinvert wants the advantage over Nature established with thesis-defense rigor before making the corresponding arXiv claim. Follow `research/PAPER_PLAN.md`'s required evidence standard: predeclare the claim, replication/stopping and analysis; verify baseline fairness and efficiency; account for frontier uncertainty; preserve contrary evidence and exact provenance. The completed five-seed confirmation does not establish score superiority. Do not add seeds until significance or treat beating Nature alone as SOTA.
++
+ Benchmark revision map: read `research/BENCHMARK_STATE.md`. Commit `b2fa7787a754d36362374ac271ea6c7b23beeb25` retrospectively reproduces all 38 captured source/config hashes for the confirmation; the original launch base alone had uncommitted changes. Later Pong/representation work and archived results are in `5352d24ec1b740ed05ebe11e01126c8e3886cfb0`. Preserve the original protocol receipt, and identify the measured source separately from whichever revision is current when discussing performance.
+ 
+ Frozen confirmation `confirm.ol9tcj5k` is completed and audited: 30 jobs, 390 evaluations, no upload failures. Read `research/CONFIRMATION_RESULTS.md` for the paired-seed full-frontier result and limitations before proposing another search. `research/analyze_confirmation.py` regenerates audited tables/interactive curves from the local campaign. Do not reuse the old single-seed CNN2 chart as the definitive confirmation, pool best seeds into a frontier, or claim 92% typical performance for the former winner. Mean time front favors ours at low cost and IMPALA at high score; uncertainty in the quality-versus-Nature score difference includes zero. Preserve native-source/hash provenance because current source contains later Pong/representation changes absent from this campaign.
+diff --git a/PROJECT_NOTES.md b/PROJECT_NOTES.md
+index 8577786b..83ca2cf8 100644
+--- a/PROJECT_NOTES.md
++++ b/PROJECT_NOTES.md
+@@ -1,5 +1,9 @@
+ # CNN project notes
+ 
++## 2026-09-14 — Thesis-defense standard for the Nature advantage
++
++Kinvert explicitly requires substantially more certainty that our advantage over Nature is real, with claims in the arXiv paper verified as rigorously as a thesis defense. [The paper plan](research/PAPER_PLAN.md#required-evidence-standard-defend-the-claim-like-a-thesis) now requires predeclared claims and statistical design, adequate independent replication, frontier-appropriate uncertainty, fair and efficient baselines, checks of alternative explanations, and independently reproducible evidence. The current five-seed score interval includes zero; the completed confirmation is not proof of superiority. Preserve negative and inconclusive evidence, and restrict claims to the tasks and budget region actually supported.
++
+ ## 2026-09-14 — Benchmark source and later work committed separately
+ 
+ Measured-source commit `b2fa7787a754d36362374ac271ea6c7b23beeb25` matches all 38 captured file hashes for `confirm.ol9tcj5k`; it retrospectively reconstructs the captured files from the dirty launch state based on `9ed6bc2a`. Later features and archived results are in `5352d24ec1b740ed05ebe11e01126c8e3886cfb0`. [Benchmark state and recovery instructions](research/BENCHMARK_STATE.md) records the distinction, measured settings and performance. No push or new training was performed for these commits.
+diff --git a/ocean/connect4cnn/wandb_sidecar.py b/ocean/connect4cnn/wandb_sidecar.py
+index 1ad90c7f..933d6927 100644
+--- a/ocean/connect4cnn/wandb_sidecar.py
++++ b/ocean/connect4cnn/wandb_sidecar.py
+@@ -18,12 +18,17 @@ RESULT = re.compile(r"sweep run=(\d+) score=([-+\d.eE]+) cost=([-+\d.eE]+) steps
+ SCHEMA = 2
+ 
+ 
++def campaign_key(root):
++    root = Path(root)
++    return f"{root.parent.name}/{root.name}" if (root / "environment.txt").exists() else root.name
++
++
+ def display_name(root, index):
+     adjectives = ("happy", "mystic", "brave", "gentle", "bright", "quiet", "swift", "lucky",
+                   "cosmic", "golden", "clever", "merry", "calm", "wild", "silver", "sunny")
+     nouns = ("cat", "tree", "fox", "otter", "owl", "river", "panda", "wolf",
+              "falcon", "cedar", "badger", "comet", "tiger", "maple", "robin", "bear")
+-    digest = hashlib.sha256(f"{Path(root).name}/{index}".encode()).digest()
++    digest = hashlib.sha256(f"{campaign_key(root)}/{index}".encode()).digest()
+     return f"{adjectives[digest[0] % len(adjectives)]}-{nouns[digest[1] % len(nouns)]}-{index + 1}"
+ 
+ 
+@@ -43,7 +48,7 @@ def scalar(value):
+         return value
+ 
+ 
+-def architecture(config):
++def architecture(config, reference=None):
+     encoder = config["policy.encoder"]
+     common = ("policy.hidden_size", "policy.num_layers")
+     if encoder == 1:
+@@ -59,6 +64,8 @@ def architecture(config):
+         keys = ("policy.cnn_depth", "policy.cnn_projection", "policy.cnn_global_pool") + common
+         keys += tuple(f"policy.cnn_{key}_{stage}" for stage in range(1, int(config["policy.cnn_depth"]) + 1)
+                       for key in ("channels", "kernel", "stride", "pool", "residual"))
++    elif encoder == 0 and reference in ("impala_cnn", "impoola_cnn"):
++        version, keys = "shared-" + reference + "-v1", common
+     else:
+         raise ValueError("Unsupported sweep encoder")
+     return {"version": version, "observation": [1, 36, 44], **{k: config[k] for k in keys}}
+@@ -66,6 +73,10 @@ def architecture(config):
+ 
+ def trials(root):
+     root = Path(root)
++    environment = (root / "environment.txt").read_text().strip() if (root / "environment.txt").exists() else "connect4cnn"
++    if environment not in ("connect4cnn", "pongcnn"):
++        raise ValueError("Unsupported pixel environment")
++    reference = (root / "variant.txt").read_text().strip() if (root / "variant.txt").exists() else None
+     log = root / "sweep.log"
+     if not log.exists():
+         return []
+@@ -77,7 +88,7 @@ def trials(root):
+             observed[int(i)] = dict(score=float(score), cost=float(cost), steps=int(float(steps)),
+                                     random=int(random), gp_obs=int(gp), pareto=int(pareto))
+     result = []
+-    for path in sorted((root / "metrics/connect4cnn").glob("*.ini")):
++    for path in sorted((root / "metrics" / environment).glob("*.ini")):
+         index = int(path.stem.rsplit("_", 1)[1])
+         if index not in observed:
+             continue
+@@ -85,12 +96,12 @@ def trials(root):
+         if not all(math.isfinite(final[k]) for k in ("score", "cost", "steps")) or final["cost"] <= 0:
+             raise ValueError(f"Invalid final observation: {path}")
+         ini = read_ini(path)
+-        if not ini.has_section("metrics") or ini.get("base", "env_name") != "connect4cnn":
++        if not ini.has_section("metrics") or ini.get("base", "env_name") != environment:
+             raise ValueError(f"Invalid completed native log: {path}")
+         config = {f"{s}.{k}": scalar(v) for s in ini.sections() if s != "metrics" for k, v in ini[s].items()}
+-        spec = architecture(config)
++        spec = architecture(config, reference)
+         identity = hashlib.sha256(json.dumps(spec, sort_keys=True).encode()).hexdigest()
+-        checkpoint = root / "checkpoints/connect4cnn" / path.stem / f"{final['steps']:016d}.bin"
++        checkpoint = root / "checkpoints" / environment / path.stem / f"{final['steps']:016d}.bin"
+         if not checkpoint.is_file() or checkpoint.stat().st_size % 4:
+             raise ValueError(f"Missing or malformed final checkpoint: {checkpoint}")
+         columns = {k: [float(x) for x in v.split(",")] for k, v in ini["metrics"].items()}
+@@ -103,7 +114,12 @@ def trials(root):
+                 if 0 <= j < len(values) and math.isfinite(values[j]):
+                     row[key] = values[j]
+             history.append(row)
+-        result.append(dict(index=index, run_id=path.stem, config=config, architecture=spec,
++        evaluation = root / "evaluations" / (path.stem + ".json")
++        evaluation = json.loads(evaluation.read_text()) if evaluation.exists() else None
++        if evaluation:
++            if evaluation["checkpoint_sha256"] != hashlib.sha256(checkpoint.read_bytes()).hexdigest():
++                raise ValueError("Evaluation checkpoint does not match completed trial")
++        result.append(dict(index=index, run_id=path.stem, config=config, architecture=spec, evaluation=evaluation,
+                            representation=config.get("env.representation", 0),
+                            architecture_sha256=identity, checkpoint=str(checkpoint.relative_to(root)),
+                            checkpoint_sha256=hashlib.sha256(checkpoint.read_bytes()).hexdigest(),
+@@ -130,10 +146,10 @@ def sync(root, mode, project, entity=None, client=None):
+         (payloads / f"{run_id}.json").write_text(content)
+         if isinstance(state.get(run_id), dict) and state[run_id].get("schema") == SCHEMA:
+             continue
+-        wandb_id = hashlib.sha256(f"{root.name}/{run_id}".encode()).hexdigest()[:24]
++        wandb_id = hashlib.sha256(f"{campaign_key(root)}/{run_id}".encode()).hexdigest()[:24]
+         if mode != "disabled":
+             run = client.init(project=project, entity=entity, id=wandb_id, name=display_name(root, trial["index"]),
+-                              group=root.name, mode=mode, dir=str(payloads), config=trial["config"],
++                              group=campaign_key(root), mode=mode, dir=str(payloads), config=trial["config"],
+                               resume="allow" if mode == "online" else None,
+                               settings=client.Settings(console="off", disable_git=True, x_disable_stats=True))
+             try:
+@@ -142,6 +158,10 @@ def sync(root, mode, project, entity=None, client=None):
+                 run.define_metric("binned/*", hidden=True)
+                 for row in trial["history"]:
+                     run.log(row, step=row["agent_steps"])
++                if trial.get("evaluation"):
++                    run.log({"agent_steps": trial["steps"], "eval/perf": trial["evaluation"]["perf"],
++                             "eval/score": trial["evaluation"]["score"], "eval/games": trial["evaluation"]["games"]},
++                            step=trial["steps"])
+                 for key in list(run.summary.keys()):
+                     if key.startswith("binned/"):
+                         del run.summary[key]
+diff --git a/research/PAPER_PLAN.md b/research/PAPER_PLAN.md
+index 166645d1..2d330ead 100644
+--- a/research/PAPER_PLAN.md
++++ b/research/PAPER_PLAN.md
+@@ -7,7 +7,7 @@ Working title: **Practical Compute-Efficient Visual Encoders for Reinforcement L
+ ## Action checklist
+ 
+ 1. **Confirm current results — completed:** all 30 jobs and 390 evaluations passed; checkpoint/config/source audit and full paired-seed frontier analysis are in [CONFIRMATION_RESULTS.md](CONFIRMATION_RESULTS.md). Our models occupy the low-cost mean frontier and IMPALA the high-performance region; the quality-versus-Nature score advantage remains uncertain with five seeds.
+-2. **Separate fairness questions:** controlled identical-learner comparison versus comparable per-family tuning allowance; see the experimental-design section.
++2. **Establish a defensible advantage over Nature — open:** substantially reduce uncertainty using the thesis-defense standard below, and separate controlled identical-learner comparisons from comparable per-family tuning allowances. Completing item 1 did not establish this claim.
+ 3. **Test architecture generalization:** select on development environments and freeze before retraining on untouched game identities; see generalization and environment strategy.
+ 4. **Integrate an established external benchmark:** proposed original Procgen; its native integration remains unverified here.
+ 5. **Deliver a usable native PufferLib component:** standard configuration, portable pixel contract, reproducible build/train/eval commands; see practical deliverable.
+@@ -15,6 +15,23 @@ Working title: **Practical Compute-Efficient Visual Encoders for Reinforcement L
+ 
+ Only item 1 is newly authorized for execution by the current request. The remaining items stay in the plan; no unseen-environment experiment has been launched.
+ 
++## Required evidence standard: defend the claim like a thesis
++
++Explicit user requirement, September 14, 2026: **make our advantage over Nature much more certain, and prepare the arXiv paper as though every claim must survive a thesis defense.** Cover plausible alternative explanations and retain evidence a reviewer can independently check. The objective is to determine whether the advantage holds; an inconclusive or negative result must narrow the claim rather than trigger selective reporting.
++
++Current evidence is insufficient for a firm score-superiority claim: quality's final paired advantage over Nature is +6.31 percentage points, with a pointwise 95% bootstrap interval of −0.07 to +13.00. The observed mean wall-time frontier is encouraging, but uncertainty in a final score difference is not a test of the whole frontier. See [confirmation results](CONFIRMATION_RESULTS.md) and [measured source revision](BENCHMARK_STATE.md).
++
++Before presenting an advantage over Nature as established:
++
++1. **Specify the claim before the next confirmation.** Freeze candidate selection, baseline recipes, tasks, budget region, primary metric, practically meaningful improvement, and analysis. Distinguish higher score at a fixed wall budget from less time to a fixed score, sample efficiency, and implementation throughput. A favorable checkpoint discovered afterward is exploratory evidence.
++2. **Plan adequate independent replication.** Use development variability to choose a justified seed count or interval-precision target; document the calculation and assumptions. Fix the sample size or a statistically valid sequential stopping rule before inspecting new results. Do not keep adding seeds until a confidence interval happens to exclude zero. Pair seeds across candidates and account for both training variability and evaluation noise.
++3. **Quantify uncertainty for the actual claim.** Retain complete curves and failed/non-achieving runs. Use an appropriate predeclared comparison for the selected budget region, with simultaneous inference or multiplicity control when claiming advantages across many budgets/models/tasks. Pointwise bars alone do not establish frontier-wide dominance. Report effect sizes and practical relevance, not just statistical significance.
++4. **Challenge baseline fairness.** Verify Nature's architecture, adaptations, numerical correctness, initialization, learning schedule and effective settings. Report the common-learner comparison separately from a comparison with comparable tuning resources, including competitive smaller baseline variants. Audit backend efficiency so a slow reference implementation cannot masquerade as an architectural advance.
++5. **Test alternative explanations and scope.** Check observation/preprocessing equivalence, timing boundaries, hardware contention and parameter/core differences. Use fixed-design appearance tests and additional games to test whether the result depends on Connect4's rendering or rules. A second GPU needs all competing methods rerun on it. Generality requires untouched tasks; a narrow Connect4 claim must remain labeled as such.
++6. **Make every published claim traceable.** Link claims to exact code revisions, resolved configs, seeds, raw measurements, analysis and reproducible commands. Reproduce the reported comparison from a clean checkout and independently audit the analysis before submission. Preserve search costs, exclusions, failures and contradictory results. A SOTA claim additionally requires a current relevant-baseline review and a clearly defined benchmark/protocol; beating Nature alone does not establish it.
++
++The paper may claim a reliable improvement in a useful, explicitly bounded portion of the Pareto frontier if the evidence supports it. It need not claim superiority everywhere. These requirements are open research work, not a declaration that the present results satisfy them or authorization for an unspecified training campaign.
++
+ ## Claims and evidence
+ 
+ | Claim | Required evidence | Current status |

@@ -1,0 +1,3 @@
+name,run_id,variant,steps,train_perf,native_cost_s,native_avg_sps,params,eval_perf,eval_score,eval_games,eval_status,training_pareto,architecture_sha256,checkpoint_sha256
+lucky-badger-1,sweep_1789434850533_0000,flex_quality,32768,0.0,0.28,117028.57142857142,160224,,,,pending,True,408a8d2c79c389135e2b0ecd5495ad44fc9abff6c33f4daad6424f0b2e48d996,a0c1cdd2001500f586d675aacf2c04f94fe61a30923dabb7c5a6f69a2001cc50
+bright-panda-2,sweep_1789434851098_0001,flex_quality,32768,0.0,0.28,117028.57142857142,160224,,,,pending,True,408a8d2c79c389135e2b0ecd5495ad44fc9abff6c33f4daad6424f0b2e48d996,d7c31bd594f4a992fb0e264d6f6d510111f55ea4b6f6ca2e848c5950b4bcbb40

@@ -1,0 +1,8 @@
+/home/claude/cnn/build/pongcnn/canary.w5tqV8nE/flex_quality.bin train --headless --policy.encoder=4 --train.total_timesteps=13312000 --base.checkpoint_interval=500 --base.seed=9173 --base.run_id=pilot --base.checkpoint_dir=/home/claude/cnn/build/pongcnn/pilot.p0ydqKv4/checkpoints --base.log_dir=/home/claude/cnn/build/pongcnn/pilot.p0ydqKv4/metrics 
+/home/claude/cnn/build/pongcnn/canary.w5tqV8nE/flex_quality.bin 
+eval 
+--headless 
+--policy.encoder=4 
+--base.seed=29173 
+--base.eval_episodes=256 
+--base.load_model_path=/home/claude/cnn/build/pongcnn/pilot.p0ydqKv4/checkpoints/pongcnn/pilot/0000000013312000.bin 

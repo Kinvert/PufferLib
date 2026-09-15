@@ -6,6 +6,12 @@ On September 12, the checkout was fast-forwarded eight commits to `89414204ce850
 
 ## Start here
 
+- [5090 fixed-model hardware comparison](HARDWARE_COMPARISON.md): Kinvert-fork checkout, existing-toolchain setup, canary/full commands and same-revision timing requirements.
+
+- [Potential CNN constructor/search deliverable](CNN_CONSTRUCTOR_PLAN.md): native small-first architecture search, per-environment frontiers, exported training configurations and an evidence plan.
+
+- [Pong fixed-architecture hyperparameter search](PONG_HYPER_SWEEP.md): locked transferred model and reference architectures, bounded native PROTEIN training search, cnn3 logging and negative budget-calibration evidence.
+
 - [Benchmark source revisions and recovery](BENCHMARK_STATE.md): exact captured implementation for the five-seed results, distinguished from later Pong and representation work.
 
 - [Completed five-seed confirmation](CONFIRMATION_RESULTS.md): all 390 checkpoint evaluations, whole time/step frontiers, uncertainty, and audit receipts for ours versus Nature/IMPALA/Impoola.

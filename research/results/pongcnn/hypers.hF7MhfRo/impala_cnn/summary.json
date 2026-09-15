@@ -1,0 +1,12 @@
+{
+  "variant": "impala_cnn",
+  "completed": 2,
+  "architectures": 1,
+  "native_failures": [],
+  "evaluation_failures": [],
+  "status": "completed",
+  "config_sha256": {
+    "default.ini": "c9a4ded787c728fd1a844acef7589a63ad091fba3f3de7f0bbf606aa656dcaf2",
+    "pongcnn.ini": "63d70f1a10d1f545a2f9c7ac087701d4ed19e515fb4d6fa565105e28a43fe5ee"
+  }
+}

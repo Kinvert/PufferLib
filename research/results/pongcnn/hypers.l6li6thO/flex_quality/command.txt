@@ -1,0 +1,1 @@
+timeout -k 10 180 /home/claude/cnn/build/pongcnn/hypers.l6li6thO/flex_quality/train sweep --headless

@@ -1,0 +1,1 @@
+timeout -k 10 180 /home/claude/cnn/build/pongcnn/hypers.hF7MhfRo/impala_cnn/train sweep --headless

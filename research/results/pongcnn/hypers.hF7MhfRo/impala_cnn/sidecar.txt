@@ -1,0 +1,84 @@
+/home/claude/cnn/.venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py:2274: UnsupportedFieldAttributeWarning: The 'repr' attribute with value False was provided to the `Field()` function, which has no effect in the context it was used. 'repr' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/home/claude/cnn/.venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py:2274: UnsupportedFieldAttributeWarning: The 'frozen' attribute with value True was provided to the `Field()` function, which has no effect in the context it was used. 'frozen' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+wandb: Currently logged in as: kinvert (kinvert-k) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: creating run
+wandb: Tracking run with wandb version 0.21.4
+wandb: Run data is saved locally in /home/claude/cnn/build/pongcnn/hypers.hF7MhfRo/impala_cnn/sidecar/wandb/run-20260914_181751-bdf0d03324efdcf35ca041e9
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run quiet-badger-1
+wandb: ⭐️ View project at https://wandb.ai/kinvert-k/cnn3
+wandb: 🚀 View run at https://wandb.ai/kinvert-k/cnn3/runs/bdf0d03324efdcf35ca041e9
+wandb: updating run metadata
+wandb: 
+wandb: Run history:
+wandb:                SPS ▁▃█▂
+wandb:        agent_steps ▁▄▆█
+wandb: env/episode_length ▁█▇▅
+wandb: env/episode_return ▁▁▁▁
+wandb:              env/n ▁▇█▁
+wandb:           env/perf ▁▁▁▁
+wandb:          env/score ▁▁▁▁
+wandb:              epoch ▁▄▆█
+wandb:         eval/games ▁
+wandb:          eval/perf ▁
+wandb:                +14 ...
+wandb: 
+wandb: Run summary:
+wandb:                 SPS 11610.89629
+wandb:         agent_steps 32768
+wandb:        architecture shared-impala_cnn-v1...
+wandb: architecture_sha256 d28d3ea186efe8367c25...
+wandb:  env/episode_length 8
+wandb:  env/episode_return -21
+wandb:               env/n 12
+wandb:            env/perf 0
+wandb:           env/score -21
+wandb:               epoch 16
+wandb:                 +26 ...
+wandb: 
+wandb: 🚀 View run quiet-badger-1 at: https://wandb.ai/kinvert-k/cnn3/runs/bdf0d03324efdcf35ca041e9
+wandb: ⭐️ View project at: https://wandb.ai/kinvert-k/cnn3
+wandb: Synced 4 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./build/pongcnn/hypers.hF7MhfRo/impala_cnn/sidecar/wandb/run-20260914_181751-bdf0d03324efdcf35ca041e9/logs
+wandb: creating run
+wandb: Tracking run with wandb version 0.21.4
+wandb: Run data is saved locally in /home/claude/cnn/build/pongcnn/hypers.hF7MhfRo/impala_cnn/sidecar/wandb/run-20260914_181753-b5d9f68578041f86576810c5
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run sunny-fox-2
+wandb: ⭐️ View project at https://wandb.ai/kinvert-k/cnn3
+wandb: 🚀 View run at https://wandb.ai/kinvert-k/cnn3/runs/b5d9f68578041f86576810c5
+wandb: updating run metadata; uploading summary
+wandb: 
+wandb: Run history:
+wandb:                SPS ██▆▅▆▁
+wandb:        agent_steps ▁▃▅▆▇█
+wandb: env/episode_length ▆█▆▇▇▁
+wandb: env/episode_return ▁▁▁▁▁▁
+wandb:              env/n ▇▅▂█▁▁
+wandb:           env/perf ▁▁▁▁▁▁
+wandb:          env/score ▁▁▁▁▁▁
+wandb:              epoch ▁▃▅▆▇█
+wandb:         eval/games ▁
+wandb:          eval/perf ▁
+wandb:                +14 ...
+wandb: 
+wandb: Run summary:
+wandb:                 SPS 6789.42627
+wandb:         agent_steps 32768
+wandb:        architecture shared-impala_cnn-v1...
+wandb: architecture_sha256 d28d3ea186efe8367c25...
+wandb:  env/episode_length 5
+wandb:  env/episode_return -21
+wandb:               env/n 6
+wandb:            env/perf 0
+wandb:           env/score -21
+wandb:               epoch 16
+wandb:                 +26 ...
+wandb: 
+wandb: 🚀 View run sunny-fox-2 at: https://wandb.ai/kinvert-k/cnn3/runs/b5d9f68578041f86576810c5
+wandb: ⭐️ View project at: https://wandb.ai/kinvert-k/cnn3
+wandb: Synced 4 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./build/pongcnn/hypers.hF7MhfRo/impala_cnn/sidecar/wandb/run-20260914_181753-b5d9f68578041f86576810c5/logs
+Sidecar: recorded 2 completed trials (online)

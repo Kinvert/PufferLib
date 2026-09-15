@@ -1,0 +1,3 @@
+name,run_id,variant,steps,train_perf,native_cost_s,native_avg_sps,params,eval_perf,eval_score,eval_games,eval_status,training_pareto,architecture_sha256,checkpoint_sha256
+lucky-bear-1,sweep_1789435052086_0000,nature_cnn,32768,0.0,0.31,105703.22580645162,138016,0.0,-21.0,64,ok,True,a0b888bdf2c68078929ed64f0cccb7cfe1197160ce5c8e0745d6830f9606bd7c,9b3bce8152aa5f32d2b6fa791a7bed9ce0eae6de3dcd6e6963cc4c0b8a5550f2
+bright-owl-2,sweep_1789435052701_0001,nature_cnn,32768,0.0,0.34,96376.47058823529,138016,0.0,-21.0,64,ok,False,a0b888bdf2c68078929ed64f0cccb7cfe1197160ce5c8e0745d6830f9606bd7c,3ca3858f3bb1b86ba640c3217e5c4a0f5f86821d372d0ad79dcc57f69b8d4acc

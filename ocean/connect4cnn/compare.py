@@ -8,6 +8,7 @@ import fcntl
 import hashlib
 import json
 import os
+import platform
 from pathlib import Path
 import re
 import signal
@@ -23,6 +24,22 @@ VARIANTS = {"state": "connect4", "tiny_cnn": "connect4cnn", "nature_cnn": "conne
             "impala_cnn": "connect4cnn", "impoola_cnn": "connect4cnn",
             "flex_quality": "connect4cnn", "flex_fast": "connect4cnn", "flex_small": "connect4cnn"}
 EVAL = re.compile(r"CUDA_EVAL env=(\S+) score=([-+\d.eE]+) perf=([-+\d.eE]+) games=(\d+) params=(\d+)")
+
+
+def find_nvidia_smi():
+    executable = shutil.which("nvidia-smi")
+    if executable:
+        return executable
+    fallback = "/usr/lib/wsl/lib/nvidia-smi"
+    if Path(fallback).is_file():
+        return fallback
+    raise RuntimeError("nvidia-smi not found in PATH or the WSL driver directory; use the host's existing GPU environment")
+
+
+def require_idle_gpu(executable):
+    active = subprocess.check_output([executable, "--query-compute-apps=pid", "--format=csv,noheader"], text=True, timeout=20)
+    if active.strip():
+        raise RuntimeError("GPU has a compute process; stop this comparison without interrupting the existing job")
 
 
 def read_ini(path):
@@ -143,6 +160,7 @@ def main():
     parser.add_argument("--entity", default="kinvert-k")
     parser.add_argument("--recipe", type=Path)
     parser.add_argument("--note", help="Change or purpose recorded in the experiment history")
+    parser.add_argument("--require-idle-gpu", action="store_true", help="Refuse competing GPU compute processes before builds and each training job")
     args = parser.parse_args()
     manifest = json.loads((HERE / "confirmation.json").read_text())
     controlled = ("steps", "seeds", "eval_seed", "eval_games", "checkpoints", "timeout")
@@ -228,7 +246,20 @@ def main():
             frozen.write(f)
         protocol["effective_sha256"] = sha256(out / "effective.ini")
     (out / "protocol.json").write_text(json.dumps(protocol, indent=2) + "\n")
-    run(["/usr/lib/wsl/lib/nvidia-smi"], out / "gpu.txt", 20, commands)
+    smi = find_nvidia_smi()
+    if args.require_idle_gpu:
+        require_idle_gpu(smi)
+    run([smi], out / "gpu.txt", 20, commands)
+    host = {"platform": platform.platform(), "machine": platform.machine(), "logical_cpus": os.cpu_count(),
+            "python": sys.version, "nvidia_smi": smi}
+    if hasattr(os, "sched_getaffinity"):
+        host["available_cpus"] = len(os.sched_getaffinity(0))
+    (out / "host.json").write_text(json.dumps(host, indent=2) + "\n")
+    nvcc = str(Path(os.environ["CUDA_HOME"]) / "bin/nvcc") if os.environ.get("CUDA_HOME") else shutil.which("nvcc")
+    if nvcc:
+        run([nvcc, "--version"], out / "cuda-compiler.txt", 20, commands)
+    if shutil.which("lscpu"):
+        run(["lscpu"], out / "cpu.txt", 20, commands)
     binaries = {}
     if os.environ.get("NVCC_PREPEND_FLAGS"):
         parser.error("Unset NVCC_PREPEND_FLAGS so reference build selection is controlled")
@@ -280,7 +311,9 @@ def main():
                 runtime_cwd = trial
             jobs.append(job)
             try:
-                run(["/usr/lib/wsl/lib/nvidia-smi"], trial / "gpu-before.txt", 20, commands)
+                if args.require_idle_gpu:
+                    require_idle_gpu(smi)
+                run([smi], trial / "gpu-before.txt", 20, commands)
                 start_wall = time.time()
                 elapsed = run([binaries[variant], "train", *common], trial / "train.log", args.timeout, commands, runtime_cwd)
                 job["train_process_wall_s"] = elapsed

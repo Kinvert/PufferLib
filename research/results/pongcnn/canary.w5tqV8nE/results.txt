@@ -1,0 +1,5 @@
+state CUDA_EVAL env=pong score=-21.000000 perf=0.000000 games=64 params=50688
+flex_quality CUDA_EVAL env=pongcnn score=-21.000000 perf=0.000000 games=64 params=160224
+nature_cnn CUDA_EVAL env=pongcnn score=-21.000000 perf=0.000000 games=64 params=138016
+impala_cnn CUDA_EVAL env=pongcnn score=-21.000000 perf=0.000000 games=74 params=269984
+impoola_cnn CUDA_EVAL env=pongcnn score=-21.000000 perf=0.000000 games=66 params=151200

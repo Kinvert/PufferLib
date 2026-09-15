@@ -6,14 +6,33 @@ Working title: **Practical Compute-Efficient Visual Encoders for Reinforcement L
 
 ## Action checklist
 
+Additional potential software contribution: [native CNN constructor and per-environment frontier search](CNN_CONSTRUCTOR_PLAN.md). This can complement the fixed-CNN result; its search-budget comparisons and practical-delivery requirements are distinct from claiming that one architecture generalizes everywhere.
+
 1. **Confirm current results — completed:** all 30 jobs and 390 evaluations passed; checkpoint/config/source audit and full paired-seed frontier analysis are in [CONFIRMATION_RESULTS.md](CONFIRMATION_RESULTS.md). Our models occupy the low-cost mean frontier and IMPALA the high-performance region; the quality-versus-Nature score advantage remains uncertain with five seeds.
-2. **Separate fairness questions:** controlled identical-learner comparison versus comparable per-family tuning allowance; see the experimental-design section.
+2. **Establish a defensible advantage over Nature — open:** substantially reduce uncertainty using the thesis-defense standard below, and separate controlled identical-learner comparisons from comparable per-family tuning allowances. Completing item 1 did not establish this claim.
 3. **Test architecture generalization:** select on development environments and freeze before retraining on untouched game identities; see generalization and environment strategy.
 4. **Integrate an established external benchmark:** proposed original Procgen; its native integration remains unverified here.
 5. **Deliver a usable native PufferLib component:** standard configuration, portable pixel contract, reproducible build/train/eval commands; see practical deliverable.
 6. **Report the whole tradeoff:** all curves, uncertainty, failures, search cost, and tasks where a method loses; see measurement and analysis requirements.
 
-Only item 1 is newly authorized for execution by the current request. The remaining items stay in the plan; no unseen-environment experiment has been launched.
+Item 1 was the initial execution authorization and is complete. The user subsequently authorized Pong development experiments with the existing CNN locked and training-hyperparameter search; see [PONG_HYPER_SWEEP.md](PONG_HYPER_SWEEP.md). That bounded development search does not authorize all remaining paper experiments or replace fresh-seed confirmation. No untouched-game final test has been launched.
+
+## Required evidence standard: defend the claim like a thesis
+
+Explicit user requirement, September 14, 2026: **make our advantage over Nature much more certain, and prepare the arXiv paper as though every claim must survive a thesis defense.** Cover plausible alternative explanations and retain evidence a reviewer can independently check. The objective is to determine whether the advantage holds; an inconclusive or negative result must narrow the claim rather than trigger selective reporting.
+
+Current evidence is insufficient for a firm score-superiority claim: quality's final paired advantage over Nature is +6.31 percentage points, with a pointwise 95% bootstrap interval of −0.07 to +13.00. The observed mean wall-time frontier is encouraging, but uncertainty in a final score difference is not a test of the whole frontier. See [confirmation results](CONFIRMATION_RESULTS.md) and [measured source revision](BENCHMARK_STATE.md).
+
+Before presenting an advantage over Nature as established:
+
+1. **Specify the claim before the next confirmation.** Freeze candidate selection, baseline recipes, tasks, budget region, primary metric, practically meaningful improvement, and analysis. Distinguish higher score at a fixed wall budget from less time to a fixed score, sample efficiency, and implementation throughput. A favorable checkpoint discovered afterward is exploratory evidence.
+2. **Plan adequate independent replication.** Use development variability to choose a justified seed count or interval-precision target; document the calculation and assumptions. Fix the sample size or a statistically valid sequential stopping rule before inspecting new results. Do not keep adding seeds until a confidence interval happens to exclude zero. Pair seeds across candidates and account for both training variability and evaluation noise.
+3. **Quantify uncertainty for the actual claim.** Retain complete curves and failed/non-achieving runs. Use an appropriate predeclared comparison for the selected budget region, with simultaneous inference or multiplicity control when claiming advantages across many budgets/models/tasks. Pointwise bars alone do not establish frontier-wide dominance. Report effect sizes and practical relevance, not just statistical significance.
+4. **Challenge baseline fairness.** Verify Nature's architecture, adaptations, numerical correctness, initialization, learning schedule and effective settings. Report the common-learner comparison separately from a comparison with comparable tuning resources, including competitive smaller baseline variants. Audit backend efficiency so a slow reference implementation cannot masquerade as an architectural advance.
+5. **Test alternative explanations and scope.** Check observation/preprocessing equivalence, timing boundaries, hardware contention and parameter/core differences. Use fixed-design appearance tests and additional games to test whether the result depends on Connect4's rendering or rules. A second GPU needs all competing methods rerun on it. Generality requires untouched tasks; a narrow Connect4 claim must remain labeled as such.
+6. **Make every published claim traceable.** Link claims to exact code revisions, resolved configs, seeds, raw measurements, analysis and reproducible commands. Reproduce the reported comparison from a clean checkout and independently audit the analysis before submission. Preserve search costs, exclusions, failures and contradictory results. A SOTA claim additionally requires a current relevant-baseline review and a clearly defined benchmark/protocol; beating Nature alone does not establish it.
+
+The paper may claim a reliable improvement in a useful, explicitly bounded portion of the Pareto frontier if the evidence supports it. It need not claim superiority everywhere. These requirements are open research work, not a declaration that the present results satisfy them or authorization for an unspecified training campaign.
 
 ## Claims and evidence
 
@@ -65,7 +84,7 @@ Rotate/interleave model order while running serially on an otherwise available G
 
 ## Environment strategy
 
-September 14 implementation: user authorized adding native **PongCNN** while Connect4 confirmation runs. See [PongCNN](../ocean/pongcnn/README.md). It is an additional development/integration task, not ALE Pong or an untouched test game. CPU transition/pixel checks pass; shared-encoder GPU training remains to be validated after the active confirmation. State/pixel information differences and Pong's point-fraction metric are documented there. This does not replace the proposed external benchmark or establish across-environment learning transfer.
+September 14 implementation: user authorized adding native **PongCNN**, then its fixed-architecture training-hyperparameter search. See [PongCNN](../ocean/pongcnn/README.md) and [search protocol](PONG_HYPER_SWEEP.md). It is a development/integration task, not ALE Pong or an untouched test game. CPU transition/pixel checks, five-model native GPU train/reload, and eight-trial online search canary pass. The common-recipe quality pilot scored zero after 13.312M decisions; learning transfer is not established. State/pixel information differences and Pong's point-fraction metric are documented. This does not replace the proposed external benchmark.
 
 **Stage A — Connect4 confirmation:** validate the measurement pipeline, train the frozen panel across fresh seeds, and reproduce the full-frontier analysis with equal checkpoint density. Preserve the existing sweep as development evidence. Keep the stock state baseline as a separately tuned practical reference; a pixel/state comparison alone is not a CNN-architecture comparison.
 

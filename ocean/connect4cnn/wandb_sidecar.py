@@ -18,12 +18,17 @@ RESULT = re.compile(r"sweep run=(\d+) score=([-+\d.eE]+) cost=([-+\d.eE]+) steps
 SCHEMA = 2
 
 
+def campaign_key(root):
+    root = Path(root)
+    return f"{root.parent.name}/{root.name}" if (root / "environment.txt").exists() else root.name
+
+
 def display_name(root, index):
     adjectives = ("happy", "mystic", "brave", "gentle", "bright", "quiet", "swift", "lucky",
                   "cosmic", "golden", "clever", "merry", "calm", "wild", "silver", "sunny")
     nouns = ("cat", "tree", "fox", "otter", "owl", "river", "panda", "wolf",
              "falcon", "cedar", "badger", "comet", "tiger", "maple", "robin", "bear")
-    digest = hashlib.sha256(f"{Path(root).name}/{index}".encode()).digest()
+    digest = hashlib.sha256(f"{campaign_key(root)}/{index}".encode()).digest()
     return f"{adjectives[digest[0] % len(adjectives)]}-{nouns[digest[1] % len(nouns)]}-{index + 1}"
 
 
@@ -43,7 +48,7 @@ def scalar(value):
         return value
 
 
-def architecture(config):
+def architecture(config, reference=None):
     encoder = config["policy.encoder"]
     common = ("policy.hidden_size", "policy.num_layers")
     if encoder == 1:
@@ -59,6 +64,8 @@ def architecture(config):
         keys = ("policy.cnn_depth", "policy.cnn_projection", "policy.cnn_global_pool") + common
         keys += tuple(f"policy.cnn_{key}_{stage}" for stage in range(1, int(config["policy.cnn_depth"]) + 1)
                       for key in ("channels", "kernel", "stride", "pool", "residual"))
+    elif encoder == 0 and reference in ("impala_cnn", "impoola_cnn"):
+        version, keys = "shared-" + reference + "-v1", common
     else:
         raise ValueError("Unsupported sweep encoder")
     return {"version": version, "observation": [1, 36, 44], **{k: config[k] for k in keys}}
@@ -66,6 +73,10 @@ def architecture(config):
 
 def trials(root):
     root = Path(root)
+    environment = (root / "environment.txt").read_text().strip() if (root / "environment.txt").exists() else "connect4cnn"
+    if environment not in ("connect4cnn", "pongcnn"):
+        raise ValueError("Unsupported pixel environment")
+    reference = (root / "variant.txt").read_text().strip() if (root / "variant.txt").exists() else None
     log = root / "sweep.log"
     if not log.exists():
         return []
@@ -77,7 +88,7 @@ def trials(root):
             observed[int(i)] = dict(score=float(score), cost=float(cost), steps=int(float(steps)),
                                     random=int(random), gp_obs=int(gp), pareto=int(pareto))
     result = []
-    for path in sorted((root / "metrics/connect4cnn").glob("*.ini")):
+    for path in sorted((root / "metrics" / environment).glob("*.ini")):
         index = int(path.stem.rsplit("_", 1)[1])
         if index not in observed:
             continue
@@ -85,12 +96,12 @@ def trials(root):
         if not all(math.isfinite(final[k]) for k in ("score", "cost", "steps")) or final["cost"] <= 0:
             raise ValueError(f"Invalid final observation: {path}")
         ini = read_ini(path)
-        if not ini.has_section("metrics") or ini.get("base", "env_name") != "connect4cnn":
+        if not ini.has_section("metrics") or ini.get("base", "env_name") != environment:
             raise ValueError(f"Invalid completed native log: {path}")
         config = {f"{s}.{k}": scalar(v) for s in ini.sections() if s != "metrics" for k, v in ini[s].items()}
-        spec = architecture(config)
+        spec = architecture(config, reference)
         identity = hashlib.sha256(json.dumps(spec, sort_keys=True).encode()).hexdigest()
-        checkpoint = root / "checkpoints/connect4cnn" / path.stem / f"{final['steps']:016d}.bin"
+        checkpoint = root / "checkpoints" / environment / path.stem / f"{final['steps']:016d}.bin"
         if not checkpoint.is_file() or checkpoint.stat().st_size % 4:
             raise ValueError(f"Missing or malformed final checkpoint: {checkpoint}")
         columns = {k: [float(x) for x in v.split(",")] for k, v in ini["metrics"].items()}
@@ -103,7 +114,12 @@ def trials(root):
                 if 0 <= j < len(values) and math.isfinite(values[j]):
                     row[key] = values[j]
             history.append(row)
-        result.append(dict(index=index, run_id=path.stem, config=config, architecture=spec,
+        evaluation = root / "evaluations" / (path.stem + ".json")
+        evaluation = json.loads(evaluation.read_text()) if evaluation.exists() else None
+        if evaluation:
+            if evaluation["checkpoint_sha256"] != hashlib.sha256(checkpoint.read_bytes()).hexdigest():
+                raise ValueError("Evaluation checkpoint does not match completed trial")
+        result.append(dict(index=index, run_id=path.stem, config=config, architecture=spec, evaluation=evaluation,
                            representation=config.get("env.representation", 0),
                            architecture_sha256=identity, checkpoint=str(checkpoint.relative_to(root)),
                            checkpoint_sha256=hashlib.sha256(checkpoint.read_bytes()).hexdigest(),
@@ -130,10 +146,10 @@ def sync(root, mode, project, entity=None, client=None):
         (payloads / f"{run_id}.json").write_text(content)
         if isinstance(state.get(run_id), dict) and state[run_id].get("schema") == SCHEMA:
             continue
-        wandb_id = hashlib.sha256(f"{root.name}/{run_id}".encode()).hexdigest()[:24]
+        wandb_id = hashlib.sha256(f"{campaign_key(root)}/{run_id}".encode()).hexdigest()[:24]
         if mode != "disabled":
             run = client.init(project=project, entity=entity, id=wandb_id, name=display_name(root, trial["index"]),
-                              group=root.name, mode=mode, dir=str(payloads), config=trial["config"],
+                              group=campaign_key(root), mode=mode, dir=str(payloads), config=trial["config"],
                               resume="allow" if mode == "online" else None,
                               settings=client.Settings(console="off", disable_git=True, x_disable_stats=True))
             try:
@@ -142,6 +158,10 @@ def sync(root, mode, project, entity=None, client=None):
                 run.define_metric("binned/*", hidden=True)
                 for row in trial["history"]:
                     run.log(row, step=row["agent_steps"])
+                if trial.get("evaluation"):
+                    run.log({"agent_steps": trial["steps"], "eval/perf": trial["evaluation"]["perf"],
+                             "eval/score": trial["evaluation"]["score"], "eval/games": trial["evaluation"]["games"]},
+                            step=trial["steps"])
                 for key in list(run.summary.keys()):
                     if key.startswith("binned/"):
                         del run.summary[key]
