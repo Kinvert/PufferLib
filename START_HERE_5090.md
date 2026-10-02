@@ -4,7 +4,7 @@ This file is the complete starting brief for an agent or person with **no prior 
 
 ## What we are doing
 
-**Current task, September 15:** follow [NEXT_5090_VALIDATION.md](NEXT_5090_VALIDATION.md). Validate deterministic mixed appearances on Connect4CNN/PongCNN using the bounded native canary. The original hardware comparison and Pong replication/profile tasks are completed; their commands below are historical reproduction instructions, not instructions to repeat them now. The planned full-frontier confirmation still needs measurement/evaluation/inference gates before launch.
+**Current task, September 29:** follow [NEXT_5090_FLEX2_SWEEP.md](NEXT_5090_FLEX2_SWEEP.md). Validate expanded encoder 5, run bounded native canaries, and then search two controlled architecture panels on this RTX 5090. The appearance task in [NEXT_5090_VALIDATION.md](NEXT_5090_VALIDATION.md), the hardware comparison, and the Pong campaigns are historical context; their launch commands below are not instructions to repeat them. The planned full-frontier confirmation still needs separate measurement/evaluation/inference gates.
 
 We are researching efficient pixel-input CNNs in native PufferLib 5.0. Compare our existing quality CNN with adapted Nature, IMPALA and Impoola. All models train from scratch; none is pretrained. Keep the full observed frontier and identical per-panel learner settings; preserve outcomes where references win.
 

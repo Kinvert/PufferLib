@@ -200,3 +200,6 @@ resources/trailer/shots/*.mp4
 .refactor-snapshots/
 
 vendor/fast-nle/
+
+# Local unattended agent policy (machine-local trust settings)
+.omp/

@@ -6,7 +6,14 @@ On September 12, the checkout was fast-forwarded eight commits to `89414204ce850
 
 ## Start here
 
-- [Current 5090 validation task](../NEXT_5090_VALIDATION.md): deterministic mixed appearances, bounded native canary and remaining exact-evaluation gates; historical campaigns must not be relaunched.
+- [Small native pixel environment candidates](NATIVE_PIXEL_ENV_CANDIDATES.md): source-based ranking and the selected direct-buffer FlappyCNN task; [implementation and canary](../ocean/flappycnn/README.md).
+- [FlappyCNN stock-learner pilots](FLAPPY_STOCK_PILOT.md): fixed quality pixels and original stock state, stock Flappy learner/environment settings and 20M requested decisions each on the 5060; completed/audited outside the sandbox, with [state/pixel comparison receipts](results/flappycnn/stock-pilot.tgKBYrNs/REPORT.md).
+
+- [Pixel-space game-frame pretraining design](PIXEL_PRETRAINING_DATASET_PLAN.md): exact frame-aligned boxes/masks, native annotation path, data splits and scratch controls. Research only; no dataset generated.
+- [Expanded native CNN grammar](FLEX2_CNN_SWEEP.md): encoder 5, dilation, four stages, adaptive readout, fixed/learned activations and duplicate avoidance. Build passes; GPU validation pending.
+- [September 26 literature refresh](ENCODER_RESEARCH_20260926.md): Hadamax, Aftab, learned rational activations, OCAtari and temporal pretraining, with scope and next experiments.
+
+- [Current 5090 encoder-5 handoff](../NEXT_5090_FLEX2_SWEEP.md): GPU math/reload gates and two bounded architecture-search panels. [Earlier appearance validation](../NEXT_5090_VALIDATION.md) is historical context; completed campaigns must not be relaunched.
 
 - [Complete 5090 session handoff](../START_HERE_5090.md): context and executable checklist from fresh clone through tests, training, tables and evidence transfer.
 

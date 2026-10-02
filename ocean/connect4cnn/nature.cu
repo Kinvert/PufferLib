@@ -6,16 +6,18 @@ struct NatureLayer {
     int ih, iw, ci, co, k, stride, oh, ow;
 };
 
+static constexpr int NATURE_MAX_LAYERS = 24;
+
 struct NatureWeights {
-    NatureLayer layer[12];
-    Prec weight[12], bias[12];
+    NatureLayer layer[NATURE_MAX_LAYERS];
+    Prec weight[NATURE_MAX_LAYERS], bias[NATURE_MAX_LAYERS];
     int count;
 };
 
 struct NatureActivations {
-    Prec patches[12], output[12], grad_output[12], grad_patches[12];
-    Prec weight_grad[12], bias_grad[12];
-    Int winner[12]; // Used only by the flexible family's max-pool layers.
+    Prec patches[NATURE_MAX_LAYERS], output[NATURE_MAX_LAYERS], grad_output[NATURE_MAX_LAYERS], grad_patches[NATURE_MAX_LAYERS];
+    Prec weight_grad[NATURE_MAX_LAYERS], bias_grad[NATURE_MAX_LAYERS];
+    Int winner[NATURE_MAX_LAYERS]; // Used only by the flexible family's max-pool layers.
 };
 
 __global__ void nature_im2col(const precision_t* input, precision_t* patches,

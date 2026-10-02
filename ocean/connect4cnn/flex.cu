@@ -7,30 +7,30 @@ struct FlexWeights {
 };
 
 __global__ void flex_patches(const precision_t* input, precision_t* patches,
-        NatureLayer d, int B, int ph, int pw) {
+        NatureLayer d, int B, int ph, int pw, int dilation = 1) {
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
     int K = d.k * d.k * d.ci;
     if (idx >= B * d.oh * d.ow * K) return;
     int q = idx % K, p = idx / K;
-    int y = (p / d.ow) % d.oh * d.stride + q / (d.k * d.ci) - ph;
-    int x = p % d.ow * d.stride + (q / d.ci) % d.k - pw;
+    int y = (p / d.ow) % d.oh * d.stride + q / (d.k * d.ci) * dilation - ph;
+    int x = p % d.ow * d.stride + (q / d.ci) % d.k * dilation - pw;
     patches[idx] = y >= 0 && y < d.ih && x >= 0 && x < d.iw
         ? input[((int64_t)(p / (d.oh * d.ow)) * d.ih * d.iw + y * d.iw + x) * d.ci + q % d.ci]
         : from_float(0.0f);
 }
 
 __global__ void flex_unpatch(const precision_t* patches, precision_t* grad,
-        NatureLayer d, int B, int ph, int pw) {
+        NatureLayer d, int B, int ph, int pw, int dilation = 1) {
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
     if (idx >= B * d.ih * d.iw * d.ci) return;
     int c = idx % d.ci, x = (idx / d.ci) % d.iw;
     int y = (idx / (d.ci * d.iw)) % d.ih, b = idx / (d.ci * d.iw * d.ih);
     float sum = 0;
     for (int ky = 0; ky < d.k; ky++) {
-        int oy = y + ph - ky;
+        int oy = y + ph - ky * dilation;
         if (oy < 0 || oy % d.stride || oy / d.stride >= d.oh) continue;
         for (int kx = 0; kx < d.k; kx++) {
-            int ox = x + pw - kx;
+            int ox = x + pw - kx * dilation;
             if (ox < 0 || ox % d.stride || ox / d.stride >= d.ow) continue;
             int64_t row = ((int64_t)b * d.oh + oy / d.stride) * d.ow + ox / d.stride;
             sum += to_float(patches[row * d.k * d.k * d.ci + (ky * d.k + kx) * d.ci + c]);

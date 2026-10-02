@@ -43,6 +43,16 @@ These configs already exist in this checkout and are practical to run on a singl
 
 Sources: [Procgen paper](https://arxiv.org/abs/1912.01588), [official Procgen implementation](https://github.com/openai/procgen), [Cleanba](https://arxiv.org/abs/2310.00036), [BBF](https://arxiv.org/abs/2305.19452), [POPGym Arcade](https://arxiv.org/abs/2503.01450), [Memory Gym](https://arxiv.org/abs/2309.17207), [DrQ-v2](https://arxiv.org/abs/2107.09645). These are complementary protocols, not interchangeable leaderboard entries.
 
+## Current native pixel development panel (September 26, 2026)
+
+| Task | Pixel path | Evidence status |
+|---|---|---|
+| [Connect4CNN](../ocean/connect4cnn/README.md) | Direct in-memory board/glyph rasterization | GPU learning/confirmation evidence exists; quality advantage over Nature remains uncertain |
+| [PongCNN](../ocean/pongcnn/README.md) | Direct in-memory court rectangles and score bars | GPU learning/replication exists; recipe dependence and pooled-evaluation limitations remain |
+| [FlappyCNN](../ocean/flappycnn/README.md) | Direct in-memory pipes/bird rectangles | Single-seed stock-learner pilots: quality pixels 56.12s / 355K process SPS / 52.25 pipes; original stock state 9.73s / 2.048M SPS / 48.53 pipes; other CNN baselines pending |
+
+These are native PufferLib development tasks, not original ALE/Procgen score protocols. [Candidate ranking and next gates](NATIVE_PIXEL_ENV_CANDIDATES.md) explain the third task's selection. None requires a graphics context to generate policy images. This panel is separate from the state-environment inventory above.
+
 ## Full Procgen game catalog
 
 Here, **Procgen means the specific original 16-game benchmark**, not procedurally generated environments in general. All games use 64×64 RGB observations. The descriptions below summarize the [official game catalog](https://github.com/openai/procgen#environments); pilot selection is our proposal.

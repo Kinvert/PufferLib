@@ -2689,6 +2689,14 @@ void run_sweep(Ini* ini, const char* exe_path) {
     int next_run_id = 0;
     int completed = 0;
     int active = 0;
+#if defined(PUFFER_CONNECT4CNN) || defined(PUFFER_PONGCNN) || defined(PUFFER_FLAPPYCNN)
+    DictItem* sweep_encoder = dict_find(puf_ini_section(ini, "policy", 0), "encoder");
+    int deduplicate = sweep_encoder && sweep_encoder->value == 5;
+    assert(!deduplicate || parallel == 1);
+    uint64_t* trial_hashes = deduplicate ? (uint64_t*)calloc(max_runs + 1001, sizeof(uint64_t)) : NULL;
+    assert(!deduplicate || trial_hashes);
+    int hash_count = 0;
+#endif
     // Free-list: slot i owns GPUs [i*train_gpus, (i+1)*train_gpus). Refill as
     // soon as any trial exits (waitpid -1), so finished GPUs are never idle
     // while more runs remain.
@@ -2716,6 +2724,37 @@ void run_sweep(Ini* ini, const char* exe_path) {
                 info = protein_sweep_suggest(protein, samples, NAN);
             }
 
+            // Resolve discrete/conditional architecture choices before launching.
+            // This opt-in encoder path leaves ordinary PufferLib sweeps unchanged.
+            int attempts = 0;
+            for (;;) {
+                for (int p = 0; p < space->num; p++) {
+                    float val = space_unnormalize(&space->spaces[p], samples[p]);
+                    char buf[64], key[256];
+                    snprintf(buf, sizeof(buf), "%.9g", val);
+                    snprintf(key, sizeof(key), "%s.%s", params[p].section, params[p].key);
+                    puf_ini_put(ini, key, buf);
+                }
+#if defined(PUFFER_CONNECT4CNN) || defined(PUFFER_PONGCNN) || defined(PUFFER_FLAPPYCNN)
+                if (deduplicate) {
+                    uint64_t hash = flex2_trial_hash(ini);
+                    int duplicate = 0;
+                    for (int j = 0; j < hash_count; j++) duplicate |= trial_hashes[j] == hash;
+                    if (duplicate) {
+                        if (++attempts >= 256) {
+                            fprintf(stderr, "encoder 5 exhausted unique suggestions; stopped before duplicate training\n");
+                            exit(1);
+                        }
+                        info = protein_sweep_suggest(protein, samples, NAN);
+                        continue;
+                    }
+                    assert(hash_count < max_runs + 1001);
+                    trial_hashes[hash_count++] = hash;
+                    printf("sweep architecture=%016llx rejected_duplicates=%d\n", (unsigned long long)hash, attempts);
+                }
+#endif
+                break;
+            }
             SweepJob job = {
                 .run = next_run_id++,
                 .random = info.is_random,
@@ -2725,15 +2764,6 @@ void run_sweep(Ini* ini, const char* exe_path) {
             };
             memcpy(job.sample, samples, space->num * sizeof(float));
 
-            for (int p = 0; p < space->num; p++) {
-                float val = space_unnormalize(&space->spaces[p], samples[p]);
-                char buf[64];
-                snprintf(buf, sizeof(buf), "%.9g", val);
-                char key[256];
-                snprintf(key, sizeof(key), "%s.%s",
-                    params[p].section, params[p].key);
-                puf_ini_put(ini, key, buf);
-            }
             char run_id[128];
             snprintf(run_id, sizeof(run_id), "sweep_%ld_%04d",
                 (long)(1000.0 * wall_clock()), job.run);
@@ -2834,6 +2864,9 @@ void run_sweep(Ini* ini, const char* exe_path) {
             job->random, job->gp_obs, job->pareto);
         completed++;
     }
+#if defined(PUFFER_CONNECT4CNN) || defined(PUFFER_PONGCNN) || defined(PUFFER_FLAPPYCNN)
+    free(trial_hashes);
+#endif
 }
 
 // Sweep objective: bare names → env/<name>; keys with '/' used as-is.

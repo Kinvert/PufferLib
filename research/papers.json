@@ -23,5 +23,11 @@
   {"slug":"popgym-arcade", "arxiv":"2503.01450v8", "group":"evaluation"},
   {"slug":"memory-gym", "arxiv":"2309.17207v6", "group":"evaluation"},
   {"slug":"ale-protocols", "arxiv":"1709.06009v2", "group":"evaluation"},
-  {"slug":"popgym", "arxiv":"2303.01859v1", "group":"evaluation"}
+  {"slug":"popgym", "arxiv":"2303.01859v1", "group":"evaluation"},
+  {"slug":"ocatari", "arxiv":"2306.08649v2", "group":"pretraining"},
+  {"slug":"sgi-pretraining", "arxiv":"2106.04799v1", "group":"pretraining"},
+  {"slug":"rational-activations", "arxiv":"2102.09407v5", "group":"activation"},
+  {"slug":"constrained-rational", "title":"Balancing Expressivity and Robustness: Constrained Rational Activations for Reinforcement Learning", "year":2026, "group":"activation", "url":"https://proceedings.mlr.press/v330/surdej26a.html", "pdf":"https://raw.githubusercontent.com/mlresearch/v330/main/assets/surdej26a/surdej26a.pdf"},
+  {"slug":"hadamax", "arxiv":"2505.15345v2", "group":"encoder"},
+  {"slug":"aftab", "arxiv":"2608.07335v3", "group":"encoder"}
 ]

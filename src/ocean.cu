@@ -26,10 +26,11 @@ void puf_normal_init(Prec* dst, float std, ulong seed, cudaStream_t stream) {
 #ifdef PUFFER_ASTEROIDS
 #include "../ocean/asteroids/asteroids.cu"
 #endif
-#if defined(PUFFER_CONNECT4CNN) || defined(PUFFER_PONGCNN)
+#if defined(PUFFER_CONNECT4CNN) || defined(PUFFER_PONGCNN) || defined(PUFFER_FLAPPYCNN)
 #include "../ocean/connect4cnn/cnn.cu"
 #include "../ocean/connect4cnn/nature.cu"
 #include "../ocean/connect4cnn/flex.cu"
+#include "../ocean/connect4cnn/flex2.cu"
 #if defined(C4_IMPALA_CNN) || defined(C4_IMPOOLA_CNN)
 #include "../ocean/connect4cnn/impala.cu"
 #elif !defined(C4_NATURE_CNN)
@@ -82,7 +83,7 @@ static void create_custom_encoder(Encoder* enc, Dict* policy = NULL) {
 #endif
 #elif defined(PUFFER_ASTEROIDS)
     create_asteroids_encoder(enc);
-#elif defined(PUFFER_CONNECT4CNN) || defined(PUFFER_PONGCNN)
+#elif defined(PUFFER_CONNECT4CNN) || defined(PUFFER_PONGCNN) || defined(PUFFER_FLAPPYCNN)
     DictItem* type = policy ? dict_find(policy, "encoder") : NULL;
     if (type && type->value == 1) {
         c4_cnn::create_connect4_encoder(enc);
@@ -93,8 +94,10 @@ static void create_custom_encoder(Encoder* enc, Dict* policy = NULL) {
         create_compact_encoder(enc, policy);
     } else if (type && type->value == 4) {
         create_flex_encoder(enc, policy);
+    } else if (type && type->value == 5) {
+        create_flex2_encoder(enc, policy);
     } else {
-        assert((!type || type->value == 0) && "unsupported Connect4CNN encoder ID");
+        assert((!type || type->value == 0) && "unsupported pixel encoder ID");
 #ifdef C4_NATURE_CNN
         create_nature_encoder(enc);
 #else

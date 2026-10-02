@@ -64,17 +64,28 @@ def architecture(config, reference=None):
         keys = ("policy.cnn_depth", "policy.cnn_projection", "policy.cnn_global_pool") + common
         keys += tuple(f"policy.cnn_{key}_{stage}" for stage in range(1, int(config["policy.cnn_depth"]) + 1)
                       for key in ("channels", "kernel", "stride", "pool", "residual"))
+    elif encoder == 5:
+        version = "connect4-flex-v2"
+        keys = ("policy.cnn_depth", "policy.cnn_projection", "policy.cnn_readout",
+                "policy.cnn_projection_activation") + common
+        keys += tuple(f"policy.cnn_{key}_{stage}" for stage in range(1, int(config["policy.cnn_depth"]) + 1)
+                      for key in ("channels", "kernel", "stride", "dilation", "activation", "pool", "residual"))
     elif encoder == 0 and reference in ("impala_cnn", "impoola_cnn"):
         version, keys = "shared-" + reference + "-v1", common
     else:
         raise ValueError("Unsupported sweep encoder")
-    return {"version": version, "observation": [1, 36, 44], **{k: config[k] for k in keys}}
+    spec = {"version": version, "observation": [1, 36, 44], **{k: config[k] for k in keys}}
+    if encoder == 5:
+        for stage in range(1, int(config["policy.cnn_depth"]) + 1):
+            if spec[f"policy.cnn_kernel_{stage}"] == 1 and spec[f"policy.cnn_residual_{stage}"] == 0:
+                spec[f"policy.cnn_dilation_{stage}"] = 1
+    return spec
 
 
 def trials(root):
     root = Path(root)
     environment = (root / "environment.txt").read_text().strip() if (root / "environment.txt").exists() else "connect4cnn"
-    if environment not in ("connect4cnn", "pongcnn"):
+    if environment not in ("connect4cnn", "pongcnn", "flappycnn"):
         raise ValueError("Unsupported pixel environment")
     reference = (root / "variant.txt").read_text().strip() if (root / "variant.txt").exists() else None
     log = root / "sweep.log"

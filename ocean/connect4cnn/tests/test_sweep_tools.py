@@ -13,6 +13,32 @@ import wandb_sidecar as sidecar
 
 
 class ToolsTest(unittest.TestCase):
+    def test_flappy_recipe_uses_flappy_physics_and_artifact_paths(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp)
+            config = sweep.prepare(out, sweep.HERE / "tests/flex_kernel.ini", 3, environment="flappycnn")
+            self.assertEqual(config.getint("env", "width"), 420)
+            self.assertEqual(config.getfloat("env", "gravity"), .45)
+            self.assertNotIn("player_pieces", config["env"])
+            self.assertEqual((out / "environment.txt").read_text().strip(), "flappycnn")
+            self.assertTrue((out / "config/flappycnn.ini").exists())
+            self.assertFalse((out / "config/connect4cnn.ini").exists())
+            self.assertEqual(config.getint("policy", "hidden_size"), 128)
+            self.assertEqual(config.getint("policy", "num_layers"), 1)
+
+    def test_flappy_rejects_connect4_only_appearance(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            recipe = sidecar.read_ini(sweep.HERE / "tests/flex_kernel.ini")
+            recipe.add_section("env")
+            recipe.set("env", "representation", "5")
+            path = root / "bad.ini"
+            with path.open("w") as f:
+                recipe.write(f)
+            out = root / "out"; out.mkdir()
+            with self.assertRaises(ValueError):
+                sweep.prepare(out, path, 3, environment="flappycnn")
+
     def test_mixed_appearance_cannot_sweep_inactive_id(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -116,6 +142,31 @@ env/perf = .1,.2
             self.assertEqual(config.getint("sweep.train.total_timesteps", "min"), 3319808)
             self.assertEqual(config.getint("sweep.train.total_timesteps", "max"), 13279232)
             self.assertEqual(config.getint("policy", "hidden_size"), 128)
+
+    def test_flex2_5090_panels_are_fixed_budget_and_bounded(self):
+        panels = (("sweep_flex2_fast.ini", 1, 7),
+                  ("sweep_flex2_stage2.ini", 2, 8))
+        for name, depth, dimensions in panels:
+            with self.subTest(recipe=name), tempfile.TemporaryDirectory() as tmp:
+                config = sweep.prepare(Path(tmp), sweep.HERE / name, None)
+                self.assertEqual(config.getint("policy", "encoder"), 5)
+                self.assertEqual(config.getint("policy", "cnn_depth"), depth)
+                self.assertEqual(sum(s.startswith("sweep.") for s in config), dimensions)
+                self.assertEqual(config.getint("train", "total_timesteps"), 13312000)
+                self.assertFalse(config.has_section("sweep.train.total_timesteps"))
+                self.assertEqual(config.getint("policy", "hidden_size"), 128)
+                self.assertEqual(config.getint("policy", "num_layers"), 1)
+                self.assertEqual(config.getint("sweep", "gpus"), 1)
+                self.assertEqual(config.getint("policy", "cnn_stride_1"), 4)
+                self.assertEqual(config.getint("sweep.policy.cnn_readout", "max"), 3)
+                if depth == 1:
+                    self.assertEqual(config.getint("sweep.policy.cnn_channels_1", "max"), 32)
+                    self.assertEqual(config.getint("sweep.policy.cnn_stride_1", "min"), 4)
+                    self.assertNotIn("cnn_channels_2", config["policy"])
+                else:
+                    self.assertEqual(config.getint("sweep.policy.cnn_channels_2", "max"), 32)
+                    self.assertEqual(config.getint("sweep.policy.cnn_kernel_2", "max"), 3)
+                    self.assertEqual(config.getint("sweep.policy.cnn_residual_2", "max"), 1)
 
     def test_nature_and_compact_recipes(self):
         configs = []

@@ -41,18 +41,48 @@ for stage in range(1, 4):
     }.items():
         LIMITS[4][f"policy.cnn_{key}_{stage}"] = bounds
 
+LIMITS[5] = {"policy.cnn_depth": ("int_uniform", {1, 2, 3, 4}),
+             "policy.cnn_projection": ("uniform_pow2", {16, 32, 64, 128}),
+             "policy.cnn_readout": ("int_uniform", {0, 1, 2, 3}),
+             "policy.cnn_projection_activation": ("int_uniform", {0, 1, 2, 3, 4})}
+for stage in range(1, 5):
+    for key, bounds in {
+        "channels": ("uniform_pow2", {8, 16, 32, 64}),
+        "kernel": ("int_uniform", set(range(1, 9 if stage == 1 else 6))),
+        "stride": ("uniform_pow2", {1, 2, 4, 8} if stage == 1 else {1, 2, 4}),
+        "dilation": ("int_uniform", {1, 2, 3, 4}),
+        "activation": ("int_uniform", {0, 1, 2, 3, 4}),
+        "pool": ("int_uniform", {0, 1, 2}),
+        "residual": ("int_uniform", {0, 1, 2}),
+    }.items():
+        LIMITS[5][f"policy.cnn_{key}_{stage}"] = bounds
+
 
 def sha(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
-def prepare(out, recipe, max_runs):
+def prepare(out, recipe, max_runs, depth=None, environment="connect4cnn"):
+    if environment not in ("connect4cnn", "pongcnn", "flappycnn"):
+        raise ValueError("Unsupported pixel environment")
     ini = read_ini(ROOT / "config/default.ini")
-    ini.read([ROOT / "config/connect4cnn.ini", HERE / "compare.ini"])
+    env_dir = ROOT / "ocean" / environment
+    ini.read([ROOT / "config" / f"{environment}.ini", env_dir / "compare.ini"])
     for section in list(ini.sections()):
         if section.startswith("sweep."):
             ini.remove_section(section)
     ini.read(recipe)
+    if depth is not None:
+        if ini.getint("policy", "encoder") != 5:
+            raise ValueError("--depth is for the expanded encoder 5")
+        ini.set("policy", "cnn_depth", str(depth))
+        ini.remove_section("sweep.policy.cnn_depth")
+    if ini.getint("policy", "encoder") == 5 and not ini.has_section("sweep.policy.cnn_depth"):
+        # An inactive coordinate must not consume GP search dimensions.
+        active = ini.getint("policy", "cnn_depth")
+        for stage in range(active + 1, 5):
+            for name in ("channels", "kernel", "stride", "dilation", "activation", "pool", "residual"):
+                ini.remove_section(f"sweep.policy.cnn_{name}_{stage}")
     dimensions = {s[6:] for s in ini.sections() if s.startswith("sweep.")}
     mode = ini.getfloat("env", "representation_mode", fallback=0)
     appearance_seed = ini.getfloat("env", "representation_seed", fallback=0)
@@ -62,7 +92,7 @@ def prepare(out, recipe, max_runs):
         raise ValueError("representation is inactive in mixed mode; do not sweep it")
     encoder = ini.getint("policy", "encoder")
     if encoder not in LIMITS or not dimensions or not dimensions <= set(LIMITS[encoder]) | {"train.total_timesteps", "env.representation"}:
-        raise ValueError("Fix encoder to 1/2/3/4 and sweep a nonempty subset of architecture/budget/representation options")
+        raise ValueError("Fix encoder to 1/2/3/4/5 and sweep a nonempty subset of architecture/budget/representation options")
     for key in list(ini["policy"]):
         if key.startswith("cnn_") and "policy." + key not in LIMITS[encoder]:
             ini.remove_option("policy", key)
@@ -75,11 +105,19 @@ def prepare(out, recipe, max_runs):
     if ini.getint("sweep", "max_runs") < 1:
         raise ValueError("max-runs must be positive")
     if ini.get("sweep", "metric") != "perf":
-        raise ValueError("Use sweep.metric=perf (training win rate)")
-    limits = {**LIMITS[encoder], "env.representation": ("int_uniform", set(range(10)))}
+        raise ValueError("Use sweep.metric=perf (environment-specific training performance)")
+    appearances = {"connect4cnn": 10, "pongcnn": 5, "flappycnn": 4}
+    limits = {**LIMITS[encoder], "env.representation": ("int_uniform", set(range(appearances[environment])))}
     for key, (distribution, allowed) in limits.items():
         section = "sweep." + key
         base_section, name = key.split(".")
+        if not ini.has_option(base_section, name):
+            stage = name.rsplit("_", 1)[-1]
+            if (encoder == 5 and stage.isdigit() and
+                    int(stage) > ini.getint("policy", "cnn_depth") and
+                    not ini.has_section(section)):
+                continue
+            raise ValueError(f"Missing fixed architecture setting: {key}")
         value = ini.getfloat(base_section, name)
         if value not in allowed:
             raise ValueError(f"Unsupported architecture default: {key}")
@@ -104,7 +142,8 @@ def prepare(out, recipe, max_runs):
     (out / "config").mkdir()
     with (out / "config/default.ini").open("w") as f:
         ini.write(f)
-    (out / "config/connect4cnn.ini").write_text("# All effective settings are in this campaign's default.ini.\n")
+    (out / "config" / f"{environment}.ini").write_text("# All effective settings are in this campaign's default.ini.\n")
+    (out / "environment.txt").write_text(environment + "\n")
     return ini
 
 
@@ -127,6 +166,8 @@ def execute(command, cwd, log, timeout):
 
 
 def write_report(out, rows, wall, status):
+    environment = (out / "environment.txt").read_text().strip() if (out / "environment.txt").exists() else "connect4cnn"
+    labels = {"connect4cnn": "Training wins", "pongcnn": "Training point fraction", "flappycnn": "Training perf (clipped pipes/20)"}
     fields = ["index", "run_id", "name", "family", "representation", "representation_mode", "representation_seed", "channels", "depth", "stride", "projection", "blocks", "global_pool", "architecture_json", "steps", "score", "cost", "native_avg_sps", "params", "random", "gp_obs", "architecture_sha256", "pareto"]
     def appearance(row):
         mode = row.get("representation_mode", 0)
@@ -148,10 +189,10 @@ def write_report(out, rows, wall, status):
         writer = csv.DictWriter(f, fieldnames=fields)
         writer.writeheader(); writer.writerows(flat)
     lines = ["# Experimental CNN native PROTEIN sweep", "", f"Status: {status}. Sweep process wall: {wall:.3f} seconds.",
-             "Same Connect4 rules and image dimensions; representation, architecture and budget follow the saved config. Learner/core recipe is locked.",
+             f"Native {environment}, image dimensions 1x36x44; representation, architecture and budget follow the saved config. Learner/core recipe is locked.",
              "Training metrics, not held-out evaluation. Cost is native adjusted uptime rounded by PROTEIN stdout; SPS = actual decisions / that cost.",
              "Training observations guide discovery; held-out evaluation and repeated seeds are required to confirm finalists. Report Pareto flags use rounded final observations within each appearance assignment (fixed ID or mixed seed); native PROTEIN still optimizes the joint search objective. CSV retains mode and seed.", "",
-             "| Run | Family | Representation | Architecture settings | Steps | Training wins | Cost s | Native avg SPS | Parameters | GP proposal | Pareto |",
+             f"| Run | Family | Representation | Architecture settings | Steps | {labels[environment]} | Cost s | Native avg SPS | Parameters | GP proposal | Pareto |",
              "|---|---|---:|---|---:|---:|---:|---:|---:|---|---|"]
     for r in flat:
         shape = ", ".join(f"{k.removeprefix('policy.cnn_')}={v}" for k, v in json.loads(r["architecture_json"]).items() if k.startswith("policy.cnn_")) or "fixed Nature"
@@ -166,18 +207,22 @@ def write_report(out, rows, wall, status):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--recipe", type=Path, default=HERE / "sweep.ini")
+    parser.add_argument("--environment", choices=("connect4cnn", "pongcnn", "flappycnn"), default="connect4cnn")
     parser.add_argument("--max-runs", type=int)
+    parser.add_argument("--depth", type=int, choices=(1, 2, 3, 4), help="Fix encoder 5 depth and omit inactive sweep dimensions")
     parser.add_argument("--timeout", type=int, default=600, help="Hard deadline for the entire sweep and its worker process group")
     parser.add_argument("--wandb", choices=("disabled", "offline", "online"), default="offline")
     parser.add_argument("--project", default="puffer-cnn")
     parser.add_argument("--entity")
     parser.add_argument("--canary", action="store_true", help="Keep the chosen family/ranges but use short 16K–64K training budgets")
+    parser.add_argument("--prepare-only", action="store_true", help="Save resolved INIs and source receipts without building or accessing a GPU")
     args = parser.parse_args()
     if args.timeout <= 0:
         parser.error("timeout must be positive")
-    (ROOT / "build/connect4cnn").mkdir(parents=True, exist_ok=True)
-    out = Path(tempfile.mkdtemp(prefix="sweep.", dir=ROOT / "build/connect4cnn"))
-    ini = prepare(out, args.recipe.resolve(), args.max_runs)
+    build_dir = ROOT / "build" / args.environment
+    build_dir.mkdir(parents=True, exist_ok=True)
+    out = Path(tempfile.mkdtemp(prefix="sweep.", dir=build_dir))
+    ini = prepare(out, args.recipe.resolve(), args.max_runs, args.depth, args.environment)
     if args.canary:
         ini.set("train", "total_timesteps", "32768")
         if ini.has_section("sweep.train.total_timesteps"):
@@ -188,6 +233,9 @@ def main():
     print(f"Sweep: {out}", flush=True)
     sources = [ROOT / "build.sh", ROOT / "config/default.ini", ROOT / "config/connect4cnn.ini",
                *sorted((ROOT / "src").glob("*")), *sorted(HERE.glob("*"))]
+    if args.environment != "connect4cnn":
+        sources += [ROOT / "config" / f"{args.environment}.ini", *sorted((ROOT / "ocean" / args.environment).glob("*"))]
+        sources += sorted((ROOT / "ocean" / args.environment / "tests").glob("*"))
     sources = [p for p in sources if p.is_file()]
     sources += sorted((HERE / "tests").glob("*.cu")) + sorted((HERE / "tests").glob("*.py"))
     for source in sources:
@@ -200,12 +248,17 @@ def main():
                     config_sha256=sha(out / "config/default.ini"),
                     dimensions=sorted(s[6:] for s in ini.sections() if s.startswith("sweep.")),
                     max_runs=ini.getint("sweep", "max_runs"), timeout=args.timeout)
+    protocol["environment"] = args.environment
     binary = out / "cnn"
-    build = ["bash", "build.sh", "connect4cnn", str(binary), "--float"]
+    build = ["bash", "build.sh", args.environment, str(binary), "--float"]
     command = [str(binary), "sweep", "--headless"]
     protocol.update(build_command=build, sweep_command=command, sweep_cwd=str(out))
+    protocol["status"] = "prepared"
     (out / "protocol.json").write_text(json.dumps(protocol, indent=2) + "\n")
-    execute(["/usr/lib/wsl/lib/nvidia-smi"], ROOT, out / "gpu.txt", 20)
+    if args.prepare_only:
+        print(f"Prepared only: {out / 'protocol.json'}", flush=True)
+        return
+    execute(["bash", "-c", 'source ocean/connect4cnn/runtime_env.sh; smi=$(puffer_find_nvidia_smi) && puffer_require_idle_gpu "$smi" && "$smi"'], ROOT, out / "gpu.txt", 20)
     execute(build, ROOT, out / "build.log", 300)
     protocol["binary_sha256"] = sha(binary)
     protocol.update(wandb_mode=args.wandb, wandb_project=args.project, wandb_entity=args.entity,
