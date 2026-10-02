@@ -1,0 +1,1 @@
+cp flex_quality.bin nature_cnn.bin; Nature selected by policy.encoder=2

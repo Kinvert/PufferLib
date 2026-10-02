@@ -1,0 +1,1 @@
+env NVCC_PREPEND_FLAGS=-DC4_IMPOOLA_CNN bash build.sh flappycnn /home/claude/cnn/build/flappycnn/canary.fn3qdTXH/impoola_cnn.bin --float 

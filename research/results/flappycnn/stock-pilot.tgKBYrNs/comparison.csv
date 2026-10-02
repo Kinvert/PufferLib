@@ -1,0 +1,3 @@
+model,environment,hidden_size,num_layers,train_seed,requested_steps,actual_steps,parameters,process_train_seconds,process_sps,native_uptime_seconds,native_avg_sps,eval_seed,eval_requested_episodes,eval_completed_episodes,eval_mean_pipes,eval_clipped_perf,process_eval_seconds
+stock_state,flappy,64,2,73,20000000,19922944,25152,9.73,2047579.0339157244,8.79609990119934,2264974.730139607,10073,256,266,48.533836,0.947180,12.36
+quality_cnn,flappycnn,128,1,73,20000000,19922944,160096,56.12,355006.12972202426,55.09379196166992,361618.674094186,10073,256,257,52.252918,0.975875,14.06

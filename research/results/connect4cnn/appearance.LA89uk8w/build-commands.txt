@@ -1,0 +1,8 @@
+bash build.sh connect4cnn /home/keith/Git/ml/cnn-5090/build/appearance-validation-c49ad33e/build/connect4cnn/appearance.LA89uk8w/connect4cnn/flex_quality/train --float 
+env NVCC_PREPEND_FLAGS=-DC4_NATURE_CNN bash build.sh connect4cnn /home/keith/Git/ml/cnn-5090/build/appearance-validation-c49ad33e/build/connect4cnn/appearance.LA89uk8w/connect4cnn/nature_cnn/train --float 
+env NVCC_PREPEND_FLAGS=-DC4_IMPALA_CNN bash build.sh connect4cnn /home/keith/Git/ml/cnn-5090/build/appearance-validation-c49ad33e/build/connect4cnn/appearance.LA89uk8w/connect4cnn/impala_cnn/train --float 
+env NVCC_PREPEND_FLAGS=-DC4_IMPOOLA_CNN bash build.sh connect4cnn /home/keith/Git/ml/cnn-5090/build/appearance-validation-c49ad33e/build/connect4cnn/appearance.LA89uk8w/connect4cnn/impoola_cnn/train --float 
+bash build.sh pongcnn /home/keith/Git/ml/cnn-5090/build/appearance-validation-c49ad33e/build/connect4cnn/appearance.LA89uk8w/pongcnn/flex_quality/train --float 
+env NVCC_PREPEND_FLAGS=-DC4_NATURE_CNN bash build.sh pongcnn /home/keith/Git/ml/cnn-5090/build/appearance-validation-c49ad33e/build/connect4cnn/appearance.LA89uk8w/pongcnn/nature_cnn/train --float 
+env NVCC_PREPEND_FLAGS=-DC4_IMPALA_CNN bash build.sh pongcnn /home/keith/Git/ml/cnn-5090/build/appearance-validation-c49ad33e/build/connect4cnn/appearance.LA89uk8w/pongcnn/impala_cnn/train --float 
+env NVCC_PREPEND_FLAGS=-DC4_IMPOOLA_CNN bash build.sh pongcnn /home/keith/Git/ml/cnn-5090/build/appearance-validation-c49ad33e/build/connect4cnn/appearance.LA89uk8w/pongcnn/impoola_cnn/train --float 

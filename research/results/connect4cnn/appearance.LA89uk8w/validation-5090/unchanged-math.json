@@ -1,0 +1,7 @@
+{
+  "src/algo.cu": "96830389a720ac8eaa4923713e3212e7b010caebd61773513e6fb8603660ef3a",
+  "ocean/connect4cnn/cnn.cu": "d8413b2c7ae72d4e0d08fb63188affa3e1f72fe1d61427d6646ce3bc6d709745",
+  "ocean/connect4cnn/nature.cu": "92096f104e8e6c021e24581de075b20e493772f13cf19df1a8367747c066950e",
+  "ocean/connect4cnn/flex.cu": "477cb646c1dcc03f9c61b81480fa8df3ee7fa43f211ac3b9dfef85b00040ba73",
+  "ocean/connect4cnn/impala.cu": "16775e05607f521229d09b9c869190e008f65e4530983ddb22b12e25af74455e"
+}

@@ -1,0 +1,30 @@
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0               🐡 GPU:  11%   VRAM:   5.1/31G    RAM:  0.5G     │
+│                                                                              │
+│ Env         connect4cnn    Evaluate       80ms  59%    Losses       1.217    │
+│ Params           270.5K      Model        62ms  45%    policy       0.452    │
+│ Steps              2.0K      Env          16ms  11%    value        0.153    │
+│ SPS               15.1K      Copy          2ms   1%    entropy      1.939    │
+│ Epoch                 1    Train          55ms  40%    old_kl      -0.000    │
+│ Uptime            135ms      Model        55ms  40%    kl           0.000    │
+│ To go             947ms      Misc          0ms   0%    clipfrac     0.000    │
+│                                                                              │
+│ perf                          0.000   score                        -0.964    │
+│ episode_return               -0.964   episode_length                6.611    │
+│ invalids                      0.040                                          │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0              🐡  GPU:  11%   VRAM:   5.1/31G    RAM:  0.5G     │
+│                                                                              │
+│ Env         connect4cnn    Evaluate      217ms  37%    Losses       1.161    │
+│ Params           270.5K      Model        87ms  14%    policy       0.440    │
+│ Steps             16.4K      Env         110ms  18%    value        0.144    │
+│ SPS               24.3K      Copy         18ms   3%    entropy      1.938    │
+│ Epoch                 8    Train         370ms  62%    old_kl      -0.000    │
+│ Uptime            725ms      Model       369ms  62%    kl           0.000    │
+│ To go               0ms      Misc          0ms   0%    clipfrac     0.000    │
+│                                                                              │
+│ perf                          0.000   score                        -0.963    │
+│ episode_return               -0.963   episode_length                6.644    │
+│ invalids                      0.037                                          │
+╰──────────────────────────────────────────────────────────────────────────────╯

@@ -1,0 +1,1 @@
+/home/claude/cnn/build/flappycnn/stock-pilot.DN7C2JF6/train train --headless --train.gpus=1 --base.run_id=bright-bird-1 --base.checkpoint_dir=/home/claude/cnn/build/flappycnn/stock-pilot.DN7C2JF6/checkpoints --base.log_dir=/home/claude/cnn/build/flappycnn/stock-pilot.DN7C2JF6/metrics --base.checkpoint_interval=8 --base.eval_episodes=0 

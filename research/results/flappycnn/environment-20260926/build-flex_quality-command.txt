@@ -1,0 +1,1 @@
+bash build.sh flappycnn /home/claude/cnn/build/flappycnn/canary.fn3qdTXH/flex_quality.bin --float 

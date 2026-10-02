@@ -1,0 +1,1 @@
+/home/claude/cnn/build/flappycnn/stock-pilot.tgKBYrNs/train eval --headless --train.gpus=1 --base.seed=10073 --base.eval_episodes=256 --base.eval_agents=64 --base.load_model_path=/home/claude/cnn/build/flappycnn/stock-pilot.tgKBYrNs/checkpoints/flappy/bright-bird-1/0000000019922944.bin 

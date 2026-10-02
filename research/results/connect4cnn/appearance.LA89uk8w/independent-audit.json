@@ -1,0 +1,194 @@
+{
+  "status": "passed",
+  "training_runs": 16,
+  "evaluations": 16,
+  "finite_checkpoints": 32,
+  "paired_checkpoint_comparisons": 16,
+  "identical_evaluation_pairs": 8,
+  "pairs": [
+    {
+      "game": "connect4cnn",
+      "model": "flex_quality",
+      "parameters": 160736,
+      "checkpoint_hashes": [
+        "181aa9765409aed5dfbdd96db59ccc731e2519f2051119b492dab9416c721c1c",
+        "0335a5ab85c5bd7ac73295cf9d2aafd105d5c21a230f7aef36731edde28ce386"
+      ],
+      "evaluation": "CUDA_EVAL env=connect4cnn score=-0.948276 perf=0.000000 games=290 params=160736",
+      "configuration_differences": [
+        "base.checkpoint_dir",
+        "base.log_dir",
+        "vec.num_threads"
+      ],
+      "train_seconds": [
+        0.58,
+        0.43
+      ],
+      "eval_seconds": [
+        0.33,
+        0.33
+      ]
+    },
+    {
+      "game": "connect4cnn",
+      "model": "nature_cnn",
+      "parameters": 138528,
+      "checkpoint_hashes": [
+        "e6a6b4e2f6b9f01722a13bdc66287a94b8c745ea72d015b3799927713f88372a",
+        "0fbd7813e7b046c7b18d55fef85b48d960c5a964fe71139218591c24792117b3"
+      ],
+      "evaluation": "CUDA_EVAL env=connect4cnn score=-0.949495 perf=0.000000 games=297 params=138528",
+      "configuration_differences": [
+        "base.checkpoint_dir",
+        "base.log_dir",
+        "vec.num_threads"
+      ],
+      "train_seconds": [
+        0.5,
+        0.42
+      ],
+      "eval_seconds": [
+        0.35,
+        0.33
+      ]
+    },
+    {
+      "game": "connect4cnn",
+      "model": "impala_cnn",
+      "parameters": 270496,
+      "checkpoint_hashes": [
+        "4849636d48da901534a2f31e34ecbd6a83e3acaaf3ab8efa0c5c397e7e7d1fbf",
+        "b38fac6c300a947810808065ed466731ca7a154c564079cb807348a457d2835f"
+      ],
+      "evaluation": "CUDA_EVAL env=connect4cnn score=-0.941368 perf=0.000000 games=307 params=270496",
+      "configuration_differences": [
+        "base.checkpoint_dir",
+        "base.log_dir",
+        "vec.num_threads"
+      ],
+      "train_seconds": [
+        1.0,
+        0.92
+      ],
+      "eval_seconds": [
+        0.39,
+        0.33
+      ]
+    },
+    {
+      "game": "connect4cnn",
+      "model": "impoola_cnn",
+      "parameters": 151712,
+      "checkpoint_hashes": [
+        "9fda283db9b14e6493040a9a1b480e43b8a7db614a74f2a73b317ed72ace7f4c",
+        "f5e3301fca09975725c9c7f7904a4a18c6ca83a616a0f85c6238cca045dd178d"
+      ],
+      "evaluation": "CUDA_EVAL env=connect4cnn score=-0.937500 perf=0.000000 games=304 params=151712",
+      "configuration_differences": [
+        "base.checkpoint_dir",
+        "base.log_dir",
+        "vec.num_threads"
+      ],
+      "train_seconds": [
+        0.99,
+        0.94
+      ],
+      "eval_seconds": [
+        0.35,
+        0.34
+      ]
+    },
+    {
+      "game": "pongcnn",
+      "model": "flex_quality",
+      "parameters": 160224,
+      "checkpoint_hashes": [
+        "b2b7ac6356f299a175098e4d70c2b532f4520b0a4b9c904f358e72a65ff907c3",
+        "d5b8671c6f9a6a981b8ff96739f0820b1db835065483ca8a0cc49abb516e2d83"
+      ],
+      "evaluation": "CUDA_EVAL env=pongcnn score=-21.000000 perf=0.000000 games=65 params=160224",
+      "configuration_differences": [
+        "base.checkpoint_dir",
+        "base.log_dir",
+        "vec.num_threads"
+      ],
+      "train_seconds": [
+        0.34,
+        0.34
+      ],
+      "eval_seconds": [
+        0.36,
+        0.35
+      ]
+    },
+    {
+      "game": "pongcnn",
+      "model": "nature_cnn",
+      "parameters": 138016,
+      "checkpoint_hashes": [
+        "db2144f117811fcb63fa2802a3b5200400941271b6e2ba1bd350df7dfea4dbfb",
+        "6479c2adc0346bc1872483d3c5e44864e7ca78d6725ff6eff928acc3350a7b19"
+      ],
+      "evaluation": "CUDA_EVAL env=pongcnn score=-21.000000 perf=0.000000 games=65 params=138016",
+      "configuration_differences": [
+        "base.checkpoint_dir",
+        "base.log_dir",
+        "vec.num_threads"
+      ],
+      "train_seconds": [
+        0.35,
+        0.35
+      ],
+      "eval_seconds": [
+        0.34,
+        0.35
+      ]
+    },
+    {
+      "game": "pongcnn",
+      "model": "impala_cnn",
+      "parameters": 269984,
+      "checkpoint_hashes": [
+        "eb2baa4fed2cb8f5c0c9e821cf7c5b28816126c68342f43f8c3110e57a7b9f3a",
+        "a7305c12d61ad54e87a5b193459460f6e5beb91b87a903c2ab1dc762142f4078"
+      ],
+      "evaluation": "CUDA_EVAL env=pongcnn score=-21.000000 perf=0.000000 games=66 params=269984",
+      "configuration_differences": [
+        "base.checkpoint_dir",
+        "base.log_dir",
+        "vec.num_threads"
+      ],
+      "train_seconds": [
+        0.88,
+        0.89
+      ],
+      "eval_seconds": [
+        0.47,
+        0.47
+      ]
+    },
+    {
+      "game": "pongcnn",
+      "model": "impoola_cnn",
+      "parameters": 151200,
+      "checkpoint_hashes": [
+        "0dafd65401591e49b199f6e436e898a4f1706b22a0b5d7be4bdd7855acfd28d1",
+        "131397b8316de4b1ba171bd6e0f512cabb0da807d775b11560b11d98a4a4e79d"
+      ],
+      "evaluation": "CUDA_EVAL env=pongcnn score=-20.984375 perf=0.000710 games=64 params=151200",
+      "configuration_differences": [
+        "base.checkpoint_dir",
+        "base.log_dir",
+        "vec.num_threads"
+      ],
+      "train_seconds": [
+        0.83,
+        0.82
+      ],
+      "eval_seconds": [
+        0.46,
+        0.44
+      ]
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0               🐡 GPU:  42%   VRAM:   5.1/31G    RAM:  0.5G     │
+│                                                                              │
+│ Env             pongcnn    Evaluate        0ms   0%    Losses                │
+│ Params           151.2K      Model         0ms   0%    policy                │
+│ Steps              2.0K      Env           0ms   0%    value                 │
+│ SPS                 0.0      Copy          0ms   0%    entropy               │
+│ Epoch                 0    Train           0ms   0%    old_kl                │
+│ Uptime             67ms      Model         0ms   0%    kl                    │
+│ To go               0ms      Misc          0ms   0%    clipfrac              │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0              🐡  GPU:  42%   VRAM:   5.1/31G    RAM:  0.5G     │
+│                                                                              │
+│ Env             pongcnn    Evaluate        0ms   0%    Losses                │
+│ Params           151.2K      Model         0ms   0%    policy                │
+│ Steps             18.4K      Env           0ms   0%    value                 │
+│ SPS                 0.0      Copy          0ms   0%    entropy               │
+│ Epoch                 0    Train           0ms   0%    old_kl                │
+│ Uptime            180ms      Model         0ms   0%    kl                    │
+│ To go               0ms      Misc          0ms   0%    clipfrac              │
+│                                                                              │
+│ perf                          0.001   score                       -20.984    │
+│ episode_return              -20.984   episode_length               10.438    │
+╰──────────────────────────────────────────────────────────────────────────────╯
+CUDA_EVAL env=pongcnn score=-20.984375 perf=0.000710 games=64 params=151200

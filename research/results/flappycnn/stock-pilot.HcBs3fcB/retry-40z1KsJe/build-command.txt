@@ -1,0 +1,1 @@
+bash build.sh flappycnn /home/claude/cnn/build/flappycnn/stock-pilot.40z1KsJe/train --float 

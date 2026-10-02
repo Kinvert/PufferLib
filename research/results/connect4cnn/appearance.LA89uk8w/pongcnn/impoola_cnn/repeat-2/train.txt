@@ -1,0 +1,26 @@
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0               🐡 GPU:  48%   VRAM:   5.1/31G    RAM:  0.5G     │
+│                                                                              │
+│ Env             pongcnn    Evaluate       66ms  58%    Losses       2.131    │
+│ Params           151.2K      Model        64ms  56%    policy       1.329    │
+│ Steps              2.0K      Env           1ms   0%    value        1.605    │
+│ SPS               18.1K      Copy          1ms   0%    entropy      1.097    │
+│ Epoch                 1    Train          47ms  41%    old_kl       0.000    │
+│ Uptime            113ms      Model        47ms  41%    kl          -0.000    │
+│ To go             793ms      Misc          0ms   0%    clipfrac     0.000    │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0              🐡  GPU:  48%   VRAM:   5.1/31G    RAM:  0.5G     │
+│                                                                              │
+│ Env             pongcnn    Evaluate      101ms  22%    Losses       1.933    │
+│ Params           151.2K      Model        86ms  19%    policy       1.251    │
+│ Steps             16.4K      Env           4ms   0%    value        1.366    │
+│ SPS               32.3K      Copy          9ms   2%    entropy      1.097    │
+│ Epoch                 8    Train         341ms  77%    old_kl       0.000    │
+│ Uptime            558ms      Model       341ms  77%    kl           0.000    │
+│ To go               0ms      Misc          0ms   0%    clipfrac     0.000    │
+│                                                                              │
+│ perf                          0.000   score                       -21.000    │
+│ episode_return              -21.000   episode_length                9.678    │
+╰──────────────────────────────────────────────────────────────────────────────╯

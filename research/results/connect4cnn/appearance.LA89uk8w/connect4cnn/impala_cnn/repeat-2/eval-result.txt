@@ -1,0 +1,1 @@
+CUDA_EVAL env=connect4cnn score=-0.941368 perf=0.000000 games=307 params=270496

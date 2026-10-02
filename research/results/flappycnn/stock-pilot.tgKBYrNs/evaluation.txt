@@ -1,0 +1,1 @@
+CUDA_EVAL env=flappy score=48.533836 perf=0.947180 games=266 params=25152

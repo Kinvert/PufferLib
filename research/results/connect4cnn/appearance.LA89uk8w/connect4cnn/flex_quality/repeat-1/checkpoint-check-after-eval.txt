@@ -1,0 +1,2 @@
+checkpoints/connect4cnn/trial/0000000000008192.bin: OK
+checkpoints/connect4cnn/trial/0000000000016384.bin: OK
