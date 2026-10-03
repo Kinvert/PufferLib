@@ -6,6 +6,10 @@ On September 12, the checkout was fast-forwarded eight commits to `89414204ce850
 
 ## Start here
 
+- [Exact evaluation and full-frontier measurement groundwork](CLAIM_PIPELINE.md): opt-in native episode accounting and completed-checkpoint timing, matched frozen preparation, artifact audits, whole curves and explicit inference gates. No new GPU run; initial synthetic uncertainty coverage is inadequate for a publication claim.
+
+- [Current potential priorities](../potential-todos.md) and [encoder-5 verification contract](FLEX2_VERIFICATION.md): independent numerical reference, boundary probes and evidence requirements; compiled locally, GPU execution pending on the 5090.
+
 - [Small native pixel environment candidates](NATIVE_PIXEL_ENV_CANDIDATES.md): source-based ranking and the selected direct-buffer FlappyCNN task; [implementation and canary](../ocean/flappycnn/README.md).
 - [FlappyCNN stock-learner pilots](FLAPPY_STOCK_PILOT.md): fixed quality pixels and original stock state, stock Flappy learner/environment settings and 20M requested decisions each on the 5060; completed/audited outside the sandbox, with [state/pixel comparison receipts](results/flappycnn/stock-pilot.tgKBYrNs/REPORT.md).
 
@@ -42,7 +46,7 @@ On September 12, the checkout was fast-forwarded eight commits to `89414204ce850
 - [Reading list](READING_LIST.md): what to read and why, with local conversions and primary sources.
 - [CNN architectures](CNN_ARCHITECTURES.md): Nature, IMPALA, pooling variants, compute accounting, and candidate designs.
 - [CUDA and scaffolding](CUDA_AND_SCAFFOLDING.md): actual PufferLib integration points, reference implementations, interchangeable candidates, and a route to native kernels.
-- [Benchmarks and sweeps](BENCHMARKS_AND_SWEEPS.md): suite comparison, all 16 Procgen games, first targets to beat, and controlled architecture experiments.
+- [Benchmarks and sweeps](BENCHMARKS_AND_SWEEPS.md): October 2 next-benchmark priorities and RGB/native integration gates, suite comparison, all 16 Procgen games, and controlled architecture experiments.
 - [Research assessment](ASSESSMENT.md): corrected assumptions, decisions, and a practical starting direction.
 - [Search log](SEARCH_LOG.md): scope of the literature search and remaining gaps.
 

@@ -1,0 +1,24 @@
+{
+  "command": [
+    "bash",
+    "build.sh",
+    "connect4cnn",
+    "/home/claude/cnn/build/connect4cnn/claim-build-oct02-v1/binaries/nature_cnn",
+    "--float"
+  ],
+  "cwd": "/home/claude/cnn",
+  "status": "ok",
+  "timeout": 600,
+  "environment": {
+    "PUFFER_CHECKPOINT_RECEIPTS": null,
+    "NVCC_ARCH": "sm_120",
+    "NVCC_EXTRA": "-DC4_NATURE_CNN",
+    "NVCC_APPEND_FLAGS": null,
+    "CUDA_HOME": "/usr/local/cuda",
+    "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+  },
+  "launch_monotonic_ns": 604610307661320,
+  "pid": 1977816,
+  "returncode": 0,
+  "end_monotonic_ns": 604618038499105
+}

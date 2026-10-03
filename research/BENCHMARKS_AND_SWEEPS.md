@@ -2,6 +2,31 @@
 
 Research notes checked 2026-09-11 (America/Los_Angeles). This document proposes experiments; no training, benchmark installation, or CUDA/system change was performed. Links to local code describe this checkout and should be checked again after upstream updates.
 
+## Next benchmark priorities (October 2, 2026)
+
+**Recommendation: original Procgen for the next external paper milestone; native Breakout for an optional small engineering extension.** Connect4CNN, PongCNN and FlappyCNN are already development tasks. Their results do not establish transfer to untouched games or broad pixel-RL superiority. The ranking below is our research judgment, not measured integration cost or throughput. This update authorizes no GPU runs or installations.
+
+| Priority | Benchmark | Evidence it could add | Main requirement or limitation |
+|---|---|---|---|
+| 1 | [Original Procgen](https://github.com/openai/procgen) | Richer visual learning and generalization to held-out procedural levels across 16 games | Support 64×64 RGB and integrate the original environment. Keep the existing proposed development panel: CoinRun, BigFish, StarPilot and Maze. A smaller initial plumbing subset does not replace that panel or establish suite-wide performance. |
+| 2 | [ALE Atari](https://ale.farama.org/) | An established external pixel benchmark with diverse game dynamics | Use original ROM environments and a pinned evaluation protocol. ALE exposes a C++ interface. Native PufferLib Pong/Breakout are separate tasks and cannot inherit ALE scores. |
+| 3 | [POPGym Arcade](https://arxiv.org/abs/2503.01450) | Paired fully/partially observable variants address Joseph's encoder-versus-memory question | Additional integration work; control the recurrent core and audit what changes between observability variants. |
+| 4 | [Memory Gym](https://arxiv.org/abs/2309.17207) | Mortar Mayhem, Mystery Path and Searing Spotlights stress retaining visual information over time | Fix finite/endless variants, difficulty and horizons. Success can depend strongly on the recurrent model, so it is not an isolated CNN measurement. |
+| 5 | [Crafter](https://github.com/danijar/crafter) | Richer 64×64 RGB survival/crafting scenes and achievement-based evaluation | Exploration and long-term credit assignment complicate identifying an encoder effect. Follow its achievement/score protocol rather than substituting raw reward. Later target. |
+| 6 | [MinAtar](https://github.com/kenjyoung/MinAtar) | Compact diagnostics across five Atari-inspired games | Its 10×10 object-specific channels already identify object classes; they are not ordinary RGB frames. Unchanged VALID Nature kernels do not fit this input. Resizing or changing kernels must be explicit and weakens direct protocol comparability. |
+
+For native development, [the source-based candidate review](NATIVE_PIXEL_ENV_CANDIDATES.md) favors **Breakout, then Snake and Maze**. Breakout can paint its ball, paddle and bricks directly into memory. Preserve original game rules, reset/life semantics and RNG, and validate the observation conversion. Its expected implementation simplicity is not a measured speed advantage. Adding more custom games alone does not replace external validation.
+
+### Groundwork before expanding the experiments
+
+1. **Generalize the image contract.** Current experiments use 1×36×44 grayscale. Specify channels, dimensions, layout, scale and preprocessing for 64×64 RGB; preserve existing inputs and revalidate every encoder on the new contract before comparisons.
+2. **Audit original Procgen's native route.** Its C++ implementation exposes the `gym3.libenv` C interface. Verify build dependencies, buffer ownership, reset/terminal behavior, seeding and headless image generation before implementing a thin adapter. The documented Python wheels target 3.7–3.10; do not assume compatibility with our Python 3.12 research venv. No working native adapter is claimed here.
+3. **Freeze development and test boundaries.** Use the four proposed development games for integration/tuning, and reserve other game identities for architecture-transfer evaluation. Held-out levels within a tuned game and entirely unseen games answer different questions. Freeze architectures before inspecting final test results.
+4. **Preserve comparison fairness.** Within each game, use the same observations, learner settings, core, precision, budgets, checkpoint cadence and seed allocation across encoders. Record any tuning allowances. Retain full curves, failures, search costs and measured wall time; do not select favorable games or checkpoints after seeing results.
+5. **Keep verification gates ahead of claims.** Existing encoder-5 GPU math/reload checks, baseline efficiency review and frontier-inference validation remain prerequisites. See [claim pipeline status](CLAIM_PIPELINE.md). No new benchmark resolves those open gates automatically.
+
+This is preparation for future exclusive-GPU experiments. No environment was installed, dataset generated, or training launched for this writeup. The external suites above have not been integrated into the current matched native CNN campaign.
+
 ## What we should optimize
 
 The practical target is **the lowest elapsed training time needed to reach a useful return, with repeatable execution and an explicitly measured resource budget**. An encoder can have fewer FLOPs and still be slower on the actual GPU. A faster encoder can also require more environment interactions to learn. Report both effects.

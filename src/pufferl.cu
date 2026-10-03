@@ -1723,16 +1723,27 @@ void puf_save_weights(PuffeRL* p, const char* path) {
     Float mw = p->policies[0].master_weights;
     int64_t nbytes = numel(mw.shape) * sizeof(float);
     char* buf = (char*)malloc(nbytes);
-    cudaMemcpy(buf, mw.data, nbytes, cudaMemcpyDeviceToHost);
+    assert(cudaMemcpy(buf, mw.data, nbytes, cudaMemcpyDeviceToHost) == cudaSuccess
+        && "failed to download weights");
     char tmp[4096];
     snprintf(tmp, sizeof(tmp), "%s.tmp.%d", path, getpid());
     FILE* fp = fopen(tmp, "wb");
     assert(fp && "failed to open weights for writing");
     assert(fwrite(buf, 1, nbytes, fp) == (size_t)nbytes
         && "failed to write weights");
-    fclose(fp);
+    assert(fclose(fp) == 0 && "failed to close weights");
     free(buf);
     assert(rename(tmp, path) == 0 && "failed to publish weights");
+    // Optional measurement receipt: visible completed file, not start-of-write.
+    const char* receipt = getenv("PUFFER_CHECKPOINT_RECEIPTS");
+    if (receipt && strcmp(receipt, "1") == 0) {
+        struct timespec now;
+        assert(clock_gettime(CLOCK_MONOTONIC, &now) == 0);
+        unsigned long long ns = (unsigned long long)now.tv_sec*1000000000 + now.tv_nsec;
+        printf("PUFFER_CHECKPOINT steps=%ld bytes=%lld monotonic_ns=%llu\n",
+            p->global_step, (long long)nbytes, ns);
+        assert(fflush(stdout) == 0 && "failed to flush checkpoint receipt");
+    }
 }
 
 void puf_load_weights_into(Float dst, Prec params,
@@ -3009,6 +3020,10 @@ static PuffeRL* eval_make(Ini* ini, TrainContext* ctx, int mode, int render) {
     return p;
 }
 
+#ifdef PUFFER_CONNECT4CNN
+#include "../ocean/connect4cnn/exact_eval.cu"
+#endif
+
 EvalResult run_eval(Ini* ini, TrainContext* ctx, int mode, int verbose,
         int render) {
     long n = puf_ini_get(ini, "base", "eval_episodes");
@@ -3595,6 +3610,10 @@ int main(int argc, char** argv) {
         run_sweep(&ini, argv[0]);
     } else if (strcmp(mode, "eval") == 0) {
         run_eval(&ini, &ctx, EVAL_SCORE, 1, render);
+#ifdef PUFFER_CONNECT4CNN
+    } else if (strcmp(mode, "eval_exact") == 0) {
+        run_connect4_exact_eval(&ini, &ctx);
+#endif
     } else if (strcmp(mode, "match") == 0) {
         run_eval(&ini, &ctx, EVAL_MATCH, 1, render);
     } else {

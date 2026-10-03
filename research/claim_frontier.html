@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Observed Connect4 frontier</title>
+<style>body{font:16px system-ui;max-width:1150px;margin:24px auto;padding:0 20px;color:#17202a}svg{width:100%;border:1px solid #ccc}select,label{margin:10px}pre{white-space:pre-wrap}#warning{background:#fff2d8;padding:14px}.legend{display:flex;gap:20px;margin:16px 0}</style>
+<h1>Complete observed Connect4 curves</h1>
+<p id="warning"></p><p>Descriptive frontier. Candidate joint uncertainty bands are uncalibrated; frontier membership frequencies do not establish superiority. Missing results remain missing.</p>
+<label>View <select id="view"><option value="mean">Complete paired-seed means</option></select></label>
+<label>Cost <select id="axis"><option value="seconds">Checkpoint completion seconds</option><option value="steps">Agent decisions</option></select></label>
+<label><input id="bands" type="checkbox">Show exploratory joint bands</label>
+<div id="legend" class="legend"></div><svg id="plot" viewBox="0 0 1100 540" role="img" aria-label="All measured checkpoint curves"></svg><pre id="detail">Hover or focus a point for details.</pre>
+<p>Lines connect chronological observations to show trajectories; intermediate trained policies were not measured. Black outlines identify nondominated observed points.</p>
+<script>
+const data=__DATA__, $=id=>document.getElementById(id), ns='http://www.w3.org/2000/svg';
+const colors={flex_quality:'#007c91',nature_cnn:'#bd5400',impala_cnn:'#8538a8',impoola_cnn:'#367a2f'};
+$('warning').textContent=`${data.purpose}: ${data.status}. ${data.points.length} observations, ${data.missing.length} missing cells, ${data.failures.length} failure records. No confirmed dominance claim.`;
+for(const seed of [...new Set(data.points.map(p=>p.seed))].sort((a,b)=>a-b)){
+ const option=document.createElement('option');option.value=seed;option.textContent='Training seed '+seed;$('view').appendChild(option);
+}
+for(const [model,color] of Object.entries(colors)){const span=document.createElement('span');span.textContent=model;span.style.color=color;$('legend').appendChild(span);}
+function draw(){
+ const mean=$('view').value==='mean',axis=$('axis').value;
+ const points=mean?data.means:data.points.filter(p=>p.seed===Number($('view').value));
+ $('plot').replaceChildren();
+ function el(tag,attrs,text){const node=document.createElementNS(ns,tag);for(const[k,v]of Object.entries(attrs))node.setAttribute(k,v);if(text!==undefined)node.textContent=text;$('plot').appendChild(node);return node;}
+ if(!points.length){el('text',{x:80,y:80},'No complete points for this view. See missing.csv and analysis.json.');return;}
+ const extents=points.map(p=>p[axis]);
+ if(mean&&$('bands').checked&&axis==='seconds')for(const p of points)if(Number.isFinite(p.time_high))extents.push(p.time_high);
+ const xmax=Math.max(...extents)*1.05,X=x=>80+x/xmax*950,Y=y=>475-y*410;
+ for(let i=0;i<=10;i++){const y=Y(i/10);el('line',{x1:80,x2:1030,y1:y,y2:y,stroke:'#e2e2e2'});el('text',{x:65,y:y+5,'text-anchor':'end'},i*10+'%');}
+ for(let i=0;i<=6;i++){const value=xmax*i/6;el('text',{x:X(value),y:500,'text-anchor':'middle'},axis==='steps'?(value/1e6).toFixed(2)+'M':value.toFixed(1));}
+ el('text',{x:500,y:530},axis==='seconds'?'Seconds until checkpoint completion':'Agent decisions');
+ for(const[model,color]of Object.entries(colors)){
+  const group=points.filter(p=>p.model===model).sort((a,b)=>a.steps-b.steps);
+  el('polyline',{points:group.map(p=>X(p[axis])+','+Y(p.win_rate)).join(' '),fill:'none',stroke:color,'stroke-width':2});
+  for(const p of group){
+   if(mean&&$('bands').checked&&p.score_low!==undefined){
+    el('line',{x1:X(p[axis]),x2:X(p[axis]),y1:Y(p.score_low),y2:Y(p.score_high),stroke:color,opacity:.35});
+    if(axis==='seconds'&&p.time_high!==null)el('line',{x1:X(p.time_low),x2:X(p.time_high),y1:Y(p.win_rate),y2:Y(p.win_rate),stroke:color,opacity:.35});
+   }
+   const edge=!points.some(q=>q[axis]<=p[axis]&&q.win_rate>=p.win_rate&&(q[axis]<p[axis]||q.win_rate>p.win_rate));
+   const dot=el('circle',{cx:X(p[axis]),cy:Y(p.win_rate),r:edge?5:3.5,fill:color,stroke:edge?'black':color,tabindex:0});
+   const details=()=>{$('detail').textContent=JSON.stringify(p,null,2);};dot.addEventListener('mouseenter',details);dot.addEventListener('focus',details);
+  }
+ }
+}
+for(const id of ['view','axis','bands'])$(id).addEventListener('change',draw);draw();
+</script></html>

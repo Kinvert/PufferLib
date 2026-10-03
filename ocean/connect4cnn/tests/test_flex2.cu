@@ -17,6 +17,61 @@ static Allocator params, acts, grads, rollout;
 static Prec input, upstream;
 static cudaStream_t test_stream;
 
+// Direct probes isolate boundary behavior from matrix multiplication rounding.
+__global__ void flex2test_function_kernel(const float* x, const float* p,
+        float* y, float* dx, float* dp, int kind, int n) {
+    int i = blockIdx.x*blockDim.x+threadIdx.x;
+    if (i < n) y[i] = flex2_function(x[i],kind,p,&dx[i],dp+12*i);
+}
+extern "C" void flex2test_activation(float* x, float* p, float* y,
+        float* dx, float* dp, int kind, int n) {
+    float *input, *coefficients, *output, *derivative, *partials;
+    CUDA_CHECK(cudaMalloc(&input,n*sizeof(float)));
+    CUDA_CHECK(cudaMalloc(&coefficients,12*sizeof(float)));
+    CUDA_CHECK(cudaMalloc(&output,n*sizeof(float)));
+    CUDA_CHECK(cudaMalloc(&derivative,n*sizeof(float)));
+    CUDA_CHECK(cudaMalloc(&partials,12*n*sizeof(float)));
+    CUDA_CHECK(cudaMemcpy(input,x,n*sizeof(float),cudaMemcpyHostToDevice));
+    CUDA_CHECK(cudaMemcpy(coefficients,p,12*sizeof(float),cudaMemcpyHostToDevice));
+    flex2test_function_kernel<<<grid_size(n),BLOCK_SIZE>>>(input,coefficients,output,derivative,partials,kind,n);
+    CUDA_CHECK(cudaGetLastError()); CUDA_CHECK(cudaDeviceSynchronize());
+    CUDA_CHECK(cudaMemcpy(y,output,n*sizeof(float),cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(dx,derivative,n*sizeof(float),cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(dp,partials,12*n*sizeof(float),cudaMemcpyDeviceToHost));
+    for (float* ptr : {input,coefficients,output,derivative,partials}) CUDA_CHECK(cudaFree(ptr));
+}
+extern "C" void flex2test_pool(float* x, float* grad, float* y, float* dx,
+        int kind, int B, int H, int W, int C, int oh, int ow) {
+    int ni = B*H*W*C, no = B*oh*ow*C;
+    float *input, *upstream, *output, *derivative; int* winner;
+    CUDA_CHECK(cudaMalloc(&input,ni*sizeof(float)));
+    CUDA_CHECK(cudaMalloc(&upstream,no*sizeof(float)));
+    CUDA_CHECK(cudaMalloc(&output,no*sizeof(float)));
+    CUDA_CHECK(cudaMalloc(&derivative,ni*sizeof(float)));
+    CUDA_CHECK(cudaMalloc(&winner,no*sizeof(int)));
+    CUDA_CHECK(cudaMemcpy(input,x,ni*sizeof(float),cudaMemcpyHostToDevice));
+    CUDA_CHECK(cudaMemcpy(upstream,grad,no*sizeof(float),cudaMemcpyHostToDevice));
+    NatureLayer d = {H,W,C,C,3,2,oh,ow};
+    if (kind == 1) {
+        assert(oh == (H+1)/2 && ow == (W+1)/2);
+        c4_cnn::imp_pool<<<grid_size(no),BLOCK_SIZE>>>(input,output,winner,B,H,W,C);
+        c4_cnn::imp_pool_grad<<<grid_size(ni),BLOCK_SIZE>>>(upstream,winner,derivative,B,H,W,C);
+    } else if (kind == 2) {
+        assert(oh == (H+1)/2 && ow == (W+1)/2);
+        flex_average<<<grid_size(no),BLOCK_SIZE>>>(input,output,d,B,false);
+        flex_average_grad<<<grid_size(ni),BLOCK_SIZE>>>(upstream,derivative,d,B,false);
+    } else {
+        assert(kind == 3);
+        flex2_adaptive<<<grid_size(no),BLOCK_SIZE>>>(input,output,d,B);
+        flex2_adaptive_grad<<<grid_size(ni),BLOCK_SIZE>>>(upstream,derivative,d,B);
+    }
+    CUDA_CHECK(cudaGetLastError()); CUDA_CHECK(cudaDeviceSynchronize());
+    CUDA_CHECK(cudaMemcpy(y,output,no*sizeof(float),cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(dx,derivative,ni*sizeof(float),cudaMemcpyDeviceToHost));
+    for (float* ptr : {input,upstream,output,derivative}) CUDA_CHECK(cudaFree(ptr));
+    CUDA_CHECK(cudaFree(winner));
+}
+
 extern "C" long flex2test_init(const char* path, int B, int hidden, ulong seed) {
     Ini ini = {}; puf_ini_load_file(&ini,path);
     cublas_init_handle(); CUDA_CHECK(cudaStreamCreate(&test_stream));

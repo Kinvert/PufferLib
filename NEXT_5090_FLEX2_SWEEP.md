@@ -1,5 +1,14 @@
 # RTX 5090 handoff: validate and search expanded native CNNs
 
+Start at [NEXT_5090_TASK.md](NEXT_5090_TASK.md) for current scope and executable
+preparation. This document supplies the detailed future architecture-search gates.
+
+October 2: GPU execution is currently deferred at Kinvert's request. Prepare and
+review only. [Measurement groundwork](research/CLAIM_PIPELINE.md) now covers the
+separate locked-model exact-evaluation/timing canary; it does not authorize
+discovery or full confirmation. The commands below are for a later scheduled
+GPU session, after the applicable validation gates.
+
 September 29, 2026. Owner: Kinvert. Work in the existing `~/Git/ml/cnn-5090` checkout. This is the current encoder-5 task. Historical hardware, Pong, and appearance campaigns are complete; preserve their source, logs, checkpoints, and unfavorable results. G240's RTX 5060 is **not** the execution host for this task.
 
 The goal is a reproducible first architecture search on Connect4CNN, not a claim that an encoder beats Nature. Encoder 5 adds 1–4 stages, configurable channels/kernel/stride/dilation/pooling/residual repetitions, four readouts, and ReLU/SiLU/GELU/learned PReLU/learned rational activations. It uses the existing native C/CUDA learner and PROTEIN optimizer. The recurrent core remains H128/L1. Read [the grammar and limitations](research/FLEX2_CNN_SWEEP.md).
@@ -46,7 +55,7 @@ bash ocean/connect4cnn/tests/build_encoder_test.sh test_nature
 .venv/bin/python ocean/connect4cnn/tests/test_flex.py --library build/connect4cnn/test_nature.so
 ```
 
-Require all cases to pass, including all five activations, parameter/coefficient finite differences, dilation, odd padding, adaptive pooling, residuals, and eager/graph repeatability. The Flex2 harness uses native GPU forwards for sampled finite differences; it does **not** provide an independent full forward reference. A failure blocks the sweep. Do not waive a failed case or switch precision.
+Require all cases to pass, including all five activations, parameter/coefficient finite differences, dilation, odd padding, adaptive pooling, residuals, and eager/graph repeatability. The October 2 harness adds an independent float64 full-forward/all-parameter-gradient oracle, 69 direct boundary/operator checks and 14 whole-encoder fixtures. Read [the verification contract](research/FLEX2_VERIFICATION.md) for preserved evidence, fixed tolerances and a fresh-report command sequence. Reports cannot be overwritten; choose a new path for a rerun. A failure blocks the sweep. Do not waive a failed case or switch precision. This strengthened suite is compiled but still awaits its first 5090 execution.
 
 Next run **one short native PROTEIN canary per panel**. Each builds the real trainer and attempts exactly three 32,768-decision trials:
 

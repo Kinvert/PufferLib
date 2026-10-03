@@ -1,5 +1,14 @@
 # Paper plan: practical compute-efficient visual RL encoders
 
+October 2 implementation update: [the measurement pipeline](CLAIM_PIPELINE.md)
+now supplies native exact-episode evaluation, completed-checkpoint timing,
+matched preparation, receipt audits and full-curve reporting. All four binaries
+compile; no new GPU execution has occurred. Runtime acceptance remains pending.
+An initial synthetic diagnostic found undercoverage in the candidate simultaneous
+bands, so publication inference and full confirmation remain blocked on further
+calibration. This result is preserved; the new software does not upgrade the
+historical evidence or establish an advantage. Current work is preparation only.
+
 Status: research plan, updated September 26, 2026. Kinvert wants usable native PufferLib software and an arXiv paper with defensible evidence. The September 26 direction resumes native architecture/activation development in parallel with the measurement gates; it does not relax those gates or authorize a new full confirmation campaign. Build first and validate math/training on an available GPU. The ordered confirmation milestones below remain required before claims; editing this plan does not launch experiments.
 
 Working title: **Practical Compute-Efficient Visual Encoders for Reinforcement Learning**. Keep the title neutral until the experiments establish the contribution. The main question is: **Can a fixed compact encoder, trained from scratch on each task, improve the score-versus-training-time tradeoff across diverse pixel environments under fair tuning and reliable evaluation?** A useful result could be a small set of budget-specific encoders; one universal winner is not a required conclusion.
@@ -9,6 +18,8 @@ The practical delivery target is the [native CNN constructor and search workflow
 Parallel development: [encoder-5 grammar](FLEX2_CNN_SWEEP.md) adds dilation, residual repetitions, spatial readout and fixed/learned activations. Its build passes; GPU acceptance checks and learning evidence are pending. [Game-frame pretraining design](PIXEL_PRETRAINING_DATASET_PLAN.md) is research only: image-space labels generated from the exact frame, no state inputs, no dataset generated. A pretrained-backbone result is a separate initialization/data/compute claim from a scratch architecture result; preserve scratch controls and account for collection/pretraining cost. The current native input remains 1x36x44 grayscale; RGB/general-resolution portability is not yet delivered.
 
 September 26 additional development task: [FlappyCNN](../ocean/flappycnn/README.md) supplies fast-path in-memory pixel generation with native Flappy rules and shared encoders. Environment parity/sanitizers and all model builds pass. The quality encoder's [single-seed stock-learner 5060 pilot](results/flappycnn/stock-pilot.DN7C2JF6/REPORT.md) demonstrates learning/reload: 19.923M decisions in 56.12 process seconds, final mean 52.25 pipes / clipped perf 0.9759. It supplies no baseline superiority or Pareto claim; current-source numerical checks, other encoders and replication remain pending. Its [selection plan](NATIVE_PIXEL_ENV_CANDIDATES.md) preserves state/pixel information differences and evaluation gates. This is another development workload, not an untouched external benchmark or a confirmation result.
+
+October 2 benchmark follow-up: [ranked targets and integration requirements](BENCHMARKS_AND_SWEEPS.md#next-benchmark-priorities-october-2-2026) prioritize original Procgen, then ALE, with POPGym Arcade/Memory Gym for the encoder/core question. Native Breakout is an optional engineering extension. Crafter and MinAtar are documented with their limitations. Preserve the proposed four-game Procgen development panel and untouched-game test boundary; no additional training is authorized by this writeup.
 
 ## Next actions — ordered implementation milestones
 

@@ -2,7 +2,19 @@
 
 This file is the complete starting brief for an agent or person with **no prior conversation context**. Work in this clone; follow [AGENTS.md](AGENTS.md). The owner is **Kinvert**. Publish only to a Kinvert-owned repository when authorized; official `PufferAI/PufferLib` is not the destination.
 
+**October 2 current entry point: [NEXT_5090_TASK.md](NEXT_5090_TASK.md).** It gives
+the first GPU-free preparation commands and the ordered future validation gates.
+Use this file's runtime/venv information as needed; the old hardware campaign
+commands in sections 4–7 below are historical and must not be relaunched.
+
 ## What we are doing
+
+**October 2 execution hold:** Kinvert currently wants groundwork without occupying
+the 5090. Do not run GPU tests, canaries or searches from the commands below now.
+Read [CLAIM_PIPELINE.md](research/CLAIM_PIPELINE.md) for the new native evaluation,
+timing and artifact-audit preparation. When GPU work is scheduled again, retain
+the encoder math/legacy/reload gates; full-frontier confirmation also requires
+inference calibration. Earlier discovery instructions are not an automatic launch.
 
 **Current task, September 29:** follow [NEXT_5090_FLEX2_SWEEP.md](NEXT_5090_FLEX2_SWEEP.md). Validate expanded encoder 5, run bounded native canaries, and then search two controlled architecture panels on this RTX 5090. The appearance task in [NEXT_5090_VALIDATION.md](NEXT_5090_VALIDATION.md), the hardware comparison, and the Pong campaigns are historical context; their launch commands below are not instructions to repeat them. The planned full-frontier confirmation still needs separate measurement/evaluation/inference gates.
 

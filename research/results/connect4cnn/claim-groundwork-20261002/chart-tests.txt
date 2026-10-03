@@ -1,0 +1,1 @@
+PASS: 12 full-range chart views and empty data; synthetic fixtures only.

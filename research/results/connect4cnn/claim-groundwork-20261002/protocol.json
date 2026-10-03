@@ -1,0 +1,383 @@
+{
+  "version": "connect4-exact-frontier-v1",
+  "purpose": "measurement_canary",
+  "status": "prepared_not_executed",
+  "confirmation_launch_allowed": false,
+  "gates_pending": [
+    "GPU exact evaluator/recurrent reset and repeatability",
+    "checkpoint receipt/cadence overhead",
+    "baseline backend audit",
+    "simultaneous inference calibration and replication freeze"
+  ],
+  "models": [
+    "flex_quality",
+    "nature_cnn",
+    "impala_cnn",
+    "impoola_cnn"
+  ],
+  "training_seeds": [
+    47001,
+    47002
+  ],
+  "steps": 65536,
+  "checkpoint_steps": [
+    32768,
+    65536
+  ],
+  "evaluation_slots": 64,
+  "precision": "float32",
+  "source_revision": "859b6dcd768a4db8c283828825e6e78f7fe25062",
+  "source_sha256": {
+    "build.sh": "3682a835ef989391b11ab53cc02bede0551b46d9302e32e2f98758d598cb879a",
+    "config/connect4cnn.ini": "a059c9812141af4389d646abc626f4e168a1e8087b08571fe3952761371ca0ab",
+    "config/default.ini": "7f493977f49f2537a59c18c2a283f062e5d6063d9e130c2d15f6be075cda1084",
+    "ocean/connect4cnn/README.md": "b415da0671fc7150b9966e17fd972611fcb0d969b2e767c63daaa8972ea14de4",
+    "ocean/connect4cnn/REPRESENTATIONS.md": "4e0dbdc475c146db4a5cd2a603b289f08971866650673dc243746692998cea27",
+    "ocean/connect4cnn/appearance.h": "b70de101af713edc6e019606613053948cfd4e364444cb209419702d6fadb140",
+    "ocean/connect4cnn/appearance_canary.sh": "765c89909a3b21340af2278c95eb396e8c9d51a5aa589608cdd0665fdb3e11e5",
+    "ocean/connect4cnn/appearance_report.py": "54ee2a15c4a0d5253aff6907e5022e70fb912f6ec7419d994c587efd525f9500",
+    "ocean/connect4cnn/claim.py": "e83b807a259dc3e5233bace77fab5f8cfbbdadc334139c32282af831e8177853",
+    "ocean/connect4cnn/cnn.cu": "d8413b2c7ae72d4e0d08fb63188affa3e1f72fe1d61427d6646ce3bc6d709745",
+    "ocean/connect4cnn/compare.ini": "ed137b045d89ae4e6ed8713bf01b1a350dd37e8dcdd8c8da2508cfa55a737ab6",
+    "ocean/connect4cnn/compare.py": "6268472bb3d51fb7850642095240ad65150423158117d571512059049ec34a3a",
+    "ocean/connect4cnn/compare.sh": "a38ee8286c89090e1e1eae870b551d65bcbb8dc9b4e525550a9a234443b6f5aa",
+    "ocean/connect4cnn/compare_sidecar.py": "b73a266c4d801f50dd091066c589db7464712bfdac76c68bd05d2af874f4272c",
+    "ocean/connect4cnn/confirm.sh": "37aa64dbc427862b7c57f96d761be660506df113194d6b9b627c09a2326dd2d8",
+    "ocean/connect4cnn/confirm_when_idle.sh": "28477ba45173567f09019be80fb0a927ac37ad1d3974e46638bc2fe52f432652",
+    "ocean/connect4cnn/confirmation.json": "4b97190c2d953cbf7579dfdb735f6c228c16e9505ab11157cc37e4fb2aa328bd",
+    "ocean/connect4cnn/connect4cnn.cu": "6e4532ad5b089e75a62df51332b85b0213ea88ae253c9a7e72fbf57e5ef04547",
+    "ocean/connect4cnn/connect4cnn.h": "4db0ac958005985ea55168cd1c41fb3b99b15c83655469e8d2235ff80a3fe39a",
+    "ocean/connect4cnn/exact_eval.cu": "af61206bc1abef972a7d7206a8cae1e8420be8b45f784ae9f0bad94fdbc2f274",
+    "ocean/connect4cnn/exact_protocol.h": "c96fcecd7ba3acb6222bc310a17c9696745625eccbdb54a40420507288b7fc4a",
+    "ocean/connect4cnn/flex.cu": "dabd8daa6a72b8991cd8835a323fba89176d9928d5ebae63f5a25f830f91c303",
+    "ocean/connect4cnn/flex2.cu": "253d415f109f3d8d472bd9ffe8ff97df8ee23efbc6f15c7ff347f971bd822412",
+    "ocean/connect4cnn/hardware_compare.sh": "a62553e7dc78b5d54ab80ebb5fe6a1f659214fcc06f181e368149a77405c923a",
+    "ocean/connect4cnn/impala.cu": "16775e05607f521229d09b9c869190e008f65e4530983ddb22b12e25af74455e",
+    "ocean/connect4cnn/nature.cu": "36b120252b2d1ef9fbe14d88d9b07ef8940d7db8670d10389c23e3be6b014565",
+    "ocean/connect4cnn/package_results.sh": "bc32dd2d25395a4421060e60698bb45bdd214f4b5b5143c48ad14c8664c94a7e",
+    "ocean/connect4cnn/runtime_env.sh": "cbd0518c0d9cd1be389288193176a67c5c7ae6782b54f52524de4ae9f9e263ce",
+    "ocean/connect4cnn/smoke.sh": "6bf5da4a4940c1312e0eacb340004fe1e6e81498cbdc6312a81c5a8827453339",
+    "ocean/connect4cnn/sweep.ini": "7c6d465c6d7f2801b0c920538ca77dbbb829bd6b29b281dd17117c29f698e23b",
+    "ocean/connect4cnn/sweep.py": "e04c78f17a27cb999a2a382be41856c3e8083cd797c3f85a9e2ac9ad7adc182a",
+    "ocean/connect4cnn/sweep.sh": "344493e8047daef82d2675a55f28ea8e1107dbd7524c23a3d8eb2e9ace538332",
+    "ocean/connect4cnn/sweep_compact.ini": "03885fe5dfbfeba82bce0c2a7e56c6b2fda04aca5e1d4caa79b62c973a2f2f36",
+    "ocean/connect4cnn/sweep_discovery.ini": "dfcb5df87416c5e0d96f96b166505b295841542523d5d670046518c6ae09ac9c",
+    "ocean/connect4cnn/sweep_flex.ini": "37c4bdf0ef05fa736255603f63961fe8dfdcc3e7ea2e493cc953f88f204c88de",
+    "ocean/connect4cnn/sweep_flex2.ini": "a6d36a1daa4e458fc3f6cc3d869401b3a77b21fd9a0a6efa94e773eddf011036",
+    "ocean/connect4cnn/sweep_flex2_fast.ini": "55c1d7e5c46d2e2ffbda80a25b56cf148da2c2af655abc7c18e0be4ccd7a2b83",
+    "ocean/connect4cnn/sweep_flex2_stage2.ini": "997c59e71fff42f6f5c72237ed3031bdedfcd02d5bfe09c48de646df8d692f56",
+    "ocean/connect4cnn/sweep_nature.ini": "36720823a88fcb064e3402df25a3c6ad6ba7a1ebaa86f42773b8d7f53516eb57",
+    "ocean/connect4cnn/sweep_representation.ini": "4d2fb5b677ec876d99c8826543019440ddc8cc2eee45f608582f00a1a3eed136",
+    "ocean/connect4cnn/sweep_small.sh": "f4788828a1d41a9cf1ae4071d6d793af8b9317ce47d52538267c9f7fa7e14bb5",
+    "ocean/connect4cnn/tests/build_encoder_test.sh": "56157da6221e27dbf439a6548bc764d1439b44ad0cc55739149a15e96c93bfd6",
+    "ocean/connect4cnn/tests/flex2_reference.py": "a8ce0dfe9ac9ada6424440a726b5f9713ea753af134b335d38f96f6fc28a6434",
+    "ocean/connect4cnn/tests/flex_kernel.ini": "a090f3658fe65488c3eb01e93896cf116cd546871437634b86198d1bbd2a9ff5",
+    "ocean/connect4cnn/tests/run_all.sh": "72967e4b8d1b2b02f21781b5864f5ce9b1f0b9e39b9733caa71e4682e9864c0f",
+    "ocean/connect4cnn/tests/test_appearance.c": "f58e3ac5e0b54fde158d62caf94e9dd431fc19eb7d599c6c8babc5704cac0bc4",
+    "ocean/connect4cnn/tests/test_claim_config.c": "1d609f445b086f9a6f3e144e6eb0c40ff8a003614ab1a9083f5ed3371b58e662",
+    "ocean/connect4cnn/tests/test_claim_tools.py": "314ad46a2eacc1471cc50416cd1c046376e9792517c47944691e4230de9874bf",
+    "ocean/connect4cnn/tests/test_cnn.cu": "77eb266ebaddc3463744704117fbfa6e7825b38ad5feda22d7975af9f6bda0fd",
+    "ocean/connect4cnn/tests/test_cnn.py": "ca1798bfef021da541f6342aacf45f7309eecc3c1050ea08fb1a6eb5bab45967",
+    "ocean/connect4cnn/tests/test_compact.py": "524b209f3c818730ef50faf6e8bf7679a5b623d7049794deb1082e19d29b2141",
+    "ocean/connect4cnn/tests/test_confirmation.py": "720d706f259546dc9af5b3d03a67c8ac20ad72208be0be3ce79dd843b822a0c5",
+    "ocean/connect4cnn/tests/test_encoder.cu": "b18a0772e254a9fc124b8b0f9edaad27cf991d58c1889b92d289d5935fd2b672",
+    "ocean/connect4cnn/tests/test_encoder.py": "fb839192b78a51d1d8684e4e8ad05453edf21fe4ae2e56afc1810b17a9c4413f",
+    "ocean/connect4cnn/tests/test_environment.c": "1bac23cefc3cd4df532760e3ba085fc783819922b7aed0c531dd851f5766761c",
+    "ocean/connect4cnn/tests/test_flex.py": "72fd3c8c05c04420b7c52a1812536b8e10c855800c71099d680a77917b31bf85",
+    "ocean/connect4cnn/tests/test_flex2.cu": "bf22ea9f8df5c6a8a5e37b113ad532f0deb1f6ffc2f4e1366e85cbac67b76145",
+    "ocean/connect4cnn/tests/test_flex2.py": "db2b46bca49e5a16f605f0eba3948934036912d57e7df68cf773e45ec0775557",
+    "ocean/connect4cnn/tests/test_gpu_runtime.py": "870e16660beeccbed4c47057ae96709ad9211a9e8ba3f090ab546e1f93ce9872",
+    "ocean/connect4cnn/tests/test_hardware.py": "315cc238b0854512a68b53232a056031abceeb5d452729e8b816145ffafc6f8e",
+    "ocean/connect4cnn/tests/test_impala.cu": "844ed8dbcd4d6b147ddef4972068736501ecaf04cc6cc72e50bcebd5b68039e4",
+    "ocean/connect4cnn/tests/test_impala.py": "295e40e69ca48bee22045284f935b7120b35b16a143f4e031bb606568b4e8795",
+    "ocean/connect4cnn/tests/test_nature.cu": "89a198e85bb1bb699d6500337f6a11fafd5fde12e3b1b415f17af563656cf0ee",
+    "ocean/connect4cnn/tests/test_nature.py": "31d26c6b593a94f33288932f44b1584c75bb23720eb60bbbffbba7641bb18bcc",
+    "ocean/connect4cnn/tests/test_sweep_tools.py": "d05b24d7fcbf8ea2c6c71888698463c427a242f538f31f565f8aeb1749f1af96",
+    "ocean/connect4cnn/wandb_sidecar.py": "8dd4f8812bd85e6f08b45aa105109a246f922e1071ed639692c268f659ee41a6",
+    "research/CONNECT4_CLAIM_PROTOCOL.md": "9ac5bbb22267c2817400ecd8829f57ef2efa63172b634d9cca4502d64d069e3f",
+    "research/claim_frontier.html": "0a962568c24b118c09bda0ff3f98973a6f084a83281aeca192129acbb3842f5e",
+    "research/claim_frontier.py": "a3d9f5308c5a2b9d51f9ca9b2fd7c0dd81c15a4b3a5d4c92d540889629627ece",
+    "research/connect4_claim_design.json": "4154f40312289044dcfafd16fb2d7d709fd161d3c058dbc84cf1ca0f525f123f",
+    "src/algo.cu": "96830389a720ac8eaa4923713e3212e7b010caebd61773513e6fb8603660ef3a",
+    "src/constellation.c": "deda12600fb99755994dcb0a9b84c442dac76259b15910eea83e398150c1f6c4",
+    "src/ini.h": "cd4c83ba12ba40a7bef03ad810246cc0a5880f81e8566f6ac5a089b5c598859f",
+    "src/ocean.cu": "2e999321fff3694d04768b56546cf59826d155e82373af15c019cf254a7b1cee",
+    "src/protein.cu": "7127fe4fa3e9b0ab76ae0b8a4703357318366b1292f835f02b23bd98a6c90538",
+    "src/puffercpu.c": "6bbcd2d5f37e133972f9bb6df45e3412b8b856893c23764e1ce77582550a7adf",
+    "src/pufferenv.h": "3324a670791e2b3e46cbe7d10d9233d52fbc258e0d7e37d5b0c470e580de880c",
+    "src/pufferl.cu": "31076b36bc2b8add5ad4ed459fd922d24e59e1a74eb53fd5ca265449e932ecfa",
+    "vendor/KHR/khrplatform.h": "7b1e01aaa7ad8f6fc34b5c7bdf79ebf5189bb09e2c4d2e79fc5d350623d11e83",
+    "vendor/cJSON.c": "298581a04a36c0165da4b0aade235c23088cb2faa58651d720ea2f3706ed0b0d",
+    "vendor/cJSON.h": "25b0145150d500498e4d209cec69c18c42cf818bffcc54690be3b895a2a16dee",
+    "vendor/collections-c/include/cc_array.h": "d7ba54eac32b4e3e9c46bf415bb544868f9533f4ff287c61a4eb6ab407ec7eac",
+    "vendor/collections-c/include/cc_common.h": "2e15a60066633d3da11057a9e15d4cdba664f11a9593cb09e7a60a81dfb09d47",
+    "vendor/collections-c/include/dlmalloc.h": "b6cfbd550743d3d9c1e9c3ed5bc78ff6bfddda4c795ba0b23444dfae8731d884",
+    "vendor/glad.h": "a5df615358fd5979654929f2c02eb21b1ad621e6624897de1062d92dace28017",
+    "vendor/minshell.html": "c2e975de65131a316caaf64b27eb565dd9d59810ad9cddb042d361f97887d988",
+    "vendor/puf_web_vsync.js": "9a131eb8241a80bb21872bc327a37814f7c7ec311a48d792bed50b9bb759ab41",
+    "vendor/raygui.h": "358a641d756fb6f7d3cf289261c96afd454c7d53fc773996ec5e194c59d6ad03",
+    "vendor/rcamera.h": "18d148c6b608b678f316a251fe418c676f79eb4ac89c518de63e36f4ce7918f3",
+    "vendor/rlights.h": "0b04de5d2d96bbb860597b9a11ffda93a99c17b402e2e3d176ce23ca351da742"
+  },
+  "common_settings": {
+    "base": {
+      "env_name": "connect4cnn",
+      "gpu_offset": "0x0.0p+0",
+      "profile": "0x0.0p+0",
+      "checkpoint_interval": "0x1.0000000000000p+4",
+      "eval_episodes": "0x0.0p+0",
+      "eval_agents": "-0x1.0000000000000p+0",
+      "load_model_path": "None",
+      "load_enemy_model_path": "None",
+      "result_fd": "0x0.0p+0",
+      "cudagraphs": "0x1.0000000000000p+0",
+      "reset_every_horizon": "0x0.0p+0",
+      "async": "0x0.0p+0"
+    },
+    "vec": {
+      "total_agents": "0x1.0000000000000p+6",
+      "num_buffers": "0x1.0000000000000p+0",
+      "num_threads": "0x1.0000000000000p+1",
+      "num_policies": "0x1.0000000000000p+0",
+      "hist_policy_hidden_size": "0x0.0p+0",
+      "hist_policy_num_layers": "0x0.0p+0",
+      "hist_policy_percent": "0x0.0p+0"
+    },
+    "selfplay": {
+      "enabled": "0x0.0p+0",
+      "max_size": "0x1.0000000000000p+4",
+      "seed": "0x1.5000000000000p+5",
+      "opp_timeout_steps": "0x1.dcd6500000000p+28",
+      "eval_pool_size": "0x1.0000000000000p+3",
+      "eval_games": "0x0.0p+0",
+      "eval_bot_games": "0x0.0p+0",
+      "eval_bots": "0x0.0p+0",
+      "eval_bot_envs": "0x1.0000000000000p+13",
+      "eval_bot_threads": "0x0.0p+0"
+    },
+    "bot_eval": {},
+    "env": {
+      "dr": "0x0.0p+0",
+      "num_agents": "0x1.0000000000000p+0",
+      "num_bots": "0x0.0p+0",
+      "representation": "0x0.0p+0",
+      "representation_mode": "0x0.0p+0",
+      "representation_seed": "0x0.0p+0",
+      "player_pieces": "0x0.0p+0",
+      "env_pieces": "0x0.0p+0"
+    },
+    "policy": {
+      "hidden_size": "0x1.0000000000000p+7",
+      "num_layers": "0x1.0000000000000p+0"
+    },
+    "train": {
+      "gpus": "0x1.0000000000000p+0",
+      "total_timesteps": "0x1.0000000000000p+16",
+      "learning_rate": "0x1.0624dd2f1a9fcp-10",
+      "anneal_lr": "0x1.0000000000000p+0",
+      "min_lr_ratio": "0x0.0p+0",
+      "gamma": "0x1.999999999999ap-1",
+      "gae_lambda": "0x1.ecdd72367e415p-1",
+      "replay_ratio": "0x1.0000000000000p+0",
+      "clip_coef": "0x1.060e736049ecbp-1",
+      "vf_coef": "0x1.4000000000000p+2",
+      "vf_clip_coef": "0x1.fde54b48d3ae7p+0",
+      "max_grad_norm": "0x1.1ac0a4a05dd90p-1",
+      "ent_coef": "0x1.0ffa24f2f440fp-15",
+      "anneal_ent_coef": "0x0.0p+0",
+      "min_ent_coef_ratio": "0x0.0p+0",
+      "momentum": "0x1.c1dc93ea2d2fep-1",
+      "minibatch_size": "0x1.0000000000000p+11",
+      "horizon": "0x1.0000000000000p+5",
+      "vtrace": "0x0.0p+0",
+      "vtrace_rho_clip": "0x1.0000000000000p+0",
+      "vtrace_c_clip": "0x1.0000000000000p+0",
+      "verb_eps": "0x0.0p+0",
+      "verb_eps_anneal_start": "0x1.999999999999ap-2",
+      "verb_eps_anneal_end": "0x1.0000000000000p+0"
+    },
+    "sweep": {
+      "metric": "score",
+      "metric_distribution": "linear",
+      "goal": "maximize",
+      "max_suggestion_cost": "0x1.c200000000000p+11",
+      "max_runs": "0x1.2c00000000000p+10",
+      "gpus": "-0x1.0000000000000p+0",
+      "downsample": "0x1.9000000000000p+4",
+      "prune_pareto": "0x1.0000000000000p+0",
+      "early_stop_quantile": "0x1.3333333333333p-2"
+    },
+    "eval_exact": {
+      "episodes": "0x1.0000000000000p+10",
+      "episode_offset": "0x0.0p+0",
+      "seed": "0x0.0p+0",
+      "slots": "0x1.0000000000000p+6",
+      "output": "None"
+    }
+  },
+  "jobs": [
+    {
+      "id": "flex_quality-s47001",
+      "model": "flex_quality",
+      "seed": 47001,
+      "parameters": 160736,
+      "config_sha256": "b8810bb5674fab08d899c59e8dea16ffa1c78bf62ac5a7500dd4bbe49ef7e7ca",
+      "env_config_sha256": "17a376db58b0949ee01269f27b32a448d37043bf4357c8f0ae56c189d68b8aff",
+      "evaluation": [
+        {
+          "seed": 147001,
+          "offset": 0,
+          "episodes": 65
+        },
+        {
+          "seed": 147002,
+          "offset": 0,
+          "episodes": 8
+        }
+      ]
+    },
+    {
+      "id": "nature_cnn-s47001",
+      "model": "nature_cnn",
+      "seed": 47001,
+      "parameters": 138528,
+      "config_sha256": "7813d5db0f7deec9c21c5a7dfbf41501799be547769bbb0a31ecb64c436fbb9c",
+      "env_config_sha256": "17a376db58b0949ee01269f27b32a448d37043bf4357c8f0ae56c189d68b8aff",
+      "evaluation": [
+        {
+          "seed": 147001,
+          "offset": 0,
+          "episodes": 65
+        },
+        {
+          "seed": 147002,
+          "offset": 0,
+          "episodes": 8
+        }
+      ]
+    },
+    {
+      "id": "impala_cnn-s47001",
+      "model": "impala_cnn",
+      "seed": 47001,
+      "parameters": 270496,
+      "config_sha256": "7813d5db0f7deec9c21c5a7dfbf41501799be547769bbb0a31ecb64c436fbb9c",
+      "env_config_sha256": "17a376db58b0949ee01269f27b32a448d37043bf4357c8f0ae56c189d68b8aff",
+      "evaluation": [
+        {
+          "seed": 147001,
+          "offset": 0,
+          "episodes": 65
+        },
+        {
+          "seed": 147002,
+          "offset": 0,
+          "episodes": 8
+        }
+      ]
+    },
+    {
+      "id": "impoola_cnn-s47001",
+      "model": "impoola_cnn",
+      "seed": 47001,
+      "parameters": 151712,
+      "config_sha256": "7813d5db0f7deec9c21c5a7dfbf41501799be547769bbb0a31ecb64c436fbb9c",
+      "env_config_sha256": "17a376db58b0949ee01269f27b32a448d37043bf4357c8f0ae56c189d68b8aff",
+      "evaluation": [
+        {
+          "seed": 147001,
+          "offset": 0,
+          "episodes": 65
+        },
+        {
+          "seed": 147002,
+          "offset": 0,
+          "episodes": 8
+        }
+      ]
+    },
+    {
+      "id": "nature_cnn-s47002",
+      "model": "nature_cnn",
+      "seed": 47002,
+      "parameters": 138528,
+      "config_sha256": "474cf3cfdb3597b479b097c240a9e5a9f22e430a216a5db8aa456f21cbbe7e13",
+      "env_config_sha256": "17a376db58b0949ee01269f27b32a448d37043bf4357c8f0ae56c189d68b8aff",
+      "evaluation": [
+        {
+          "seed": 147003,
+          "offset": 0,
+          "episodes": 65
+        },
+        {
+          "seed": 147004,
+          "offset": 0,
+          "episodes": 8
+        }
+      ]
+    },
+    {
+      "id": "impala_cnn-s47002",
+      "model": "impala_cnn",
+      "seed": 47002,
+      "parameters": 270496,
+      "config_sha256": "474cf3cfdb3597b479b097c240a9e5a9f22e430a216a5db8aa456f21cbbe7e13",
+      "env_config_sha256": "17a376db58b0949ee01269f27b32a448d37043bf4357c8f0ae56c189d68b8aff",
+      "evaluation": [
+        {
+          "seed": 147003,
+          "offset": 0,
+          "episodes": 65
+        },
+        {
+          "seed": 147004,
+          "offset": 0,
+          "episodes": 8
+        }
+      ]
+    },
+    {
+      "id": "impoola_cnn-s47002",
+      "model": "impoola_cnn",
+      "seed": 47002,
+      "parameters": 151712,
+      "config_sha256": "474cf3cfdb3597b479b097c240a9e5a9f22e430a216a5db8aa456f21cbbe7e13",
+      "env_config_sha256": "17a376db58b0949ee01269f27b32a448d37043bf4357c8f0ae56c189d68b8aff",
+      "evaluation": [
+        {
+          "seed": 147003,
+          "offset": 0,
+          "episodes": 65
+        },
+        {
+          "seed": 147004,
+          "offset": 0,
+          "episodes": 8
+        }
+      ]
+    },
+    {
+      "id": "flex_quality-s47002",
+      "model": "flex_quality",
+      "seed": 47002,
+      "parameters": 160736,
+      "config_sha256": "691537656235e7158388adddef4a69d13d129827b70cefd61307fa99080314e2",
+      "env_config_sha256": "17a376db58b0949ee01269f27b32a448d37043bf4357c8f0ae56c189d68b8aff",
+      "evaluation": [
+        {
+          "seed": 147003,
+          "offset": 0,
+          "episodes": 65
+        },
+        {
+          "seed": 147004,
+          "offset": 0,
+          "episodes": 8
+        }
+      ]
+    }
+  ],
+  "timing": "CLOCK_MONOTONIC launch to native post-rename checkpoint receipt",
+  "episode_allocation": "fixed waves; per-episode Philox and environment RNG; completed slots never step again",
+  "analysis": "full checkpoint means and seed curves; candidate simultaneous bands remain exploratory"
+}

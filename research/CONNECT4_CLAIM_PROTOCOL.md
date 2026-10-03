@@ -1,5 +1,13 @@
 # Connect4 full-frontier comparison: design and execution gates
 
+October 2 groundwork update: [CLAIM_PIPELINE.md](CLAIM_PIPELINE.md) documents the
+implemented opt-in native evaluator, monotonic completed-checkpoint receipts,
+matched configuration/audit tooling and full-curve reporting. All four binaries
+compile, but GPU measurement acceptance remains pending. Candidate joint bands
+undercover in preliminary synthetic diagnostics; no inferential gate is closed
+and no new confirmation run has started. Preserve the protocol below as the
+target, rather than treating implementation or canary preparation as acceptance.
+
 September 15, 2026. **Kinvert's correction: compare the full observed Pareto frontier with the same training regime for every encoder.** This supersedes the earlier 60-second target, three reference times, 80-second training cap and per-family learner selection. No new confirmation training has started. [Machine-readable design](connect4_claim_design.json) records what is fixed and what still needs validation before launch.
 
 ## Question and scope

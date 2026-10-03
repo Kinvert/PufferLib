@@ -1,0 +1,42 @@
+{
+  "status": "development_simulation_not_an_acceptance_certificate",
+  "scenarios": [
+    {
+      "scenario": "null",
+      "repetitions": 40,
+      "training_seeds": 40,
+      "bootstrap_draws": 250,
+      "joint_coverage": 0.9,
+      "coverage_monte_carlo_se": 0.04743416490252569,
+      "any_false_dominance_rate": 0.0
+    },
+    {
+      "scenario": "crossing",
+      "repetitions": 40,
+      "training_seeds": 40,
+      "bootstrap_draws": 250,
+      "joint_coverage": 0.875,
+      "coverage_monte_carlo_se": 0.05229125165837972,
+      "any_false_dominance_rate": 0.0
+    },
+    {
+      "scenario": "ties",
+      "repetitions": 40,
+      "training_seeds": 40,
+      "bootstrap_draws": 250,
+      "joint_coverage": 0.85,
+      "coverage_monte_carlo_se": 0.05645794895318108,
+      "any_false_dominance_rate": 0.0
+    },
+    {
+      "scenario": "declining",
+      "repetitions": 40,
+      "training_seeds": 40,
+      "bootstrap_draws": 250,
+      "joint_coverage": 0.825,
+      "coverage_monte_carlo_se": 0.06007807420348958,
+      "any_false_dominance_rate": 0.0
+    }
+  ],
+  "limitation": "These four populations do not cover RL failure mixtures, arbitrary hardware drift or missing outcomes"
+}

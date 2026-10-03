@@ -1,0 +1,21 @@
+{
+  "command": [
+    "/usr/local/cuda/bin/nvcc",
+    "--version"
+  ],
+  "cwd": "/home/claude/cnn",
+  "status": "ok",
+  "timeout": 30,
+  "environment": {
+    "PUFFER_CHECKPOINT_RECEIPTS": null,
+    "NVCC_ARCH": "sm_120",
+    "NVCC_EXTRA": null,
+    "NVCC_APPEND_FLAGS": null,
+    "CUDA_HOME": "/usr/local/cuda",
+    "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+  },
+  "launch_monotonic_ns": 604602454275346,
+  "pid": 1977688,
+  "returncode": 0,
+  "end_monotonic_ns": 604602459419429
+}
