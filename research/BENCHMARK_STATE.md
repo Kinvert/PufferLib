@@ -1,5 +1,11 @@
 # Source state for the five-seed CNN results
 
+October 5 caveat: the measured source below contains an inherited draw-rule bug,
+now corrected in both state and pixel games. These results remain **legacy-rule
+evidence**; they cannot be pooled with corrected-rule results. See the
+[defect, regression checks and version boundary](CONNECT4_DRAW_CORRECTION.md).
+The effect on model rankings has not been measured.
+
 Recorded September 14, 2026 for campaign **`confirm.ol9tcj5k`**. See [results and full Pareto curves](CONFIRMATION_RESULTS.md) and the [frozen protocol](CONFIRMATION_PROTOCOL.md).
 
 ## Git revisions

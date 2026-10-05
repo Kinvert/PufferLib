@@ -1,5 +1,9 @@
 # RTX 5090 hardware comparison — received and audited
 
+**October 5 caveat:** these are historical native Connect4 results from before
+the [draw-rule correction](CONNECT4_DRAW_CORRECTION.md). Preserve them separately
+from corrected-rule results; no effect on rankings or timings has been measured.
+
 Source: the separate 5090 session's report and transferred evidence archive. **The G240 receipt audit passed:** all 42 captured source files match the recorded Git revision, all 52 CSV observations match raw evaluation logs, and all four models have matching non-encoder settings. The remote session additionally reports passing numerical/gradient, repeatability, sanitizer and checkpoint audits; those tests were not rerun here.
 
 Reported revision: `9b829e071f6d3d56064465dc8284a4b0f03c82a4`. Hardware: RTX 5090, Ryzen 9 9950X3D, CUDA compiler **13.1.115**, driver **580.105.08**. Float32, train seed **173**, **13,312,000 decisions per model**. Runtime setup used a machine-local helper before the standard runner:

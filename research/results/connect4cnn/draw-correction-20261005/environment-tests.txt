@@ -1,0 +1,2 @@
+PASS: draw/opening/full-board fixtures, all 10 representations, pixel/reset fixtures, 4096-step state/pixel parity each, repeats and invalid-ID rejection (ASan/UBSan).
+PASS: mixed per-slot appearances, fixed assignment, independent RNG, golden IDs and invalid mode/seed rejection.

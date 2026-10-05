@@ -101,6 +101,64 @@ static void check_observation(Fixture* f) {
 #endif
 }
 
+static void check_draw_rules(void) {
+    // Build occupancy from board coordinates, independently of draw's bit mask.
+    uint64_t full = 0;
+    for (int column = 0; column < 7; column++) {
+        for (int row = 0; row < 6; row++) {
+            full |= UINT64_C(1) << (column * 7 + row);
+        }
+    }
+    assert(draw(full));
+    assert(!draw(0));
+    for (int column = 0; column < 7; column++) {
+        for (int row = 0; row < 6; row++) {
+            assert(!draw(full ^ (UINT64_C(1) << (column * 7 + row))));
+        }
+        for (int other = column + 1; other < 7; other++) {
+            assert(!draw((UINT64_C(1) << (column * 7))
+                | (UINT64_C(1) << (other * 7))));
+        }
+    }
+    // The former literal falsely ended some openings in the last two columns.
+    for (unsigned int seed = 0; seed < 32; seed++) {
+        Fixture f;
+        setup(&f, seed);
+        f.action = 6;
+        puf_step(&f.env);
+        assert(f.terminal == 0 && f.reward == 0 && f.env.tick == 1);
+        assert(f.env.log.n == 0);
+        assert(__builtin_popcountll(f.env.player_pieces | f.env.env_pieces) == 2);
+        puf_close(&f.env);
+    }
+    // Bottom-to-top rows of a full board without any four-in-a-row.
+    const char* rows[] = {"XXOOXXO", "OOXXOOX", "XXOOXXO",
+                          "OOXXOOX", "XXOOXXO", "OOXXOOX"};
+    Fixture f;
+    setup(&f, 73);
+    for (int row = 0; row < 6; row++) {
+        for (int column = 0; column < 7; column++) {
+            uint64_t bit = UINT64_C(1) << (column * 7 + row);
+            if (rows[row][column] == 'O') f.env.player_pieces |= bit;
+            else f.env.env_pieces |= bit;
+        }
+    }
+    assert(!won(f.env.player_pieces) && !won(f.env.env_pieces));
+    assert((f.env.player_pieces | f.env.env_pieces) == full);
+    // Only column six is playable: the final player/opponent pair fills it.
+    f.env.player_pieces ^= UINT64_C(1) << (6 * 7 + 4);
+    f.env.env_pieces ^= UINT64_C(1) << (6 * 7 + 5);
+    f.env.tick = 20;
+    f.action = 6;
+    puf_step(&f.env);
+    assert(f.terminal == 1 && f.reward == 0);
+    assert(f.env.log.n == 1 && f.env.log.episode_length == 21);
+    assert(f.env.log.perf == 0 && f.env.log.score == 0 && f.env.log.invalids == 0);
+    assert(f.env.player_pieces == 0 && f.env.env_pieces == 0);
+    check_observation(&f);
+    puf_close(&f.env);
+}
+
 static void check_fixtures(void) {
     Fixture f;
     setup(&f, 73);
@@ -155,6 +213,7 @@ int main(int argc, char** argv) {
     if (argc > 1) representation = atof(argv[1]);
     if (argc > 2) representation_mode = atof(argv[2]);
     if (argc > 3) representation_seed = atof(argv[3]);
+    check_draw_rules();
     check_fixtures();
     for (unsigned int seed = 1; seed <= 16; seed++) {
         Fixture f;

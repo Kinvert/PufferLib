@@ -58,5 +58,5 @@ for option in '0 2 0' '0 1 -1' '0 1 4294967296' '0 1 nan' '0 1 1.5'; do
     fi
     rg -q 'must be an integer' build/connect4cnn/appearance-invalid.txt
 done
-echo "PASS: all 10 representations, pixel/reset fixtures, 4096-step upstream parity each, repeats and invalid-ID rejection (ASan/UBSan)."
+echo "PASS: draw/opening/full-board fixtures, all 10 representations, pixel/reset fixtures, 4096-step state/pixel parity each, repeats and invalid-ID rejection (ASan/UBSan)."
 echo "PASS: mixed per-slot appearances, fixed assignment, independent RNG, golden IDs and invalid mode/seed rejection."

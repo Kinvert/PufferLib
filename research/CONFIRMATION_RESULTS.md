@@ -1,5 +1,9 @@
 # Connect4CNN: frozen five-seed confirmation
 
+**October 5 caveat:** this campaign used the inherited incorrect draw rule.
+Preserve these measurements as legacy-task evidence; ranking impact is unknown.
+[Correction and new benchmark boundary](CONNECT4_DRAW_CORRECTION.md).
+
 **Measured source:** `b2fa7787a754d36362374ac271ea6c7b23beeb25`, reconstructed and verified against all 38 captured file hashes. [Exact source state, later feature revision, and recovery instructions](BENCHMARK_STATE.md).
 
 Completed September 14, 2026: `confirm.ol9tcj5k`, all **30 training jobs and 390 held-out checkpoint evaluations**, no native failures or W&B upload failures. This is the confirmation requested in paper-plan item 1, not another architecture search. All models used the original square representation, the same learner/core settings, five fresh paired seeds and the same 13 checkpoints through 13,312,000 decisions. [Frozen protocol](CONFIRMATION_PROTOCOL.md).

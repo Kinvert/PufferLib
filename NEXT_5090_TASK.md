@@ -1,5 +1,14 @@
 # Current 5090 task: prepare first, validate before searching
 
+**October 5 correction:** after safely updating, read
+[CONNECT4_DRAW_CORRECTION.md](research/CONNECT4_DRAW_CORRECTION.md). The inherited
+state/pixel draw rule is fixed; historical scores use different game semantics.
+Run `bash ocean/connect4cnn/tests/run_all.sh` (CPU environment/sanitizer checks)
+using the existing shared Raylib, then prepare fresh manifests/builds. Require
+`environment_rules: connect4-full-board-draw-v2` in new measurement manifests.
+Do not reuse October 2 preparation directories for execution. The 5090 remains
+busy; this update does not authorize GPU work.
+
 October 2, 2026. This is the current entry point for the agent on the **separate
 RTX 5090 machine**, normally in `~/Git/ml/cnn-5090`. G240 is the development
 machine with an RTX 5060; its filesystem, runtime helper and build outputs are

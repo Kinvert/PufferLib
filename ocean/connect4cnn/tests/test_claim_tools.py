@@ -83,6 +83,9 @@ class ClaimTests(unittest.TestCase):
         write(list(reversed(rows)))  # Completion order must not affect allocation.
         self.assertEqual(claim.episodes(path, block, 3), dict(wins=2, score=-1, episodes=5))
         corruptions = [rows[:-1], rows+[rows[0]], [rows[0]]+rows[:-1]]
+        wrong = copy.deepcopy(rows)
+        wrong[0].update(score=0, win=0, decisions=1)
+        corruptions.append(wrong)
         for key, value in (("env_seed", 7), ("slot", 9), ("decisions", 22), ("win", 2), ("representation", 1)):
             wrong = copy.deepcopy(rows); wrong[0][key] = value; corruptions.append(wrong)
         for wrong in corruptions:
@@ -95,6 +98,8 @@ class ClaimTests(unittest.TestCase):
         with patch.object(claim, "snapshots", return_value={}), patch.object(claim.subprocess, "check_output", return_value="revision\n"):
             p = claim.prepare(out, True, None)
         self.assertEqual(len(p["jobs"]), 8)
+        self.assertEqual(p["environment_rules"], "connect4-full-board-draw-v2")
+        self.assertEqual(claim.load(out, current_source=True)["environment_rules"], p["environment_rules"])
         self.assertFalse(p["confirmation_launch_allowed"])
         self.assertEqual(p["checkpoint_steps"], [32768, 65536])
         self.assertTrue(all(sum(b["episodes"] for b in j["evaluation"]) == 73 for j in p["jobs"]))
@@ -103,6 +108,17 @@ class ClaimTests(unittest.TestCase):
             claim.run_canary(out, False)
         with self.assertRaises(ValueError):
             claim.prepare(out, True, None)
+
+    def test_legacy_rules_can_be_read_but_not_executed(self):
+        out = self.root/"legacy"
+        with patch.object(claim, "snapshots", return_value={}), patch.object(claim.subprocess, "check_output", return_value="revision\n"):
+            p = claim.prepare(out, True, None)
+        del p["environment_rules"]
+        claim.save(out/"protocol.json", p)
+        (out/"protocol.sha256").write_text(claim.sha(out/"protocol.json")+"\n")
+        self.assertEqual(claim.load(out)["version"], "connect4-exact-frontier-v1")
+        with self.assertRaisesRegex(ValueError, "Old game rules"):
+            claim.load(out, current_source=True)
 
     def test_full_draft_cadence_and_seed_pairing(self):
         out = self.root/"draft"

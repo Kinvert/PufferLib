@@ -1,5 +1,11 @@
 # Connect4 full-frontier comparison: design and execution gates
 
+October 5 rule boundary: future comparisons use
+[`connect4-full-board-draw-v2`](CONNECT4_DRAW_CORRECTION.md), correcting an inherited
+draw bug in both state and pixel environments. Preserve all legacy-rule evidence
+separately. Fresh source/config/build manifests are required; no automatic
+retraining or GPU execution is authorized.
+
 October 2 groundwork update: [CLAIM_PIPELINE.md](CLAIM_PIPELINE.md) documents the
 implemented opt-in native evaluator, monotonic completed-checkpoint receipts,
 matched configuration/audit tooling and full-curve reporting. All four binaries

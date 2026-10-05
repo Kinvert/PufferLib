@@ -1,0 +1,2 @@
+test_connect4: ocean/connect4cnn/tests/test_environment.c:112: void check_draw_rules(void): Assertion `draw(full)' failed.
+ocean/connect4cnn/tests/run_all.sh: line 21: 4184399 Aborted                 (core dumped) "build/connect4cnn/test_$variant" > "build/connect4cnn/$variant.trace"

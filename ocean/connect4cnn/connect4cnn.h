@@ -1,5 +1,6 @@
 // Copied from connect4/connect4.h at upstream 89414204.
-// Game rules/opponent are preserved; only the observation and viewer access differ.
+// Rules/opponent match native Connect4; observations/viewer differ.
+// Both copies include the October 5, 2026 full-board draw correction.
 #include <stdlib.h>
 #include <math.h>
 #include <stdio.h>
@@ -113,9 +114,9 @@ uint64_t play(int column, uint64_t mask,  uint64_t other_pieces) {
     return other_pieces ^ mask;
 }
 
-// A full board has this specifc value
+// All 42 playable cells; the seventh bit of each column is unused.
 bool draw(uint64_t mask) {
-    return mask == 4432406249472;
+    return mask == UINT64_C(0xfdfbf7efdfbf);
 }
 
 // Determine if 'pieces' contains at least one line of connected pieces.

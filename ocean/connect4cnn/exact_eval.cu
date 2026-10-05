@@ -95,6 +95,7 @@ static void run_connect4_exact_eval(Ini* ini, TrainContext* ctx) {
                 if (!v->terminals[i]) continue;
                 float score = v->rewards[i];
                 c4_exact_require((score == -1 || score == 0 || score == 1)
+                    && (score != 0 || decision == 21)
                     && env->log.n == 1 && env->log.episode_length == decision
                     && env->log.score == score && (env->log.invalids == 0 || env->log.invalids == 1),"terminal accounting mismatch");
                 uint32_t id = first+base+i;

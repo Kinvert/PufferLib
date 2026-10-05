@@ -95,6 +95,7 @@ def report(out, protocol, points, failures, costs=None):
     result = dict(status="complete_descriptive" if complete else "incomplete",
                   claim_status="exploratory_only_inference_and_runtime_gates_pending",
                   purpose=protocol["purpose"], points=points, means=means, missing=missing, failures=failures,
+                  environment_rules=protocol.get("environment_rules", "legacy-unversioned-see-source"),
                   bootstrap=dict(method="paired whole-seed maximum standardized error", draws=2000, seed=93017,
                                  nominal_joint_coverage=.95, calibrated=False,
                                  degenerate_cells=bands["degenerate_cells"] if bands else None),
@@ -105,6 +106,7 @@ def report(out, protocol, points, failures, costs=None):
     write_csv(out/"missing.csv", missing, ["model", "seed", "steps"])
     lines = ["# Complete observed curves — descriptive analysis", "",
              f"Status: **{result['status']}**. Purpose: `{protocol['purpose']}`.", "",
+             f"Environment rules: `{result['environment_rules']}`. Do not pool different rules revisions.", "",
              "No superiority/SOTA inference is authorized. Candidate simultaneous bands are uncalibrated.",
              "A canary validates measurement plumbing; it is not a learning comparison.", "",
              f"Observed cells: {len(points)}/{len(expected)}; missing: {len(missing)}; failures: {len(failures)}.",

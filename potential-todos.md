@@ -40,6 +40,13 @@ Ordered priorities, recorded October 2, 2026:
 
 ## Constraints and next handoff
 
+October 5 audit follow-ups: [the draw-rule correction](research/CONNECT4_DRAW_CORRECTION.md)
+fixes the inherited environment defect and adds independent semantic fixtures.
+Still open: retain completed checkpoint cells when training later fails (the
+current parser rejects the whole failed process), and narrow the exact-evaluator
+worker-count check's claim because its environment stepping is serial. Keep
+these distinct from the unchanged statistical and GPU acceptance gates.
+
 October 2 progress: item 2 is implemented/compiled and awaits 5090 execution.
 Item 5 now has [native measurement and audit groundwork](research/CLAIM_PIPELINE.md),
 including matched preparation and full curves. All four builds and local artifact

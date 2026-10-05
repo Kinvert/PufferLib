@@ -25,6 +25,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[2]
 HERE = Path(__file__).resolve().parent
 MODELS = ("flex_quality", "nature_cnn", "impala_cnn", "impoola_cnn")
+ENVIRONMENT_RULES = "connect4-full-board-draw-v2"
 RECEIPT = re.compile(r"^PUFFER_CHECKPOINT steps=(\d+) bytes=(\d+) monotonic_ns=(\d+)$", re.M)
 EXACT = re.compile(r"^CONNECT4_EXACT_EVAL version=1 requested=(\d+) completed=(\d+) wins=(\d+) params=(\d+)$", re.M)
 
@@ -138,6 +139,7 @@ def prepare(out, canary, seeds):
                              config_sha256=sha(job_dir/"config/default.ini"),
                              env_config_sha256=sha(job_dir/"config/connect4cnn.ini"), evaluation=blocks))
     protocol = dict(version="connect4-exact-frontier-v1", purpose="measurement_canary" if canary else "confirmation_draft",
+                    environment_rules=ENVIRONMENT_RULES,
                     status="prepared_not_executed", confirmation_launch_allowed=False,
                     gates_pending=["GPU exact evaluator/recurrent reset and repeatability", "checkpoint receipt/cadence overhead",
                                    "baseline backend audit", "simultaneous inference calibration and replication freeze"],
@@ -161,6 +163,8 @@ def load(out, current_source=False):
     require(sha(out/"protocol.json") == (out/"protocol.sha256").read_text().strip(), "Manifest changed after preparation")
     p = json.loads((out/"protocol.json").read_text())
     require(p["version"] == "connect4-exact-frontier-v1", "Unknown protocol")
+    if current_source:
+        require(p.get("environment_rules") == ENVIRONMENT_RULES, "Old game rules; prepare a fresh campaign")
     for name, digest in p["source_sha256"].items():
         require(sha(out/"source"/name) == digest, f"Source snapshot mismatch: {name}")
         if current_source:
@@ -354,6 +358,7 @@ def episodes(path, block, slots, representation=0):
         reward, win, invalid = int(row["score"]), int(row["win"]), int(row["invalid"])
         require(reward in (-1, 0, 1) and win == int(reward == 1) and invalid in (0, 1), "Invalid outcome")
         require(not invalid or reward == -1, "Invalid action must lose")
+        require(reward != 0 or int(row["decisions"]) == 21, "Draw requires 21 decisions from an empty board")
         require(re.fullmatch(r"[0-9a-f]{16}", row["action_hash"]) is not None, "Missing action trace hash")
         wins += win; score += reward
     require(seen == set(range(block["offset"], block["offset"]+block["episodes"])), "Missing or unexpected episode IDs")

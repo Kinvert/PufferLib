@@ -1,5 +1,18 @@
 # CNN experiment history
 
+## October 5, 2026 — inherited Connect4 draw rule corrected (no GPU)
+
+Both original state and pixel Connect4 used an incorrect full-board literal that
+also produced two-piece draws. The new full-board regression fails before the
+fix; corrected independent board fixtures, all ten representations, state/pixel
+parity, repeatability and ASan/UBSan pass. Twelve artifact/configuration checks
+pass. [Report and retained evidence](CONNECT4_DRAW_CORRECTION.md) document the
+23 one-decision draws found in each old 4,096-transition native test trace.
+New measurement manifests label `connect4-full-board-draw-v2`; historical learning
+curves remain legacy-rule results. No CNN training/evaluation, SPS/VRAM/quality
+measurement or GPU work occurred; ranking impact is unknown. Do not pool scores
+across this rule change or automatically rerun previous campaigns.
+
 ## September 26, 2026 — original stock Flappy state control completed
 
 Kinvert requested original vanilla PufferLib Flappy training. `stock-pilot.tgKBYrNs` uses unchanged original state observations and stock H64/L2, native float32 on the idle 5060, stock learner/vector/game settings, train seed 73, 20M requested decisions and the pixel pilot's recording/evaluation controls. No pixel run repeated. [Comparison, checks and receipts](results/flappycnn/stock-pilot.tgKBYrNs/REPORT.md), [paired table CSV](results/flappycnn/stock-pilot.tgKBYrNs/comparison.csv).

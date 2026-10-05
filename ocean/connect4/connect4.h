@@ -93,9 +93,9 @@ uint64_t play(int column, uint64_t mask,  uint64_t other_pieces) {
     return other_pieces ^ mask;
 }
 
-// A full board has this specifc value
+// All 42 playable cells; the seventh bit of each column is unused.
 bool draw(uint64_t mask) {
-    return mask == 4432406249472;
+    return mask == UINT64_C(0xfdfbf7efdfbf);
 }
 
 // Determine if 'pieces' contains at least one line of connected pieces.
@@ -463,4 +463,3 @@ void puf_init(Env* env, Dict* kwargs) {
     env->agents[0].policy = 0;
     init(env);
 }
-

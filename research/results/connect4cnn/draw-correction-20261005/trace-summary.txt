@@ -1,0 +1,2 @@
+legacy transitions 4096 terminal episodes 596 draw lengths [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+corrected transitions 4096 terminal episodes 578 draw lengths []

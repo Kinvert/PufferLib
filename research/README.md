@@ -6,6 +6,8 @@ On September 12, the checkout was fast-forwarded eight commits to `89414204ce850
 
 ## Start here
 
+- [October 5 Connect4 draw-rule correction](CONNECT4_DRAW_CORRECTION.md): independent fixtures exposed an inherited state/pixel bug; corrected rules and historical results must remain separate. No GPU execution. [Current 5090 preparation handoff](../NEXT_5090_TASK.md).
+
 - [Exact evaluation and full-frontier measurement groundwork](CLAIM_PIPELINE.md): opt-in native episode accounting and completed-checkpoint timing, matched frozen preparation, artifact audits, whole curves and explicit inference gates. No new GPU run; initial synthetic uncertainty coverage is inadequate for a publication claim.
 
 - [Current potential priorities](../potential-todos.md) and [encoder-5 verification contract](FLEX2_VERIFICATION.md): independent numerical reference, boundary probes and evidence requirements; compiled locally, GPU execution pending on the 5090.

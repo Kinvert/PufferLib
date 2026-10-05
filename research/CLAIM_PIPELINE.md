@@ -1,5 +1,12 @@
 # Connect4 measurement pipeline: groundwork, no GPU execution
 
+October 5: [Connect4 draw semantics are corrected](CONNECT4_DRAW_CORRECTION.md).
+Prepare fresh campaigns; manifests now record `connect4-full-board-draw-v2` and
+reports display the rule label. Unversioned old preparations cannot be built or
+executed with current tooling. The exact evaluator/auditor also reject early
+draws. Historical build receipts below describe the earlier source, not GPU
+acceptance of this update. The 5090 remains busy; no GPU launch is requested.
+
 October 2, 2026. Goal: a reproducible full score-versus-training-time comparison
 that Joseph and a paper reviewer can inspect. **This is prepared infrastructure,
 not new evidence of an encoder advantage.** No 5060 or 5090 training/evaluation
