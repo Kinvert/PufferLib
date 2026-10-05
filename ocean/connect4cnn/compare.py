@@ -116,6 +116,7 @@ def report(out, rows, jobs, protocol):
                    "Same 7-column × 6-row game, opponent, learner recipe and core. Float32, one GPU, serial trials. "
                    "Encoders differ; parameters/FLOPs are not matched. State, if included, uses a modified configuration.")
     lines = ["# Connect4 training results", "", description,
+             f"Environment rules: `{protocol.get('environment_rules', 'legacy-unversioned-see-source')}`; evaluation: pooled-v1 (exploratory).",
              f"Requested decisions: {protocol['steps']:,}; expected completed decisions: {protocol['completed_steps']:,}.", "",
              "## Final results by training seed", "",
              "| Policy | Seed | Steps | Win rate | Score | Games | Parameters | Train wall seconds | Process SPS | Native avg SPS |",
@@ -225,6 +226,7 @@ def main():
         recipe.write(f)
     protocol = {**vars(args), "recipe": "config/default.ini + config/connect4.ini" if args.stock else str(args.recipe),
                 "precision": "float32", "variants": variants, "completed_steps": completed_steps,
+                "environment_rules": "connect4-full-board-draw-v2", "evaluation_protocol": "pooled-v1",
                 "checkpoint_steps": checkpoint_steps,
                 "revision": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
                 "source_sha256": {p: sha256(ROOT / p) for p in sources},
@@ -352,7 +354,7 @@ def main():
                 if [int(p.stem) for p in paths] != checkpoint_steps:
                     raise ValueError("Missing or unexpected checkpoint schedule")
                 for checkpoint in paths:
-                    if args.confirmation:
+                    if variant in manifest["parameters"]:
                         import numpy as np
                         weights = np.fromfile(checkpoint, dtype=np.float32)
                         if weights.size != manifest["parameters"][variant] or not np.isfinite(weights).all():
