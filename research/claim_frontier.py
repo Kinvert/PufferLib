@@ -78,7 +78,7 @@ def report(out, protocol, points, failures, costs=None):
                               win_rate=float(np.mean([p["win_rate"] for p in group]))))
     complete = not missing and not failures
     bands = None
-    if complete and len(protocol["training_seeds"]) >= 2:
+    if complete and len(protocol["training_seeds"]) >= 2 and protocol.get("candidate_bands", True):
         array = np.array([[[lookup[m, s, k]["seconds"], lookup[m, s, k]["win_rate"]]
                            for m, k in cells] for s in protocol["training_seeds"]])
         bands = paired_bands(array)
@@ -96,8 +96,10 @@ def report(out, protocol, points, failures, costs=None):
                   claim_status="exploratory_only_inference_and_runtime_gates_pending",
                   purpose=protocol["purpose"], points=points, means=means, missing=missing, failures=failures,
                   environment_rules=protocol.get("environment_rules", "legacy-unversioned-see-source"),
+                  evaluation_protocol=protocol.get("evaluation_protocol", "inspect source protocol"),
                   bootstrap=dict(method="paired whole-seed maximum standardized error", draws=2000, seed=93017,
                                  nominal_joint_coverage=.95, calibrated=False,
+                                 enabled=bands is not None,
                                  degenerate_cells=bands["degenerate_cells"] if bands else None),
                   timing=protocol["timing"], costs=costs or {})
     (out/"analysis.json").write_text(json.dumps(result, indent=2, allow_nan=False)+"\n")
@@ -107,6 +109,8 @@ def report(out, protocol, points, failures, costs=None):
     lines = ["# Complete observed curves — descriptive analysis", "",
              f"Status: **{result['status']}**. Purpose: `{protocol['purpose']}`.", "",
              f"Environment rules: `{result['environment_rules']}`. Do not pool different rules revisions.", "",
+             f"Training-time coordinates: {result['timing']}.", "",
+             f"Evaluation protocol: `{result['evaluation_protocol']}`.", "",
              "No superiority/SOTA inference is authorized. Candidate simultaneous bands are uncalibrated.",
              "A canary validates measurement plumbing; it is not a learning comparison.", "",
              f"Observed cells: {len(points)}/{len(expected)}; missing: {len(missing)}; failures: {len(failures)}.",

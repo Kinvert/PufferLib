@@ -12,7 +12,21 @@ int main(int argc, char** argv) {
     for (int slot = 15; slot >= 0; slot--) {
         assert(cnn_appearance_init(&kwargs, slot, 10) == expected[slot]);
         assert(cnn_appearance_init(&kwargs, slot, 5) == expected[slot] % 5);
+        assert(cnn_appearance_init_catalog(&kwargs, slot, 5, 7) == expected[slot] % 5);
     }
+    int extended[7] = {0};
+    for (unsigned int slot = 0; slot < 4096; slot++) {
+        dict_set(&kwargs, "representation_mix_catalog", 0);
+        int legacy = cnn_appearance_init_catalog(&kwargs, slot, 5, 7);
+        assert(legacy == cnn_appearance_init(&kwargs, slot, 5));
+        dict_set(&kwargs, "representation_mix_catalog", 1);
+        int expanded = cnn_appearance_init_catalog(&kwargs, slot, 5, 7);
+        assert(expanded == cnn_appearance_init(&kwargs, slot, 7));
+        extended[expanded]++;
+        dict_set(&kwargs, "representation_mix_catalog", 0);
+        assert(cnn_appearance_init_catalog(&kwargs, slot, 5, 7) == legacy);
+    }
+    for (int i = 0; i < 7; i++) assert(extended[i]);
     int counts[10] = {0}, changed = 0;
     for (unsigned int slot = 0; slot < 4096; slot++) {
         dict_set(&kwargs, "representation_seed", 12345);
@@ -31,8 +45,8 @@ int main(int argc, char** argv) {
         dict_set(&kwargs, "representation", id);
         assert(cnn_appearance_init(&kwargs, 999, 10) == id);
     }
-    if (argc == 4) {
-        // Usage: test_appearance connect4cnn|pongcnn seed slots
+    if (argc == 4 || argc == 5) {
+        // Usage: test_appearance connect4cnn|pongcnn seed slots [mix_catalog]
         int count = strcmp(argv[1], "connect4cnn") == 0 ? 10
             : strcmp(argv[1], "pongcnn") == 0 ? 5 : 0;
         double slots = strtod(argv[3], NULL);
@@ -40,9 +54,12 @@ int main(int argc, char** argv) {
         dict_set(&kwargs, "representation", 0);
         dict_set(&kwargs, "representation_mode", 1);
         dict_set(&kwargs, "representation_seed", strtod(argv[2], NULL));
+        dict_set(&kwargs, "representation_mix_catalog", argc == 5 ? strtod(argv[4], NULL) : 0);
         puts("slot,representation");
         for (unsigned int slot = 0; slot < (unsigned int)slots; slot++) {
-            printf("%u,%d\n", slot, cnn_appearance_init(&kwargs, slot, count));
+            int id = count == 5 ? cnn_appearance_init_catalog(&kwargs, slot, 5, 7)
+                : cnn_appearance_init(&kwargs, slot, count);
+            printf("%u,%d\n", slot, id);
         }
     } else if (argc != 1) return 2;
     free(kwargs.items);

@@ -1,5 +1,11 @@
 # FlappyCNN
 
+October 5 evaluation groundwork: [dedicated deterministic evaluation](DETERMINISTIC_EVAL.md)
+now has a native exact adapter, frozen host spawn/image manifests and complete
+episode audits. Four native targets compile; simulation/start/quota-corruption
+checks pass. **GPU evaluator acceptance is pending**; pooled-v1 historical
+scores below are unchanged and must not be relabeled exact.
+
 Native PufferLib Flappy with synthetic grayscale pixels, generated directly into the observation buffer. This is PufferLib's own Flappy game, not ALE or an inherited external leaderboard. Copied from `ocean/flappy/flappy.h`, blob `d5b194c7fc9ccde430689b1562c975203cc58f0d`; original Flappy remains unchanged.
 
 ## Image and rules
@@ -14,16 +20,40 @@ Native `score` is mean pipes passed per completed episode. Native `perf` is mean
 
 ## Deterministic appearances
 
+October 6: [the seven-ID drawing contract](REPRESENTATIONS.md) adds rounded
+birds and outlined pipes. [Checks and retained receipts](../../research/FLAPPY_GEOMETRIC_ROBUSTNESS.md)
+pass without executing a policy. Historical scores below use drawing 0.
+
 | `env.representation` | Image |
 |---|---|
 | 0 | Base image |
 | 1 | Horizontal reflection |
 | 2 | Vertical reflection |
 | 3 | Grayscale inversion |
+| 4 | Rounded bird, filled pipes |
+| 5 | Rectangular bird, outlined pipes |
+| 6 | Rounded bird, outlined pipes |
 
-Image shape stays fixed. These are reversible appearance transforms, with physics/actions unchanged. `env.representation_mode=0` selects a fixed ID. Mode 1 assigns one ID per native environment slot using `env.representation_seed` and the shared appearance hash; the assignment persists through resets and consumes no game RNG. Native environment RNG starts from its slot initialization; `base.seed` is the learner/action seed, not a replacement for the appearance seed. Keep mode/seed/slot count on reload. A mixed-mode search is not proof of per-appearance robustness; use a declared fixed-ID evaluation panel later.
+Image shape stays fixed, with physics/actions unchanged. IDs 1–3 are reversible
+transforms; IDs 4–6 change visible geometry. `env.representation_mode=0` selects
+a fixed ID. Mode 1 assigns one ID per native environment slot using
+`env.representation_seed` and the shared appearance hash; the assignment
+persists through resets and consumes no game RNG. Default
+`representation_mix_catalog=0` preserves the old four-ID mixture; value 1 opts
+into all seven. Native environment RNG starts from its slot initialization;
+`base.seed` is the learner/action seed, not a replacement for the appearance
+seed. Keep mode/catalog/seed/slot count on reload. A mixed-mode search is not
+proof of per-appearance robustness; use a declared fixed-ID evaluation panel.
 
 ## Native encoders and common recipe
+
+For fixed-model learning calibration, [shared learner preparation](../../research/SHARED_LEARNER_RECIPES.md)
+uses `learner_stock.ini` as an explicit stock actor/vector/learner overlay while
+keeping all four CNN graphs and H128/L1 fixed. It changes no shared defaults or
+game semantics. Two all-drawing/three-seed candidate panels and paired native
+host evaluation starts are prepared; no new training occurred. The larger
+minibatch remains unqualified for the baseline families, and both GPU holds
+remain. Preparation is separate from the historical pilot launchers below.
 
 The custom encoder hook recognizes `PUFFER_FLAPPYCNN` and reuses the existing CUDA code under `ocean/connect4cnn/`. No kernels or Raylib dependencies are copied into this environment. IDs 1–5 retain their meanings; ID 0 uses the compiled reference/default. Nature is ID 2, existing Flex is ID 4. IMPALA/Impoola use ID 0 with per-build `C4_IMPALA_CNN`/`C4_IMPOOLA_CNN` selectors. Encoder 5's new math still needs its own GPU acceptance checks; this environment does not validate it automatically. Float32 only is the supported research workflow.
 

@@ -238,10 +238,15 @@ def idle_gpu(out, name):
     (out/name).write_text(hardware)
 
 
-def parse_checkpoints(log, process_record, expected_steps, parameters):
-    require(process_record["status"] == "ok", "Training process did not complete")
+def parse_checkpoints(log, process_record, expected_steps, parameters, allow_partial=False):
+    complete = process_record["status"] == "ok"
+    require(complete or allow_partial, "Training process did not complete")
     matches = RECEIPT.findall(log)
-    require([int(row[0]) for row in matches] == expected_steps, "Missing, duplicate or unexpected checkpoint receipt")
+    actual = [int(row[0]) for row in matches]
+    require(actual == (expected_steps if complete else expected_steps[:len(actual)]),
+            "Missing, duplicate or unexpected checkpoint receipt")
+    require(len(matches) == sum(line.startswith("PUFFER_CHECKPOINT") for line in log.splitlines()),
+            "Malformed checkpoint receipt")
     result = {}
     previous = process_record["launch_monotonic_ns"]
     for step, size, timestamp in matches:
@@ -293,7 +298,10 @@ def run_canary(out, allowed):
             timed = process([str(binary), "train", "--headless"], directory, directory/"train.log", 2400, env)
             parse_checkpoints((directory/"train.log").read_text(), timed, p["checkpoint_steps"], job["parameters"])
             expected = ini(directory/"config/default.ini")
-            resolved = ini(directory/"metrics/connect4cnn/trial.ini")
+            resolved_path = directory/"checkpoints/connect4cnn/trial/resolved.ini"
+            if not resolved_path.exists():
+                resolved_path = directory/"metrics/connect4cnn/trial.ini"
+            resolved = ini(resolved_path)
             require(normalized(expected) == normalized(resolved), "Executed config differs from frozen job")
             for step in p["checkpoint_steps"]:
                 checkpoint = directory/f"checkpoints/connect4cnn/trial/{step:016d}.bin"
@@ -381,19 +389,22 @@ def audit(out):
             if by_id[job["id"]]["status"] != "ok":
                 failures.append(dict(job=job["id"], error="Job incomplete; retaining independently complete checkpoint cells"))
             require(sha(out/"binaries"/job["model"]) == binaries[job["model"]], "Binary receipt mismatch")
-            resolved = ini(directory/"metrics/connect4cnn/trial.ini")
+            resolved_path = directory/"checkpoints/connect4cnn/trial/resolved.ini"
+            if not resolved_path.exists():
+                resolved_path = directory/"metrics/connect4cnn/trial.ini"
+            resolved = ini(resolved_path)
             require(normalized(resolved) == normalized(ini(directory/"config/default.ini")), "Executed job config changed")
             require(common_settings(resolved) == p["common_settings"], "Unmatched learner settings")
             timed = json.loads((directory/"train.log.json").read_text())
             require(timed["command"] == [str(out/"binaries"/job["model"]), "train", "--headless"]
                     and timed["cwd"] == str(directory), "Wrong training command/config directory")
             require(timed["environment"]["PUFFER_CHECKPOINT_RECEIPTS"] == "1", "Checkpoint receipts were not requested")
-            times = parse_checkpoints((directory/"train.log").read_text(), timed, p["checkpoint_steps"], job["parameters"])
+            times = parse_checkpoints((directory/"train.log").read_text(), timed, p["checkpoint_steps"], job["parameters"], allow_partial=True)
         except (ValueError, OSError, KeyError) as error:
             failures.append(dict(job=job["id"], error=str(error)))
             continue
         duration = (timed["end_monotonic_ns"]-timed["launch_monotonic_ns"])/1e9
-        for label in ("repeat", "eager", "worker1"):
+        for label in (("repeat", "eager", "worker1") if by_id[job["id"]]["status"] == "ok" else ()):
             try:
                 step = p["checkpoint_steps"][-1]
                 stem = directory/f"eval-{step:016d}-{label}"
@@ -407,15 +418,18 @@ def audit(out):
                 require(hashes[".csv"] == sha(directory/f"eval-{step:016d}-b0.csv"), "Repeat/eager/worker outcomes differ")
             except (ValueError, OSError, KeyError) as error:
                 failures.append(dict(job=job["id"], check=label, error=str(error)))
+        native_uptime = None
         try:
-            metrics = resolved["metrics"]
+            logged = ini(directory/"metrics/connect4cnn/trial.ini")
+            metrics = logged["metrics"]
             native_uptime = float(metrics["uptime"].split(",")[-1])
             require(math.isfinite(native_uptime) and native_uptime > 0 and int(float(metrics["agent_steps"].split(",")[-1])) == p["steps"], "Invalid native metrics")
-        except (ValueError, KeyError) as error:
-            failures.append(dict(job=job["id"], error=str(error)))
-            continue
+        except (ValueError, KeyError, OSError) as error:
+            if timed["status"] == "ok":
+                failures.append(dict(job=job["id"], error=str(error)))
         for step in p["checkpoint_steps"]:
             try:
+                require(step in times, "Checkpoint has no complete post-rename receipt")
                 checkpoint = directory/f"checkpoints/connect4cnn/trial/{step:016d}.bin"
                 require(sha(checkpoint) == by_id[job["id"]]["checkpoints"][str(step)], "Checkpoint hash mismatch")
                 weights = np.fromfile(checkpoint, dtype=np.float32)
@@ -437,8 +451,10 @@ def audit(out):
                         totals[key] += result[key]
                 points.append(dict(model=job["model"], seed=job["seed"], steps=step, seconds=times[step],
                                    win_rate=totals["wins"]/totals["episodes"], games=totals["episodes"],
-                                   parameters=job["parameters"], process_sps=p["steps"]/duration,
-                                   native_sps=p["steps"]/native_uptime, train_seconds=duration))
+                                   parameters=job["parameters"],
+                                   process_sps=p["steps"]/duration if timed["status"] == "ok" else None,
+                                   native_sps=p["steps"]/native_uptime if native_uptime is not None else None,
+                                   train_seconds=duration))
             except (ValueError, OSError, KeyError) as error:
                 failures.append(dict(job=job["id"], steps=step, error=str(error)))
     output = Path(tempfile.mkdtemp(prefix="analysis.", dir=out))

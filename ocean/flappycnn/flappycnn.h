@@ -15,7 +15,8 @@ typedef float obs_t;
 #define OBS_WIDTH 44
 #define OBS_SIZE (OBS_CHANNELS * OBS_HEIGHT * OBS_WIDTH)
 #define NUM_ATNS 1
-#define FLAPPYCNN_NUM_REPRESENTATIONS 4
+#define FLAPPYCNN_LEGACY_REPRESENTATIONS 4
+#define FLAPPYCNN_NUM_REPRESENTATIONS 7
 
 #define FLAPPY_NUM_PIPES 3
 #define FLAPPY_NOOP 0
@@ -128,22 +129,63 @@ static inline void flappycnn_rect(obs_t* obs, float x0, float y0,
     }
 }
 
+static inline void flappycnn_pipe(obs_t* obs, float x0, float y0,
+        float x1, float y1, bool outline) {
+    if (!outline) { flappycnn_rect(obs, x0, y0, x1, y1, 0.5f); return; }
+    int left = (int)fmaxf(0, fminf(OBS_WIDTH, floorf(x0)));
+    int right = (int)fmaxf(0, fminf(OBS_WIDTH, ceilf(x1)));
+    int top = (int)fmaxf(0, fminf(OBS_HEIGHT, floorf(y0)));
+    int bottom = (int)fmaxf(0, fminf(OBS_HEIGHT, ceilf(y1)));
+    if (left >= right || top >= bottom) return;
+    for (int y = top; y < bottom; y++) {
+        if (y == top || y == bottom - 1) {
+            for (int x = left; x < right; x++) obs[y * OBS_WIDTH + x] = 0.5f;
+        } else {
+            obs[y * OBS_WIDTH + left] = 0.5f;
+            obs[y * OBS_WIDTH + right - 1] = 0.5f;
+        }
+    }
+}
+
+static inline void flappycnn_bird(Flappy* env, obs_t* obs) {
+    double cx = (double)env->bird_x * OBS_WIDTH / env->width;
+    double cy = (double)env->bird_y * OBS_HEIGHT / env->height;
+    double rx = (double)env->bird_radius * OBS_WIDTH / env->width;
+    double ry = (double)env->bird_radius * OBS_HEIGHT / env->height;
+    int left = (int)fmax(0, fmin(OBS_WIDTH, floor(cx - rx)));
+    int right = (int)fmax(0, fmin(OBS_WIDTH, ceil(cx + rx)));
+    int top = (int)fmax(0, fmin(OBS_HEIGHT, floor(cy - ry)));
+    int bottom = (int)fmax(0, fmin(OBS_HEIGHT, ceil(cy + ry)));
+    for (int y = top; y < bottom; y++) for (int x = left; x < right; x++) {
+        double dx = (x + 0.5 - cx) / rx, dy = (y + 0.5 - cy) / ry;
+        if (dx * dx + dy * dy <= 1) obs[y * OBS_WIDTH + x] = 1;
+    }
+    // Keep a visible center marker when a subpixel bird misses all centers.
+    if (cx >= 0 && cx < OBS_WIDTH && cy >= 0 && cy < OBS_HEIGHT)
+        obs[(int)cy * OBS_WIDTH + (int)cx] = 1;
+}
+
 static inline void flappy_compute_observations(Flappy* env) {
     obs_t* obs = env->agents[0].observations;
     memset(obs, 0, OBS_SIZE * sizeof(obs_t));
     float sx = (float)OBS_WIDTH / env->width;
     float sy = (float)OBS_HEIGHT / env->height;
+    bool outline = env->representation == 5 || env->representation == 6;
     // World and image y both point down. Draw visible pipe geometry, then bird.
     for (int i = 0; i < FLAPPY_NUM_PIPES; i++) {
         Pipe* pipe = &env->pipes[i];
         float x0 = pipe->x * sx, x1 = (pipe->x + env->pipe_width) * sx;
         if (x1 <= 0 || x0 >= OBS_WIDTH) continue;
-        flappycnn_rect(obs, x0, 0, x1, (pipe->gap_y - env->pipe_gap * 0.5f) * sy, 0.5f);
-        flappycnn_rect(obs, x0, (pipe->gap_y + env->pipe_gap * 0.5f) * sy, x1, OBS_HEIGHT, 0.5f);
+        flappycnn_pipe(obs, x0, 0, x1, (pipe->gap_y - env->pipe_gap * 0.5f) * sy, outline);
+        flappycnn_pipe(obs, x0, (pipe->gap_y + env->pipe_gap * 0.5f) * sy, x1, OBS_HEIGHT, outline);
     }
-    flappycnn_rect(obs, (env->bird_x - env->bird_radius) * sx,
-        (env->bird_y - env->bird_radius) * sy, (env->bird_x + env->bird_radius) * sx,
-        (env->bird_y + env->bird_radius) * sy, 1.0f);
+    if (env->representation == 4 || env->representation == 6) {
+        flappycnn_bird(env, obs);
+    } else {
+        flappycnn_rect(obs, (env->bird_x - env->bird_radius) * sx,
+            (env->bird_y - env->bird_radius) * sy, (env->bird_x + env->bird_radius) * sx,
+            (env->bird_y + env->bird_radius) * sy, 1.0f);
+    }
     if (env->representation == 1) {
         for (int y = 0; y < OBS_HEIGHT; y++) for (int x = 0; x < OBS_WIDTH / 2; x++) {
             float tmp = obs[y * OBS_WIDTH + x];
@@ -368,5 +410,6 @@ void puf_init(Env* env, Dict* kwargs) {
     env->agents[0].action_mask = NULL;
     env->agents[0].policy = 0;
     init(env);
-    env->representation = cnn_appearance_init(kwargs, env->rng, FLAPPYCNN_NUM_REPRESENTATIONS);
+    env->representation = cnn_appearance_init_catalog(kwargs, env->rng,
+        FLAPPYCNN_LEGACY_REPRESENTATIONS, FLAPPYCNN_NUM_REPRESENTATIONS);
 }

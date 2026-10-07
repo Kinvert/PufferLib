@@ -1,0 +1,1 @@
+Built temporary native PROTEIN feedback worker: /home/claude/cnn/build/cross-game-feedback/native-v2-20261006

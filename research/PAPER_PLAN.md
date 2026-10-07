@@ -1,5 +1,176 @@
 # Paper plan: practical compute-efficient visual RL encoders
 
+October 6 [native adaptive cross-game prototype](CROSS_GAME_PROTEIN_FEEDBACK.md)
+implements temporary research-core PROTEIN feedback from one shared architecture
+trained separately on all six games and evaluated on all 41 drawings. Equal-game
+fixed-anchor scores and once-per-job monotonic costs are explicit; learners stay
+fixed per game. Native/normal builds and host/mock tests pass, actual preparation
+passes, but the GPU feedback loop has not executed and anchors/caps are not
+calibrated. This adds infrastructure, no quality/Pareto claim. Kinvert prohibits
+pushing the prototype; the eventual selected architecture will receive a separate
+clean PufferLib implementation/PR. All scientific qualification gates remain.
+
+October 6 [candidate parameter layouts](CANDIDATE_BASELINE_COMPARISON.md) add
+an opt-in pre-training native registration check to candidate-only and reference
+panels. Full encoder/head/core sizes now come from the constructor before a
+checkpoint exists; scheduled runs repeat registration before querying hardware
+and require emitted weights/logs to agree. Actual 60-job preparation and 52
+host/config/synthetic regressions pass, zero policies execute. Source/action
+binding and byte checks don't qualify tensor math, full memory, equal-size
+checkpoint provenance, adequate learning or Pareto superiority. Both holds
+remain; numerical/evaluator/memory/calibration/selection gates still precede
+confirmatory comparison.
+
+October 6 [drawing-mixture discovery](DISCOVERY_PIXEL_MIXTURES.md) fixes a
+Flappy catalog mismatch and exposes deterministic slot mixtures without making
+appearance a CNN search dimension. All six games retain the 18-dimension grammar
+and their learner recipes. Preparation/native scalar checks pass, zero proposals
+execute. Match mixture seed/catalog/slot geometry in paired baseline panels;
+trained-catalog robustness differs from withheld appearance generalization.
+This adds no quality/Pareto claim or adaptive cross-game optimizer.
+
+October 6 [all-candidate curve visibility](CANDIDATE_FRONTIER_VIEW.md) closes
+an evidence-display gap: custom names and fixed reference aliases now appear
+alongside every missing/losing model, rather than only four hard-coded families.
+The offline candidate bridge must audit raw episode/clock/input receipts before
+rendering scores. Actual original smoke and empty reference allocation views
+retain all conditions/checkpoints/costs without creating a quality claim. Model
+hiding cannot alter stored frontier membership or coverage; smoke/failed panels
+have no frontier marks. This adds no new training or statistical certification.
+
+October 6 [pre-GPU checkpoint layout](CHECKPOINT_LAYOUT_GATE.md) closes a
+specific shared-acceptance gap: correct raw weight length and ordered native
+parameter registration can now be checked before invoking a GPU adapter.
+Configurable legacy CNNs and fixed references share this opt-in gate; native
+shape/stat tools compute no neural outputs. Existing Flappy quality weights
+prepare without inference. This prevents some wrong-checkpoint comparisons,
+but equal-size weights, runtime binary provenance, independent numerical math,
+learning calibration and published dominance remain separate requirements.
+
+October 6 [candidate/reference panel-v2](CANDIDATE_BASELINE_COMPARISON.md) now
+prepares arbitrary shared architectures alongside Nature, IMPALA and Impoola.
+Full captured per-game recipes and family/config world/raster manifests are
+audited before execution. Actual 18 native builds and the 60-job/two-seed
+preparation pass; 820 checkpoint evaluations have zero observations. Twenty
+new host/config/scalar/synthetic checks and 20 reporting regressions pass.
+Full curves require complete paired seeds and retain every checkpoint decline;
+game/drawing units and Pong censoring bounds remain separate. This is a fair
+comparison path, not new learning or publication evidence. Numerical/runtime,
+learner/cap calibration, discovery costs, held-out selection and simultaneous
+frontier inference remain prerequisites for a defensible claim. Both GPU holds
+remain; the completed local smoke is not repeated or extended.
+
+October 6 active [cross-game candidate panel](CROSS_GAME_CNN_SWEEP.md): Kinvert
+clarifies that we seek one architecture that works across the existing games;
+LR/clip/etc. are per-game learner recipes, identical across CNN candidates.
+The user authorized a bounded 5060 plumbing smoke, then a real 5090 campaign
+later. This scoped authorization supersedes earlier local holds only for the
+new smoke; all historical zero-execution packets remain unchanged. Full native
+PROTEIN discoveries can be expanded without best-source-game filtering. This
+isn't yet cross-game adaptive optimization or confirmatory publication evidence.
+
+October 6 [native policy metadata](POLICY_CHECKPOINT_PREFLIGHT.md) adds actual
+encoder/head/MinGRU registration and stat-only checkpoint size checks. Three
+targets compile; seven host tests/144 full-policy grid cases match independent
+C arithmetic. The real Flappy merged INI passes size preflight; the default
+file alone is rejected. No production launcher/math/learning claim changes.
+Keep source/config/binary/weight binding and finite-byte checks: size/layout
+alone cannot establish architecture or recipe identity. Both holds remain.
+
+October 6: Kinvert says the six environments are enough for now. Keep this
+inventory and prioritize acceptance, matched learning and defensible comparisons.
+The [offline viewer](PIXEL_FRONTIER_REPORTING.md) now shows all four CNNs across
+each training/evaluation drawing, every checkpoint and assigned seed, with
+explicit missing/failure coverage and separate Pong censoring bounds. It displays
+stored descriptive flags, not new significance or dominance calculations; current
+multi-game data still contains zero observations. No GPU execution is authorized.
+
+October 6 [multi-game frontier reporting](PIXEL_FRONTIER_REPORTING.md) now
+preserves native checkpoint clock boundaries, exact paired episode audit and
+all missing/failing cells across six tasks/drawings. Quality units stay separate;
+Pong censoring bounds remain intervals. No incomplete condition has frontier
+flags, no best-seed or test-checkpoint selection, no uncalibrated confidence
+bands. Host/synthetic reporting checks pass; all measured execution and claim
+gates remain. The current six-game report contains zero policy observations.
+
+October 6 [Flappy geometric variations](FLAPPY_GEOMETRIC_ROBUSTNESS.md) expand
+the current six-game catalog to 41 drawings. Rounded birds/outlined pipes
+alter perceptual information while preserving game semantics and image shape;
+legacy mixing and captured historical catalogs remain intact. Host/raster/
+sanitizer checks and five builds pass; no policy or GPU ran. These conditions
+broaden the planned robustness panel, not measured transfer or superiority.
+Freeze held-out game/drawing selection rules before learning-based selection,
+and qualify pending evaluators/shared learners before collecting matched curves.
+
+October 6 [mixed-training panels](MIXED_PIXEL_TRAINING.md) now prepare matched
+native slot mixtures and fixed-ID evaluation of every checkpoint. Counts are
+retained and unequal; the declared two learner seeds share one mixture seed.
+All current IDs are exposed, so this design tests trained-catalog robustness,
+not unseen-appearance generalization. Host/configuration checks pass; learned
+performance, live vector/reload and all existing execution/inference gates remain
+unverified. Preserve per-target correlated curves and one training-time receipt
+per checkpoint, with no target/seed selection based on observed scores.
+
+October 6 [same-policy appearance transfer](PIXEL_APPEARANCE_TRANSFER.md)
+now binds the same training checkpoint to every fixed drawing, distinct from
+retraining a fresh policy per drawing. Six-game host/configuration checks pass;
+GPU transfer remains unmeasured. Keep train/evaluation drawing separate, use
+one training-time receipt per checkpoint across targets, and account for their
+correlation. Development targets aren't certified untouched final tests; both
+GPU holds and the existing inference/acceptance/calibration gates remain.
+
+October 6 learner fairness groundwork: [LEARNING_RECIPE_CALIBRATION.md](LEARNING_RECIPE_CALIBRATION.md)
+audits native effective updates, prefix coverage, budgets/cadence and common
+recipes without a policy. All 152 prepared jobs match, but the stock Flappy
+pilot has eight times fewer updates per decision than the small-batch recipe.
+Float32 replay truncation can also produce no updates. Retain this geometry
+with executed configs and full search costs; equal decision counts alone
+aren't an equal training regime. Host/UBSan tests aren't learning adequacy,
+GPU acceptance or certified frontier inference. Both execution holds remain.
+October 6 fairness preparation: [shared GEMM acceptance](SHARED_GEMM_ACCEPTANCE.md)
+compiles isolated native main/dW event/workspace paths and freezes a 96-case
+panel with independent GPU dyadic references. Host checks pass; exclusive
+launch supervision and offline auditing are implemented/tested with host
+fixtures. GPU behavior remains pending. No production backend changed.
+Before adopting a workspace change, qualify full encoder/policy math and
+repeatability and apply it equally to all families. These six matrix shapes
+are not independent games or evidence of actual kernel overlap or speedup.
+
+October 6 shared gate: [evaluator acceptance automation](EVAL_ACCEPTANCE.md)
+freezes existing checkpoints and checks repeat/eager/same-batch independent
+tail receipts for each explicitly selected pending game/family/configuration.
+GPU-free preparation/synthetic tests do not prove inference or model math.
+Full INI comparison catches world/learner/vectorization drift; unchanged
+archives remain auditable after relocation. Require actual scheduled GPU
+receipts, independent math/reload and baseline efficiency before learning
+comparisons; neither this tool nor current development frontiers certify SOTA.
+
+October 5 robustness groundwork: [the current fixed-graph multi-task plan](MULTI_ENV_ROBUSTNESS.md)
+covers Connect4/Pong/Flappy, BreakoutCNN, separately versioned SnakeCNN and native
+MazeCNN (October 6 addition), all 38 current drawing conditions, GPU-free
+matched panel preparation and additional candidates. Maze preserves original
+level/reset/log behavior. Its exact evaluator and supervised checkpoint wrapper
+now compile/pass host/game/audit checks, but have no GPU acceptance or learning
+evidence. A checked held-out table-prefix declaration is not verified exclusion.
+The graph stays frozen across games; per-game architecture
+winners are a separate constructor claim. No new GPU campaign or multi-task
+advantage is established. Flappy/Breakout/Pong exact adapters now compile with
+passing host/simulation checks, but GPU acceptance remains pending. Flappy's
+checkpoint supervisor now also passes preparation/audit checks with strict
+source/manifest closure and explicitly weaker legacy manifest metadata.
+Existing stock quality/state weights can be prepared without retraining;
+neither those preparations nor appearance-transfer suites are learned scores.
+Breakout's
+supervised launcher passes preparation/audit checks; Pong's match/censoring
+adapter preserves full-match counters and its supervised launcher also passes
+host preparation/audit checks. GPU runtime acceptance remains pending. Snake's
+matched local state/pixel protocol and exact assigned-episode adapter compile;
+independent game/counter/sanitizer and native-host/synthetic audits pass.
+Its supervised checkpoint launcher passes GPU-free preparation/audit checks
+as of October 6; GPU learning/reload/exact acceptance remain pending. Original
+stock Snake is unchanged. General RGB/external benchmarks
+remain gates. Host starts and synthetic audit scores aren't learning evidence.
+
 October 2 implementation update: [the measurement pipeline](CLAIM_PIPELINE.md)
 now supplies native exact-episode evaluation, completed-checkpoint timing,
 matched preparation, receipt audits and full-curve reporting. All four binaries
@@ -13,7 +184,45 @@ Status: research plan, updated September 26, 2026. Kinvert wants usable native P
 
 Working title: **Practical Compute-Efficient Visual Encoders for Reinforcement Learning**. Keep the title neutral until the experiments establish the contribution. The main question is: **Can a fixed compact encoder, trained from scratch on each task, improve the score-versus-training-time tradeoff across diverse pixel environments under fair tuning and reliable evaluation?** A useful result could be a small set of budget-specific encoders; one universal winner is not a required conclusion.
 
+Implementation candidates remain separate from architecture/pretraining claims.
+The [isolated dense patch alias prototype](DENSE_PATCH_ALIAS_CANDIDATE.md) applies
+equally to quality and Nature; production remains unchanged. Compilation and
+host registration/counts are evidence of preparation only, not numerical
+equivalence, a speedup or broader learning. Qualify GPU math/repeatability and
+whole-policy behavior before timing or rebuilding matched learning curves;
+retain earlier source/backend identities and negative results.
+
+The [paired numerical supervisor](DENSE_ALIAS_ACCEPTANCE.md) now prepares the
+fixed quality/Nature graphs, including H64's single-projection branch, with
+all-parameter-gradient and exact byte comparisons across independent workers.
+Two libraries compile and 39 host/synthetic tests pass; all GPU execution
+remains pending. A numerical pass would still exclude full-policy concurrency,
+reload, larger learner batches and any learning/frontier claim.
+
+Current numerical protocol v2 adds B2048, matching the common learner, and
+has 72 fixed declarations with v1 preserved unchanged. That batch is not yet
+accepted; batches above it remain excluded. Vendor/system/link dependency
+closure is incomplete, so captured owned-source equality is not complete
+toolchain certification. Preserve this distinction in the implementation claim.
+
 The practical delivery target is the [native CNN constructor and search workflow](CNN_CONSTRUCTOR_PLAN.md). There are two distinguishable research claims: a frozen encoder's tradeoff advantage, and a search procedure finding better configurations for a declared resource budget. Neither is established yet. The software should remain useful when the existing compact model loses; the paper must not depend on forcing that model to win.
+
+October 6 shared-learner preparation: [explicit per-game overlays](SHARED_LEARNER_RECIPES.md)
+implement fixed-CNN comparison under complete shared settings without changing
+architecture/core/world. Two Flappy development candidates have aligned
+decision/cadence and paired native host starts across four drawings/three
+seeds, but zero learning runs. Stock/small-batch optimizer counts differ by
+eightfold; retain separate recipe frontiers and all negative outcomes. Runtime
+evaluation, baseline memory/math/reload, learning calibration and final
+selection/inference gates precede claims. Neither GPU hold is lifted.
+
+October 6 [memory preflight](LEARNER_MEMORY_PREFLIGHT.md) shows stock-minibatch
+IMPALA/Impoola encoder training tensors alone exceed the 5060's capacity.
+An equally applied smaller-batch stock candidate is prepared, with changed
+update counts and no learning result. This is a current-implementation buffer
+constraint, not architecture superiority or intrinsic memory evidence. Keep
+backend efficiency review, common within-candidate settings and full-policy
+fit/math/reload acceptance before comparative timing; both holds remain.
 
 Parallel development: [encoder-5 grammar](FLEX2_CNN_SWEEP.md) adds dilation, residual repetitions, spatial readout and fixed/learned activations. Its build passes; GPU acceptance checks and learning evidence are pending. [Game-frame pretraining design](PIXEL_PRETRAINING_DATASET_PLAN.md) is research only: image-space labels generated from the exact frame, no state inputs, no dataset generated. A pretrained-backbone result is a separate initialization/data/compute claim from a scratch architecture result; preserve scratch controls and account for collection/pretraining cost. The current native input remains 1x36x44 grayscale; RGB/general-resolution portability is not yet delivered.
 
@@ -112,6 +321,24 @@ Connect4 is a development case study and integration test. Its existing evaluati
 
 ## Apples-to-apples experimental design
 
+October 6 [source/backend audit](BASELINE_BACKEND_AUDIT.md): all four native
+encoders share cuBLAS GEMM helpers; reference timing isn't a Python overhead
+comparison. An independent C shape calculator matches 52 retained parameter
+rows and Flappy's quality count, with matching encoder/core source hashes.
+MAC/tensor-payload counts are static estimates, not speed/VRAM measurements.
+The current stream-setting call resets initialization's user workspace;
+validate handle/stream concurrency and workspace behavior before profiling
+or certifying broader repeatability. No kernel/system/GPU change was made.
+Backend efficiency and competitive implementation comparison remain open.
+
+[Native profiler preparation](NATIVE_ENCODER_PROFILER.md) now compiles and
+cross-checks actual callback registrations against the independent counts
+(36 shape cases and seven rejections). Scheduled CUDA timing/workspace paths,
+runtime supervision and concurrent trainer acceptance remain unexecuted gates.
+Host supervision now passes 16 tests and freezes all 64 default profiling cases;
+this hasn't executed either GPU. These
+host metadata receipts are not baseline speed or cross-game learning evidence.
+
 Use two explicitly separate comparisons:
 
 - **Controlled architecture comparison:** same learner settings, core, observations, preprocessing, precision, environment version/opponent, rollout/replay semantics, hardware, and evaluator; vary the encoder. Match model-independent backend capabilities. Parameter and FLOP counts are reported rather than silently assumed equal.
@@ -188,3 +415,76 @@ Do not write a successful cross-environment abstract or populate final-result ta
 Freeze the current experimental snapshot and candidate selection; specify a machine-readable confirmation protocol; finish the common evaluator/timing/curve workflow; remove duplicate active configuration/budget/seed trials; and audit portability to one actual external pixel environment. Start with the Connect4 confirmation panel once the protocol is concrete. Broader experiments follow measured learning and runtime calibration, not an assumed tiny timestep budget. This plan does not authorize a new long sweep by itself.
 
 Current evidence: [complete CNN2 analysis](CNN2_RESULTS.md), [experiment history](EXPERIMENT_LOG.md), [benchmark research](BENCHMARKS_AND_SWEEPS.md).
+
+## October 6 existing-checkpoint evaluator follow-up
+
+[CANDIDATE_EVALUATOR_ACCEPTANCE.md](CANDIDATE_EVALUATOR_ACCEPTANCE.md) connects
+the completed quality/Nature six-game smoke to the existing supervised exact
+evaluator gate. The offline exporter audits the complete original panel, selects
+only the last scheduled checkpoint for every policy and preserves native
+binary/config/checkpoint/suite bindings. Drawing-zero development allocation:
+10 actual saved-policy cases across five newer evaluators, graph/repeat/eager/
+independent tail at unchanged 16-slot batches; Connect4 keeps its separate gate.
+Actual RTX 5060 execution now passes all ten cases, 40 native processes and
+520 assigned episode executions, with unchanged complete episode/action rows
+and offline audit. This is scoped runtime receipt evidence, not independent
+forward/gradient validation or a learning comparison.
+Short local RTX 5060 authorization supersedes earlier local holds only within
+bounded smokes. Other drawings, batches, models, numerical math, full-learner
+memory/reload, learning/cap calibration and selection-safe frontier inference
+remain separate requirements. No private held-out selection or new training.
+
+## October 6 independent CUDA encoder numerical evidence
+
+[GPU_ENCODER_NUMERICAL_SMOKE.md](GPU_ENCODER_NUMERICAL_SMOKE.md) records actual
+RTX 5060 checks of the frozen quality/Nature encoders with an isolated float64
+CUDA reference, without a NumPy CPU CNN oracle or production kernel changes.
+All 18 H128/B1/3/64/input-state cases pass across two workers/144 harness calls,
+including every encoder parameter gradient/output, exact graph/process/device
+parameter bytes and 28 selected CUDA finite differences. Seven host guards
+remain separate from actual model evidence; raw sources/arrays/process clocks
+and hardware receipts identify the executed implementation. The 1.780s worker
+interval isn't a speed or learning comparison. The older unexecuted paired
+alias packet still uses CPU NumPy references; CUDA initialization doesn't alter
+that. Learner B2048/alternate widths/general graphs/full policy/concurrent
+reload/learning/selection/statistical dominance still need independent evidence.
+
+### Learner-batch follow-up: failure retained
+
+[GPU_ENCODER_LEARNER_BATCH.md](GPU_ENCODER_LEARNER_BATCH.md) records the actual
+72-case v2 follow-up: 33 first-worker quality cases pass, then H256/B2048
+nonblank fails 26 first-convolution gradient entries. Only 133 native calls
+and 16 selected finite-difference probes executed; Nature and independent
+repeat worker were not reached. A separate unchanged-library GPU probe finds
+one near-zero float32/float64 ReLU branch difference with a closely matching
+image-patch gradient pattern. This supports a rounding explanation, not full
+backward acceptance; the original strict result remains failed.
+
+Before claiming learner-batch encoder correctness, independently check layer
+forward values and backward algebra conditioned on actual float32 activations/
+branches, retaining the unconditioned float64 comparison with its own outcome.
+That protocol is planned, not implemented. Do not relax tolerances/drop the
+case or use earlier narrower success as B2048 acceptance. Full-policy,
+baseline efficiency, learning and statistical frontier gates remain open.
+
+### Short-time development curves on RTX 5060
+
+Kinvert separately authorized the [mini short-budget panel](MINI_SHORT_BUDGET_5060.md).
+Frozen H128 quality versus Nature, two paired seeds across six games/all41
+drawings, with matched per-game learner settings and checkpoints262,144/524,288.
+The declaration contains 24 serial training jobs, 328 assigned evaluations and
+48 final drawing0 repeat/eager checks. Only completed audited observations may
+populate curves; training timing is charged once per job and native/process SPS
+stay separate. This is coarse short-time development sampling, not sufficient
+learning/calibration, numerical acceptance, held-out selection or paper-quality
+dominance. Mini frontier marks remain null. Current results and final status
+belong in the linked report; the plan itself isn't evidence of completion.
+
+Actual mini outcome: all 24 jobs/328 evaluations/48 repeat-eager checks pass
+audit in 379.588s, with 88.709s training process time. Ours has 9–22% higher
+short-run process SPS, but three games stay at zero score across all drawings.
+This cannot establish quality dominance. Three native uptime inconsistencies
+also prohibit a native-average-SPS comparison; preserve raw logs and use
+monotonic checkpoint/process timing. A separately validated monotonic native
+timer and a smallest-useful-budget calibration are follow-up priorities before
+stronger claims; neither is implemented by this benchmark.

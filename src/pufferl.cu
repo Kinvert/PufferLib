@@ -292,6 +292,9 @@ __device__ __forceinline__ void block_reduce_sum(
 // Algo + sweeps only depend on basic tensor types and utilities
 #include "algo.cu"
 #include "protein.cu"
+#ifdef PUFFER_RESEARCH_PROTEIN_FEEDBACK
+#include "protein_feedback.cu"
+#endif
 
 typedef struct {
     int horizon;
@@ -2700,7 +2703,7 @@ void run_sweep(Ini* ini, const char* exe_path) {
     int next_run_id = 0;
     int completed = 0;
     int active = 0;
-#if defined(PUFFER_CONNECT4CNN) || defined(PUFFER_PONGCNN) || defined(PUFFER_FLAPPYCNN)
+#if defined(PUFFER_CONNECT4CNN) || defined(PUFFER_PONGCNN) || defined(PUFFER_FLAPPYCNN) || defined(PUFFER_BREAKOUTCNN) || defined(PUFFER_MAZECNN)
     DictItem* sweep_encoder = dict_find(puf_ini_section(ini, "policy", 0), "encoder");
     int deduplicate = sweep_encoder && sweep_encoder->value == 5;
     assert(!deduplicate || parallel == 1);
@@ -2746,7 +2749,7 @@ void run_sweep(Ini* ini, const char* exe_path) {
                     snprintf(key, sizeof(key), "%s.%s", params[p].section, params[p].key);
                     puf_ini_put(ini, key, buf);
                 }
-#if defined(PUFFER_CONNECT4CNN) || defined(PUFFER_PONGCNN) || defined(PUFFER_FLAPPYCNN)
+#if defined(PUFFER_CONNECT4CNN) || defined(PUFFER_PONGCNN) || defined(PUFFER_FLAPPYCNN) || defined(PUFFER_BREAKOUTCNN) || defined(PUFFER_MAZECNN)
                 if (deduplicate) {
                     uint64_t hash = flex2_trial_hash(ini);
                     int duplicate = 0;
@@ -2875,7 +2878,7 @@ void run_sweep(Ini* ini, const char* exe_path) {
             job->random, job->gp_obs, job->pareto);
         completed++;
     }
-#if defined(PUFFER_CONNECT4CNN) || defined(PUFFER_PONGCNN) || defined(PUFFER_FLAPPYCNN)
+#if defined(PUFFER_CONNECT4CNN) || defined(PUFFER_PONGCNN) || defined(PUFFER_FLAPPYCNN) || defined(PUFFER_BREAKOUTCNN) || defined(PUFFER_MAZECNN)
     free(trial_hashes);
 #endif
 }
@@ -3020,8 +3023,23 @@ static PuffeRL* eval_make(Ini* ini, TrainContext* ctx, int mode, int render) {
     return p;
 }
 
-#ifdef PUFFER_CONNECT4CNN
+#if defined(PUFFER_CONNECT4CNN) || defined(PUFFER_CONNECT4)
 #include "../ocean/connect4cnn/exact_eval.cu"
+#endif
+#if defined(PUFFER_FLAPPYCNN) || defined(PUFFER_FLAPPY)
+#include "../ocean/flappycnn/exact_eval.cu"
+#endif
+#if (defined(PUFFER_BREAKOUTCNN) || defined(PUFFER_BREAKOUT)) && PUF_BACKEND == PUF_CPU
+#include "../ocean/breakoutcnn/exact_eval.cu"
+#endif
+#if (defined(PUFFER_PONGCNN) || defined(PUFFER_PONG)) && PUF_BACKEND == PUF_CPU
+#include "../ocean/pongcnn/exact_eval.cu"
+#endif
+#if (defined(PUFFER_SNAKECNN) || defined(PUFFER_SNAKEBENCH)) && PUF_BACKEND == PUF_CPU
+#include "../ocean/snakecnn/exact_eval.cu"
+#endif
+#if (defined(PUFFER_MAZECNN) || defined(PUFFER_MAZE)) && PUF_BACKEND == PUF_CPU
+#include "../ocean/mazecnn/exact_eval.cu"
 #endif
 
 EvalResult run_eval(Ini* ini, TrainContext* ctx, int mode, int verbose,
@@ -3087,6 +3105,19 @@ TrainResult run_train(Ini* ini, TrainContext* ctx) {
     }
 
     PuffeRL* pufferl = create_pufferl(ini, ctx);
+    // Preserve the resolved launch config even if a measured run stops early.
+    const char* receipts = getenv("PUFFER_CHECKPOINT_RECEIPTS");
+    if (ctx->artifact_owner && receipts && strcmp(receipts, "1") == 0) {
+        char path[4096], tmp[4096];
+        snprintf(path, sizeof(path), "%s/resolved.ini", checkpoint_dir);
+        snprintf(tmp, sizeof(tmp), "%s/resolved.ini.tmp", checkpoint_dir);
+        FILE* fp = fopen(tmp, "wx");
+        assert(fp && "failed to open resolved checkpoint config");
+        puf_ini_write(fp, ini);
+        assert(!ferror(fp) && "failed to write resolved checkpoint config");
+        assert(fclose(fp) == 0 && "failed to close resolved checkpoint config");
+        assert(rename(tmp, path) == 0 && "failed to publish resolved checkpoint config");
+    }
     Selfplay selfplay = {0};
     if (use_selfplay) {
         char initial_checkpoint[4096];
@@ -3574,7 +3605,63 @@ int main(int argc, char** argv) {
         exit(1);
     }
     const char* mode = argv[1];
+#ifdef PUFFER_RESEARCH_PROTEIN_FEEDBACK
+    if (strcmp(mode, "research_protein_describe") == 0
+            || strcmp(mode, "research_protein_propose") == 0) {
+        return research_protein_feedback(argc, argv);
+    }
+#endif
+#if defined(PUFFER_CONNECT4CNN) || defined(PUFFER_CONNECT4)
+    if (strcmp(mode, "eval_exact_info") == 0) {
+        c4_exact_info();
+        return 0;
+    }
+#endif
+#if defined(PUFFER_FLAPPYCNN) || defined(PUFFER_FLAPPY)
+    if (strcmp(mode, "eval_exact_info") == 0) {
+        flappy_exact_info();
+        return 0;
+    }
+    if (strcmp(mode, "eval_exact_manifest") == 0) {
+        flappy_exact_manifest(argc, argv);
+        return 0;
+    }
+#endif
+#if (defined(PUFFER_BREAKOUTCNN) || defined(PUFFER_BREAKOUT)) && PUF_BACKEND == PUF_CPU
+    if (strcmp(mode, "eval_exact_info") == 0) {
+        breakout_exact_info();
+        return 0;
+    }
+    if (strcmp(mode, "eval_exact_manifest") == 0) {
+        breakout_exact_manifest(argc, argv);
+        return 0;
+    }
+#endif
+#if (defined(PUFFER_PONGCNN) || defined(PUFFER_PONG)) && PUF_BACKEND == PUF_CPU
+    if (strcmp(mode, "eval_exact_info") == 0) {
+        pong_exact_info();
+        return 0;
+    }
+    if (strcmp(mode, "eval_exact_manifest") == 0) {
+        pong_exact_manifest(argc, argv);
+        return 0;
+    }
+#endif
+#if (defined(PUFFER_SNAKECNN) || defined(PUFFER_SNAKEBENCH)) && PUF_BACKEND == PUF_CPU
+    if (strcmp(mode, "eval_exact_info") == 0) {
+        snake_exact_info();
+        return 0;
+    }
+    if (strcmp(mode, "eval_exact_manifest") == 0) {
+        snake_exact_manifest(argc, argv);
+        return 0;
+    }
+#endif
     // Train forks DP workers; CUDA before that fork SIGSEGVs the children.
+#if (defined(PUFFER_MAZECNN) || defined(PUFFER_MAZE)) && PUF_BACKEND == PUF_CPU
+    if (strcmp(mode, "eval_exact_info") == 0) { maze_exact_info(); return 0; }
+    if (strcmp(mode, "eval_exact_manifest") == 0) { maze_exact_manifest(argc, argv); return 0; }
+#endif
     if (strcmp(mode, "train") != 0) {
         int total_gpus = 0;
         assert(cudaGetDeviceCount(&total_gpus) == cudaSuccess && total_gpus >= 1
@@ -3610,9 +3697,29 @@ int main(int argc, char** argv) {
         run_sweep(&ini, argv[0]);
     } else if (strcmp(mode, "eval") == 0) {
         run_eval(&ini, &ctx, EVAL_SCORE, 1, render);
-#ifdef PUFFER_CONNECT4CNN
+#if defined(PUFFER_CONNECT4CNN) || defined(PUFFER_CONNECT4)
     } else if (strcmp(mode, "eval_exact") == 0) {
         run_connect4_exact_eval(&ini, &ctx);
+#endif
+#if defined(PUFFER_FLAPPYCNN) || defined(PUFFER_FLAPPY)
+    } else if (strcmp(mode, "eval_exact") == 0) {
+        run_flappy_exact_eval(&ini, &ctx);
+#endif
+#if (defined(PUFFER_BREAKOUTCNN) || defined(PUFFER_BREAKOUT)) && PUF_BACKEND == PUF_CPU
+    } else if (strcmp(mode, "eval_exact") == 0) {
+        run_breakout_exact_eval(&ini, &ctx);
+#endif
+#if (defined(PUFFER_PONGCNN) || defined(PUFFER_PONG)) && PUF_BACKEND == PUF_CPU
+    } else if (strcmp(mode, "eval_exact") == 0) {
+        run_pong_exact_eval(&ini, &ctx);
+#endif
+#if (defined(PUFFER_SNAKECNN) || defined(PUFFER_SNAKEBENCH)) && PUF_BACKEND == PUF_CPU
+    } else if (strcmp(mode, "eval_exact") == 0) {
+        run_snake_exact_eval(&ini, &ctx);
+#endif
+#if (defined(PUFFER_MAZECNN) || defined(PUFFER_MAZE)) && PUF_BACKEND == PUF_CPU
+    } else if (strcmp(mode, "eval_exact") == 0) {
+        run_maze_exact_eval(&ini, &ctx);
 #endif
     } else if (strcmp(mode, "match") == 0) {
         run_eval(&ini, &ctx, EVAL_MATCH, 1, render);

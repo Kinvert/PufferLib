@@ -1,5 +1,13 @@
 # Connect4 measurement pipeline: groundwork, no GPU execution
 
+**October 5 follow-up:** see [full-frontier measurement and development
+replication](CONNECT4_DEVELOPMENT_REPLICATION.md). The dedicated exact path
+passed GPU runtime checks, all 52 existing checkpoints were reevaluated, and
+checkpoint timing/config/partial-failure recovery passed the local canary.
+Fresh five-seed ours/Nature development replication is running. Historical
+preparation-only descriptions below retain their original dates; publication
+confirmation and calibrated inference are still gated.
+
 October 5: [Connect4 draw semantics are corrected](CONNECT4_DRAW_CORRECTION.md).
 Prepare fresh campaigns; manifests now record `connect4-full-board-draw-v2` and
 reports display the rule label. Unversioned old preparations cannot be built or
@@ -188,7 +196,25 @@ Synthetic statistical development can run without a GPU or neural model:
   --out build/connect4cnn/claim-statistics-NEW_ID.json
 ```
 
-## What has actually been checked
+## October 5 runtime follow-up
+
+The dedicated [checkpoint evaluator](../ocean/connect4cnn/DETERMINISTIC_EVAL.md)
+now wraps the exact native path with frozen reusable episode manifests and
+configuration/build checks. The actor stream replaces the legacy NULL stream,
+which failed CUDA graph capture in the first real GPU test. Eight existing
+checkpoint configurations passed 1,000-episode allocation, repeated processes,
+eager/graph equality and an independently replayed last wave on RTX 5060.
+See [retained evidence](results/connect4cnn/deterministic-eval-20261005/README.md).
+The original state environment now supports the same exact episode protocol.
+Native stepping is serial; this does not validate worker parallelism.
+
+This addresses that evaluator's runtime/reset/reload gate for the tested
+configurations. It does not validate encoder 5, receipt timing overhead,
+partially failed training recovery, Pong evaluation or the statistical method.
+No new training/confirmation campaign ran for this follow-up. The historical
+preparation-only checks below describe their original state.
+
+## What had been checked during initial preparation
 
 - Native Connect4CNN trainer/evaluator compilation with the existing CUDA 12.8
   toolchain and explicit `sm_120`; no GPU execution.

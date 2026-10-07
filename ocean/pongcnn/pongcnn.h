@@ -16,7 +16,8 @@ typedef float obs_t;
 #define PONGCNN_SCORE_ROWS 2
 #define PONGCNN_MARGIN 2
 #define NUM_ATNS 1
-#define PONGCNN_NUM_REPRESENTATIONS 5
+#define PONGCNN_NUM_REPRESENTATIONS 7
+#define PONGCNN_LEGACY_REPRESENTATIONS 5
 
 typedef struct Log Log;
 struct Log {
@@ -98,6 +99,26 @@ static void pongcnn_rect(obs_t* obs, float x0, float y0, float x1, float y1, flo
     }
 }
 
+static void pongcnn_texture(obs_t* obs, int representation) {
+    unsigned char classes[OBS_SIZE];
+    for (int i = PONGCNN_SCORE_ROWS * OBS_WIDTH; i < OBS_SIZE; i++) {
+        classes[i] = obs[i] == 0 ? 0 : obs[i] == 0.5f ? 1 : obs[i] == 0.75f ? 2 : 3;
+    }
+    for (int y = PONGCNN_SCORE_ROWS; y < OBS_HEIGHT; y++) for (int x = 0; x < OBS_WIDTH; x++) {
+        int i = y * OBS_WIDTH + x, c = classes[i];
+        int bit = (x + y) & 1;
+        if (representation == 6) {
+            int left = x ? classes[i - 1] : 0;
+            int right = x + 1 < OBS_WIDTH ? classes[i + 1] : 0;
+            int above = y > PONGCNN_SCORE_ROWS ? classes[i - OBS_WIDTH] : 0;
+            int below = y + 1 < OBS_HEIGHT ? classes[i + OBS_WIDTH] : 0;
+            bit = left != c || right != c || above != c || below != c;
+        }
+        // Disjoint bands retain the entire original class raster exactly.
+        obs[i] = 0.125f + 0.25f * c + 0.0625f * bit;
+    }
+}
+
 void compute_observations(Pong* env) {
     obs_t* obs = env->agents[0].observations;
     memset(obs, 0, OBS_SIZE * sizeof(obs_t));
@@ -144,6 +165,8 @@ void compute_observations(Pong* env) {
                 obs[other * OBS_WIDTH + x] = tmp;
             }
         }
+    } else if (env->representation >= 5) {
+        pongcnn_texture(obs, env->representation);
     }
 }
 
@@ -399,7 +422,8 @@ void puf_log(Log* log, Dict* out) {
 
 void puf_init(Env* env, Dict* kwargs) {
     env->num_agents = 1;
-    env->representation = cnn_appearance_init(kwargs, env->rng, PONGCNN_NUM_REPRESENTATIONS);
+    env->representation = cnn_appearance_init_catalog(kwargs, env->rng,
+        PONGCNN_LEGACY_REPRESENTATIONS, PONGCNN_NUM_REPRESENTATIONS);
     env->width = dict_get(kwargs, "width");
     env->height = dict_get(kwargs, "height");
     env->paddle_width = dict_get(kwargs, "paddle_width");

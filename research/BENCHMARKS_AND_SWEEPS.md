@@ -1,5 +1,20 @@
 # Pixel RL benchmarks and architecture sweeps
 
+October 6 current native inventory: [the fixed-graph plan](MULTI_ENV_ROBUSTNESS.md)
+now covers six tasks/41 drawings after adding Snake, Pong textures, MazeCNN
+and [Flappy geometric variations](FLAPPY_GEOMETRIC_ROBUSTNESS.md). Historical
+38-drawing packets retain their original captured catalogs.
+This remains a small synthetic-pixel development panel; no cross-task learning
+advantage or external SOTA is established. All six exact adapters now compile;
+non-Connect4 exact GPU acceptances remain pending and both holds remain.
+
+October 5 native expansion: [BreakoutCNN](../ocean/breakoutcnn/README.md) is now
+implemented with direct pixels and shared CNNs; simulation/parity/sanitizers
+and native compilation pass, GPU training/evaluation pending. The
+[fixed-architecture multi-task plan](MULTI_ENV_ROBUSTNESS.md) covers four tasks
+and 24 drawing conditions. This supersedes the old three-task implementation
+inventory below without upgrading its learning evidence or external validity.
+
 Research notes checked 2026-09-11 (America/Los_Angeles). This document proposes experiments; no training, benchmark installation, or CUDA/system change was performed. Links to local code describe this checkout and should be checked again after upstream updates.
 
 ## Next benchmark priorities (October 2, 2026)

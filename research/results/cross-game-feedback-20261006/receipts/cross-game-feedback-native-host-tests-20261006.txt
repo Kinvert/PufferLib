@@ -1,0 +1,8 @@
+test_descriptor_returns_before_gpu_branch (research.tests.test_native_feedback_host.NativeHostChecks.test_descriptor_returns_before_gpu_branch) ... ok
+test_fractional_optimizer_control_is_rejected_before_gpu_query (research.tests.test_native_feedback_host.NativeHostChecks.test_fractional_optimizer_control_is_rejected_before_gpu_query) ... ok
+test_malformed_ledger_is_rejected_before_gpu_query (research.tests.test_native_feedback_host.NativeHostChecks.test_malformed_ledger_is_rejected_before_gpu_query) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.628s
+
+OK

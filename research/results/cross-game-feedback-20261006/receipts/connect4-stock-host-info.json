@@ -1,0 +1,1 @@
+{"environment":"connect4","default_encoder":"state","float32":true,"rules":"connect4-full-board-draw-v2","receipt_version":2}

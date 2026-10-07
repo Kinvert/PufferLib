@@ -1,0 +1,9 @@
+Compiling ocean/connect4/connect4.h -> build/cross-game-feedback/connect4-stock-20261006...
+nvcc warning : incompatible redefinition for option 'threads', the last value of this option was used
+src/pufferl.cu(2743): warning #177-D: variable "attempts" was declared but never referenced
+              int attempts = 0;
+                  ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+Built: ./build/cross-game-feedback/connect4-stock-20261006

@@ -61,6 +61,12 @@ class ClaimTests(unittest.TestCase):
                 claim.parse_checkpoints(bad, process, [2048, 4096], 10)
         with self.assertRaises(ValueError):
             claim.parse_checkpoints(text, {**process, "status": "failed"}, [2048, 4096], 10)
+        failed = {**process, "status": "failed"}
+        self.assertEqual(claim.parse_checkpoints(text.splitlines()[0], failed, [2048, 4096], 10, allow_partial=True), {2048: 1e-6})
+        self.assertEqual(claim.parse_checkpoints("", failed, [2048, 4096], 10, allow_partial=True), {})
+        for bad in (text.splitlines()[1], text+text, text+"PUFFER_CHECKPOINT broken\n"):
+            with self.assertRaises(ValueError):
+                claim.parse_checkpoints(bad, failed, [2048, 4096], 10, allow_partial=True)
 
     def write_episodes(self, count=5):
         block = dict(seed=1400, offset=91, episodes=count)
@@ -235,11 +241,33 @@ class ClaimTests(unittest.TestCase):
         self.assertEqual(result["status"], "complete_descriptive")
         self.assertEqual(len(result["points"]), 16)
         bad = out/p["jobs"][0]["id"]/"eval-0000000000032768-b0.csv"
+        original_episode = bad.read_bytes()
         bad.write_text(bad.read_text().replace("0123456789abcdef", "fedcba9876543210"))
         result = json.loads((claim.audit(out)/"analysis.json").read_text())
         self.assertEqual(result["status"], "incomplete")
         self.assertEqual(len(result["points"]), 15)
         self.assertEqual(len(result["missing"]), 1)
+        # A real interrupted learner may never write its final metrics INI.
+        # The native startup config and first completed receipt remain usable.
+        bad.write_bytes(original_episode)
+        job = p["jobs"][0]
+        directory = out/job["id"]
+        (directory/"checkpoints/connect4cnn/trial/resolved.ini").write_bytes((directory/"config/default.ini").read_bytes())
+        (directory/"metrics/connect4cnn/trial.ini").unlink()
+        timed = json.loads((directory/"train.log.json").read_text())
+        timed["status"] = "failed"
+        claim.save(directory/"train.log.json", timed)
+        (directory/"train.log").write_text((directory/"train.log").read_text().splitlines()[0]+"\n")
+        execution["jobs"][0]["status"] = "failed"
+        execution["status"] = "failed"
+        claim.save(out/"execution.json", execution)
+        result = json.loads((claim.audit(out)/"analysis.json").read_text())
+        self.assertEqual(result["status"], "incomplete")
+        self.assertEqual(len(result["points"]), 15)
+        recovered = [r for r in result["points"] if r["model"] == job["model"] and r["seed"] == job["seed"]]
+        self.assertEqual([r["steps"] for r in recovered], [32768])
+        self.assertIsNone(recovered[0]["native_sps"])
+        self.assertIsNone(recovered[0]["process_sps"])
 
 
 if __name__ == "__main__":

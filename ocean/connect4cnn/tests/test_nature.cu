@@ -7,6 +7,10 @@
 #define PUFFER_ENV_NAME "connect4cnn"
 #include "src/pufferl.cu"
 
+#ifdef C4_DENSE_PATCH_ALIAS
+#include "ocean/connect4cnn/dense_patch_alias.cu"
+#endif
+
 #define CUDA_CHECK(call) do { cudaError_t err = (call); \
     if (err != cudaSuccess) { fprintf(stderr, "%s: %s\n", #call, cudaGetErrorString(err)); abort(); } \
 } while (0)
@@ -18,12 +22,23 @@ static Allocator params, acts, grads, rollout;
 static Prec input, upstream;
 static cudaStream_t test_stream;
 
+extern "C" int naturetest_alias_enabled() {
+#ifdef C4_DENSE_PATCH_ALIAS
+    return 1;
+#else
+    return 0;
+#endif
+}
+
 static int test_init(int B, int hidden, Dict* policy = NULL) {
     cublas_init_handle();
     CUDA_CHECK(cudaStreamCreate(&test_stream));
     enc.in_dim = OBS_SIZE; enc.out_dim = hidden;
     create_custom_encoder(&enc, policy);
     assert(enc.forward == nature_forward || enc.forward == flex_forward);
+#ifdef C4_DENSE_PATCH_ALIAS
+    assert(dense_patch_alias_select(&enc));
+#endif
     weights = (NatureWeights*)enc.create_weights(&enc);
     enc.reg_params(weights, &params);
     enc.reg_train(weights, &train_acts, &acts, &grads, B);
@@ -108,4 +123,8 @@ extern "C" void naturetest_close() {
     CUDA_CHECK(cudaEventDestroy(g_main_ready)); CUDA_CHECK(cudaEventDestroy(g_dw_done));
     CUDA_CHECK(cudaStreamDestroy(g_dw_stream));
     g_cublas_handle = NULL; g_cublas_dw_handle = NULL;
+}
+
+extern "C" void naturetest_read_params(float* values) {
+    CUDA_CHECK(cudaMemcpy(values, params.mem, params.total_bytes, cudaMemcpyDeviceToHost));
 }

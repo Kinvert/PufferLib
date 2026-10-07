@@ -85,7 +85,7 @@ def architecture(config, reference=None):
 def trials(root):
     root = Path(root)
     environment = (root / "environment.txt").read_text().strip() if (root / "environment.txt").exists() else "connect4cnn"
-    if environment not in ("connect4cnn", "pongcnn", "flappycnn"):
+    if environment not in ("connect4cnn", "pongcnn", "flappycnn", "breakoutcnn", "snakecnn", "mazecnn"):
         raise ValueError("Unsupported pixel environment")
     reference = (root / "variant.txt").read_text().strip() if (root / "variant.txt").exists() else None
     log = root / "sweep.log"
@@ -134,6 +134,7 @@ def trials(root):
                            representation=config.get("env.representation", 0),
                            representation_mode=config.get("env.representation_mode", 0),
                            representation_seed=config.get("env.representation_seed", 0),
+                           representation_mix_catalog=config.get("env.representation_mix_catalog", 0),
                            architecture_sha256=identity, checkpoint=str(checkpoint.relative_to(root)),
                            checkpoint_sha256=hashlib.sha256(checkpoint.read_bytes()).hexdigest(),
                            params=checkpoint.stat().st_size // 4, history=history,

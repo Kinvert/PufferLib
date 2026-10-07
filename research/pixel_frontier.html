@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pixel RL — all measured checkpoint curves</title>
+<style>
+body{font:16px system-ui;max-width:1200px;margin:24px auto;padding:0 18px;color:#182634;background:#f7f9fb}
+h1{font-size:27px}h2{font-size:20px}p{line-height:1.5}.controls,#legend{display:flex;flex-wrap:wrap;gap:16px;align-items:center;background:white;padding:12px;border:1px solid #d6dfe8;margin:12px 0}
+select{font:inherit;max-width:100%}svg{width:100%;background:white;border:1px solid #d6dfe8}.note{font-size:14px;color:#405366}
+#detail,#status,#provenance{padding:12px;background:#e9f0f6;white-space:pre-wrap;overflow-wrap:anywhere}#detail{min-height:65px}#failures{white-space:pre-wrap;overflow-wrap:anywhere}
+table{border-collapse:collapse;width:100%;font-size:14px;background:white}td,th{padding:8px;border-bottom:1px solid #dde3e9;text-align:left}.scroll{overflow-x:auto;max-height:480px}a{color:#1767c0}
+</style>
+<h1>Pixel RL: complete checkpoint curves</h1>
+<p>Each game, training appearance and evaluation drawing is a separate comparison. This viewer shows audited observations; it does not run models or certify superiority.</p>
+<div id="status"></div>
+<div class="controls">
+<label>Condition <select id="condition"></select></label>
+<label>View <select id="view"></select></label>
+<label>Cost <select id="axis"><option value="seconds">Training wall seconds</option><option value="steps">Training decisions</option></select></label>
+<label><input id="raw" type="checkbox"> Individual seed curves behind means</label>
+</div>
+<div id="legend"></div>
+<svg id="plot" viewBox="0 0 1120 540" role="img" aria-label="Audited score versus training cost for the selected game and drawing"></svg>
+<div id="detail">Hover or focus a point to inspect its checkpoint and both score bounds.</div>
+<p class="note">Lines follow successive declared checkpoints, including declines; missing checkpoints break the line. They are visual guides, not interpolation estimates. Pong has separate lower and dashed upper curves plus vertical censoring ranges: these are deterministic possible-score bounds, not confidence intervals or midpoint estimates.</p>
+<p class="note">Black rings mark stored descriptive lower/upper time-frontier flags only for complete conditions and paired means. They always refer to the entire assigned model set, even if a model is hidden. No frontier is recomputed from visible models, individual seeds or decision-axis views. Partial conditions have no frontier rings. No confidence bands or dominance certificates are enabled.</p>
+<h2>Model coverage</h2>
+<div class="scroll"><table><thead><tr><th>Model</th><th>Assigned seed/checkpoint cells</th><th>Observed</th><th>Missing</th><th>Paired means</th></tr></thead><tbody id="coverage"></tbody></table></div>
+<h2>Every displayed checkpoint</h2>
+<div class="scroll"><table><thead><tr><th>Model</th><th>Seed / mean</th><th>Decisions</th><th>Train seconds</th><th>Score lower</th><th>Score upper</th><th>Stored lower / upper front</th></tr></thead><tbody id="points"></tbody></table></div>
+<h2>Training process costs</h2>
+<p class="note">Each original job is charged once in the collection, even when evaluated on several drawings. These per-condition tables may show the same shared job; do not sum them across drawings. Process SPS includes startup and writes. Native SPS is not collected by this reader. Timed jobs must not overlap; unrecorded external GPU contention is not ruled out by this audit.</p>
+<div class="scroll"><table><thead><tr><th>Model / seed / job</th><th>Status</th><th>Process seconds</th><th>Process SPS</th><th>Native SPS</th></tr></thead><tbody id="costs"></tbody></table></div>
+<details><summary>Missing assigned cells</summary><div class="scroll"><table><thead><tr><th>Model</th><th>Seed</th><th>Decisions</th><th>Binding</th></tr></thead><tbody id="missing"></tbody></table></div></details>
+<details><summary>Retained failures for this condition</summary><pre id="failures"></pre></details>
+<details><summary>Collection provenance and qualification</summary><div id="provenance"></div></details>
+<p class="note">Means require every assigned seed at the same checkpoint and average their recorded training times equally. There is no best-seed envelope, selected test checkpoint or cross-game score average. Runtime/math acceptance, learner/cap calibration, held-out exclusion and statistical inference remain separate gates.</p>
+<p><a href="analysis.json">All audited data and hashes</a> · <a href="observations.csv">Observations CSV</a> · <a href="means.csv">Means CSV</a> · <a href="missing.csv">Missing CSV</a> · <a href="REPORT.md">Report</a></p>
+<script>__VIEWER_JS__</script>
+<script id="data" type="application/json">__DATA__</script>
+<script>
+"use strict";
+const data = JSON.parse(document.getElementById("data").textContent);
+const F = PixelFrontier, $ = id => document.getElementById(id), ns = "http://www.w3.org/2000/svg";
+const catalog = F.catalog(data), visible = new Set(catalog.models);
+const format = value => Number(value).toLocaleString(undefined, {maximumFractionDigits: 3});
+function option(target, value, text) {
+    const node = document.createElement("option"); node.value = value; node.textContent = text; target.appendChild(node);
+}
+function table(id, rows) {
+    $(id).replaceChildren();
+    for (const values of rows) {
+        const row = document.createElement("tr");
+        for (const value of values) {const cell = document.createElement("td"); cell.textContent = value; row.appendChild(cell);}
+        $(id).appendChild(row);
+    }
+}
+function svg(tag, attrs, text) {
+    const node = document.createElementNS(ns, tag);
+    for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
+    if (text !== undefined) node.textContent = text;
+    $("plot").appendChild(node); return node;
+}
+for (const [index, condition] of data.conditions.entries()) {
+    option($("condition"), index, `${condition.environment} / train ${condition.training_appearance} / eval drawing ${condition.evaluation_representation} (${condition.observed}/${condition.expected})`);
+}
+for (const model of catalog.models) {
+    const label = document.createElement("label"), input = document.createElement("input");
+    input.type = "checkbox"; input.checked = true;
+    input.addEventListener("change", () => {input.checked ? visible.add(model) : visible.delete(model); draw();});
+    label.appendChild(input); label.appendChild(document.createTextNode(" " + catalog.labels[model]));
+    label.style.color = catalog.colors[model]; $("legend").appendChild(label);
+}
+function changeCondition() {
+    const condition = data.conditions[Number($("condition").value)];
+    $("view").replaceChildren(); option($("view"), "mean", "All assigned seed means");
+    if (condition) for (const seed of F.select(data, condition, "mean").seeds) option($("view"), seed, `Seed ${seed}`);
+    draw();
+}
+function draw() {
+    const condition = data.conditions[Number($("condition").value)];
+    if (!condition) {$("status").textContent = "No conditions were allocated."; return;}
+    const view = $("view").value, axis = $("axis").value;
+    const selected = F.select(data, condition, view, [...visible]);
+    const fraction = ["connect4cnn", "pongcnn", "mazecnn"].includes(condition.environment);
+    const metric = value => fraction ? `${(value * 100).toFixed(2)}%` : format(value);
+    const extent = view === "mean" && $("raw").checked
+        ? selected.points.concat(selected.observations.filter(p => visible.has(p.model))) : selected.points;
+    const scale = F.bounds(extent, axis, fraction), X = v => 85 + v / scale.xmax * 1000, Y = v => 465 - v / scale.ymax * 405;
+    $("status").textContent = `Collection: ${data.status}. ${data.points.length}/${data.planned_cells.length} observed; ${data.missing.length} missing; ${data.failures.length} failures.\nScope: ${data.mode || "development artifact audit"}; execution: ${data.execution_status || "see collection receipts"}.\nCondition: ${condition.status}, ${condition.observed}/${condition.expected} cells, ${condition.failures} failures. Metric: ${condition.metric}.`;
+    $("detail").textContent = "Hover or focus a point to inspect its checkpoint and both score bounds.";
+    $("plot").replaceChildren();
+    for (let i = 0; i <= 5; i++) {
+        const value = scale.ymax * i / 5, y = Y(value);
+        svg("line", {x1: 85, x2: 1085, y1: y, y2: y, stroke: "#e0e7ed"});
+        svg("text", {x: 75, y: y + 4, "text-anchor": "end", "font-size": 12}, metric(value));
+        const cost = scale.xmax * i / 5;
+        svg("text", {x: X(cost), y: 489, "text-anchor": "middle", "font-size": 12}, format(cost));
+    }
+    svg("text", {x: 85, y: 30, "font-size": 14}, condition.metric);
+    svg("text", {x: 580, y: 523, "text-anchor": "middle", "font-size": 14}, axis === "seconds" ? "Training wall seconds to checkpoint (includes startup/writes)" : "Training agent decisions");
+    function curve(rows, expected, opacity) {
+        for (const segment of F.segments(rows, expected)) for (const bound of ["lower", "upper"]) {
+            if (bound === "upper" && condition.environment !== "pongcnn") continue;
+            svg("polyline", {points: segment.map(p => `${X(p[axis])},${Y(p[`score_${bound}`])}`).join(" "),
+                fill: "none", stroke: catalog.colors[segment[0].model], "stroke-width": 1.8,
+                "stroke-dasharray": bound === "upper" ? "5 4" : "none", opacity, "pointer-events": "none"});
+        }
+    }
+    for (const model of visible) {
+        const expected = selected.planned.filter(p => p.model === model).map(p => p.steps);
+        if (view === "mean" && $("raw").checked) for (const seed of selected.seeds) {
+            curve(selected.observations.filter(p => p.model === model && p.seed === seed), expected, .18);
+        }
+        const rows = selected.points.filter(p => p.model === model);
+        curve(rows, expected, 1);
+        for (const p of rows) {
+            if (condition.environment === "pongcnn") svg("line", {x1: X(p[axis]), x2: X(p[axis]),
+                y1: Y(p.score_lower), y2: Y(p.score_upper), stroke: catalog.colors[model], opacity: .5});
+            for (const bound of ["lower", "upper"]) {
+                if (bound === "upper" && condition.environment !== "pongcnn") continue;
+                const mark = F.marked(p, condition, view, axis, bound);
+                const node = svg("circle", {cx: X(p[axis]), cy: Y(p[`score_${bound}`]), r: mark ? 5 : 3.5,
+                    fill: catalog.colors[model], stroke: mark ? "#111" : "none", "stroke-width": 2,
+                    "stroke-dasharray": bound === "upper" ? "2 2" : "none", tabindex: 0});
+                const detail = () => {$("detail").textContent = `${catalog.labels[model]} | ${view === "mean" ? p.seeds + " assigned seed mean" : "seed " + p.seed}\n${format(p.steps)} decisions | ${format(p.seconds)} training seconds\nScore lower ${metric(p.score_lower)}; upper ${metric(p.score_upper)}${condition.environment === "pongcnn" ? " (deterministic censoring, not confidence)" : ""}\n${view === "mean" ? "Stored time-front flags: " + String(p.frontier_seconds_lower) + " / " + String(p.frontier_seconds_upper) : "Parameters: " + (p.parameters === undefined ? "not supplied" : format(p.parameters)) + " | episodes: " + (p.episodes === undefined ? "not supplied" : format(p.episodes)) + " | checkpoint SHA256: " + (p.checkpoint_sha256 || "not supplied")}`;};
+                node.addEventListener("mouseenter", detail); node.addEventListener("focus", detail);
+                const title = document.createElementNS(ns, "title"); title.textContent = `${catalog.labels[model]} ${bound}: ${metric(p[`score_${bound}`])}`; node.appendChild(title);
+            }
+        }
+    }
+    if (!selected.points.length) svg("text", {x: 585, y: 240, "text-anchor": "middle", "font-size": 19}, selected.observations.length ? "No complete seed means or selected seed observations in this view" : "No audited policy observations — nothing plotted");
+    table("coverage", catalog.models.map(model => {
+        const assigned = selected.planned.filter(p => p.model === model).length;
+        const observed = selected.observations.filter(p => p.model === model).length;
+        return [catalog.labels[model], assigned, observed, assigned - observed, selected.means.filter(p => p.model === model).length];
+    }));
+    table("points", [...selected.points].sort((a, b) => a.model.localeCompare(b.model) || a.steps - b.steps).map(p => [
+        catalog.labels[p.model], view === "mean" ? `${p.seeds}-seed mean` : p.seed, format(p.steps), format(p.seconds),
+        metric(p.score_lower), metric(p.score_upper), view === "mean" ? `${p.frontier_seconds_lower} / ${p.frontier_seconds_upper}` : "not computed"]));
+    const jobs = [...new Set(selected.planned.map(p => p.job_index))];
+    table("costs", jobs.map(job => {
+        const identity = selected.planned.find(p => p.job_index === job), cost = selected.costs.find(p => p.job_index === job);
+        return [`${catalog.labels[identity.model]} / ${identity.seed} / ${job}`, cost ? cost.status : "missing receipt",
+            cost ? format(cost.process_seconds) : "unknown", cost && cost.process_sps !== null ? format(cost.process_sps) : "unknown", "not collected"];
+    }));
+    table("missing", selected.missing.map(p => [catalog.labels[p.model], p.seed, format(p.steps), p.binding_index]));
+    $("failures").textContent = selected.failures.length ? JSON.stringify(selected.failures, null, 2) : "No recorded failure receipts. Missing cells are listed separately.";
+    $("provenance").textContent = `Plan SHA256: ${data.plan_sha256}\nCollection SHA256: ${data.collection_sha256}\nReporter SHA256: ${data.reporter_sha256}\n${data.qualification}\nTiming: ${data.timing}\nWhole-collection training cost accounting complete: ${data.training_cost_accounting_complete}\nAccounted process seconds (each job once): ${format(data.accounted_training_process_seconds)}\nHardware declarations: ${JSON.stringify([...new Map(data.training_job_costs.map(p => [JSON.stringify(p.hardware), p.hardware])).values()])}\nFull input and reader-source hashes are retained in analysis.json.`;
+}
+$("condition").addEventListener("change", changeCondition);
+for (const id of ["view", "axis", "raw"]) $(id).addEventListener("change", draw);
+changeCondition();
+</script>
+</html>

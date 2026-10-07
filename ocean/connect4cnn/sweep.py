@@ -62,8 +62,8 @@ def sha(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
-def prepare(out, recipe, max_runs, depth=None, environment="connect4cnn"):
-    if environment not in ("connect4cnn", "pongcnn", "flappycnn"):
+def prepare(out, recipe, max_runs, depth=None, environment="connect4cnn", appearance_seed=None):
+    if environment not in ("connect4cnn", "pongcnn", "flappycnn", "breakoutcnn", "snakecnn", "mazecnn"):
         raise ValueError("Unsupported pixel environment")
     ini = read_ini(ROOT / "config/default.ini")
     env_dir = ROOT / "ocean" / environment
@@ -72,6 +72,13 @@ def prepare(out, recipe, max_runs, depth=None, environment="connect4cnn"):
         if section.startswith("sweep."):
             ini.remove_section(section)
     ini.read(recipe)
+    if appearance_seed is not None:
+        if type(appearance_seed) is not int or not 0 <= appearance_seed <= 4294967295:
+            raise ValueError("Appearance seed must be a uint32 integer")
+        ini.set("env", "representation", "0")
+        ini.set("env", "representation_mode", "1")
+        ini.set("env", "representation_seed", str(appearance_seed))
+        ini.set("env", "representation_mix_catalog", "1" if environment in ("pongcnn", "flappycnn") else "0")
     if depth is not None:
         if ini.getint("policy", "encoder") != 5:
             raise ValueError("--depth is for the expanded encoder 5")
@@ -86,6 +93,12 @@ def prepare(out, recipe, max_runs, depth=None, environment="connect4cnn"):
     dimensions = {s[6:] for s in ini.sections() if s.startswith("sweep.")}
     mode = ini.getfloat("env", "representation_mode", fallback=0)
     appearance_seed = ini.getfloat("env", "representation_seed", fallback=0)
+    catalog = ini.getfloat("env", "representation_mix_catalog", fallback=0)
+    if catalog not in (0, 1) or (environment not in ("pongcnn", "flappycnn") and catalog != 0):
+        raise ValueError("Invalid appearance mix catalog (expanded catalogs: Pong/Flappy only)")
+    legacy_count = {"pongcnn": 5, "flappycnn": 4}.get(environment)
+    if legacy_count and mode == 1 and catalog == 0 and ini.getfloat("env", "representation") >= legacy_count:
+        raise ValueError(f"Legacy mixed {environment} catalog requires representation below {legacy_count}")
     if mode not in (0, 1) or not (0 <= appearance_seed <= 4294967295 and appearance_seed.is_integer()):
         raise ValueError("Invalid fixed appearance mode/seed")
     if mode == 1 and "env.representation" in dimensions:
@@ -106,7 +119,7 @@ def prepare(out, recipe, max_runs, depth=None, environment="connect4cnn"):
         raise ValueError("max-runs must be positive")
     if ini.get("sweep", "metric") != "perf":
         raise ValueError("Use sweep.metric=perf (environment-specific training performance)")
-    appearances = {"connect4cnn": 10, "pongcnn": 5, "flappycnn": 4}
+    appearances = {"connect4cnn": 10, "pongcnn": 7, "flappycnn": 7, "breakoutcnn": 5, "snakecnn": 6, "mazecnn": 6}
     limits = {**LIMITS[encoder], "env.representation": ("int_uniform", set(range(appearances[environment])))}
     for key, (distribution, allowed) in limits.items():
         section = "sweep." + key
@@ -167,11 +180,12 @@ def execute(command, cwd, log, timeout):
 
 def write_report(out, rows, wall, status):
     environment = (out / "environment.txt").read_text().strip() if (out / "environment.txt").exists() else "connect4cnn"
-    labels = {"connect4cnn": "Training wins", "pongcnn": "Training point fraction", "flappycnn": "Training perf (clipped pipes/20)"}
-    fields = ["index", "run_id", "name", "family", "representation", "representation_mode", "representation_seed", "channels", "depth", "stride", "projection", "blocks", "global_pool", "architecture_json", "steps", "score", "cost", "native_avg_sps", "params", "random", "gp_obs", "architecture_sha256", "pareto"]
+    labels = {"connect4cnn": "Training wins", "pongcnn": "Training point fraction", "flappycnn": "Training perf (clipped pipes/20)", "breakoutcnn": "Training normalized score", "snakecnn": "Training perf (clipped ending length/120)", "mazecnn": "Training native logged goal reward"}
+    fields = ["index", "run_id", "name", "family", "representation", "representation_mode", "representation_seed", "representation_mix_catalog", "channels", "depth", "stride", "projection", "blocks", "global_pool", "architecture_json", "steps", "score", "cost", "native_avg_sps", "params", "random", "gp_obs", "architecture_sha256", "pareto"]
     def appearance(row):
         mode = row.get("representation_mode", 0)
-        return (mode, row.get("representation_seed", 0) if mode else row.get("representation", 0))
+        return (mode, row.get("representation_seed", 0) if mode else row.get("representation", 0),
+                row.get("representation_mix_catalog", 0) if mode else 0)
     flat = []
     for row in rows:
         dominated = any(appearance(r) == appearance(row) and
@@ -184,6 +198,7 @@ def write_report(out, rows, wall, status):
                      "representation": row.get("representation", 0),
                      "representation_mode": row.get("representation_mode", 0),
                      "representation_seed": row.get("representation_seed", 0),
+                     "representation_mix_catalog": row.get("representation_mix_catalog", 0),
                      "architecture_json": json.dumps(shape, sort_keys=True), "pareto": not dominated})
     with (out / "results.csv").open("w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fields)
@@ -196,7 +211,7 @@ def write_report(out, rows, wall, status):
              "|---|---|---:|---|---:|---:|---:|---:|---:|---|---|"]
     for r in flat:
         shape = ", ".join(f"{k.removeprefix('policy.cnn_')}={v}" for k, v in json.loads(r["architecture_json"]).items() if k.startswith("policy.cnn_")) or "fixed Nature"
-        appearance_label = f"mixed seed {r['representation_seed']}" if r['representation_mode'] else str(r['representation'])
+        appearance_label = f"mixed seed {r['representation_seed']}, catalog {r['representation_mix_catalog']}" if r['representation_mode'] else str(r['representation'])
         lines.append(f"| {r['name']} | {r['family']} | {appearance_label} | {shape} | {r['steps']:,} | {r['score']:.2%} | {r['cost']:.2f} | {r['native_avg_sps']:,.0f} | {r['params']:,} | {bool(r['gp_obs'])} | {r['pareto']} |")
     lines += ["", "Source/config/binary hashes: protocol.json. Effective frozen config: config/default.ini.",
               "Per-trial INIs and checkpoints retain exact shapes; sidecar JSON joins these with final native observations.",
@@ -207,9 +222,10 @@ def write_report(out, rows, wall, status):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--recipe", type=Path, default=HERE / "sweep.ini")
-    parser.add_argument("--environment", choices=("connect4cnn", "pongcnn", "flappycnn"), default="connect4cnn")
+    parser.add_argument("--environment", choices=("connect4cnn", "pongcnn", "flappycnn", "breakoutcnn", "snakecnn", "mazecnn"), default="connect4cnn")
     parser.add_argument("--max-runs", type=int)
     parser.add_argument("--depth", type=int, choices=(1, 2, 3, 4), help="Fix encoder 5 depth and omit inactive sweep dimensions")
+    parser.add_argument("--appearance-seed", type=int, help="Use deterministic per-slot mixtures of all current drawings; not a sweep dimension")
     parser.add_argument("--timeout", type=int, default=600, help="Hard deadline for the entire sweep and its worker process group")
     parser.add_argument("--wandb", choices=("disabled", "offline", "online"), default="offline")
     parser.add_argument("--project", default="puffer-cnn")
@@ -222,7 +238,8 @@ def main():
     build_dir = ROOT / "build" / args.environment
     build_dir.mkdir(parents=True, exist_ok=True)
     out = Path(tempfile.mkdtemp(prefix="sweep.", dir=build_dir))
-    ini = prepare(out, args.recipe.resolve(), args.max_runs, args.depth, args.environment)
+    shutil.copy2(args.recipe.resolve(), out / "recipe.ini")
+    ini = prepare(out, out / "recipe.ini", args.max_runs, args.depth, args.environment, args.appearance_seed)
     if args.canary:
         ini.set("train", "total_timesteps", "32768")
         if ini.has_section("sweep.train.total_timesteps"):
@@ -245,10 +262,21 @@ def main():
     protocol = dict(revision=subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
                     started_utc=datetime.now(timezone.utc).isoformat(), precision="float32", build_arch=os.environ.get("NVCC_ARCH", "native"),
                     source_sha256={str(p.relative_to(ROOT)): sha(p) for p in sources},
+                    recipe_requested=str(args.recipe.resolve()), recipe_sha256=sha(out / "recipe.ini"),
                     config_sha256=sha(out / "config/default.ini"),
                     dimensions=sorted(s[6:] for s in ini.sections() if s.startswith("sweep.")),
                     max_runs=ini.getint("sweep", "max_runs"), timeout=args.timeout)
     protocol["environment"] = args.environment
+    protocol["appearance"] = dict(mode=int(ini.getfloat("env", "representation_mode", fallback=0)),
+        seed=int(ini.getfloat("env", "representation_seed", fallback=0)),
+        catalog=int(ini.getfloat("env", "representation_mix_catalog", fallback=0)),
+        fixed_fallback=int(ini.getfloat("env", "representation")),
+        assignment="native-persistent-slot" if ini.getfloat("env", "representation_mode", fallback=0) else "fixed",
+        native_vector_initialization_validated=False)
+    if args.environment == "snakecnn":
+        protocol["rules"] = "snake-local-episodic-v1"
+    if args.environment == "mazecnn":
+        protocol["rules"] = "maze-native-v1"
     binary = out / "cnn"
     build = ["bash", "build.sh", args.environment, str(binary), "--float"]
     command = [str(binary), "sweep", "--headless"]

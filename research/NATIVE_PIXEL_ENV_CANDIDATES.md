@@ -1,5 +1,25 @@
 # Next small native pixel environments
 
+October 6: **MazeCNN is now implemented and compiles**, preserving the original
+local crop, shared level table, movement and reset/log quirks. Six direct-buffer
+drawings, independent game/reference/BFS/raster/sanitizer parity and four native
+targets pass. No policy ran; dedicated exact evaluation/held-out levels/GPU
+acceptance remain pending. [Contract and receipts](../ocean/mazecnn/README.md).
+The current panel is six tasks/38 conditions; older counts below are historical.
+
+October 5 update: **BreakoutCNN is now implemented and compiles**, with direct
+buffer pixels, five reversible appearances, original-game parity and sanitizer
+checks. Breakout's exact adapter and supervised launcher now compile/pass
+host preparation checks; GPU training/reload/exact acceptance remain pending.
+**SnakeCNN and matched SnakeBench are implemented** under a separately named
+one-agent/local-view protocol, leaving stock Snake untouched. Six direct-buffer
+drawings and deterministic worlds/counters pass independent reference/sanitizer
+checks. Its exact adapter compiles and native starts/audits pass; supervised
+checkpoint launch now passes GPU-free preparation/audit checks (October 6);
+GPU learning/exact acceptance remain pending.
+[Current inventory and preparation](MULTI_ENV_ROBUSTNESS.md)
+supersede implementation-status portions of the September ranking below.
+
 September 26, 2026. Local source inspection, not measured throughput. Kinvert authorized adding another simple headless pixel task. Selection prioritizes small native simulation, direct in-memory rasterization, reusable encoders and a useful change in visual/control demands from Connect4/Pong.
 
 | Rank | Candidate and source | Direct pixels | Value / limitation |

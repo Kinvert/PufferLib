@@ -22,15 +22,17 @@ done
 cmp build/flappycnn/flappy.trace build/flappycnn/flappycnn.trace
 build/flappycnn/test_flappycnn > build/flappycnn/flappycnn.repeat.trace
 cmp build/flappycnn/flappycnn.trace build/flappycnn/flappycnn.repeat.trace
-for representation in {1..3}; do
+for representation in {1..6}; do
     build/flappycnn/test_flappycnn "$representation" > "build/flappycnn/representation-$representation.trace"
     cmp build/flappycnn/flappy.trace "build/flappycnn/representation-$representation.trace"
 done
 for seed in 0 12345 4294967295; do
     build/flappycnn/test_flappycnn 0 1 "$seed" > "build/flappycnn/mixed-$seed.trace"
     cmp build/flappycnn/flappy.trace "build/flappycnn/mixed-$seed.trace"
+    build/flappycnn/test_flappycnn 0 1 "$seed" 1 > "build/flappycnn/mixed-expanded-$seed.trace"
+    cmp build/flappycnn/flappy.trace "build/flappycnn/mixed-expanded-$seed.trace"
 done
-for option in '-1' '4' 'nan' '1.5' '0 2' '0 1 -1' '0 1 4294967296'; do
+for option in '-1' '7' 'nan' '1.5' '0 2' '0 1 -1' '0 1 4294967296' '0 1 0 2' '0 1 0 1.5'; do
     if build/flappycnn/test_flappycnn $option >/dev/null 2>build/flappycnn/appearance-invalid.txt; then
         echo "Invalid appearance options accepted: $option" >&2
         exit 1
@@ -39,3 +41,5 @@ for option in '-1' '4' 'nan' '1.5' '0 2' '0 1 -1' '0 1 4294967296'; do
 done
 echo 'PASS: 49,152 transitions plus pass/crash/cap/respawn fixtures match native Flappy.'
 echo 'PASS: fixed/mixed appearances, clipping, overwrite, velocity isolation, repeatability, ASan/UBSan.'
+echo 'PASS: rounded-bird/outlined-pipe pixel-center oracle, tiny/edge/occluded fixtures and opt-in expanded mixing.'
+echo 'PASS: exact episode identity/reset, independent initial RNG, native cap/crash/pass accounting; no neural execution.'

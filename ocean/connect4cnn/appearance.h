@@ -31,3 +31,12 @@ static int cnn_appearance_init(Dict* kwargs, unsigned int slot, int count) {
     while (draw < threshold) draw = cnn_appearance_mix(draw + 0x9e3779b9u);
     return draw % (unsigned int)count;
 }
+
+// Expanded catalogs must not silently change historical mixed assignments.
+// Fixed mode accepts all IDs; mixed mode defaults to the legacy alphabet.
+static int cnn_appearance_init_catalog(Dict* kwargs, unsigned int slot,
+        int legacy_count, int count) {
+    unsigned int catalog = cnn_appearance_option(kwargs, "representation_mix_catalog", 1);
+    unsigned int mode = cnn_appearance_option(kwargs, "representation_mode", 1);
+    return cnn_appearance_init(kwargs, slot, mode && !catalog ? legacy_count : count);
+}

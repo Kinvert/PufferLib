@@ -1,12 +1,27 @@
 # PongCNN
 
+October 6 appearances: [seven fixed presets](REPRESENTATIONS.md) now include
+invertible checker/contour textures. Default mixed catalog 0 preserves the old
+five-ID assignments; catalog 1 explicitly opts into all seven. Four normal
+native targets compile; environment/sanitizer and native host-start checks pass.
+No new GPU policy ran; both GPU holds remain. Historical launch commands below
+require explicitly scheduled execution. [Retained preparation evidence](../../research/results/pongcnn/texture-preparation-20261006/README.md).
+
 Native PufferLib Pong with a synthetic pixel observation. This is PufferLib's own game, **not ALE/Atari Pong**, and has no inherited Atari benchmark score. Copied from `ocean/pong/pong.h` (git blob `5fa3806cb1be8b43f93a831a4820c263abc015a9`). Original Pong is unchanged.
+
+October 5 exact evaluation: [the native match adapter](DETERMINISTIC_EVAL.md)
+now preserves whole-match decisions and ending points, with explicit IDs/RNG
+and retained capped-outcome bounds. Native tick resets after each point, so
+legacy length is only the final rally. Four targets and host checks pass;
+supervised checkpoint preparation/audit checks also pass; GPU acceptance remains
+pending. Historical pooled-v1 data
+stay separate, and current GPU holds remain.
 
 ## Observation and game
 
 Float32 CHW `[1,36,44]`, values in `[0,1]`, top row first. Rows 0 and 1 are left/right score bars: total row intensity divided by 44 equals score divided by the winning score. Fractional edge pixels preserve that ratio. The remaining 34 rows show the arena, with two columns on each side for the paddles and 40 columns for ball motion. Left paddle is 0.5, right/agent paddle 0.75, ball 1, background 0. Rectangle coverage uses floor/ceil bounds and clipping, so small visible objects retain pixel coverage. World y points up; image y points down. The 500×640 world is scaled into this image, not resized in the simulation.
 
-Generation clears the observation buffer and fills rectangles directly in C, with no allocation, graphics context, screenshot, external renderer or RNG use. Default appearance 0 preserves the original image; four additional reversible court transforms and seeded per-slot assignment are defined in [REPRESENTATIONS.md](REPRESENTATIONS.md). Score rows stay unchanged. The existing Raylib viewer remains optional and reads game state. It is a human game view, not an exact preview of the policy image. Image generation happens once after the skipped physics frames, including the existing early-return reset paths. All physics, frame skip, three discrete actions, scripted opponent, rewards, score limits and same-step reset semantics are preserved. The environment also retains Pong's continuous-control branch; research configs use discrete control.
+Generation clears the observation buffer and fills rectangles directly in C, with no allocation, graphics context, screenshot, external renderer or RNG use. Default appearance 0 preserves the original image; six additional reversible court transforms and seeded per-slot assignment are defined in [REPRESENTATIONS.md](REPRESENTATIONS.md). Score rows stay unchanged. The existing Raylib viewer remains optional and reads game state. It is a human game view, not an exact preview of the policy image. Image generation happens once after the skipped physics frames, including the existing early-return reset paths. All physics, frame skip, three discrete actions, scripted opponent, rewards, score limits and same-step reset semantics are preserved. The environment also retains Pong's continuous-control branch; research configs use discrete control.
 
 **Information differences matter:** state Pong explicitly exposes velocity, while a single pixel frame does not. The recurrent core must infer motion across decisions, and rasterization loses subpixel position precision. Also, the original state header computes both score observations with unsigned integer division, making them zero during normal play before the automatic reset. The pixel score bars expose the current score. This existing state behavior is preserved, not silently repaired. State/pixel comparisons therefore measure different observation interfaces, not strictly equal information. Encoder-to-encoder comparisons all receive exactly the same pixels and score bars.
 

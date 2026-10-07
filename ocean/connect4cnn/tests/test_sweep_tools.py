@@ -13,6 +13,88 @@ import wandb_sidecar as sidecar
 
 
 class ToolsTest(unittest.TestCase):
+    def test_maze_recipe_preserves_level_controls_and_rejects_invalid_appearance(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            config = sweep.prepare(root, sweep.HERE / "tests/flex_kernel.ini", 3, environment="mazecnn")
+            self.assertEqual(config.getint("env", "num_maps"), 8192)
+            self.assertEqual(config.getint("env", "map_size"), -1)
+            self.assertEqual(config.getint("policy", "hidden_size"), 128)
+            self.assertEqual(config.getint("policy", "num_layers"), 1)
+            self.assertTrue((root / "config/mazecnn.ini").exists())
+            self.assertNotIn("frameskip", config["env"])
+            recipe = sidecar.read_ini(sweep.HERE / "tests/flex_kernel.ini")
+            recipe.add_section("env"); recipe.set("env", "representation", "6")
+            path = root / "bad.ini"
+            with path.open("w") as stream: recipe.write(stream)
+            with self.assertRaises(ValueError): sweep.prepare(root, path, 3, environment="mazecnn")
+
+    def test_snake_recipe_is_separately_versioned_local_episodic_game(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            config = sweep.prepare(root, sweep.HERE / "tests/flex_kernel.ini", 3, environment="snakecnn")
+            self.assertEqual(config.getint("env", "rule_version"), 1)
+            self.assertEqual(config.getint("env", "num_agents"), 1)
+            self.assertEqual(config.getint("env", "vision"), 5)
+            self.assertEqual(config.getint("env", "leave_corpse_on_death"), 0)
+            self.assertEqual(config.getint("env", "max_steps"), 2048)
+            # The explicit recipe overrides the starting quality graph.
+            self.assertEqual(config.getint("policy", "cnn_projection"), 32)
+            self.assertNotIn("frameskip", config["env"])
+            self.assertTrue((root / "config/snakecnn.ini").exists())
+            self.assertEqual((root / "environment.txt").read_text().strip(), "snakecnn")
+
+    def test_snake_sidecar_and_report_keep_length_metric_and_paths(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); run_id = self.fixture(root)
+            source = root / "metrics/connect4cnn" / (run_id + ".ini")
+            destination = root / "metrics/snakecnn" / source.name; destination.parent.mkdir()
+            destination.write_text(source.read_text().replace("env_name = connect4cnn", "env_name = snakecnn"))
+            source = root / "checkpoints/connect4cnn" / run_id / "0000000000004096.bin"
+            destination = root / "checkpoints/snakecnn" / run_id / source.name
+            destination.parent.mkdir(parents=True); destination.write_bytes(source.read_bytes())
+            (root / "environment.txt").write_text("snakecnn\n")
+            (root / "sweep.log").write_text("sweep run=0 score=0.8000 cost=3.00 steps=4096 random=1 gp_obs=0 pareto=0\n")
+            trial, = sidecar.trials(root)
+            self.assertEqual(trial["history"][-1]["env/perf"], .2)
+            self.assertTrue(trial["checkpoint"].startswith("checkpoints/snakecnn/"))
+            sweep.write_report(root, [trial], 3, "ok")
+            self.assertIn("clipped ending length/120", (root / "REPORT.md").read_text())
+
+    def test_breakout_sidecar_uses_correct_native_metric_and_checkpoint_paths(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            run_id = self.fixture(root)
+            source = root / "metrics/connect4cnn" / (run_id + ".ini")
+            destination = root / "metrics/breakoutcnn" / source.name
+            destination.parent.mkdir()
+            destination.write_text(source.read_text().replace("env_name = connect4cnn", "env_name = breakoutcnn"))
+            checkpoint = root / "checkpoints/connect4cnn" / run_id / "0000000000004096.bin"
+            target = root / "checkpoints/breakoutcnn" / run_id / checkpoint.name
+            target.parent.mkdir(parents=True); target.write_bytes(checkpoint.read_bytes())
+            (root / "environment.txt").write_text("breakoutcnn\n")
+            (root / "sweep.log").write_text("sweep run=0 score=0.8000 cost=3.00 steps=4096 random=1 gp_obs=0 pareto=0\n")
+            trial, = sidecar.trials(root)
+            self.assertEqual(trial["history"][-1]["env/perf"], .2)
+            self.assertEqual(trial["params"], 4)
+            self.assertTrue(trial["checkpoint"].startswith("checkpoints/breakoutcnn/"))
+            sweep.write_report(root, [trial], 3, "ok")
+            self.assertIn("Training normalized score", (root / "REPORT.md").read_text())
+
+    def test_breakout_recipe_has_stock_geometry_and_no_other_game_fields(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp)
+            config = sweep.prepare(out, sweep.HERE / "tests/flex_kernel.ini", 3, environment="breakoutcnn")
+            self.assertEqual(config.getint("env", "width"), 576)
+            self.assertEqual(config.getint("env", "brick_rows"), 6)
+            self.assertEqual(config.getint("env", "brick_cols"), 18)
+            self.assertEqual(config.getint("env", "frameskip"), 3)
+            self.assertNotIn("gravity", config["env"])
+            self.assertEqual(config.get("sweep", "metric"), "perf")
+            self.assertTrue((out / "config/breakoutcnn.ini").exists())
+            self.assertEqual(config.getint("policy", "hidden_size"), 128)
+            self.assertEqual(config.getint("policy", "num_layers"), 1)
+
     def test_flappy_recipe_uses_flappy_physics_and_artifact_paths(self):
         with tempfile.TemporaryDirectory() as tmp:
             out = Path(tmp)
@@ -31,7 +113,7 @@ class ToolsTest(unittest.TestCase):
             root = Path(tmp)
             recipe = sidecar.read_ini(sweep.HERE / "tests/flex_kernel.ini")
             recipe.add_section("env")
-            recipe.set("env", "representation", "5")
+            recipe.set("env", "representation", "7")
             path = root / "bad.ini"
             with path.open("w") as f:
                 recipe.write(f)
@@ -49,6 +131,98 @@ class ToolsTest(unittest.TestCase):
                 recipe.write(f)
             with self.assertRaisesRegex(ValueError, "inactive"):
                 sweep.prepare(root, path, 2)
+
+    def test_pong_texture_ids_and_mixed_catalog_preparation(self):
+        for representation, mode, catalog, valid in ((5, 0, 0, True), (6, 0, 0, True),
+                (0, 1, 0, True), (0, 1, 1, True), (5, 1, 0, False), (7, 0, 0, False),
+                (0, 1, 2, False), (0, 1, 0.5, False)):
+            with tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                recipe = sidecar.read_ini(sweep.HERE / "tests/flex_kernel.ini")
+                recipe.add_section("env")
+                for key, value in (("representation", representation), ("representation_mode", mode),
+                                   ("representation_mix_catalog", catalog)):
+                    recipe.set("env", key, str(value))
+                path = root / "recipe.ini"
+                with path.open("w") as stream: recipe.write(stream)
+                if valid:
+                    config = sweep.prepare(root, path, 2, environment="pongcnn")
+                    self.assertEqual(config.getint("env", "representation_mix_catalog"), catalog)
+                else:
+                    with self.assertRaises(ValueError):
+                        sweep.prepare(root, path, 2, environment="pongcnn")
+
+    def test_flappy_expanded_and_legacy_catalogs_match_native_guards(self):
+        for representation, mode, catalog, valid in ((3, 1, 0, True), (4, 1, 0, False),
+                (6, 0, 0, True), (4, 1, 1, True), (6, 1, 1, True), (7, 0, 1, False),
+                (0, 1, 2, False), (0, 1, 0.5, False), (0, 1, float("nan"), False)):
+            with self.subTest(representation=representation, mode=mode, catalog=catalog), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                recipe = sidecar.read_ini(sweep.HERE / "tests/flex_kernel.ini")
+                recipe.add_section("env")
+                for key, value in (("representation", representation), ("representation_mode", mode),
+                                   ("representation_mix_catalog", catalog)):
+                    recipe.set("env", key, str(value))
+                path = root / "recipe.ini"
+                with path.open("w") as stream: recipe.write(stream)
+                if valid:
+                    config = sweep.prepare(root, path, 2, environment="flappycnn")
+                    self.assertEqual(config.getint("env", "representation_mix_catalog"), catalog)
+                    self.assertEqual(config.getint("env", "representation"), representation)
+                else:
+                    with self.assertRaises(ValueError): sweep.prepare(root, path, 2, environment="flappycnn")
+
+    def test_architecture_discovery_mixtures_preserve_each_game_learner(self):
+        recipe = sweep.ROOT / "research/recipes/general_cnn_discovery.ini"
+        for environment in ("connect4cnn", "pongcnn", "flappycnn", "breakoutcnn", "snakecnn", "mazecnn"):
+            with self.subTest(environment=environment), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                for name in ("fixed", "mixed", "repeated"): (root / name).mkdir()
+                with patch.object(sweep, "execute", side_effect=AssertionError("GPU execution prohibited")):
+                    fixed = sweep.prepare(root / "fixed", recipe, 2, environment=environment)
+                    mixed = sweep.prepare(root / "mixed", recipe, 2, environment=environment, appearance_seed=35173)
+                    repeated = sweep.prepare(root / "repeated", recipe, 2, environment=environment, appearance_seed=35173)
+                dimensions = {s[6:] for s in mixed.sections() if s.startswith("sweep.")}
+                self.assertEqual(len(dimensions), 18)
+                self.assertTrue(all(s.startswith("policy.cnn_") for s in dimensions))
+                for section in ("train", "vec", "policy", "selfplay", "sweep"):
+                    self.assertEqual(dict(fixed[section]), dict(mixed[section]))
+                for section in mixed.sections():
+                    if section != "base": self.assertEqual(dict(mixed[section]), dict(repeated[section]))
+                expected = dict(fixed["env"])
+                expected.update(representation="0", representation_mode="1", representation_seed="35173",
+                    representation_mix_catalog="1" if environment in ("pongcnn", "flappycnn") else "0")
+                self.assertEqual(dict(mixed["env"]), expected)
+                self.assertEqual(fixed.getint("env", "representation_mode", fallback=0), 0)
+                self.assertEqual(mixed.getint("policy", "hidden_size"), 128)
+                self.assertEqual(mixed.getint("policy", "num_layers"), 1)
+                self.assertEqual(mixed.getint("train", "total_timesteps"), 13312000)
+
+    def test_explicit_mixture_seed_boundaries_and_rejections(self):
+        recipe = sweep.ROOT / "research/recipes/general_cnn_discovery.ini"
+        for seed in (0, 4294967295, -1, 4294967296, 1.5, True, float("nan")):
+            with self.subTest(seed=seed), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                if type(seed) is int and 0 <= seed <= 4294967295:
+                    config = sweep.prepare(root, recipe, 2, appearance_seed=seed)
+                    self.assertEqual(config.getint("env", "representation_seed"), seed)
+                else:
+                    with self.assertRaisesRegex(ValueError, "uint32"):
+                        sweep.prepare(root, recipe, 2, appearance_seed=seed)
+        with tempfile.TemporaryDirectory() as tmp:
+            with self.assertRaisesRegex(ValueError, "inactive"):
+                sweep.prepare(Path(tmp), sweep.HERE / "sweep_representation.ini", 2, appearance_seed=35173)
+
+    def test_expanded_catalog_rejected_for_games_without_selector(self):
+        for environment in ("connect4cnn", "breakoutcnn", "snakecnn", "mazecnn"):
+            with self.subTest(environment=environment), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                recipe = sidecar.read_ini(sweep.HERE / "tests/flex_kernel.ini")
+                recipe.add_section("env"); recipe.set("env", "representation_mix_catalog", "1")
+                path = root / "recipe.ini"
+                with path.open("w") as stream: recipe.write(stream)
+                with self.assertRaisesRegex(ValueError, "mix catalog"):
+                    sweep.prepare(root, path, 2, environment=environment)
 
     def test_representation_sweep(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -97,6 +271,12 @@ class ToolsTest(unittest.TestCase):
                 rows = list(csv.DictReader(f))
             self.assertEqual([r["pareto"] for r in rows], ["True"] * 3)
             self.assertEqual([r["representation_seed"] for r in rows], ["0", "12", "13"])
+            expanded = {**mixed, "index": 4, "representation_mix_catalog": 1, "cost": 0.5}
+            sweep.write_report(root, [mixed, expanded], 5, "ok")
+            with (root / "results.csv").open() as f:
+                rows = list(csv.DictReader(f))
+            self.assertEqual([r["representation_mix_catalog"] for r in rows], ["0", "1"])
+            self.assertEqual([r["pareto"] for r in rows], ["True", "True"])
 
     def test_isolated_dimensions(self):
         original = (sweep.ROOT / "config/default.ini").read_bytes()

@@ -7,6 +7,7 @@
 static double representation = 0;
 static double representation_mode = 0;
 static double representation_seed = 0;
+static double representation_mix_catalog = 0;
 
 typedef struct {
     Env env;
@@ -41,6 +42,7 @@ static void setup(Fixture* f, unsigned int seed, int frameskip, int continuous) 
     dict_set(&kwargs, "representation", representation);
     dict_set(&kwargs, "representation_mode", representation_mode);
     dict_set(&kwargs, "representation_seed", representation_seed);
+    dict_set(&kwargs, "representation_mix_catalog", representation_mix_catalog);
 #endif
     f->env.rng = seed;
     puf_init(&f->env, &kwargs);
@@ -75,7 +77,33 @@ static void check_observation(Fixture* f) {
     for (int i = 0; i < OBS_SIZE; i++) obs[i] = 99;
     compute_observations(&f->env);
     assert(memcmp(saved, obs, sizeof(saved)) == 0 && rng == f->env.rng);
+#ifdef TEST_PIXELS
+    if (f->env.representation >= 5) {
+        int id = f->env.representation;
+        f->env.representation = 0;
+        compute_observations(&f->env);
+        const float decoded[] = {0, 0.5f, 0.75f, 1};
+        for (int i = 0; i < OBS_SIZE; i++) {
+            if (i < PONGCNN_SCORE_ROWS * OBS_WIDTH) assert(saved[i] == obs[i]);
+            else {
+                int c = (int)floorf(4 * saved[i]);
+                assert(c >= 0 && c < 4 && decoded[c] == obs[i]);
+            }
+        }
+        f->env.representation = id;
+        compute_observations(&f->env);
+        assert(memcmp(saved, obs, sizeof(saved)) == 0 && rng == f->env.rng);
+    }
+#endif
 }
+
+#ifdef TEST_PIXELS
+static float fixture_pixel(int x, int y, int bx, int by) {
+    if (x < 0 || x >= 44 || y < 2 || y >= 36) return 0;
+    if (x >= bx && x < bx + 2 && y >= by && y < by + 2) return 1;
+    return x < 2 && y >= 33 ? 0.5f : x >= 42 && y < 5 ? 0.75f : 0;
+}
+#endif
 
 static void fixtures(void) {
     Fixture f;
@@ -131,6 +159,17 @@ static void fixtures(void) {
                     if (expected == 0.5f) expected = 0.75f;
                     else if (expected == 0.75f) expected = 0.5f;
                 } else if (f.env.representation == 4) expected = 1 - expected;
+                else if (f.env.representation >= 5) {
+                    int c = expected == 0 ? 0 : expected == 0.5f ? 1 : expected == 0.75f ? 2 : 3;
+                    int bit = (x + y) & 1;
+                    if (f.env.representation == 6) {
+                        bit = fixture_pixel(x - 1, y, bx, by) != expected
+                            || fixture_pixel(x + 1, y, bx, by) != expected
+                            || fixture_pixel(x, y - 1, bx, by) != expected
+                            || fixture_pixel(x, y + 1, bx, by) != expected;
+                    }
+                    expected = 0.125f + 0.25f * c + 0.0625f * bit;
+                }
                 assert(obs[ty * 44 + tx] == expected);
             }
         }
@@ -167,6 +206,7 @@ int main(int argc, char** argv) {
     if (argc > 1) representation = atof(argv[1]);
     if (argc > 2) representation_mode = atof(argv[2]);
     if (argc > 3) representation_seed = atof(argv[3]);
+    if (argc > 4) representation_mix_catalog = atof(argv[4]);
     fixtures();
     int skips[] = {1, 3, 8};
     for (int continuous = 0; continuous <= 1; continuous++) {

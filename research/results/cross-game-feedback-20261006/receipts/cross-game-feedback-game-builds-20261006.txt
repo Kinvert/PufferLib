@@ -1,0 +1,1 @@
+/home/claude/cnn/build/cross-game-feedback/games-20261006/registry.json
