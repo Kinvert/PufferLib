@@ -5,6 +5,9 @@ editing is needed on the 5090. This is temporary research, not the upstream PR.
 Do not push to PufferAI/PufferLib. This handoff supersedes earlier no-delivery /
 5090-hold wording **only for this small canary**. No long search is scheduled.
 
+[A clean-checkout build/preparation check](research/results/feedback-delivery-20261007/README.md)
+passes on G240 with a new uv venv. Actual 5090 GPU feedback execution is pending.
+
 ```bash
 cd ~/Git/ml/cnn-5090
 git pull --ff-only origin cnn-research

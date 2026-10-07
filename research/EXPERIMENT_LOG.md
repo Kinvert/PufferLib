@@ -14,9 +14,12 @@ Actual local launcher preparation at
 `build/cross-game-feedback/delivery-20261007/` passes 44 host/scalar/mock tests,
 three native pre-CUDA validation tests, the native bridge, six normal game and
 three metadata builds, and frozen-input preparation/inspection. No GPU query,
-neural computation or feedback trial ran. Clean-clone delivery verification and
-the commit/push are recorded separately after completion; remote GPU execution
-remains pending. This supersedes earlier no-delivery wording for the Kinvert
+neural computation or feedback trial ran. A separate clean Git clone of
+`b61127cb979354c9db3e829933dda3c4777a1919`, with a fresh uv Python 3.12 / NumPy
+venv, also passes the entire launcher preparation, including ordinary Raylib
+dependency download. [Verification receipts](results/feedback-delivery-20261007/README.md)
+record 512 immutable inputs/291 owned sources and zero policy executions.
+Remote GPU execution remains pending. This supersedes earlier no-delivery wording for the Kinvert
 research handoff only, not the minimal eventual upstream PR or any math,
 calibration/learning/frontier qualification.
 
