@@ -314,6 +314,23 @@ class CandidatePanelTests(unittest.TestCase):
             self.prepare()
         self.assertTrue((self.args.out / "failure.json").exists())
 
+    def test_general_nature_control_reuses_normal_build_and_rejects_slow_family(self):
+        self.args.per_game_learners=True; self.args.baselines=["nature_cnn"]
+        value=self.prepare()
+        self.assertEqual(len(value["jobs"]),18)
+        self.assertEqual(value["native_registry"]["protocol"],"native-cnn-candidate-build-v1")
+        with patch.object(tool.bridge,"adapter",side_effect=SuiteFixture): tool.inspect(self.args.out/"plan.json")
+        self.args.out=self.root/"impala-missing"; self.args.baselines=["impala_cnn"]
+        with self.assertRaisesRegex(ValueError,"matching fresh build"): self.prepare()
+
+    def test_validation5060_bounds_and_layout_are_required(self):
+        self.args.per_game_learners=True; value=self.prepare()
+        with self.assertRaisesRegex(ValueError,"registration"): tool.run_hardware(value,"validation5060")
+        for job in value["jobs"]: job["policy_layout"]={"test_only":True}
+        self.assertEqual(tool.run_hardware(value,"validation5060"),"5060")
+        value["task_budgets"]["mazecnn"]["steps"]=262144
+        with self.assertRaisesRegex(ValueError,"bounded 5060"): tool.run_hardware(value,"validation5060")
+
     def test_native_import_keeps_dominated_and_duplicate_trials(self):
         campaign = self.root / "native"; (campaign / "metrics/connect4cnn").mkdir(parents=True)
         (campaign / "sweep.log").write_text("synthetic completed native observations\n")

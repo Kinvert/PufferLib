@@ -1,0 +1,198 @@
+{
+  "status": "ok",
+  "protocol": "cross-game-native-protein-research-v2",
+  "trials": [
+    {
+      "index": 0,
+      "feedback": {
+        "score": 0.010835913312693499,
+        "score_upper": 0.010835913312693499,
+        "cost": 6.934866768,
+        "training_jobs_charged": 6,
+        "games": [
+          {
+            "environment": "connect4cnn",
+            "cells": 10,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.0,
+            "normalized_upper": 0.0
+          },
+          {
+            "environment": "pongcnn",
+            "cells": 7,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.0,
+            "normalized_upper": 0.0
+          },
+          {
+            "environment": "flappycnn",
+            "cells": 7,
+            "offset": 0.0,
+            "target": 100.0,
+            "normalized_lower": 0.0,
+            "normalized_upper": 0.0
+          },
+          {
+            "environment": "breakoutcnn",
+            "cells": 5,
+            "offset": 0.0,
+            "target": 20.0,
+            "normalized_lower": 0.029411764705882353,
+            "normalized_upper": 0.029411764705882353
+          },
+          {
+            "environment": "snakecnn",
+            "cells": 6,
+            "offset": 1.0,
+            "target": 20.0,
+            "normalized_lower": 0.01599587203302374,
+            "normalized_upper": 0.01599587203302374
+          },
+          {
+            "environment": "mazecnn",
+            "cells": 6,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.0196078431372549,
+            "normalized_upper": 0.0196078431372549
+          }
+        ],
+        "conservative_pong": true,
+        "publication_claim_qualified": false
+      },
+      "duplicate_of": null
+    },
+    {
+      "index": 1,
+      "feedback": {
+        "score": 0.005051599587203303,
+        "score_upper": 0.005051599587203303,
+        "cost": 7.868755061,
+        "training_jobs_charged": 6,
+        "games": [
+          {
+            "environment": "connect4cnn",
+            "cells": 10,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.0,
+            "normalized_upper": 0.0
+          },
+          {
+            "environment": "pongcnn",
+            "cells": 7,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.0,
+            "normalized_upper": 0.0
+          },
+          {
+            "environment": "flappycnn",
+            "cells": 7,
+            "offset": 0.0,
+            "target": 100.0,
+            "normalized_lower": 0.0,
+            "normalized_upper": 0.0
+          },
+          {
+            "environment": "breakoutcnn",
+            "cells": 5,
+            "offset": 0.0,
+            "target": 20.0,
+            "normalized_lower": 0.02411764705882353,
+            "normalized_upper": 0.02411764705882353
+          },
+          {
+            "environment": "snakecnn",
+            "cells": 6,
+            "offset": 1.0,
+            "target": 20.0,
+            "normalized_lower": 0.006191950464396286,
+            "normalized_upper": 0.006191950464396286
+          },
+          {
+            "environment": "mazecnn",
+            "cells": 6,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.0,
+            "normalized_upper": 0.0
+          }
+        ],
+        "conservative_pong": true,
+        "publication_claim_qualified": false
+      },
+      "duplicate_of": null
+    },
+    {
+      "index": 2,
+      "feedback": {
+        "score": 0.010443756449948402,
+        "score_upper": 0.010443756449948402,
+        "cost": 6.615474402,
+        "training_jobs_charged": 6,
+        "games": [
+          {
+            "environment": "connect4cnn",
+            "cells": 10,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.0,
+            "normalized_upper": 0.0
+          },
+          {
+            "environment": "pongcnn",
+            "cells": 7,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.0,
+            "normalized_upper": 0.0
+          },
+          {
+            "environment": "flappycnn",
+            "cells": 7,
+            "offset": 0.0,
+            "target": 100.0,
+            "normalized_lower": 0.0,
+            "normalized_upper": 0.0
+          },
+          {
+            "environment": "breakoutcnn",
+            "cells": 5,
+            "offset": 0.0,
+            "target": 20.0,
+            "normalized_lower": 0.027058823529411764,
+            "normalized_upper": 0.027058823529411764
+          },
+          {
+            "environment": "snakecnn",
+            "cells": 6,
+            "offset": 1.0,
+            "target": 20.0,
+            "normalized_lower": 0.01599587203302374,
+            "normalized_upper": 0.01599587203302374
+          },
+          {
+            "environment": "mazecnn",
+            "cells": 6,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.0196078431372549,
+            "normalized_upper": 0.0196078431372549
+          }
+        ],
+        "conservative_pong": true,
+        "publication_claim_qualified": false
+      },
+      "duplicate_of": null
+    }
+  ],
+  "result_sha256": "48e7452550d21963895afed43fc19d091352dcecb90a72438b3a639fee15336d",
+  "policy_execution_in_audit": false,
+  "native_feedback_receipts_audited": true,
+  "publication_claim_qualified": false,
+  "broader_encoder_math_qualified": false,
+  "optimizer_process_seconds": 1.609151238
+}

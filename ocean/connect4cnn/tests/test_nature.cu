@@ -128,3 +128,19 @@ extern "C" void naturetest_close() {
 extern "C" void naturetest_read_params(float* values) {
     CUDA_CHECK(cudaMemcpy(values, params.mem, params.total_bytes, cudaMemcpyDeviceToHost));
 }
+
+// Test-only snapshots for independent per-layer CUDA forward/backward checks.
+// No production callback, activation, parameter or gradient is changed.
+extern "C" int naturetest_trace_elems() {
+    int n = 0;
+    for (int i = 0; i < weights->count; i++) n += numel(train_acts.output[i].shape);
+    return n;
+}
+
+extern "C" void naturetest_read_trace(float* values) {
+    for (int i = 0; i < weights->count; i++) {
+        int n = numel(train_acts.output[i].shape);
+        CUDA_CHECK(cudaMemcpy(values, train_acts.output[i].data, n * sizeof(float), cudaMemcpyDeviceToHost));
+        values += n;
+    }
+}

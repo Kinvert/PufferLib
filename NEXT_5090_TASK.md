@@ -1,5 +1,11 @@
 # Current 5090 task: prepare first, validate before searching
 
+**Superseding entry: [NEXT_5090_LEARNING_FEEDBACK.md](NEXT_5090_LEARNING_FEEDBACK.md).**
+The independent CUDA layer/conditioned-backward gate and staged real campaign
+are now implemented. Use that handoff. The failed H256 packet below remains
+failed; the new H128 protocol has a distinct documented contract. Older canary,
+preparation-only and historical launch commands below are not the current task.
+
 **October 7 current entry point:** read [NEXT_5090_FEEDBACK.md](NEXT_5090_FEEDBACK.md).
 Kinvert authorized delivery to his research fork and a bounded native feedback
 canary, which is now complete. Use its GPU-free development preparation task;

@@ -1,0 +1,13 @@
+candidate,environment,seed,parameters,train_seconds,process_sps,native_avg_sps,native_metrics_ini
+quality-reference,connect4cnn,66173,160736,1.567416584,41811.47543606697,,/home/claude/cnn/build/learning-feedback/paired-controls-5060-20261007/jobs/connect4cnn/quality-reference-s66173/metrics/connect4cnn/quality-reference.ini
+nature-cnn,connect4cnn,66173,138528,1.517478902,43187.420868669185,,/home/claude/cnn/build/learning-feedback/paired-controls-5060-20261007/jobs/connect4cnn/nature-cnn-s66173/metrics/connect4cnn/nature-cnn.ini
+nature-cnn,pongcnn,66173,138016,1.116450446,58700.32139339573,,/home/claude/cnn/build/learning-feedback/paired-controls-5060-20261007/jobs/pongcnn/nature-cnn-s66173/metrics/pongcnn/nature-cnn.ini
+quality-reference,pongcnn,66173,160224,1.016887391,64447.6473796694,,/home/claude/cnn/build/learning-feedback/paired-controls-5060-20261007/jobs/pongcnn/quality-reference-s66173/metrics/pongcnn/quality-reference.ini
+quality-reference,flappycnn,66173,160096,1.016566962,64467.961727837464,,/home/claude/cnn/build/learning-feedback/paired-controls-5060-20261007/jobs/flappycnn/quality-reference-s66173/metrics/flappycnn/quality-reference.ini
+nature-cnn,flappycnn,66173,137888,1.116588063,58693.08670909551,,/home/claude/cnn/build/learning-feedback/paired-controls-5060-20261007/jobs/flappycnn/nature-cnn-s66173/metrics/flappycnn/nature-cnn.ini
+nature-cnn,breakoutcnn,66173,138016,1.116287109,58708.91052276767,,/home/claude/cnn/build/learning-feedback/paired-controls-5060-20261007/jobs/breakoutcnn/nature-cnn-s66173/metrics/breakoutcnn/nature-cnn.ini
+quality-reference,breakoutcnn,66173,160224,1.066077675,61473.94466355371,,/home/claude/cnn/build/learning-feedback/paired-controls-5060-20261007/jobs/breakoutcnn/quality-reference-s66173/metrics/breakoutcnn/quality-reference.ini
+quality-reference,snakecnn,66173,160352,1.016246718,64488.27714688865,,/home/claude/cnn/build/learning-feedback/paired-controls-5060-20261007/jobs/snakecnn/quality-reference-s66173/metrics/snakecnn/quality-reference.ini
+nature-cnn,snakecnn,66173,138144,1.116711789,58686.58381289821,,/home/claude/cnn/build/learning-feedback/paired-controls-5060-20261007/jobs/snakecnn/nature-cnn-s66173/metrics/snakecnn/nature-cnn.ini
+nature-cnn,mazecnn,66173,138272,1.56779029,41801.509052591464,,/home/claude/cnn/build/learning-feedback/paired-controls-5060-20261007/jobs/mazecnn/nature-cnn-s66173/metrics/mazecnn/nature-cnn.ini
+quality-reference,mazecnn,66173,160480,1.367165275,47935.68209959107,,/home/claude/cnn/build/learning-feedback/paired-controls-5060-20261007/jobs/mazecnn/quality-reference-s66173/metrics/mazecnn/quality-reference.ini

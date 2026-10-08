@@ -124,6 +124,10 @@ def inspect(root, current=False):
     for name, digest in value["files_sha256"].items():
         require(sha(root / name) == digest, "Changed research input: " + name)
     panels.verify_sources(root, value["source_sha256"], current)
+    if "encoder_validation" in value:
+        import cnn_graph_acceptance as graph_checks
+        graph_checks.inspect_bundle(Path(value["encoder_validation"]), current=current)
+        require(sha(Path(value["encoder_validation"])/"bundle.json") == value["encoder_validation_sha256"], "Changed numerical gate")
     if current:
         require(sha(Path(value["optimizer"])) == value["optimizer_sha256"], "Changed native optimizer")
         require(optimizer_receipts(Path(value["optimizer_build"]), current=True) == value["optimizer_receipts"], "Changed native build packet")
@@ -186,6 +190,11 @@ def prepare(args):
         temporary_research_core=True, native_optimizer=True, cross_game_feedback_implemented=True,
         publication_claim_qualified=False, broader_encoder_math_qualified=False)
     if extended: value.update(task_budgets=budgets, per_game_learners=per_game_learners(config), learner_geometry=geometry)
+    if getattr(args, "encoder_validation", None):
+        import cnn_graph_acceptance as graph_checks
+        graph_checks.inspect_bundle(args.encoder_validation, current=True)
+        value.update(encoder_validation=str(args.encoder_validation.resolve()),
+                     encoder_validation_sha256=sha(args.encoder_validation/"bundle.json"))
     save(out / "plan.json", value, exclusive=True)
     inspect(out, current=True)
     return value
@@ -228,13 +237,18 @@ def run(args):
     root = args.plan.resolve().parent; value = inspect(root, current=True)
     config, seeds = recipe(root / "recipe.ini"); settings = config["search"]
     count = settings.getint("max_runs"); timeout = settings.getint("campaign_timeout")
-    expected = "5060" if args.mode == "smoke" else "5090"
+    expected = "5060" if args.mode in ("smoke", "validation5060") else "5090"
+    if args.mode == "validation5060":
+        require(count <= 3 and len(seeds) == 1 and max(b["steps"] for b in task_budgets(config).values()) <= 131072
+                and all(b["checkpoint_steps"] == b["steps"] for b in task_budgets(config).values())
+                and settings.getint("episodes") <= 17 and settings.getint("slots") <= 16
+                and timeout <= 900 and "encoder_validation" in value, "Validation exceeds bounded 5060 allocation")
     if args.mode in ("smoke", "canary5090"):
         require(recipe_protocol(config) == PROTOCOL and count <= 3 and len(seeds) == 1 and settings.getint("steps") <= 131072
             and settings.getint("checkpoint_steps") == settings.getint("steps")
             and settings.getint("episodes") <= 17 and settings.getint("slots") <= 16
             and 0 < timeout <= 600, "Feedback canary exceeds bounded allocation")
-    limit = 30 if args.mode in ("smoke", "canary5090") else 3600
+    limit = 30 if args.mode in ("smoke", "canary5090", "validation5060") else 3600
     require(0 < timeout <= 172800 and all(0 < settings.getint(k) <= limit for k in
             ("train_timeout", "eval_timeout", "proposal_timeout")), "Unbounded research deadlines")
     execution = root / "execution"; execution.mkdir(exist_ok=False)
@@ -280,6 +294,14 @@ def run(args):
             panels.architecture(candidate_path)
             spec = panels.architecture(candidate_path)
             duplicate = next((r["index"] for r in record["trials"] if r["architecture"] == spec), None)
+            math_check = None
+            if "encoder_validation" in value:
+                import cnn_graph_acceptance as graph_checks
+                math_path=trial/"encoder-check"
+                result=graph_checks.run(Path(value["encoder_validation"]),candidate_path,math_path,expected,
+                                        min(120,remaining(120)))
+                require(result["hardware"]==record["hardware"],"Encoder check changed hardware")
+                math_check=dict(report=str(math_path/"REPORT.json"),sha256=sha(math_path/"REPORT.json"))
             prep = SimpleNamespace(out=trial / "panel", registry=root / "registry.json",
                 candidate=[name + "=" + str(candidate_path)], native_campaign=[], baselines=[],
                 policy_metadata=Path(value["policy_metadata"]), seeds=seeds,
@@ -295,7 +317,7 @@ def run(args):
             with contextlib.redirect_stdout(io.StringIO()):
                 plan = panels.prepare(prep)
                 panels.run(SimpleNamespace(plan=prep.out / "plan.json", allow_gpu=True,
-                    mode={"smoke": "research", "canary5090": "canary5090", "development": "development"}[args.mode],
+                    mode={"smoke": "research", "canary5090": "canary5090", "development": "development", "validation5060": "validation5060"}[args.mode],
                     timeout=remaining(timeout), train_timeout=settings.getint("train_timeout"), eval_timeout=settings.getint("eval_timeout")))
                 analysis = panels.audit(prep.out / "plan.json", trial / "review")
             feedback = aggregate(plan, analysis, config)
@@ -307,6 +329,7 @@ def run(args):
                 architecture=spec, duplicate_of=duplicate,
                 feedback=feedback, feedback_sha256=sha(trial / "feedback.json"), candidate_sha256=sha(candidate_path),
                 audit_sha256=sha(trial / "review/analysis.json")))
+            if math_check: record["trials"][-1]["encoder_check"]=math_check
             record["history"] = history
             save(execution / "progress.json", record)
         # Explicit unused final proposal confirms the last panel reached native observe.
@@ -365,6 +388,12 @@ def audit(args):
         for key, number in entry["proposal"]["policy"].items():
             require(assigned.getfloat("policy", key) == number, "Candidate does not use native proposal")
         architectures.append(spec)
+        if "encoder_validation" in value:
+            import cnn_graph_acceptance as graph_checks
+            math_path=trial/"encoder-check"
+            require(entry["encoder_check"]==dict(report=str(math_path/"REPORT.json"),sha256=sha(math_path/"REPORT.json"))
+                    and sha(math_path/"config.ini")==sha(trial/"candidate.ini"),"Changed proposal numerical check")
+            graph_checks.audit(math_path)
         panel_root = trial / "panel"; plan = panels.inspect(panel_root / "plan.json")
         require(plan["seeds"] == seeds and len(plan["candidates"]) == 1
             and plan["candidates"][0]["architecture"] == spec, "Panel changed assigned architecture/seeds")
@@ -390,7 +419,7 @@ def audit(args):
     proposal(root / "execution/final-feedback", result["final_unused_proposal"], result["final_optimizer_process"])
     require(result["history"] == history and result["final_observations_replayed"] == len(summaries)
         and previous_end <= result["ended_monotonic_ns"], "Final feedback was not observed")
-    if config.getint("protein", "num_random_samples") == 0:
+    if len(summaries) > config.getint("protein", "num_random_samples"):
         require(result["final_unused_proposal"]["gp_observations"] > 0, "GP feedback path did not run")
     report = dict(status="ok", protocol=value.get("protocol", PROTOCOL), trials=summaries,
         result_sha256=sha(result_path), policy_execution_in_audit=False, native_feedback_receipts_audited=True,
@@ -407,9 +436,10 @@ def main():
     for name in ("recipe", "registry", "optimizer-build", "policy-metadata", "out"):
         prep.add_argument("--" + name, type=Path, required=True)
     prep.add_argument("--learner-recipe", action="append", default=[], help="ENV=INI overlay fixed across every candidate")
+    prep.add_argument("--encoder-validation", type=Path, help="Require independent CUDA graph checks before every candidate")
     check = sub.add_parser("inspect"); check.add_argument("--out", type=Path, required=True)
     execute = sub.add_parser("run"); execute.add_argument("--plan", type=Path, required=True)
-    execute.add_argument("--mode", choices=("smoke", "canary5090", "development"), required=True)
+    execute.add_argument("--mode", choices=("smoke", "canary5090", "development", "validation5060"), required=True)
     execute.add_argument("--allow-gpu", action="store_true")
     review = sub.add_parser("audit")
     review.add_argument("--plan", type=Path, required=True); review.add_argument("--out", type=Path, required=True)

@@ -1,5 +1,14 @@
 # After the successful 5090 feedback canary
 
+**Implemented follow-up:** [NEXT_5090_LEARNING_FEEDBACK.md](../NEXT_5090_LEARNING_FEEDBACK.md)
+now supplies the staged launcher: independent CUDA checks, paired full-budget
+learning controls, a per-game eligibility gate, 12 native architecture proposals,
+paired Nature/quality references and complete descriptive curves. Read
+[CNN_GRAPH_ACCEPTANCE.md](CNN_GRAPH_ACCEPTANCE.md) for the new numerical contract.
+The plan below remains background; its former missing implementation statements
+are superseded by these tools. Real learning eligibility must still come from
+the 5090 controls; short local checks do not establish it.
+
 October 7, 2026. The native cross-game loop executes and audits on the 5090.
 [Received evidence](results/feedback-canary-5090-20261007/README.md) covers
 three trials, but every trial constructs the same C16 architecture and nearly

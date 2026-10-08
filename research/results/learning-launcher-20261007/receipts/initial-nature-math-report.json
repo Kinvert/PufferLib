@@ -1,0 +1,24 @@
+{
+  "status": "passed",
+  "schema": "native-cnn-graph-check-v1",
+  "config_sha256": "5d3a36be7f2f5e4dbad614c86794d7e546d515c01b8b9acdfd6708e02db35fae",
+  "cases": 14,
+  "native_calls": 56,
+  "batches": [
+    1,
+    64,
+    2048
+  ],
+  "hidden_size": 128,
+  "cpu_neural_reference": false,
+  "full_policy_qualified": false,
+  "backward_contract": "independent CUDA on actual float32 activations/branches",
+  "publication_claim_qualified": false,
+  "hardware": {
+    "gpu_name": "NVIDIA GeForce RTX 5060",
+    "gpu_uuid": "GPU-56b0df25-b4c9-46eb-e498-bc5c71904097",
+    "driver": "591.86",
+    "host": "G240",
+    "cuda_compiler": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2025 NVIDIA Corporation\nBuilt on Fri_Feb_21_20:23:50_PST_2025\nCuda compilation tools, release 12.8, V12.8.93\nBuild cuda_12.8.r12.8/compiler.35583870_0\n"
+  }
+}

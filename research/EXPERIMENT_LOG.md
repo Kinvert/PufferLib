@@ -1,5 +1,22 @@
 # CNN experiment history
 
+## Implemented and locally validated — staged real learning launcher 20261007
+
+[Evidence and exact qualification](results/learning-launcher-20261007/README.md).
+Fresh builds register full-budget paired controls/references. Actual RTX5060
+checks pass three distinct native feedback proposals across all six games/41
+drawings (18 trainings/123 evaluations/36 repeat-eager checks, 208.753s), with
+independent CUDA checks before each trial and final GP replay of three scores.
+Separate paired quality/Nature execution passes12/82/24 in119.342s. Seven encoder
+check allocations total98 process/case instances/392 native calls including
+H128/B2048; Nature's current allocation enforces its original stricter tolerance.
+Final68 host/scalar/mock tests and4 native host tests pass. The launcher now stops
+if any full-budget game control fails its declared learning rule, otherwise runs
+12 native architecture trials and paired references with complete curves.
+No full-budget 5090 run or learning/frontier win is claimed. Earlier failed H256
+comparison remains failed. Read [the handoff](../NEXT_5090_LEARNING_FEEDBACK.md);
+do not repeat the completed tiny canary or either completed local allocation.
+
 ## Implemented and GPU-free prepared — broader cross-game feedback 20261007
 
 [Actual preparation receipts](results/feedback-development-preparation-20261007/README.md).

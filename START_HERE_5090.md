@@ -2,11 +2,12 @@
 
 This file is the complete starting brief for an agent or person with **no prior conversation context**. Work in this clone; follow [AGENTS.md](AGENTS.md). The owner is **Kinvert**. Publish only to a Kinvert-owned repository when authorized; official `PufferAI/PufferLib` is not the destination.
 
-**October 7 current entry point: [NEXT_5090_FEEDBACK.md](NEXT_5090_FEEDBACK.md).**
-Kinvert authorized the research delivery and its bounded native cross-game
-feedback canary, which is now complete. Follow the updated GPU-free development
-preparation task; do not repeat that canary. Earlier execution holds below are
-historical; larger campaigns and encoder5 are not scheduled by this update.
+**October 7 current entry point: [NEXT_5090_LEARNING_FEEDBACK.md](NEXT_5090_LEARNING_FEEDBACK.md).**
+The staged learning-control/search/reference launcher is implemented. Preparation
+is GPU-free; its separate run command first validates CUDA and learning controls,
+then permits a bounded native search if every game passes. Launch when the 5090
+is available. The completed feedback canary and older instructions below are
+historical. Do not repeat them or launch encoder5 from this handoff.
 
 **October 2 prior entry point: [NEXT_5090_TASK.md](NEXT_5090_TASK.md).** It gives
 the first GPU-free preparation commands and the ordered future validation gates.

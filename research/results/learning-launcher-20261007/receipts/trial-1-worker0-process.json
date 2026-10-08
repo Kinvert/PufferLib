@@ -1,0 +1,24 @@
+{
+  "command": [
+    "/home/claude/cnn/.venv/bin/python",
+    "/home/claude/cnn/research/cnn_graph_acceptance.py",
+    "_worker",
+    "--out",
+    "/home/claude/cnn/build/learning-feedback/validation-5060-20261007/execution/trial-0001/encoder-check/worker-0"
+  ],
+  "cwd": "/home/claude/cnn/build/learning-feedback/validation-5060-20261007/execution/trial-0001/encoder-check/worker-0",
+  "status": "ok",
+  "timeout": 120,
+  "environment": {
+    "PUFFER_CHECKPOINT_RECEIPTS": null,
+    "NVCC_ARCH": null,
+    "NVCC_EXTRA": null,
+    "NVCC_APPEND_FLAGS": null,
+    "CUDA_HOME": "/usr/local/cuda",
+    "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+  },
+  "launch_monotonic_ns": 127474727391726,
+  "pid": 197369,
+  "returncode": 0,
+  "end_monotonic_ns": 127476647832206
+}

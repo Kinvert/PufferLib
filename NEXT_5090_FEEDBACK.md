@@ -1,5 +1,10 @@
 # Completed 5090 feedback canary and current preparation task
 
+**Current entry: [NEXT_5090_LEARNING_FEEDBACK.md](NEXT_5090_LEARNING_FEEDBACK.md).**
+The staged learning-control/search/reference launcher is implemented and locally
+checked. Use its two commands when the 5090 is available. The preparation-only
+task and completed canary below are historical; do not repeat them.
+
 October 7: **the canary below is complete**, including real all-six-game score
 aggregation and native PROTEIN feedback. Read
 [the evidence](research/results/feedback-canary-5090-20261007/README.md).

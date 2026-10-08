@@ -1,0 +1,563 @@
+{
+  "status": "ok",
+  "mode": "validation5060",
+  "trials": [
+    {
+      "index": 0,
+      "name": "happy-cat-1",
+      "proposal": {
+        "protocol": "native-cross-game-protein-v1",
+        "trial": 0,
+        "observations_replayed": 0,
+        "gp_observations": 0,
+        "random": 0,
+        "pareto": 0,
+        "normalized": [
+          -1,
+          -0.333333313,
+          -1,
+          -1,
+          1,
+          -1,
+          -1,
+          -1,
+          0,
+          0,
+          0,
+          -1,
+          -1,
+          0,
+          0,
+          -1,
+          -1,
+          -1
+        ],
+        "policy": {
+          "cnn_depth": 1,
+          "cnn_projection": 32,
+          "cnn_global_pool": 0,
+          "cnn_channels_1": 8,
+          "cnn_kernel_1": 8,
+          "cnn_stride_1": 4,
+          "cnn_pool_1": 0,
+          "cnn_residual_1": 0,
+          "cnn_channels_2": 16,
+          "cnn_kernel_2": 3,
+          "cnn_stride_2": 2,
+          "cnn_pool_2": 0,
+          "cnn_residual_2": 0,
+          "cnn_channels_3": 16,
+          "cnn_kernel_3": 3,
+          "cnn_stride_3": 1,
+          "cnn_pool_3": 0,
+          "cnn_residual_3": 0
+        },
+        "success_observations": 0,
+        "failure_observations": 0
+      },
+      "optimizer_process": {
+        "command": [
+          "/home/claude/cnn/build/learning-feedback/verified-launcher-20261007/optimizer/worker",
+          "research_protein_propose",
+          "/home/claude/cnn/build/learning-feedback/validation-5060-20261007/recipe.ini",
+          "/home/claude/cnn/build/learning-feedback/validation-5060-20261007/execution/trial-0000/history.tsv",
+          "/home/claude/cnn/build/learning-feedback/validation-5060-20261007/execution/trial-0000/proposal.json"
+        ],
+        "cwd": "/home/claude/cnn/build/learning-feedback/validation-5060-20261007",
+        "status": "ok",
+        "timeout": 30,
+        "environment": {
+          "PUFFER_CHECKPOINT_RECEIPTS": null,
+          "NVCC_ARCH": null,
+          "NVCC_EXTRA": null,
+          "NVCC_APPEND_FLAGS": null,
+          "CUDA_HOME": "/usr/local/cuda",
+          "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+        },
+        "launch_monotonic_ns": 127406351782300,
+        "pid": 196069,
+        "returncode": 0,
+        "end_monotonic_ns": 127406716451076
+      },
+      "architecture": {
+        "encoder": 4,
+        "cnn_depth": 1,
+        "cnn_projection": 32,
+        "cnn_global_pool": 0,
+        "cnn_channels_1": 8,
+        "cnn_kernel_1": 8,
+        "cnn_stride_1": 4,
+        "cnn_pool_1": 0,
+        "cnn_residual_1": 0
+      },
+      "duplicate_of": null,
+      "feedback": {
+        "score": 0.010835913312693499,
+        "score_upper": 0.010835913312693499,
+        "cost": 6.934866768,
+        "training_jobs_charged": 6,
+        "games": [
+          {
+            "environment": "connect4cnn",
+            "cells": 10,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.0,
+            "normalized_upper": 0.0
+          },
+          {
+            "environment": "pongcnn",
+            "cells": 7,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.0,
+            "normalized_upper": 0.0
+          },
+          {
+            "environment": "flappycnn",
+            "cells": 7,
+            "offset": 0.0,
+            "target": 100.0,
+            "normalized_lower": 0.0,
+            "normalized_upper": 0.0
+          },
+          {
+            "environment": "breakoutcnn",
+            "cells": 5,
+            "offset": 0.0,
+            "target": 20.0,
+            "normalized_lower": 0.029411764705882353,
+            "normalized_upper": 0.029411764705882353
+          },
+          {
+            "environment": "snakecnn",
+            "cells": 6,
+            "offset": 1.0,
+            "target": 20.0,
+            "normalized_lower": 0.01599587203302374,
+            "normalized_upper": 0.01599587203302374
+          },
+          {
+            "environment": "mazecnn",
+            "cells": 6,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.0196078431372549,
+            "normalized_upper": 0.0196078431372549
+          }
+        ],
+        "conservative_pong": true,
+        "publication_claim_qualified": false
+      },
+      "feedback_sha256": "17e08d85c512f43b038615af9e99279381024a524bf9a37820a919ab63e788c9",
+      "candidate_sha256": "298217dff1acb64abce3fa1f2a7732679b3e6541d3eb13d2ff9a8b656b597f8a",
+      "audit_sha256": "8774f8b52c524b142d3b6382db692b71369de2284cb8ec867604665854239386",
+      "encoder_check": {
+        "report": "/home/claude/cnn/build/learning-feedback/validation-5060-20261007/execution/trial-0000/encoder-check/REPORT.json",
+        "sha256": "fe2c612ae41e958207f9e9f6e6ffe6235687d3d19f1ec50655021af25dde0fb5"
+      }
+    },
+    {
+      "index": 1,
+      "name": "mystic-tree-2",
+      "proposal": {
+        "protocol": "native-cross-game-protein-v1",
+        "trial": 1,
+        "observations_replayed": 1,
+        "gp_observations": 0,
+        "random": 1,
+        "pareto": 0,
+        "normalized": [
+          0.250535369,
+          -0.097586453,
+          0.864957809,
+          0.779076815,
+          -0.713949323,
+          0.686388135,
+          -0.748153925,
+          0.875641465,
+          -0.108537197,
+          0.0978188515,
+          -0.522599936,
+          0.0166735649,
+          0.568199515,
+          0.448421121,
+          0.733319998,
+          -0.870256543,
+          -0.522990227,
+          -0.654067516
+        ],
+        "policy": {
+          "cnn_depth": 2,
+          "cnn_projection": 32,
+          "cnn_global_pool": 1,
+          "cnn_channels_1": 32,
+          "cnn_kernel_1": 2,
+          "cnn_stride_1": 8,
+          "cnn_pool_1": 0,
+          "cnn_residual_1": 1,
+          "cnn_channels_2": 16,
+          "cnn_kernel_2": 3,
+          "cnn_stride_2": 1,
+          "cnn_pool_2": 1,
+          "cnn_residual_2": 1,
+          "cnn_channels_3": 16,
+          "cnn_kernel_3": 4,
+          "cnn_stride_3": 1,
+          "cnn_pool_3": 0,
+          "cnn_residual_3": 0
+        },
+        "success_observations": 1,
+        "failure_observations": 0
+      },
+      "optimizer_process": {
+        "command": [
+          "/home/claude/cnn/build/learning-feedback/verified-launcher-20261007/optimizer/worker",
+          "research_protein_propose",
+          "/home/claude/cnn/build/learning-feedback/validation-5060-20261007/recipe.ini",
+          "/home/claude/cnn/build/learning-feedback/validation-5060-20261007/execution/trial-0001/history.tsv",
+          "/home/claude/cnn/build/learning-feedback/validation-5060-20261007/execution/trial-0001/proposal.json"
+        ],
+        "cwd": "/home/claude/cnn/build/learning-feedback/validation-5060-20261007",
+        "status": "ok",
+        "timeout": 30,
+        "environment": {
+          "PUFFER_CHECKPOINT_RECEIPTS": null,
+          "NVCC_ARCH": null,
+          "NVCC_EXTRA": null,
+          "NVCC_APPEND_FLAGS": null,
+          "CUDA_HOME": "/usr/local/cuda",
+          "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+        },
+        "launch_monotonic_ns": 127474272114519,
+        "pid": 197354,
+        "returncode": 0,
+        "end_monotonic_ns": 127474536563225
+      },
+      "architecture": {
+        "encoder": 4,
+        "cnn_depth": 2,
+        "cnn_projection": 32,
+        "cnn_global_pool": 1,
+        "cnn_channels_1": 32,
+        "cnn_kernel_1": 2,
+        "cnn_stride_1": 8,
+        "cnn_pool_1": 0,
+        "cnn_residual_1": 1,
+        "cnn_channels_2": 16,
+        "cnn_kernel_2": 3,
+        "cnn_stride_2": 1,
+        "cnn_pool_2": 1,
+        "cnn_residual_2": 1
+      },
+      "duplicate_of": null,
+      "feedback": {
+        "score": 0.005051599587203303,
+        "score_upper": 0.005051599587203303,
+        "cost": 7.868755061,
+        "training_jobs_charged": 6,
+        "games": [
+          {
+            "environment": "connect4cnn",
+            "cells": 10,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.0,
+            "normalized_upper": 0.0
+          },
+          {
+            "environment": "pongcnn",
+            "cells": 7,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.0,
+            "normalized_upper": 0.0
+          },
+          {
+            "environment": "flappycnn",
+            "cells": 7,
+            "offset": 0.0,
+            "target": 100.0,
+            "normalized_lower": 0.0,
+            "normalized_upper": 0.0
+          },
+          {
+            "environment": "breakoutcnn",
+            "cells": 5,
+            "offset": 0.0,
+            "target": 20.0,
+            "normalized_lower": 0.02411764705882353,
+            "normalized_upper": 0.02411764705882353
+          },
+          {
+            "environment": "snakecnn",
+            "cells": 6,
+            "offset": 1.0,
+            "target": 20.0,
+            "normalized_lower": 0.006191950464396286,
+            "normalized_upper": 0.006191950464396286
+          },
+          {
+            "environment": "mazecnn",
+            "cells": 6,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.0,
+            "normalized_upper": 0.0
+          }
+        ],
+        "conservative_pong": true,
+        "publication_claim_qualified": false
+      },
+      "feedback_sha256": "8fd0c3d90f455d371a31ce8e0b9497adc64582cf74cfb49cef0197c68c6498af",
+      "candidate_sha256": "007e8669d3caa5530317e29097d01620f8b38b30608e79e414196eeef0fd081f",
+      "audit_sha256": "fd3598b3543b207ecd66fc813ef074ef7fc8dfbc4d0178433a2208b85997a1be",
+      "encoder_check": {
+        "report": "/home/claude/cnn/build/learning-feedback/validation-5060-20261007/execution/trial-0001/encoder-check/REPORT.json",
+        "sha256": "cdda58dfbac07f8b9932d89f6ff31ef84454514c0f3d279f3cddb98343867fee"
+      }
+    },
+    {
+      "index": 2,
+      "name": "swift-fox-3",
+      "proposal": {
+        "protocol": "native-cross-game-protein-v1",
+        "trial": 2,
+        "observations_replayed": 2,
+        "gp_observations": 2,
+        "random": 0,
+        "pareto": 1,
+        "normalized": [
+          -1,
+          -0.753651261,
+          -1,
+          -0.563667417,
+          0.532166719,
+          -1,
+          -1,
+          -1,
+          -0.003074646,
+          0.442249954,
+          -0.376935422,
+          -0.883919001,
+          -0.582303703,
+          0.467806578,
+          0.215682507,
+          -1,
+          -1,
+          -1
+        ],
+        "policy": {
+          "cnn_depth": 1,
+          "cnn_projection": 16,
+          "cnn_global_pool": 0,
+          "cnn_channels_1": 8,
+          "cnn_kernel_1": 6,
+          "cnn_stride_1": 4,
+          "cnn_pool_1": 0,
+          "cnn_residual_1": 0,
+          "cnn_channels_2": 16,
+          "cnn_kernel_2": 4,
+          "cnn_stride_2": 2,
+          "cnn_pool_2": 0,
+          "cnn_residual_2": 0,
+          "cnn_channels_3": 16,
+          "cnn_kernel_3": 3,
+          "cnn_stride_3": 1,
+          "cnn_pool_3": 0,
+          "cnn_residual_3": 0
+        },
+        "success_observations": 2,
+        "failure_observations": 0
+      },
+      "optimizer_process": {
+        "command": [
+          "/home/claude/cnn/build/learning-feedback/verified-launcher-20261007/optimizer/worker",
+          "research_protein_propose",
+          "/home/claude/cnn/build/learning-feedback/validation-5060-20261007/recipe.ini",
+          "/home/claude/cnn/build/learning-feedback/validation-5060-20261007/execution/trial-0002/history.tsv",
+          "/home/claude/cnn/build/learning-feedback/validation-5060-20261007/execution/trial-0002/proposal.json"
+        ],
+        "cwd": "/home/claude/cnn/build/learning-feedback/validation-5060-20261007",
+        "status": "ok",
+        "timeout": 30,
+        "environment": {
+          "PUFFER_CHECKPOINT_RECEIPTS": null,
+          "NVCC_ARCH": null,
+          "NVCC_EXTRA": null,
+          "NVCC_APPEND_FLAGS": null,
+          "CUDA_HOME": "/usr/local/cuda",
+          "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+        },
+        "launch_monotonic_ns": 127548986458396,
+        "pid": 198665,
+        "returncode": 0,
+        "end_monotonic_ns": 127549451524508
+      },
+      "architecture": {
+        "encoder": 4,
+        "cnn_depth": 1,
+        "cnn_projection": 16,
+        "cnn_global_pool": 0,
+        "cnn_channels_1": 8,
+        "cnn_kernel_1": 6,
+        "cnn_stride_1": 4,
+        "cnn_pool_1": 0,
+        "cnn_residual_1": 0
+      },
+      "duplicate_of": null,
+      "feedback": {
+        "score": 0.010443756449948402,
+        "score_upper": 0.010443756449948402,
+        "cost": 6.615474402,
+        "training_jobs_charged": 6,
+        "games": [
+          {
+            "environment": "connect4cnn",
+            "cells": 10,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.0,
+            "normalized_upper": 0.0
+          },
+          {
+            "environment": "pongcnn",
+            "cells": 7,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.0,
+            "normalized_upper": 0.0
+          },
+          {
+            "environment": "flappycnn",
+            "cells": 7,
+            "offset": 0.0,
+            "target": 100.0,
+            "normalized_lower": 0.0,
+            "normalized_upper": 0.0
+          },
+          {
+            "environment": "breakoutcnn",
+            "cells": 5,
+            "offset": 0.0,
+            "target": 20.0,
+            "normalized_lower": 0.027058823529411764,
+            "normalized_upper": 0.027058823529411764
+          },
+          {
+            "environment": "snakecnn",
+            "cells": 6,
+            "offset": 1.0,
+            "target": 20.0,
+            "normalized_lower": 0.01599587203302374,
+            "normalized_upper": 0.01599587203302374
+          },
+          {
+            "environment": "mazecnn",
+            "cells": 6,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.0196078431372549,
+            "normalized_upper": 0.0196078431372549
+          }
+        ],
+        "conservative_pong": true,
+        "publication_claim_qualified": false
+      },
+      "feedback_sha256": "6936da6e0622ef73e9adb1f2c41468e9e68074a451dcbc81225437c3e1af27fc",
+      "candidate_sha256": "070fc63e572ca3a9d4c25006a2972feaee4b473e634c15394c36e9f72f21aceb",
+      "audit_sha256": "11c431211a13ff1ec8bb2dd7f937e53bf9c260d05b1d727994c786e9754303b5",
+      "encoder_check": {
+        "report": "/home/claude/cnn/build/learning-feedback/validation-5060-20261007/execution/trial-0002/encoder-check/REPORT.json",
+        "sha256": "0caa8c38fe9fdff04d122e7c9e11af7c1285c855c873fe464494790971ba0d95"
+      }
+    }
+  ],
+  "started_monotonic_ns": 127406193013355,
+  "learning_quality_claim": false,
+  "plan_sha256": "827d88de921969d02dafaed81a079e2a9cd0d973329854f1066ea1874efed3a2",
+  "history": "PUFFER_CROSS_GAME_V1 18\n0 0.010835913312693499 6.934866768 -1 -0.333333313 -1 -1 1 -1 -1 -1 0 0 0 -1 -1 0 0 -1 -1 -1\n0 0.0050515995872033028 7.8687550609999999 0.250535369 -0.097586453 0.864957809 0.779076815 -0.713949323 0.686388135 -0.748153925 0.875641465 -0.108537197 0.0978188515 -0.522599936 0.0166735649 0.568199515 0.448421121 0.733319998 -0.870256543 -0.522990227 -0.654067516\n0 0.010443756449948402 6.6154744020000003 -1 -0.753651261 -1 -0.563667417 0.532166719 -1 -1 -1 -0.003074646 0.442249954 -0.376935422 -0.883919001 -0.582303703 0.467806578 0.215682507 -1 -1 -1\n",
+  "hardware": {
+    "gpu_name": "NVIDIA GeForce RTX 5060",
+    "gpu_uuid": "GPU-56b0df25-b4c9-46eb-e498-bc5c71904097",
+    "driver": "591.86",
+    "host": "G240",
+    "cuda_compiler": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2025 NVIDIA Corporation\nBuilt on Fri_Feb_21_20:23:50_PST_2025\nCuda compilation tools, release 12.8, V12.8.93\nBuild cuda_12.8.r12.8/compiler.35583870_0\n"
+  },
+  "final_observations_replayed": 3,
+  "final_unused_proposal": {
+    "protocol": "native-cross-game-protein-v1",
+    "trial": 3,
+    "observations_replayed": 3,
+    "gp_observations": 3,
+    "random": 0,
+    "pareto": 2,
+    "normalized": [
+      -1,
+      -0.0828962922,
+      -0.868432999,
+      -1,
+      0.62176156,
+      -0.726987481,
+      -1,
+      -0.795076966,
+      0.217884421,
+      -0.423232645,
+      -0.194229782,
+      -1,
+      -0.63863349,
+      -0.325003117,
+      0.17036581,
+      -1,
+      -1,
+      -1
+    ],
+    "policy": {
+      "cnn_depth": 1,
+      "cnn_projection": 32,
+      "cnn_global_pool": 0,
+      "cnn_channels_1": 8,
+      "cnn_kernel_1": 7,
+      "cnn_stride_1": 4,
+      "cnn_pool_1": 0,
+      "cnn_residual_1": 0,
+      "cnn_channels_2": 16,
+      "cnn_kernel_2": 2,
+      "cnn_stride_2": 2,
+      "cnn_pool_2": 0,
+      "cnn_residual_2": 0,
+      "cnn_channels_3": 16,
+      "cnn_kernel_3": 3,
+      "cnn_stride_3": 1,
+      "cnn_pool_3": 0,
+      "cnn_residual_3": 0
+    },
+    "success_observations": 3,
+    "failure_observations": 0
+  },
+  "final_optimizer_process": {
+    "command": [
+      "/home/claude/cnn/build/learning-feedback/verified-launcher-20261007/optimizer/worker",
+      "research_protein_propose",
+      "/home/claude/cnn/build/learning-feedback/validation-5060-20261007/recipe.ini",
+      "/home/claude/cnn/build/learning-feedback/validation-5060-20261007/execution/final-feedback/history.tsv",
+      "/home/claude/cnn/build/learning-feedback/validation-5060-20261007/execution/final-feedback/proposal.json"
+    ],
+    "cwd": "/home/claude/cnn/build/learning-feedback/validation-5060-20261007",
+    "status": "ok",
+    "timeout": 30,
+    "environment": {
+      "PUFFER_CHECKPOINT_RECEIPTS": null,
+      "NVCC_ARCH": null,
+      "NVCC_EXTRA": null,
+      "NVCC_APPEND_FLAGS": null,
+      "CUDA_HOME": "/usr/local/cuda",
+      "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+    },
+    "launch_monotonic_ns": 127614430883942,
+    "pid": 199972,
+    "returncode": 0,
+    "end_monotonic_ns": 127614945851586
+  },
+  "ended_monotonic_ns": 127614946253442
+}

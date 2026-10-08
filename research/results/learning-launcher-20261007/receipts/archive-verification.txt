@@ -1,0 +1,1 @@
+build/hardware-artifacts/learning-launcher-5060-20261007.SMy1arPK.tar.gz: OK

@@ -56,6 +56,13 @@ def candidate_families(candidate):
     return candidate.get("binary_family", "default"), candidate.get("policy_family", "flex")
 
 
+def matching_registry(registry, baselines, per_game_learners):
+    # Nature selector 2 shares the normal binary; learner-v3 may reuse it.
+    if per_game_learners and baselines == ["nature_cnn"]:
+        return registry["protocol"] in ("native-cnn-candidate-build-v1", "native-cnn-candidate-build-v2")
+    return registry["protocol"] == ("native-cnn-candidate-build-v2" if baselines else "native-cnn-candidate-build-v1")
+
+
 def metadata_source_binding(registry, native_registry, sources):
     # Owned build_arch/weights_create files, excluding unrelated test/docs.
     for name, digest in registry["sources"].items():
@@ -314,7 +321,7 @@ def prepare(args):
         require(separator and task in TASKS and task not in recipes, "Invalid/duplicate per-game learner")
         recipes[task] = Path(filename).resolve()
     registry_path = args.registry.resolve(); registry = json.loads(registry_path.read_text())
-    require(registry["protocol"] == ("native-cnn-candidate-build-v2" if expanded else "native-cnn-candidate-build-v1")
+    require(matching_registry(registry, baselines, per_game_learners)
             and set(registry["binaries"]) == set(TASKS), "Need complete matching fresh build registry; build --baselines for references")
     builds = registry_builds(registry)
     verify_sources(registry_path.parent, registry["source_sha256"], current=True)
@@ -430,7 +437,7 @@ def inspect(path, current=False):
     verify_sources(root, value["source_sha256"], current)
     builds = registry_builds(value["native_registry"])
     if per_game_learners:
-        require(value["native_registry"]["protocol"] == ("native-cnn-candidate-build-v2" if expanded else "native-cnn-candidate-build-v1"),
+        require(matching_registry(value["native_registry"], value.get("baselines", []), True),
                 "Wrong per-game learner build registry")
         require(not current or root.resolve() == Path(value["native_working_root"]), "Cannot launch relocated packet paths")
     if "policy_layout" in value:
@@ -448,7 +455,7 @@ def inspect(path, current=False):
             require(sha(snapshot) == candidate["sha256"] and architecture(snapshot) == candidate["architecture"],
                     "Candidate differs from frozen learner-panel snapshot")
     if expanded:
-        require(value["native_registry"]["protocol"] == "native-cnn-candidate-build-v2"
+        require(matching_registry(value["native_registry"], value["baselines"], per_game_learners)
                 and value["baselines"] and len(set(value["baselines"])) == len(value["baselines"])
                 and set(value["baselines"]) <= set(BASELINES), "Wrong fixed-baseline declaration")
         require({c.get("baseline") for c in value["candidates"] if c.get("kind") == "baseline"} == set(value["baselines"]),
@@ -593,6 +600,15 @@ def coverage(path, out):
 
 
 def run_hardware(value, mode):
+    if mode == "validation5060":
+        require(len(value["candidates"]) <= 2 and len(value["seeds"]) == 1
+                and max(b["steps"] for b in value["task_budgets"].values()) <= 131072
+                and all(b["checkpoint_steps"] == b["steps"] for b in value["task_budgets"].values())
+                and value["episodes"] <= 17 and value["slots"] <= 16
+                and value["planned_evaluations"] <= 82, "Validation exceeds bounded 5060 allocation")
+        require(all(c["architecture"]["encoder"] in (2,4) for c in value["candidates"]), "Validation requires legacy CNNs")
+        require(all(job.get("policy_layout") for job in value["jobs"]), "Validation requires full policy registration")
+        return "5060"
     if value.get("per_game_learners", False):
         require(mode == "development", "Per-game learner panels require separately scheduled 5090 development mode")
     if mode == "canary5090":
@@ -642,7 +658,7 @@ def run(args):
     root = args.plan.resolve().parent; value = inspect(args.plan.resolve(), current=True)
     require(args.timeout > 0 and args.train_timeout > 0 and args.eval_timeout > 0, "Positive process/campaign deadlines required")
     expected = run_hardware(value, args.mode)
-    if args.mode in ("mini", "research", "canary5090"):
+    if args.mode in ("mini", "research", "canary5090", "validation5060"):
         require(args.timeout <= (600 if args.mode == "canary5090" else 900)
                 and args.train_timeout <= 30 and args.eval_timeout <= 30,
                 "Mini requires bounded campaign/process deadlines")
@@ -705,7 +721,7 @@ def run(args):
                     save(out / "progress.json", record)
             # A same-batch repeat/eager smoke for every candidate/game, using
             # drawing 0 and its final checkpoint. This is not independent math.
-            if args.mode in ("smoke", "mini", "canary5090"):
+            if args.mode in ("smoke", "mini", "canary5090", "validation5060") or args.mode == "development" and value["protocol"] == LEARNER_PROTOCOL:
                 target = job["targets"][0]; step = job["checkpoint_steps"][-1]
                 reference = out / "evaluations" / f"job-{index:04d}" / f"s{step}-r0" / "episodes.csv"
                 for mode in ("repeat", "eager"):
@@ -835,7 +851,8 @@ def audit(path, out):
         reference = root / "execution/evaluations" / f"job-{entry['job_index']:04d}" / f"s{job['checkpoint_steps'][-1]}-r0/episodes.csv"
         require(sha(reference) == entry["episodes_sha256"], "Repeat differs from original evaluation")
         evaluate(dict(job_index=entry["job_index"], step=job["checkpoint_steps"][-1], representation=0), Path(entry["result"]))
-    if result["status"] == "ok" and result["mode"] in ("smoke", "mini", "canary5090"):
+    if result["status"] == "ok" and (result["mode"] in ("smoke", "mini", "canary5090", "validation5060")
+            or result["mode"] == "development" and value["protocol"] == LEARNER_PROTOCOL):
         require(repeat_keys == {(i, mode) for i in range(len(value["jobs"])) for mode in ("repeat", "eager")}, "Missing smoke repeat/eager check")
     inputs.verify()
     out = out.resolve(); out.mkdir(parents=True, exist_ok=False)
@@ -845,7 +862,7 @@ def audit(path, out):
         repeat_checks=len(result["repeat_checks"]), hardware=result.get("hardware"), inputs_sha256=inputs.hashes, frontier_claim_qualified=False,
         quality_selection_allowed=False, cross_game_aggregate_score=None, native_vector_initialization_validated=False,
         warning="Short plumbing results are not learning evidence, independent numerical acceptance, calibrated budgets/caps or a publication frontier.")
-    if value["protocol"] == BASELINE_PROTOCOL:
+    if value["protocol"] == BASELINE_PROTOCOL or value["protocol"] == LEARNER_PROTOCOL and value.get("baselines"):
         curves = candidate_frontiers(value, observations, result["mode"])
         analysis["curve_status"] = curves["status"]
         write_frontiers(out, curves)
@@ -886,7 +903,7 @@ def main():
     review = sub.add_parser("audit"); review.add_argument("--plan", type=Path, required=True); review.add_argument("--out", type=Path, required=True)
     ledger = sub.add_parser("coverage"); ledger.add_argument("--plan", type=Path, required=True); ledger.add_argument("--out", type=Path, required=True)
     execute = sub.add_parser("run"); execute.add_argument("--plan", type=Path, required=True)
-    execute.add_argument("--mode", choices=("smoke", "mini", "research", "canary5090", "development"), required=True); execute.add_argument("--allow-gpu", action="store_true")
+    execute.add_argument("--mode", choices=("smoke", "mini", "research", "canary5090", "development", "validation5060"), required=True); execute.add_argument("--allow-gpu", action="store_true")
     execute.add_argument("--timeout", type=int, default=900); execute.add_argument("--train-timeout", type=int, default=60)
     execute.add_argument("--eval-timeout", type=int, default=30)
     args = parser.parse_args()

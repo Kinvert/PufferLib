@@ -10,6 +10,13 @@ On September 12, the checkout was fast-forwarded eight commits to `89414204ce850
 
 ## Start here
 
+- [Current staged 5090 learning/search run](../NEXT_5090_LEARNING_FEEDBACK.md):
+  prepare without GPU, then validate controls and run the native cross-game
+  discovery loop only if every game learns. Includes paired references and all
+  scheduled per-game/drawing curves. [CUDA graph gate](CNN_GRAPH_ACCEPTANCE.md)
+  checks every proposed encoder before training. Older canary and preparation-only
+  instructions below are historical, not commands to repeat.
+
 - [Next experiment after the 5090 canary](NEXT_FEEDBACK_EXPERIMENT.md): implemented
   per-game budgets/learner geometry, qualify actual searched graphs/batches,
   calibrate quality versus Nature until scores are informative, then run varied
