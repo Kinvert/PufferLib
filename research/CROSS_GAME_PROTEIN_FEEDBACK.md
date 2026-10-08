@@ -6,10 +6,13 @@ his fork's `cnn-research` branch. Read
 Do not push to PufferAI or treat it as the eventual upstream PR. Later implement
 the selected architecture separately with minimal, clean normal PufferLib code.
 
-Status: implemented, compiled and prepared; **the actual GPU feedback loop has
-not run**. The explicit bounded 5090 canary is the next remote task; no long
-search or restart of the completed earlier 5060 mini is scheduled.
-No learning, numerical acceptance, speed or Pareto win follows from this work.
+Status October 7: **the bounded 5090 GPU feedback canary completed**; read
+[the received evidence](results/feedback-canary-5090-20261007/README.md).
+All three trials / 18 jobs / 123 drawing evaluations / 36 repeat-eager checks
+pass the remote audit, with local artifact checks. All proposals round to C16,
+with explicit duplicates. No long search or restart of completed allocations
+is scheduled. No learning, numerical acceptance, speed or Pareto win follows
+from this plumbing canary. Earlier preparation-only statements remain historical.
 
 ## Actual loop
 
@@ -91,13 +94,31 @@ Deterministic per-slot mixed training assignments share one appearance seed/
 catalog, and exact evaluation uses all fixed drawings with paired episode IDs,
 world RNG and batch sizes. Raw rewards from different games are never averaged.
 
+October 7 opt-in development preparation adds `[search] learner_mode=per_game`
+and optional `[task.ENV]` sections with `steps` / `checkpoint_steps`. Unspecified
+games use the root budget. Numeric `--learner-recipe ENV=INI` overlays can then
+choose rollout/minibatch geometry per game, held fixed across every suggestion.
+Native scalar preflight rejects rounded decision budgets, misaligned checkpoint
+cadence and zero optimizer updates before a proposal. Feedback-v2 / panel-v3
+freeze and inspect these proofs offline; legacy contracts are unchanged.
+
+Depth can be swept from a depth-one default through three stages using all 18
+CNN coordinates. Audits bind inactive coordinates too; effective-graph duplicates
+are retained. Native random-warmup controls remain in `[protein]`. These controls
+enable a broader search; they do not qualify its graphs or calibrate its learners.
+`bash research/run_feedback_5090.sh prepare-development` exercises GPU-free
+preparation using explicitly uncalibrated examples. It schedules no GPU work and
+cannot be passed to the launcher's old bounded `run` command. Read
+[the next experiment](NEXT_FEEDBACK_EXPERIMENT.md) before planning a campaign.
+
 ## Replay and retained evidence
 
 Native optimizer processes reserve the shared hardware lock and reject busy
 GPUs. Each exits before training/inference, avoiding a resident GP context that
 would contaminate memory/idle checks/timing. A fresh process reconstructs the
 previous native sequence from its frozen ledger and refuses changed float32
-normalized proposals before observing them. GPU replay determinism is untested.
+normalized proposals before observing them. GPU replay passes the three-trial
+5090 canary; larger histories and other hardware remain untested.
 
 Replay repeats earlier GP work: overhead grows with trial count and must be
 measured before thousands of trials. Standard PROTEIN merges sufficiently close
@@ -145,8 +166,9 @@ NVCC_ARCH=sm_120 bash research/build_policy_metadata.sh build/cross-game-feedbac
 
 Declared smoke: three trials, six games, one seed, 65,536 decisions/job, one
 checkpoint, 17 episodes/16 slots per drawing. If complete: **18 training jobs,
-123 evaluations, 2,091 assigned episodes**. Currently zero executed. Campaign
-≤600s, each process ≤30s. Vary only C8/C16, depth1/K7/S4/projection64, so three
+123 drawing evaluations, plus 36 repeat/eager checks, 2,703 assigned episodes**.
+That allocation completed on the 5090. Campaign ≤600s, with launcher-specific
+training/evaluation/proposal caps. Vary only C8/C16, depth1/K7/S4/projection64, so three
 trials necessarily repeat an architecture. This is plumbing, not useful learning
 or broad search. `num_random_samples=0` exercises GP feedback immediately after
 the first panel; ordinary native discovery defaults to10.

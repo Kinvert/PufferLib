@@ -10,10 +10,16 @@ On September 12, the checkout was fast-forwarded eight commits to `89414204ce850
 
 ## Start here
 
-- [October 7 5090 feedback handoff](../NEXT_5090_FEEDBACK.md): two commands build,
-  prepare, run the tiny native cross-game PROTEIN canary and audit/archive it.
-  Kinvert authorized research delivery to his fork. GPU-free local launcher
-  preparation passes; actual remote feedback execution remains pending. This
+- [Next experiment after the 5090 canary](NEXT_FEEDBACK_EXPERIMENT.md): implemented
+  per-game budgets/learner geometry, qualify actual searched graphs/batches,
+  calibrate quality versus Nature until scores are informative, then run varied
+  native architecture discovery and independent confirmation. The completed
+  canary is plumbing proof; all three proposals constructed C16.
+
+- [October 7 5090 feedback handoff](../NEXT_5090_FEEDBACK.md): the real six-game
+  feedback canary is complete. New GPU-free preparation covers per-game learners,
+  budgets and all 18 architecture dimensions. Kinvert authorized research delivery
+  to his fork. No new GPU campaign is scheduled. This
   changes the earlier delivery hold, not the numerical or publication gates.
 
 - [Completed short-budget RTX 5060 mini benchmark](MINI_SHORT_BUDGET_5060.md): quality versus Nature, two paired seeds, six games/all 41 drawings, checkpoints 262,144/524,288 decisions. All 24 jobs/328 evaluations/48 repeat-eager checks pass audit; [curves and SPS table](results/mini-short-5060-20261006/README.md). Ours processes decisions 9–22% faster in these small runs, but learning is weak and frontier marks stay suppressed. Three native uptime inconsistencies are retained; monotonic receipts define the timing comparison.
@@ -36,7 +42,7 @@ On September 12, the checkout was fast-forwarded eight commits to `89414204ce850
 
 - [Matched arbitrary CNNs and fixed references](CANDIDATE_BASELINE_COMPARISON.md): opt-in panel-v2 adds Nature, IMPALA and Impoola with identical per-game learners, seeds, budgets, mixtures and exact suites. Eighteen normal targets compile; actual preparation passes 60 jobs/82 suites/310 native start-and-pixel comparisons, with 820 planned evaluations and zero observations. Full curves retain missing cells, declines and complete paired means. [Retained artifact verification](results/candidate-baselines-preparation-20261006/README.md) passes without GPU/model execution; qualification/calibration and scheduling remain pending.
 
-- [Native cross-game feedback prototype](CROSS_GAME_PROTEIN_FEEDBACK.md): temporary macro-gated core bridge closes the adaptive loop using native PROTEIN and six-game exact scalar feedback. Compiled/prepared and host-tested; GPU loop unexecuted. Local research only: no push, no upstream PR claim, no long campaign.
+- [Native cross-game feedback prototype](CROSS_GAME_PROTEIN_FEEDBACK.md): temporary macro-gated core bridge closes the adaptive loop using native PROTEIN and six-game exact scalar feedback. Actual three-trial 5090 loop passes; broader discovery preparation adds per-game budgets/learners and 18 CNN dimensions. Research delivery is to Kinvert's fork only; no upstream PR or long campaign is scheduled.
 - [One CNN across games/drawings](CROSS_GAME_CNN_SWEEP.md): the generic panel expands independent native proposals into all six environments and 41 deterministic drawing targets. Architecture is common across games; learners are fixed per game. Earlier short 5060 allocations are complete; full 5090 work requires separate scheduling.
 
 - [Native checkpoint size/layout preflight](POLICY_CHECKPOINT_PREFLIGHT.md): actual full-policy registration, ordered encoder/head/MinGRU shapes and stat-only checkpoint checks before GPU scheduling. Three targets and seven host/scalar checks pass; this does not certify checkpoint contents, identity or model math.

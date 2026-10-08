@@ -23,7 +23,29 @@ from claim import common_settings
 
 ROOT = panels.ROOT
 PROTOCOL = "cross-game-native-protein-research-v1"
+DEVELOPMENT_PROTOCOL = "cross-game-native-protein-research-v2"
 require, save, sha = panels.require, panels.save, panels.sha
+
+
+def task_budgets(config):
+    overrides = {}
+    for section in config.sections():
+        if not section.startswith("task."): continue
+        task = section[5:]
+        require(task in panels.TASKS and set(config[section]) == {"steps", "checkpoint_steps"}, "Invalid per-game budget section")
+        overrides[task] = {key: config.getint(section, key) for key in ("steps", "checkpoint_steps")}
+    return panels.panel.resolve_budgets(panels.TASKS, config.getint("search", "steps"),
+        config.getint("search", "checkpoint_steps"), overrides)
+
+
+def per_game_learners(config):
+    mode = config.get("search", "learner_mode", fallback="fixed")
+    require(mode in ("fixed", "per_game"), "Invalid learner_mode")
+    return mode == "per_game"
+
+
+def recipe_protocol(config):
+    return DEVELOPMENT_PROTOCOL if per_game_learners(config) or any(s.startswith("task.") for s in config.sections()) else PROTOCOL
 
 
 def recipe(path):
@@ -36,7 +58,14 @@ def recipe(path):
     panels.architecture(path)
     keys = [s for s in config.sections() if s.startswith("sweep.")]
     require(keys and all(s.startswith("sweep.policy.cnn_") for s in keys), "Only CNN coordinates may vary")
-    require(set(config.sections()) == required | set(keys), "Unsupported recipe section; use fixed learner overlays")
+    tasks = {s for s in config.sections() if s.startswith("task.")}
+    require(set(config.sections()) == required | set(keys) | tasks, "Unsupported recipe section; use fixed learner overlays")
+    max_depth = config.getint("sweep.policy.cnn_depth", "max") if config.has_section("sweep.policy.cnn_depth") else config.getint("policy", "cnn_depth")
+    require(max_depth in (1, 2, 3), "Invalid maximum CNN depth")
+    for stage in range(1, max_depth + 1):
+        for name in ("channels", "kernel", "stride", "pool", "residual"):
+            key = f"cnn_{name}_{stage}"
+            require(config.getfloat("policy", key) in panels.LIMITS[4]["policy." + key][1], "Missing/invalid potentially active stage: " + key)
     for section in keys:
         coordinate = section[6:]
         require(coordinate in panels.LIMITS[4], "Unsupported CNN coordinate")
@@ -46,8 +75,8 @@ def recipe(path):
         require(lo in values and hi in values and lo < hi, "Bad CNN range")
         require(config.has_option("policy", coordinate[7:]), "Missing CNN coordinate default")
         require(lo <= config.getint("policy", coordinate[7:]) <= hi, "Default outside range")
-        if config.getint("policy", "cnn_depth") == 1 and coordinate[-1:].isdigit():
-            require(coordinate.endswith("_1"), "Inactive stage must not consume search dimensions")
+        if coordinate[-1:].isdigit():
+            require(int(coordinate[-1]) <= max_depth, "Inactive stage must not consume search dimensions")
     seeds = [int(v.strip()) for v in config.get("search", "training_seeds").split(",")]
     require(seeds and len(seeds) == len(set(seeds)) and all(0 <= s < 2**32 for s in seeds), "Bad training seeds")
     for task in panels.TASKS:
@@ -62,8 +91,10 @@ def recipe(path):
         require(0 <= config.getint("search", key) < 2**32, "Invalid panel seed")
     require(config.getint("search", "eval_seed") <= 2**32-len(seeds), "Evaluation seed allocation overflows")
     require(not set(range(config.getint("search", "eval_seed"), config.getint("search", "eval_seed")+len(seeds))) & set(seeds), "Evaluation seed overlaps training")
-    require(config.getint("search", "steps") % 2048 == 0
-        and config.getint("search", "checkpoint_steps") % 2048 == 0, "Decisions/cadence must be 2048 multiples")
+    budgets = task_budgets(config)
+    if not per_game_learners(config):
+        require(all(b["steps"] % 2048 == b["checkpoint_steps"] % 2048 == 0 for b in budgets.values()),
+                "Decisions/cadence must be 2048 multiples")
     require(0 <= config.getint("protein", "seed") < 2**32
         and 0 <= config.getint("protein", "num_random_samples") <= 100
         and 1 <= config.getint("protein", "gp_training_iter") <= 100, "Invalid optimizer controls")
@@ -88,7 +119,7 @@ def optimizer_receipts(directory, current=False):
 
 def inspect(root, current=False):
     value = json.loads((root / "plan.json").read_text())
-    require(value["protocol"] == PROTOCOL, "Wrong research feedback protocol")
+    require(value["protocol"] in (PROTOCOL, DEVELOPMENT_PROTOCOL), "Wrong research feedback protocol")
     require(not current or str(root.resolve()) == value["preparation_root"], "Cannot run relocated research packet")
     for name, digest in value["files_sha256"].items():
         require(sha(root / name) == digest, "Changed research input: " + name)
@@ -97,7 +128,16 @@ def inspect(root, current=False):
         require(sha(Path(value["optimizer"])) == value["optimizer_sha256"], "Changed native optimizer")
         require(optimizer_receipts(Path(value["optimizer_build"]), current=True) == value["optimizer_receipts"], "Changed native build packet")
     require(optimizer_receipts(root / "optimizer-build") == value["optimizer_receipts"], "Changed frozen optimizer build")
-    recipe(root / "recipe.ini")
+    config, _ = recipe(root / "recipe.ini")
+    require(value["protocol"] == recipe_protocol(config), "Wrong recipe feedback contract")
+    if value["protocol"] == DEVELOPMENT_PROTOCOL:
+        require(value["task_budgets"] == task_budgets(config)
+                and value["per_game_learners"] is per_game_learners(config), "Changed per-game feedback allocation")
+        bases = {task: panels.base_config(root / "source", task, value["task_budgets"][task],
+            config.getint("search", "appearance_seed"),
+            next((root / r["file"] for r in value["learner_recipes"] if r["environment"] == task), None),
+            value["per_game_learners"]) for task in panels.TASKS}
+        panels.inspect_learner_geometry(root, value, bases)
     return value
 
 
@@ -122,6 +162,12 @@ def prepare(args):
         learners.append(dict(environment=task, file=str(destination.relative_to(out))))
     save(out / "registry-location.json", dict(original=str(args.registry.resolve())), exclusive=True)
     sources = panels.capture(out)
+    extended = recipe_protocol(config) == DEVELOPMENT_PROTOCOL
+    budgets = task_budgets(config)
+    if extended:
+        bases = {task: panels.base_config(ROOT, task, budgets[task], config.getint("search", "appearance_seed"),
+            next((out / r["file"] for r in learners if r["environment"] == task), None), per_game_learners(config)) for task in panels.TASKS}
+        geometry = panels.panel.native_geometry(out, bases)
     with contextlib.redirect_stdout(io.StringIO()):
         layout = panels.policy_layout.freeze(args.policy_metadata, out / "policy-metadata")
     panels.metadata_source_binding(layout, registry, sources)
@@ -129,7 +175,7 @@ def prepare(args):
     panels.process(command, out, out / "describe.txt", 30)
     description = json.loads((out / "describe.txt").read_text())
     require(description["gpu_queried"] is False and description["policy_executed"] is False, "Descriptor ran GPU/model")
-    value = dict(protocol=PROTOCOL, preparation_root=str(out), optimizer=str(optimizer),
+    value = dict(protocol=recipe_protocol(config), preparation_root=str(out), optimizer=str(optimizer),
         optimizer_sha256=sha(optimizer), optimizer_build=str(args.optimizer_build.resolve()), optimizer_receipts=receipts,
         policy_metadata=str(args.policy_metadata.resolve()), seeds=seeds,
         learner_recipes=learners,
@@ -139,6 +185,7 @@ def prepare(args):
         optimizer_cost="sum final monotonic checkpoint training seconds once per game/seed",
         temporary_research_core=True, native_optimizer=True, cross_game_feedback_implemented=True,
         publication_claim_qualified=False, broader_encoder_math_qualified=False)
+    if extended: value.update(task_budgets=budgets, per_game_learners=per_game_learners(config), learner_geometry=geometry)
     save(out / "plan.json", value, exclusive=True)
     inspect(out, current=True)
     return value
@@ -183,7 +230,7 @@ def run(args):
     count = settings.getint("max_runs"); timeout = settings.getint("campaign_timeout")
     expected = "5060" if args.mode == "smoke" else "5090"
     if args.mode in ("smoke", "canary5090"):
-        require(count <= 3 and len(seeds) == 1 and settings.getint("steps") <= 131072
+        require(recipe_protocol(config) == PROTOCOL and count <= 3 and len(seeds) == 1 and settings.getint("steps") <= 131072
             and settings.getint("checkpoint_steps") == settings.getint("steps")
             and settings.getint("episodes") <= 17 and settings.getint("slots") <= 16
             and 0 < timeout <= 600, "Feedback canary exceeds bounded allocation")
@@ -237,7 +284,10 @@ def run(args):
                 candidate=[name + "=" + str(candidate_path)], native_campaign=[], baselines=[],
                 policy_metadata=Path(value["policy_metadata"]), seeds=seeds,
                 steps=settings.getint("steps"), checkpoint_steps=settings.getint("checkpoint_steps"),
-                task_budget=[], learner_recipe=[r["environment"] + "=" + str(root / r["file"]) for r in value["learner_recipes"]], appearance_seed=settings.getint("appearance_seed"),
+                task_budget=[f"{task}={b['steps']}:{b['checkpoint_steps']}" for task, b in task_budgets(config).items()]
+                    if recipe_protocol(config) == DEVELOPMENT_PROTOCOL else [],
+                per_game_learners=per_game_learners(config),
+                learner_recipe=[r["environment"] + "=" + str(root / r["file"]) for r in value["learner_recipes"]], appearance_seed=settings.getint("appearance_seed"),
                 eval_seed=settings.getint("eval_seed"), episodes=settings.getint("episodes"), slots=settings.getint("slots"),
                 pong_max_decisions=settings.getint("pong_max_decisions"), breakout_max_frames=settings.getint("breakout_max_frames"))
             # Registry source snapshots live in the original build directory.
@@ -311,12 +361,16 @@ def audit(args):
         spec = panels.architecture(trial / "candidate.ini")
         require(spec == entry["architecture"], "Changed trial architecture")
         require(entry["duplicate_of"] == next((i for i, a in enumerate(architectures) if a == spec), None), "Hidden architecture duplicate")
+        assigned = panels.panel.read(trial / "candidate.ini")
         for key, number in entry["proposal"]["policy"].items():
-            require(spec[key] == number, "Candidate does not use native proposal")
+            require(assigned.getfloat("policy", key) == number, "Candidate does not use native proposal")
         architectures.append(spec)
         panel_root = trial / "panel"; plan = panels.inspect(panel_root / "plan.json")
         require(plan["seeds"] == seeds and len(plan["candidates"]) == 1
             and plan["candidates"][0]["architecture"] == spec, "Panel changed assigned architecture/seeds")
+        if value.get("protocol") == DEVELOPMENT_PROTOCOL:
+            require(plan["task_budgets"] == value["task_budgets"]
+                    and plan.get("per_game_learners", False) is value["per_game_learners"], "Panel changed frozen per-game allocation")
         for job in plan["jobs"]:
             key = job["environment"], job["seed"]
             fixed = common_settings(panels.panel.read(panel_root / job["config"]))
@@ -338,7 +392,7 @@ def audit(args):
         and previous_end <= result["ended_monotonic_ns"], "Final feedback was not observed")
     if config.getint("protein", "num_random_samples") == 0:
         require(result["final_unused_proposal"]["gp_observations"] > 0, "GP feedback path did not run")
-    report = dict(status="ok", protocol=PROTOCOL, trials=summaries,
+    report = dict(status="ok", protocol=value.get("protocol", PROTOCOL), trials=summaries,
         result_sha256=sha(result_path), policy_execution_in_audit=False, native_feedback_receipts_audited=True,
         publication_claim_qualified=False, broader_encoder_math_qualified=False,
         optimizer_process_seconds=math.fsum((r["optimizer_process"]["end_monotonic_ns"]-r["optimizer_process"]["launch_monotonic_ns"])/1e9

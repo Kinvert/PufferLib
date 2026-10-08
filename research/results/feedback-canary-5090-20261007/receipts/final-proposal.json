@@ -1,0 +1,1 @@
+{"protocol":"native-cross-game-protein-v1","trial":3,"observations_replayed":3,"gp_observations":3,"random":0,"pareto":1,"normalized":[0.862663567],"policy":{"cnn_channels_1":16},"success_observations":3,"failure_observations":0}

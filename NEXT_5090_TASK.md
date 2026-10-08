@@ -2,7 +2,8 @@
 
 **October 7 current entry point:** read [NEXT_5090_FEEDBACK.md](NEXT_5090_FEEDBACK.md).
 Kinvert authorized delivery to his research fork and a bounded native feedback
-canary. Use its launcher; no code edits on the 5090 are needed. Earlier no-delivery
+canary, which is now complete. Use its GPU-free development preparation task;
+do not repeat the canary. No code edits on the 5090 are needed. Earlier no-delivery
 and hold statements below are historical and do not override that specific task.
 The old larger numerical/learning campaigns below are not scheduled by it.
 

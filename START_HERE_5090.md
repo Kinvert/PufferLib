@@ -4,8 +4,9 @@ This file is the complete starting brief for an agent or person with **no prior 
 
 **October 7 current entry point: [NEXT_5090_FEEDBACK.md](NEXT_5090_FEEDBACK.md).**
 Kinvert authorized the research delivery and its bounded native cross-game
-feedback canary. Follow that two-command handoff. Earlier execution holds below
-are historical; larger campaigns and encoder5 are not scheduled by this update.
+feedback canary, which is now complete. Follow the updated GPU-free development
+preparation task; do not repeat that canary. Earlier execution holds below are
+historical; larger campaigns and encoder5 are not scheduled by this update.
 
 **October 2 prior entry point: [NEXT_5090_TASK.md](NEXT_5090_TASK.md).** It gives
 the first GPU-free preparation commands and the ordered future validation gates.

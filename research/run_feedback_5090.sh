@@ -4,9 +4,10 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 feedback_command="${1:-}"
-if [[ "$feedback_command" != prepare && "$feedback_command" != run ]] || [[ $# -gt 2 ]]; then
+if [[ "$feedback_command" != prepare && "$feedback_command" != prepare-development && "$feedback_command" != run ]] || [[ $# -gt 2 ]]; then
     echo 'Usage: bash research/run_feedback_5090.sh prepare [FRESH_DIR]' >&2
     echo '       bash research/run_feedback_5090.sh run PREPARED_DIR' >&2
+    echo '       bash research/run_feedback_5090.sh prepare-development [FRESH_DIR] (GPU-free only)' >&2
     exit 2
 fi
 
@@ -18,13 +19,13 @@ source ocean/connect4cnn/runtime_env.sh
 export NVCC_ARCH=sm_120
 export NVCC_PREPEND_FLAGS='--threads 1'
 if [[ ! -x .venv/bin/python ]]; then
-    [[ "$feedback_command" == prepare ]] || { echo 'Run prepare first.' >&2; exit 1; }
+    [[ "$feedback_command" != run ]] || { echo 'Run prepare first.' >&2; exit 1; }
     uv venv --python 3.12 .venv
     uv pip install --python .venv/bin/python 'numpy==2.5.3'
 fi
 .venv/bin/python -c 'import numpy; import sys; assert sys.version_info[:2] == (3, 12), "Use uv venv --python 3.12"'
 
-if [[ "$feedback_command" == prepare ]]; then
+if [[ "$feedback_command" != run ]]; then
     [[ -x "$CUDA_HOME/bin/nvcc" && -f "$NCCL_ROOT/include/nccl.h" ]] || {
         echo 'Point CUDA_HOME/NCCL_ROOT at the existing toolkit/NCCL. Do not install or change CUDA.' >&2
         exit 1
@@ -46,20 +47,31 @@ if [[ "$feedback_command" == prepare ]]; then
     .venv/bin/python research/candidate_panel.py build --out "$feedback_dir/games" \
         > "$feedback_dir/game-builds.txt" 2>&1
     bash research/build_policy_metadata.sh "$feedback_dir/metadata" > "$feedback_dir/metadata-builds.txt" 2>&1
+    feedback_recipe=research/recipes/cross_game_feedback_smoke.ini
+    feedback_learners=()
+    if [[ "$feedback_command" == prepare-development ]]; then
+        feedback_recipe=research/recipes/cross_game_feedback_prepare.ini
+        feedback_learners=(--learner-recipe mazecnn=research/recipes/feedback_maze_prepare.ini)
+    fi
     .venv/bin/python research/cross_game_feedback.py prepare \
-        --recipe research/recipes/cross_game_feedback_smoke.ini \
+        --recipe "$feedback_recipe" "${feedback_learners[@]}" \
         --registry "$feedback_dir/games/registry.json" --optimizer-build "$feedback_dir/optimizer" \
         --policy-metadata "$feedback_dir/metadata" --out "$feedback_dir/prepared" \
         > "$feedback_dir/preparation.txt" 2>&1
     .venv/bin/python research/cross_game_feedback.py inspect --out "$feedback_dir/prepared" \
         > "$feedback_dir/inspection.txt" 2>&1
-    printf 'GPU-free preparation passed: %s\nRun when the 5090 is idle:\n  bash research/run_feedback_5090.sh run %q\n' \
-        "$feedback_dir" "$feedback_dir"
+    if [[ "$feedback_command" == prepare-development ]]; then
+        printf 'GPU-free development preparation passed: %s\nExample budgets/learners/anchors are uncalibrated. No GPU launch is scheduled. Read research/NEXT_FEEDBACK_EXPERIMENT.md.\n' "$feedback_dir"
+    else
+        printf 'GPU-free preparation passed: %s\nRun when the 5090 is idle:\n  bash research/run_feedback_5090.sh run %q\n' \
+            "$feedback_dir" "$feedback_dir"
+    fi
     exit 0
 fi
 
 [[ $# == 2 && -f "$2/prepared/plan.json" ]] || { echo 'Specify the directory printed by prepare.' >&2; exit 2; }
 feedback_dir=$(realpath "$2")
+.venv/bin/python -c 'import json, sys; assert json.load(open(sys.argv[1]))["protocol"] == "cross-game-native-protein-research-v1", "run is the bounded canary route; development preparation is not a launch allocation"' "$feedback_dir/prepared/plan.json"
 [[ ! -e "$feedback_dir/prepared/execution" && ! -e "$feedback_dir/review" ]] || {
     echo 'Allocation already started. Preserve it; no automatic restart.' >&2
     exit 1

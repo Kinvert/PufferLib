@@ -229,6 +229,91 @@ class CandidatePanelTests(unittest.TestCase):
             self.assertEqual(config.getint("policy", "num_layers"), 1)
             self.assertEqual(config.getint("train", "total_timesteps"), 13312000)
 
+    def test_per_game_geometry_is_shared_with_references_and_audited_offline(self):
+        self.with_baselines(); self.args.baselines = ["nature_cnn"]
+        self.args.per_game_learners = True
+        recipe = self.root / "flappy-learner.ini"
+        recipe.write_text("[vec]\ntotal_agents=128\nnum_buffers=2\nnum_threads=2\n[train]\nhorizon=64\nminibatch_size=2048\nlearning_rate=.003\n")
+        self.args.learner_recipe = ["flappycnn=" + str(recipe)]
+        self.args.task_budget = ["flappycnn=98304:32768"]
+        value = self.prepare()
+        self.assertEqual(value["protocol"], tool.LEARNER_PROTOCOL)
+        self.assertEqual(value["planned_training_jobs"], 18)
+        self.assertEqual(value["planned_evaluations"], 165)
+        for job in value["jobs"]:
+            if job["environment"] != "flappycnn": continue
+            config = tool.panel.read(self.args.out / job["config"])
+            self.assertEqual(config.getint("vec", "total_agents"), 128)
+            self.assertEqual(config.getint("train", "horizon"), 64)
+            self.assertEqual(config.getint("base", "checkpoint_interval"), 4)
+            self.assertEqual(job["checkpoint_steps"], [32768,65536,98304])
+        native = json.loads((self.args.out / "validation/flappycnn.json").read_text())
+        self.assertEqual(native["optimizer_minibatches_per_epoch"], 4)
+        self.assertEqual(native["optimizer_updates_per_rank"], 48)
+        self.assertFalse(native["policy_executed"])
+        with patch.object(tool.bridge, "adapter", side_effect=SuiteFixture), \
+             patch.object(tool.subprocess, "check_output", side_effect=AssertionError("Offline only")):
+            self.assertEqual(tool.inspect(self.args.out / "plan.json"), value)
+        for mode in ("smoke", "mini", "research", "canary5090"):
+            with self.assertRaisesRegex(ValueError, "separately scheduled"):
+                tool.run_hardware(value, mode)
+        self.assertEqual(tool.run_hardware(value, "development"), "5090")
+
+    def test_general_geometry_accepts_its_rollout_multiple_and_rejects_misalignment(self):
+        self.args.per_game_learners = True
+        recipe = self.root / "small-learner.ini"
+        recipe.write_text("[vec]\ntotal_agents=32\n[train]\nhorizon=16\nminibatch_size=512\n")
+        self.args.learner_recipe = ["flappycnn=" + str(recipe)]
+        self.args.task_budget = ["flappycnn=3072:1536"]
+        value = self.prepare()
+        job = next(j for j in value["jobs"] if j["environment"] == "flappycnn")
+        self.assertEqual(job["checkpoint_steps"], [1536,3072])
+        self.assertEqual(tool.panel.read(self.args.out / job["config"]).getint("base", "checkpoint_interval"), 3)
+        self.args.out = self.root / "misaligned"
+        self.args.task_budget = ["flappycnn=3072:1000"]
+        with self.assertRaisesRegex(ValueError, "align"):
+            self.prepare()
+        self.assertTrue((self.args.out / "failure.json").exists())
+
+    def test_general_learner_rehash_and_geometry_receipt_changes_are_rejected(self):
+        self.args.per_game_learners = True; value = self.prepare()
+        path = self.args.out / "plan.json"
+        original = path.read_text()
+        original_configs = {}
+        for job in value["jobs"]:
+            if job["environment"] != "connect4cnn": continue
+            config_path = self.args.out / job["config"]; config = tool.panel.read(config_path)
+            original_configs[job["config"]] = config_path.read_bytes()
+            config.set("train", "learning_rate", ".01")
+            with config_path.open("w") as stream: config.write(stream)
+            value["files_sha256"][job["config"]] = tool.sha(config_path)
+        tool.save(path, value)
+        with patch.object(tool.bridge, "adapter", side_effect=SuiteFixture), self.assertRaisesRegex(ValueError, "frozen per-game recipe"):
+            tool.inspect(path)
+        path.write_text(original)
+        # Restore those files before independently corrupting the geometry proof.
+        value = json.loads(original)
+        for job in value["jobs"]:
+            if job["environment"] != "connect4cnn": continue
+            config_path = self.args.out / job["config"]
+            config_path.write_bytes(original_configs[job["config"]])
+        receipt = self.args.out / "validation/connect4cnn.json"
+        data = json.loads(receipt.read_text()); data["optimizer_updates_per_rank"] = 0
+        tool.save(receipt, data)
+        value["files_sha256"]["validation/connect4cnn.json"] = tool.sha(receipt)
+        value["learner_geometry"]["connect4cnn"]["receipt_sha256"] = tool.sha(receipt)
+        tool.save(path, value)
+        with patch.object(tool.bridge, "adapter", side_effect=SuiteFixture), self.assertRaisesRegex(ValueError, "inconsistent native learner"):
+            tool.inspect(path)
+
+    def test_general_geometry_refuses_zero_optimizer_updates(self):
+        self.args.per_game_learners = True
+        recipe = self.root / "zero.ini"; recipe.write_text("[train]\nreplay_ratio=.25\n")
+        self.args.learner_recipe = ["connect4cnn=" + str(recipe)]
+        with self.assertRaisesRegex(ValueError, "positive updates"):
+            self.prepare()
+        self.assertTrue((self.args.out / "failure.json").exists())
+
     def test_native_import_keeps_dominated_and_duplicate_trials(self):
         campaign = self.root / "native"; (campaign / "metrics/connect4cnn").mkdir(parents=True)
         (campaign / "sweep.log").write_text("synthetic completed native observations\n")

@@ -1,0 +1,1285 @@
+{
+  "status": "prepared-inspected",
+  "feedback_plan_sha256": "2c6298f5948e4ef426832e4bb5640bfe67f4e86bd107aa63518d577c7c958397",
+  "panel_plan_sha256": "f502086051aafe6358098665d84e2ad18eb6033ea89c8c60b10954fb7b2579b0",
+  "feedback_protocol": "cross-game-native-protein-research-v2",
+  "dimensions": 18,
+  "panel_protocol": "native-cnn-candidate-panel-v3",
+  "jobs": 24,
+  "suites": 82,
+  "planned_evaluations": 656,
+  "task_budgets": {
+    "connect4cnn": {
+      "steps": 1048576,
+      "checkpoint_steps": 262144
+    },
+    "pongcnn": {
+      "steps": 1048576,
+      "checkpoint_steps": 262144
+    },
+    "flappycnn": {
+      "steps": 2097152,
+      "checkpoint_steps": 524288
+    },
+    "breakoutcnn": {
+      "steps": 1048576,
+      "checkpoint_steps": 262144
+    },
+    "snakecnn": {
+      "steps": 1048576,
+      "checkpoint_steps": 262144
+    },
+    "mazecnn": {
+      "steps": 1048576,
+      "checkpoint_steps": 262144
+    }
+  },
+  "learner_geometry": {
+    "connect4cnn": {
+      "batch_steps": 2048,
+      "config": "validation/connect4cnn.ini",
+      "config_sha256": "d00c3c963eb200e70f03886258c842d59d74d979b4645e6bf25bff78056cc21c",
+      "receipt": "validation/connect4cnn.json",
+      "receipt_sha256": "90d4bb0cff8b8fb84e7af911d42f473337c1a29ab00b1c87076a17e408c156b1"
+    },
+    "pongcnn": {
+      "batch_steps": 2048,
+      "config": "validation/pongcnn.ini",
+      "config_sha256": "048da4f4d0c75531355aa1d8fee8fb04a4e845b734644423d26f3aa534336a31",
+      "receipt": "validation/pongcnn.json",
+      "receipt_sha256": "bc65077b15be8731b5d4e04e3983ad39fcdd24ff4a70366ccc233c8e086e676d"
+    },
+    "flappycnn": {
+      "batch_steps": 2048,
+      "config": "validation/flappycnn.ini",
+      "config_sha256": "bfdf3c3faf0e6ac43bc787802b402d5e8f724d183f982f9483a6b74c12eaa141",
+      "receipt": "validation/flappycnn.json",
+      "receipt_sha256": "41a2d2cd2ffec1a5f210a5cf9cbd28f0abc14b7aa6bf9509a25577e8ed94d391"
+    },
+    "breakoutcnn": {
+      "batch_steps": 2048,
+      "config": "validation/breakoutcnn.ini",
+      "config_sha256": "c7680b3097e6386435cef293db4a831e0d895b4edd8d213d259a42c1da42c7b4",
+      "receipt": "validation/breakoutcnn.json",
+      "receipt_sha256": "edfed60141eaa6494eb4be1746fd9662eeea5364cee22e6019f5aee7a9afcb4d"
+    },
+    "snakecnn": {
+      "batch_steps": 2048,
+      "config": "validation/snakecnn.ini",
+      "config_sha256": "f0ab8402883bc40ac4cc52d353e4e093d45338f8fa2f3c56ab877637b1a6f457",
+      "receipt": "validation/snakecnn.json",
+      "receipt_sha256": "17ab52c358f9a76fe88e5a3cce92d321c2795f06a302570f063a7ad090942226"
+    },
+    "mazecnn": {
+      "batch_steps": 4096,
+      "config": "validation/mazecnn.ini",
+      "config_sha256": "5da1e6e70ea8a49ddde53c7c27d8c23d301305493a9137d83f2520e969aba0b9",
+      "receipt": "validation/mazecnn.json",
+      "receipt_sha256": "d813cbb51ba649d67fc9ace52197865d4213c972eacdd126588ddf014a063251"
+    }
+  },
+  "candidates": [
+    {
+      "name": "happy-cat-1",
+      "architecture": {
+        "encoder": 4,
+        "cnn_depth": 1,
+        "cnn_projection": 32,
+        "cnn_global_pool": 0,
+        "cnn_channels_1": 8,
+        "cnn_kernel_1": 8,
+        "cnn_stride_1": 4,
+        "cnn_pool_1": 0,
+        "cnn_residual_1": 0
+      },
+      "original": "/home/claude/cnn/research/recipes/cross_game_feedback_prepare.ini",
+      "sha256": "189caac3df277552155487dcb26170806398344f92d28d6612a7580ada1451dc",
+      "origin": "explicit",
+      "snapshot": "candidates/0000.ini"
+    },
+    {
+      "name": "mystic-tree-2",
+      "architecture": {
+        "encoder": 4,
+        "cnn_depth": 3,
+        "cnn_projection": 16,
+        "cnn_global_pool": 1,
+        "cnn_channels_1": 8,
+        "cnn_kernel_1": 3,
+        "cnn_stride_1": 4,
+        "cnn_pool_1": 1,
+        "cnn_residual_1": 1,
+        "cnn_channels_2": 16,
+        "cnn_kernel_2": 3,
+        "cnn_stride_2": 2,
+        "cnn_pool_2": 2,
+        "cnn_residual_2": 1,
+        "cnn_channels_3": 32,
+        "cnn_kernel_3": 5,
+        "cnn_stride_3": 1,
+        "cnn_pool_3": 0,
+        "cnn_residual_3": 0
+      },
+      "original": "/home/claude/cnn/research/recipes/panel_prepare_three_stage.ini",
+      "sha256": "2820f317df89626e79fd40bc1463280b18e14a14ff3ceea0ab6134987837c21a",
+      "origin": "explicit",
+      "snapshot": "candidates/0001.ini"
+    }
+  ],
+  "layouts": [
+    {
+      "environment": "connect4cnn",
+      "seed": 61173,
+      "candidate": "happy-cat-1",
+      "config_sha256": "338e68d393f19cf5b6d016ba297dac0deb71dd521e9d081f2c013c85c497af27",
+      "policy_layout": {
+        "family": "flex",
+        "actions": 7,
+        "descriptor_sha256": "255a37bdb5c55adab46695b4b9b88df0e14b99bf2b0bceea5e6a932848f528b3",
+        "parameters": 80296,
+        "bytes": 321184,
+        "command": [
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+          "--describe-flex",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/connect4cnn/happy-cat-1-s61173/config/default.ini",
+          "7"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+            "--describe-flex",
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/connect4cnn/happy-cat-1-s61173/config/default.ini",
+            "7"
+          ],
+          "cwd": "/home/claude/cnn",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 124409007173878,
+          "pid": 173671,
+          "returncode": 0,
+          "end_monotonic_ns": 124409071320695
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default": "ef36376c035d7dd8cbd1c66e6f0310efbc2fc07d087882a046827093876e6acc",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/connect4cnn/happy-cat-1-s61173/config/default.ini": "338e68d393f19cf5b6d016ba297dac0deb71dd521e9d081f2c013c85c497af27"
+        },
+        "numerical_acceptance": false,
+        "runtime_binary_source_certified": false
+      }
+    },
+    {
+      "environment": "connect4cnn",
+      "seed": 61173,
+      "candidate": "mystic-tree-2",
+      "config_sha256": "2eb79ec0fbbd00d89d808a985a9798a017c42be7382a3c87832de12bb29dd2df",
+      "policy_layout": {
+        "family": "flex",
+        "actions": 7,
+        "descriptor_sha256": "07e263cecfd332739831630ce0ea4304aafc504dffec55b95e220c4f52926445",
+        "parameters": 69864,
+        "bytes": 279456,
+        "command": [
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+          "--describe-flex",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/connect4cnn/mystic-tree-2-s61173/config/default.ini",
+          "7"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+            "--describe-flex",
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/connect4cnn/mystic-tree-2-s61173/config/default.ini",
+            "7"
+          ],
+          "cwd": "/home/claude/cnn",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 124409095259016,
+          "pid": 173672,
+          "returncode": 0,
+          "end_monotonic_ns": 124409159361372
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default": "ef36376c035d7dd8cbd1c66e6f0310efbc2fc07d087882a046827093876e6acc",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/connect4cnn/mystic-tree-2-s61173/config/default.ini": "2eb79ec0fbbd00d89d808a985a9798a017c42be7382a3c87832de12bb29dd2df"
+        },
+        "numerical_acceptance": false,
+        "runtime_binary_source_certified": false
+      }
+    },
+    {
+      "environment": "pongcnn",
+      "seed": 61173,
+      "candidate": "mystic-tree-2",
+      "config_sha256": "2696dd8994f112731b1726e2d2c76caa23b1d99a00a057f96c84128b1de36953",
+      "policy_layout": {
+        "family": "flex",
+        "actions": 3,
+        "descriptor_sha256": "72499554c9d807edc69e8b9934a3e9db2219554baf4665d2fd5ab7e4df994069",
+        "parameters": 69352,
+        "bytes": 277408,
+        "command": [
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+          "--describe-flex",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/pongcnn/mystic-tree-2-s61173/config/default.ini",
+          "3"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+            "--describe-flex",
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/pongcnn/mystic-tree-2-s61173/config/default.ini",
+            "3"
+          ],
+          "cwd": "/home/claude/cnn",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 124409966801848,
+          "pid": 173713,
+          "returncode": 0,
+          "end_monotonic_ns": 124410031427561
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default": "ef36376c035d7dd8cbd1c66e6f0310efbc2fc07d087882a046827093876e6acc",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/pongcnn/mystic-tree-2-s61173/config/default.ini": "2696dd8994f112731b1726e2d2c76caa23b1d99a00a057f96c84128b1de36953"
+        },
+        "numerical_acceptance": false,
+        "runtime_binary_source_certified": false
+      }
+    },
+    {
+      "environment": "pongcnn",
+      "seed": 61173,
+      "candidate": "happy-cat-1",
+      "config_sha256": "c20905945be5066c44f89b10c95f7b7326cac3404d773d3c56845e801a4a0384",
+      "policy_layout": {
+        "family": "flex",
+        "actions": 3,
+        "descriptor_sha256": "1ed4667e471ee831a4e9f6746e842327fa19536a1820d9004a335b5f51e24aa5",
+        "parameters": 79784,
+        "bytes": 319136,
+        "command": [
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+          "--describe-flex",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/pongcnn/happy-cat-1-s61173/config/default.ini",
+          "3"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+            "--describe-flex",
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/pongcnn/happy-cat-1-s61173/config/default.ini",
+            "3"
+          ],
+          "cwd": "/home/claude/cnn",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 124410055507552,
+          "pid": 173714,
+          "returncode": 0,
+          "end_monotonic_ns": 124410119517775
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default": "ef36376c035d7dd8cbd1c66e6f0310efbc2fc07d087882a046827093876e6acc",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/pongcnn/happy-cat-1-s61173/config/default.ini": "c20905945be5066c44f89b10c95f7b7326cac3404d773d3c56845e801a4a0384"
+        },
+        "numerical_acceptance": false,
+        "runtime_binary_source_certified": false
+      }
+    },
+    {
+      "environment": "flappycnn",
+      "seed": 61173,
+      "candidate": "happy-cat-1",
+      "config_sha256": "579d62d6f36125b67d6974389dd06107bc997fc367dfa22fbafcd0773885389d",
+      "policy_layout": {
+        "family": "flex",
+        "actions": 2,
+        "descriptor_sha256": "257b1a754868d14a9fff61f93250bd2e6b400eaaa14c8b6af2d3cf51ab5d0b6d",
+        "parameters": 79656,
+        "bytes": 318624,
+        "command": [
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+          "--describe-flex",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/flappycnn/happy-cat-1-s61173/config/default.ini",
+          "2"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+            "--describe-flex",
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/flappycnn/happy-cat-1-s61173/config/default.ini",
+            "2"
+          ],
+          "cwd": "/home/claude/cnn",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 124410907506624,
+          "pid": 173742,
+          "returncode": 0,
+          "end_monotonic_ns": 124410971598946
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default": "ef36376c035d7dd8cbd1c66e6f0310efbc2fc07d087882a046827093876e6acc",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/flappycnn/happy-cat-1-s61173/config/default.ini": "579d62d6f36125b67d6974389dd06107bc997fc367dfa22fbafcd0773885389d"
+        },
+        "numerical_acceptance": false,
+        "runtime_binary_source_certified": false
+      }
+    },
+    {
+      "environment": "flappycnn",
+      "seed": 61173,
+      "candidate": "mystic-tree-2",
+      "config_sha256": "343eae43bfd77a2f94ed1f5d9d38885358e808f1f2333ebd2bc52234a58178ec",
+      "policy_layout": {
+        "family": "flex",
+        "actions": 2,
+        "descriptor_sha256": "e21590277d5c784cec3b2db50b4c9763699d10eaba30d15dff9e855556cfa666",
+        "parameters": 69224,
+        "bytes": 276896,
+        "command": [
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+          "--describe-flex",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/flappycnn/mystic-tree-2-s61173/config/default.ini",
+          "2"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+            "--describe-flex",
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/flappycnn/mystic-tree-2-s61173/config/default.ini",
+            "2"
+          ],
+          "cwd": "/home/claude/cnn",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 124410997054619,
+          "pid": 173743,
+          "returncode": 0,
+          "end_monotonic_ns": 124411061080529
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default": "ef36376c035d7dd8cbd1c66e6f0310efbc2fc07d087882a046827093876e6acc",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/flappycnn/mystic-tree-2-s61173/config/default.ini": "343eae43bfd77a2f94ed1f5d9d38885358e808f1f2333ebd2bc52234a58178ec"
+        },
+        "numerical_acceptance": false,
+        "runtime_binary_source_certified": false
+      }
+    },
+    {
+      "environment": "breakoutcnn",
+      "seed": 61173,
+      "candidate": "mystic-tree-2",
+      "config_sha256": "c50314bfc0b2feb2bf72a390628e8396486d65ec5eaf4b049d002b5c03eb9944",
+      "policy_layout": {
+        "family": "flex",
+        "actions": 3,
+        "descriptor_sha256": "72499554c9d807edc69e8b9934a3e9db2219554baf4665d2fd5ab7e4df994069",
+        "parameters": 69352,
+        "bytes": 277408,
+        "command": [
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+          "--describe-flex",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/breakoutcnn/mystic-tree-2-s61173/config/default.ini",
+          "3"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+            "--describe-flex",
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/breakoutcnn/mystic-tree-2-s61173/config/default.ini",
+            "3"
+          ],
+          "cwd": "/home/claude/cnn",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 124411636270114,
+          "pid": 173754,
+          "returncode": 0,
+          "end_monotonic_ns": 124411700383394
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default": "ef36376c035d7dd8cbd1c66e6f0310efbc2fc07d087882a046827093876e6acc",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/breakoutcnn/mystic-tree-2-s61173/config/default.ini": "c50314bfc0b2feb2bf72a390628e8396486d65ec5eaf4b049d002b5c03eb9944"
+        },
+        "numerical_acceptance": false,
+        "runtime_binary_source_certified": false
+      }
+    },
+    {
+      "environment": "breakoutcnn",
+      "seed": 61173,
+      "candidate": "happy-cat-1",
+      "config_sha256": "377a689cfd8140e47acd1bc872db3ad6254863b40a744efb4b553e6d78a0d942",
+      "policy_layout": {
+        "family": "flex",
+        "actions": 3,
+        "descriptor_sha256": "1ed4667e471ee831a4e9f6746e842327fa19536a1820d9004a335b5f51e24aa5",
+        "parameters": 79784,
+        "bytes": 319136,
+        "command": [
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+          "--describe-flex",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/breakoutcnn/happy-cat-1-s61173/config/default.ini",
+          "3"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+            "--describe-flex",
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/breakoutcnn/happy-cat-1-s61173/config/default.ini",
+            "3"
+          ],
+          "cwd": "/home/claude/cnn",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 124411725097195,
+          "pid": 173755,
+          "returncode": 0,
+          "end_monotonic_ns": 124411789067749
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default": "ef36376c035d7dd8cbd1c66e6f0310efbc2fc07d087882a046827093876e6acc",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/breakoutcnn/happy-cat-1-s61173/config/default.ini": "377a689cfd8140e47acd1bc872db3ad6254863b40a744efb4b553e6d78a0d942"
+        },
+        "numerical_acceptance": false,
+        "runtime_binary_source_certified": false
+      }
+    },
+    {
+      "environment": "snakecnn",
+      "seed": 61173,
+      "candidate": "happy-cat-1",
+      "config_sha256": "6ddbcaedaf650b11ae4928a3ff358c27679ddbbc1b590500bc2b350f1c3ae854",
+      "policy_layout": {
+        "family": "flex",
+        "actions": 4,
+        "descriptor_sha256": "8aacf4b8d9c4fcb7f621ee63bf7e17244a7930231048e6f41743847a2300f90c",
+        "parameters": 79912,
+        "bytes": 319648,
+        "command": [
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+          "--describe-flex",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/snakecnn/happy-cat-1-s61173/config/default.ini",
+          "4"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+            "--describe-flex",
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/snakecnn/happy-cat-1-s61173/config/default.ini",
+            "4"
+          ],
+          "cwd": "/home/claude/cnn",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 124412470429130,
+          "pid": 173768,
+          "returncode": 0,
+          "end_monotonic_ns": 124412534510168
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default": "ef36376c035d7dd8cbd1c66e6f0310efbc2fc07d087882a046827093876e6acc",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/snakecnn/happy-cat-1-s61173/config/default.ini": "6ddbcaedaf650b11ae4928a3ff358c27679ddbbc1b590500bc2b350f1c3ae854"
+        },
+        "numerical_acceptance": false,
+        "runtime_binary_source_certified": false
+      }
+    },
+    {
+      "environment": "snakecnn",
+      "seed": 61173,
+      "candidate": "mystic-tree-2",
+      "config_sha256": "3c7dbd15429618f192a876cffa62795dc6db4db69cf366de5d21d90d3debbb0c",
+      "policy_layout": {
+        "family": "flex",
+        "actions": 4,
+        "descriptor_sha256": "3213b0d7b5610cb5a022dfaa19ed840c520406760ccaec4a8aa1e873725e9c91",
+        "parameters": 69480,
+        "bytes": 277920,
+        "command": [
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+          "--describe-flex",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/snakecnn/mystic-tree-2-s61173/config/default.ini",
+          "4"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+            "--describe-flex",
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/snakecnn/mystic-tree-2-s61173/config/default.ini",
+            "4"
+          ],
+          "cwd": "/home/claude/cnn",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 124412558457872,
+          "pid": 173769,
+          "returncode": 0,
+          "end_monotonic_ns": 124412622388759
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default": "ef36376c035d7dd8cbd1c66e6f0310efbc2fc07d087882a046827093876e6acc",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/snakecnn/mystic-tree-2-s61173/config/default.ini": "3c7dbd15429618f192a876cffa62795dc6db4db69cf366de5d21d90d3debbb0c"
+        },
+        "numerical_acceptance": false,
+        "runtime_binary_source_certified": false
+      }
+    },
+    {
+      "environment": "mazecnn",
+      "seed": 61173,
+      "candidate": "mystic-tree-2",
+      "config_sha256": "ec9f10f44cd57f3c35d0e574bfc80ce0b66deda4148148d144dcfa767aa82944",
+      "policy_layout": {
+        "family": "flex",
+        "actions": 5,
+        "descriptor_sha256": "8d462dd0fbead4c3b10fb3809cc7c3ded756dfb9ec6b29f9ec9b29102bf72c64",
+        "parameters": 69608,
+        "bytes": 278432,
+        "command": [
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+          "--describe-flex",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/mazecnn/mystic-tree-2-s61173/config/default.ini",
+          "5"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+            "--describe-flex",
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/mazecnn/mystic-tree-2-s61173/config/default.ini",
+            "5"
+          ],
+          "cwd": "/home/claude/cnn",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 124413931386437,
+          "pid": 173782,
+          "returncode": 0,
+          "end_monotonic_ns": 124413995619236
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default": "ef36376c035d7dd8cbd1c66e6f0310efbc2fc07d087882a046827093876e6acc",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/mazecnn/mystic-tree-2-s61173/config/default.ini": "ec9f10f44cd57f3c35d0e574bfc80ce0b66deda4148148d144dcfa767aa82944"
+        },
+        "numerical_acceptance": false,
+        "runtime_binary_source_certified": false
+      }
+    },
+    {
+      "environment": "mazecnn",
+      "seed": 61173,
+      "candidate": "happy-cat-1",
+      "config_sha256": "3671da7262998494fe83af093a2d98bd099c7afe02eceff358f27e121a6c4d60",
+      "policy_layout": {
+        "family": "flex",
+        "actions": 5,
+        "descriptor_sha256": "64a8f582b7c2d69b462b5af81488b3883d02f4999164159eec520d757e5ab1e8",
+        "parameters": 80040,
+        "bytes": 320160,
+        "command": [
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+          "--describe-flex",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/mazecnn/happy-cat-1-s61173/config/default.ini",
+          "5"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+            "--describe-flex",
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/mazecnn/happy-cat-1-s61173/config/default.ini",
+            "5"
+          ],
+          "cwd": "/home/claude/cnn",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 124414020349599,
+          "pid": 173783,
+          "returncode": 0,
+          "end_monotonic_ns": 124414084317208
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default": "ef36376c035d7dd8cbd1c66e6f0310efbc2fc07d087882a046827093876e6acc",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/mazecnn/happy-cat-1-s61173/config/default.ini": "3671da7262998494fe83af093a2d98bd099c7afe02eceff358f27e121a6c4d60"
+        },
+        "numerical_acceptance": false,
+        "runtime_binary_source_certified": false
+      }
+    },
+    {
+      "environment": "connect4cnn",
+      "seed": 61174,
+      "candidate": "mystic-tree-2",
+      "config_sha256": "9f4a18837abe5d2cf3d5b396894b8d23c98ca9b57c2691dbf556948b269daad2",
+      "policy_layout": {
+        "family": "flex",
+        "actions": 7,
+        "descriptor_sha256": "07e263cecfd332739831630ce0ea4304aafc504dffec55b95e220c4f52926445",
+        "parameters": 69864,
+        "bytes": 279456,
+        "command": [
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+          "--describe-flex",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/connect4cnn/mystic-tree-2-s61174/config/default.ini",
+          "7"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+            "--describe-flex",
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/connect4cnn/mystic-tree-2-s61174/config/default.ini",
+            "7"
+          ],
+          "cwd": "/home/claude/cnn",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 124414115324795,
+          "pid": 173784,
+          "returncode": 0,
+          "end_monotonic_ns": 124414179627343
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default": "ef36376c035d7dd8cbd1c66e6f0310efbc2fc07d087882a046827093876e6acc",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/connect4cnn/mystic-tree-2-s61174/config/default.ini": "9f4a18837abe5d2cf3d5b396894b8d23c98ca9b57c2691dbf556948b269daad2"
+        },
+        "numerical_acceptance": false,
+        "runtime_binary_source_certified": false
+      }
+    },
+    {
+      "environment": "connect4cnn",
+      "seed": 61174,
+      "candidate": "happy-cat-1",
+      "config_sha256": "5172097eea3041c63f32ac5238f3bb0054d2938063ece1680f130704774e7b1c",
+      "policy_layout": {
+        "family": "flex",
+        "actions": 7,
+        "descriptor_sha256": "255a37bdb5c55adab46695b4b9b88df0e14b99bf2b0bceea5e6a932848f528b3",
+        "parameters": 80296,
+        "bytes": 321184,
+        "command": [
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+          "--describe-flex",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/connect4cnn/happy-cat-1-s61174/config/default.ini",
+          "7"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+            "--describe-flex",
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/connect4cnn/happy-cat-1-s61174/config/default.ini",
+            "7"
+          ],
+          "cwd": "/home/claude/cnn",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 124414204077694,
+          "pid": 173785,
+          "returncode": 0,
+          "end_monotonic_ns": 124414268137509
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default": "ef36376c035d7dd8cbd1c66e6f0310efbc2fc07d087882a046827093876e6acc",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/connect4cnn/happy-cat-1-s61174/config/default.ini": "5172097eea3041c63f32ac5238f3bb0054d2938063ece1680f130704774e7b1c"
+        },
+        "numerical_acceptance": false,
+        "runtime_binary_source_certified": false
+      }
+    },
+    {
+      "environment": "pongcnn",
+      "seed": 61174,
+      "candidate": "happy-cat-1",
+      "config_sha256": "c586da6d048a02dea4392bcc7556ca5935f0b5672aa579bdbedad16e198fbb66",
+      "policy_layout": {
+        "family": "flex",
+        "actions": 3,
+        "descriptor_sha256": "1ed4667e471ee831a4e9f6746e842327fa19536a1820d9004a335b5f51e24aa5",
+        "parameters": 79784,
+        "bytes": 319136,
+        "command": [
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+          "--describe-flex",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/pongcnn/happy-cat-1-s61174/config/default.ini",
+          "3"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+            "--describe-flex",
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/pongcnn/happy-cat-1-s61174/config/default.ini",
+            "3"
+          ],
+          "cwd": "/home/claude/cnn",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 124415067799391,
+          "pid": 173815,
+          "returncode": 0,
+          "end_monotonic_ns": 124415131836090
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default": "ef36376c035d7dd8cbd1c66e6f0310efbc2fc07d087882a046827093876e6acc",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/pongcnn/happy-cat-1-s61174/config/default.ini": "c586da6d048a02dea4392bcc7556ca5935f0b5672aa579bdbedad16e198fbb66"
+        },
+        "numerical_acceptance": false,
+        "runtime_binary_source_certified": false
+      }
+    },
+    {
+      "environment": "pongcnn",
+      "seed": 61174,
+      "candidate": "mystic-tree-2",
+      "config_sha256": "62777eaa77443e9fce925be0e64329a70f4a3c9f26bae60ced410629d04d7bf3",
+      "policy_layout": {
+        "family": "flex",
+        "actions": 3,
+        "descriptor_sha256": "72499554c9d807edc69e8b9934a3e9db2219554baf4665d2fd5ab7e4df994069",
+        "parameters": 69352,
+        "bytes": 277408,
+        "command": [
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+          "--describe-flex",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/pongcnn/mystic-tree-2-s61174/config/default.ini",
+          "3"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+            "--describe-flex",
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/pongcnn/mystic-tree-2-s61174/config/default.ini",
+            "3"
+          ],
+          "cwd": "/home/claude/cnn",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 124415156088470,
+          "pid": 173816,
+          "returncode": 0,
+          "end_monotonic_ns": 124415220268666
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default": "ef36376c035d7dd8cbd1c66e6f0310efbc2fc07d087882a046827093876e6acc",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/pongcnn/mystic-tree-2-s61174/config/default.ini": "62777eaa77443e9fce925be0e64329a70f4a3c9f26bae60ced410629d04d7bf3"
+        },
+        "numerical_acceptance": false,
+        "runtime_binary_source_certified": false
+      }
+    },
+    {
+      "environment": "flappycnn",
+      "seed": 61174,
+      "candidate": "mystic-tree-2",
+      "config_sha256": "7f991a945602893a3887d5e72cff5a294e92ddfdb25c920eda65c3a15b719cb3",
+      "policy_layout": {
+        "family": "flex",
+        "actions": 2,
+        "descriptor_sha256": "e21590277d5c784cec3b2db50b4c9763699d10eaba30d15dff9e855556cfa666",
+        "parameters": 69224,
+        "bytes": 276896,
+        "command": [
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+          "--describe-flex",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/flappycnn/mystic-tree-2-s61174/config/default.ini",
+          "2"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+            "--describe-flex",
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/flappycnn/mystic-tree-2-s61174/config/default.ini",
+            "2"
+          ],
+          "cwd": "/home/claude/cnn",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 124416015232439,
+          "pid": 173847,
+          "returncode": 0,
+          "end_monotonic_ns": 124416079752325
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default": "ef36376c035d7dd8cbd1c66e6f0310efbc2fc07d087882a046827093876e6acc",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/flappycnn/mystic-tree-2-s61174/config/default.ini": "7f991a945602893a3887d5e72cff5a294e92ddfdb25c920eda65c3a15b719cb3"
+        },
+        "numerical_acceptance": false,
+        "runtime_binary_source_certified": false
+      }
+    },
+    {
+      "environment": "flappycnn",
+      "seed": 61174,
+      "candidate": "happy-cat-1",
+      "config_sha256": "c1631d9d0a456d7bb82902a7b6fb4a53d23eb62a2cc6602613e44a03777c7496",
+      "policy_layout": {
+        "family": "flex",
+        "actions": 2,
+        "descriptor_sha256": "257b1a754868d14a9fff61f93250bd2e6b400eaaa14c8b6af2d3cf51ab5d0b6d",
+        "parameters": 79656,
+        "bytes": 318624,
+        "command": [
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+          "--describe-flex",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/flappycnn/happy-cat-1-s61174/config/default.ini",
+          "2"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+            "--describe-flex",
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/flappycnn/happy-cat-1-s61174/config/default.ini",
+            "2"
+          ],
+          "cwd": "/home/claude/cnn",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 124416104529931,
+          "pid": 173848,
+          "returncode": 0,
+          "end_monotonic_ns": 124416168462373
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default": "ef36376c035d7dd8cbd1c66e6f0310efbc2fc07d087882a046827093876e6acc",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/flappycnn/happy-cat-1-s61174/config/default.ini": "c1631d9d0a456d7bb82902a7b6fb4a53d23eb62a2cc6602613e44a03777c7496"
+        },
+        "numerical_acceptance": false,
+        "runtime_binary_source_certified": false
+      }
+    },
+    {
+      "environment": "breakoutcnn",
+      "seed": 61174,
+      "candidate": "happy-cat-1",
+      "config_sha256": "a418d3fb0239bde46cfafe172acce44dc123b06960d14ff1d1dc5974a834bf19",
+      "policy_layout": {
+        "family": "flex",
+        "actions": 3,
+        "descriptor_sha256": "1ed4667e471ee831a4e9f6746e842327fa19536a1820d9004a335b5f51e24aa5",
+        "parameters": 79784,
+        "bytes": 319136,
+        "command": [
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+          "--describe-flex",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/breakoutcnn/happy-cat-1-s61174/config/default.ini",
+          "3"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+            "--describe-flex",
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/breakoutcnn/happy-cat-1-s61174/config/default.ini",
+            "3"
+          ],
+          "cwd": "/home/claude/cnn",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 124416735827045,
+          "pid": 173859,
+          "returncode": 0,
+          "end_monotonic_ns": 124416800367457
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default": "ef36376c035d7dd8cbd1c66e6f0310efbc2fc07d087882a046827093876e6acc",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/breakoutcnn/happy-cat-1-s61174/config/default.ini": "a418d3fb0239bde46cfafe172acce44dc123b06960d14ff1d1dc5974a834bf19"
+        },
+        "numerical_acceptance": false,
+        "runtime_binary_source_certified": false
+      }
+    },
+    {
+      "environment": "breakoutcnn",
+      "seed": 61174,
+      "candidate": "mystic-tree-2",
+      "config_sha256": "f3dedcf966048a78f896deceb37895d58765323100a4d21bf857cb2814b0acb8",
+      "policy_layout": {
+        "family": "flex",
+        "actions": 3,
+        "descriptor_sha256": "72499554c9d807edc69e8b9934a3e9db2219554baf4665d2fd5ab7e4df994069",
+        "parameters": 69352,
+        "bytes": 277408,
+        "command": [
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+          "--describe-flex",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/breakoutcnn/mystic-tree-2-s61174/config/default.ini",
+          "3"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+            "--describe-flex",
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/breakoutcnn/mystic-tree-2-s61174/config/default.ini",
+            "3"
+          ],
+          "cwd": "/home/claude/cnn",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 124416825570012,
+          "pid": 173860,
+          "returncode": 0,
+          "end_monotonic_ns": 124416889499842
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default": "ef36376c035d7dd8cbd1c66e6f0310efbc2fc07d087882a046827093876e6acc",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/breakoutcnn/mystic-tree-2-s61174/config/default.ini": "f3dedcf966048a78f896deceb37895d58765323100a4d21bf857cb2814b0acb8"
+        },
+        "numerical_acceptance": false,
+        "runtime_binary_source_certified": false
+      }
+    },
+    {
+      "environment": "snakecnn",
+      "seed": 61174,
+      "candidate": "mystic-tree-2",
+      "config_sha256": "1bbcf0b26cf98ecf27e08ec9668057391d403591bd84698ee4f1a165e6f8f2f4",
+      "policy_layout": {
+        "family": "flex",
+        "actions": 4,
+        "descriptor_sha256": "3213b0d7b5610cb5a022dfaa19ed840c520406760ccaec4a8aa1e873725e9c91",
+        "parameters": 69480,
+        "bytes": 277920,
+        "command": [
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+          "--describe-flex",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/snakecnn/mystic-tree-2-s61174/config/default.ini",
+          "4"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+            "--describe-flex",
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/snakecnn/mystic-tree-2-s61174/config/default.ini",
+            "4"
+          ],
+          "cwd": "/home/claude/cnn",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 124417573953499,
+          "pid": 173873,
+          "returncode": 0,
+          "end_monotonic_ns": 124417638359641
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default": "ef36376c035d7dd8cbd1c66e6f0310efbc2fc07d087882a046827093876e6acc",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/snakecnn/mystic-tree-2-s61174/config/default.ini": "1bbcf0b26cf98ecf27e08ec9668057391d403591bd84698ee4f1a165e6f8f2f4"
+        },
+        "numerical_acceptance": false,
+        "runtime_binary_source_certified": false
+      }
+    },
+    {
+      "environment": "snakecnn",
+      "seed": 61174,
+      "candidate": "happy-cat-1",
+      "config_sha256": "80b3d0841417b7ad194fafd731f02f875b22c202c5f22eab8d4b2bf9b1bd58f2",
+      "policy_layout": {
+        "family": "flex",
+        "actions": 4,
+        "descriptor_sha256": "8aacf4b8d9c4fcb7f621ee63bf7e17244a7930231048e6f41743847a2300f90c",
+        "parameters": 79912,
+        "bytes": 319648,
+        "command": [
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+          "--describe-flex",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/snakecnn/happy-cat-1-s61174/config/default.ini",
+          "4"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+            "--describe-flex",
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/snakecnn/happy-cat-1-s61174/config/default.ini",
+            "4"
+          ],
+          "cwd": "/home/claude/cnn",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 124417662904534,
+          "pid": 173874,
+          "returncode": 0,
+          "end_monotonic_ns": 124417726996745
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default": "ef36376c035d7dd8cbd1c66e6f0310efbc2fc07d087882a046827093876e6acc",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/snakecnn/happy-cat-1-s61174/config/default.ini": "80b3d0841417b7ad194fafd731f02f875b22c202c5f22eab8d4b2bf9b1bd58f2"
+        },
+        "numerical_acceptance": false,
+        "runtime_binary_source_certified": false
+      }
+    },
+    {
+      "environment": "mazecnn",
+      "seed": 61174,
+      "candidate": "happy-cat-1",
+      "config_sha256": "ef98775e971a1b51eb417742538161bad156ed22c3a01c8deed0600331f4a344",
+      "policy_layout": {
+        "family": "flex",
+        "actions": 5,
+        "descriptor_sha256": "64a8f582b7c2d69b462b5af81488b3883d02f4999164159eec520d757e5ab1e8",
+        "parameters": 80040,
+        "bytes": 320160,
+        "command": [
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+          "--describe-flex",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/mazecnn/happy-cat-1-s61174/config/default.ini",
+          "5"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+            "--describe-flex",
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/mazecnn/happy-cat-1-s61174/config/default.ini",
+            "5"
+          ],
+          "cwd": "/home/claude/cnn",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 124419026083363,
+          "pid": 173887,
+          "returncode": 0,
+          "end_monotonic_ns": 124419090422945
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default": "ef36376c035d7dd8cbd1c66e6f0310efbc2fc07d087882a046827093876e6acc",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/mazecnn/happy-cat-1-s61174/config/default.ini": "ef98775e971a1b51eb417742538161bad156ed22c3a01c8deed0600331f4a344"
+        },
+        "numerical_acceptance": false,
+        "runtime_binary_source_certified": false
+      }
+    },
+    {
+      "environment": "mazecnn",
+      "seed": 61174,
+      "candidate": "mystic-tree-2",
+      "config_sha256": "d9abfdf48b633c69abe0cf09f2ffdacaac21a7058b6e61f39fdd2a7b239b3f4d",
+      "policy_layout": {
+        "family": "flex",
+        "actions": 5,
+        "descriptor_sha256": "8d462dd0fbead4c3b10fb3809cc7c3ded756dfb9ec6b29f9ec9b29102bf72c64",
+        "parameters": 69608,
+        "bytes": 278432,
+        "command": [
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+          "--describe-flex",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/mazecnn/mystic-tree-2-s61174/config/default.ini",
+          "5"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default",
+            "--describe-flex",
+            "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/mazecnn/mystic-tree-2-s61174/config/default.ini",
+            "5"
+          ],
+          "cwd": "/home/claude/cnn",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 124419123445450,
+          "pid": 173888,
+          "returncode": 0,
+          "end_monotonic_ns": 124419237843599
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/policy-metadata/default": "ef36376c035d7dd8cbd1c66e6f0310efbc2fc07d087882a046827093876e6acc",
+          "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/panel/jobs/mazecnn/mystic-tree-2-s61174/config/default.ini": "d9abfdf48b633c69abe0cf09f2ffdacaac21a7058b6e61f39fdd2a7b239b3f4d"
+        },
+        "numerical_acceptance": false,
+        "runtime_binary_source_certified": false
+      }
+    }
+  ],
+  "gpu_executed": false,
+  "learning_or_numerical_acceptance": false
+}

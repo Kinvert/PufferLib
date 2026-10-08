@@ -34,6 +34,7 @@ import checkpoint_preflight as policy_layout
 
 PROTOCOL = "native-cnn-candidate-panel-v1"
 BASELINE_PROTOCOL = "native-cnn-candidate-panel-v2"
+LEARNER_PROTOCOL = "native-cnn-candidate-panel-v3"
 TASKS = tuple(panel.ENVIRONMENTS)
 BASELINES = {
     "nature_cnn": dict(name="nature-cnn", architecture={"encoder": 2}, binary_family="default", policy_family="nature"),
@@ -93,6 +94,40 @@ def checkpoint_size(job, checkpoint):
         require(checkpoint.stat().st_size == job["policy_layout"]["bytes"],
                 "Checkpoint size differs from native policy registration")
     return checkpoint.stat().st_size // 4
+
+
+def inspect_learner_geometry(root, value, bases):
+    """Reparse retained native scalar proofs; no executable/model/GPU call."""
+    require(set(value["learner_geometry"]) == set(TASKS), "Incomplete learner geometry")
+    build = json.loads((root / "validation/build.json").read_text())
+    require(build["policy_executed"] is False and build["gpu_runtime_validated"] is False
+            and all(value["source_sha256"].get(n) == h for n, h in build["source_sha256"].items()),
+            "Learner geometry source/status differs")
+    require(sha(root / "validation/learner_geometry") == build["binary_sha256"], "Changed scalar geometry executable")
+    for task, record in value["learner_geometry"].items():
+        require(record["config"] == f"validation/{task}.ini" and record["receipt"] == f"validation/{task}.json",
+                "Wrong learner geometry allocation")
+        config_path, receipt_path = root / record["config"], root / record["receipt"]
+        require(sha(config_path) == record["config_sha256"] and sha(receipt_path) == record["receipt_sha256"],
+                "Changed learner geometry input/result")
+        config = panel.read(config_path); native = json.loads(receipt_path.read_text())
+        require(normalized(config) == normalized(bases[task]), "Native geometry differs from frozen per-game recipe")
+        batch = config.getint("vec", "total_agents") * config.getint("train", "horizon")
+        budget = value["task_budgets"][task]
+        require(native["protocol"] == "native-learner-geometry-v1" and native["environment"] == task
+                and native["float32_geometry"] is True and native["policy_executed"] is False
+                and native["gpu_runtime_validated"] is False and native["world_size"] == 1
+                and native["agents_per_rank"] == config.getint("vec", "total_agents")
+                and native["horizon"] == config.getint("train", "horizon")
+                and native["minibatch_decisions"] == config.getint("train", "minibatch_size")
+                and record["batch_steps"] == batch == native["rollout_decisions_per_rank"],
+                "Wrong native learner geometry identity/shape")
+        require(native["requested_global_decisions"] == native["actual_global_decisions"] == budget["steps"]
+                and native["dropped_requested_decisions"] == 0 and native["nonzero_training_updates"] is True
+                and native["optimizer_minibatches_per_epoch"] > 0
+                and native["epochs"] == budget["steps"] // batch
+                and native["optimizer_updates_per_rank"] == native["epochs"] * native["optimizer_minibatches_per_epoch"],
+                "Zero/rounded/inconsistent native learner updates")
 
 
 def capture(out):
@@ -207,7 +242,7 @@ def job_order(records, seeds):
                 yield task, seed, candidate
 
 
-def base_config(source, task, budget, appearance_seed, recipe=None):
+def base_config(source, task, budget, appearance_seed, recipe=None, per_game_learners=False):
     base = panel.read(source / "config/default.ini", source / f"config/{task}.ini", source / f"ocean/{task}/compare.ini")
     if recipe: panel.apply_learner(base, panel.learner_recipe(recipe, panel.read(source / "config/default.ini")))
     for section in list(base.sections()):
@@ -216,11 +251,16 @@ def base_config(source, task, budget, appearance_seed, recipe=None):
     for key in list(base["policy"]):
         if key.startswith("cnn_") or key == "encoder": base.remove_option("policy", key)
     base["policy"].update(hidden_size="128", num_layers="1")
-    require(base.getint("vec", "total_agents") == 64 and base.getint("train", "horizon") == 32
-            and base.getint("train", "minibatch_size") == 2048 and base.getint("train", "gpus") == 1,
-            "First panel requires shared 64-slot/H32/M2048 learner")
+    require(base.getint("train", "gpus") == 1, "Candidate panels require one GPU")
+    if not per_game_learners:
+        require(base.getint("vec", "total_agents") == 64 and base.getint("train", "horizon") == 32
+                and base.getint("train", "minibatch_size") == 2048,
+                "First panel requires shared 64-slot/H32/M2048 learner")
+    rollout = base.getint("vec", "total_agents") * base.getint("train", "horizon")
+    require(rollout > 0 and budget["steps"] % rollout == 0 and budget["checkpoint_steps"] % rollout == 0,
+            "Budget/cadence must align with the per-game native rollout")
     base["base"].update(env_name=task, load_model_path="None", eval_episodes="0", eval_agents="-1",
-                         checkpoint_interval=str(budget["checkpoint_steps"]//2048))
+                         checkpoint_interval=str(budget["checkpoint_steps"]//rollout))
     base["train"]["total_timesteps"] = str(budget["steps"])
     base["env"].update(representation="0", representation_mode="1", representation_seed=str(appearance_seed))
     if task in ("pongcnn", "flappycnn"): base["env"]["representation_mix_catalog"] = "1"
@@ -253,6 +293,7 @@ def prepare(args):
     for name in baselines: records.append(dict(BASELINES[name], kind="baseline", baseline=name, origin="fixed-native-reference"))
     require(len({r["name"] for r in records}) == len(records), "Candidate name collides with fixed baseline")
     expanded = bool(baselines)
+    per_game_learners = getattr(args, "per_game_learners", False)
     require(args.seeds and len(set(args.seeds)) == len(args.seeds) and all(type(s) is int and 0 <= s < 2**32 for s in args.seeds), "Invalid paired training seeds")
     require(0 <= args.appearance_seed < 2**32 and 0 <= args.eval_seed <= 2**32-len(args.seeds), "Invalid appearance/evaluation seeds")
     require(1 <= args.episodes <= 1000000 and 1 <= args.slots <= 1024, "Invalid exact episode quota/slots")
@@ -264,8 +305,9 @@ def prepare(args):
         steps, cadence = map(int, budget.split(":"))
         overrides[task] = dict(steps=steps, checkpoint_steps=cadence)
     budgets = panel.resolve_budgets(TASKS, args.steps, args.checkpoint_steps, overrides)
-    require(all(b["steps"] % 2048 == b["checkpoint_steps"] % 2048 == 0 for b in budgets.values()),
-            "Budget/cadence must be positive 2048-decision multiples")
+    if not per_game_learners:
+        require(all(b["steps"] % 2048 == b["checkpoint_steps"] % 2048 == 0 for b in budgets.values()),
+                "Budget/cadence must be positive 2048-decision multiples")
     recipes = {}
     for raw in getattr(args, "learner_recipe", []):
         task, separator, filename = raw.partition("=")
@@ -284,7 +326,7 @@ def prepare(args):
     try:
         bases = {}
         for task in TASKS:
-            bases[task] = base_config(ROOT, task, budgets[task], args.appearance_seed, recipes.get(task))
+            bases[task] = base_config(ROOT, task, budgets[task], args.appearance_seed, recipes.get(task), per_game_learners)
         geometry = panel.native_geometry(out, bases)
         assignments = panel.mixed_assignments(out, bases, args.appearance_seed)
         sources = capture(out)
@@ -344,13 +386,14 @@ def prepare(args):
             jobs.append(dict(id=str(directory.relative_to(out)), environment=task, candidate=candidate["name"], seed=seed,
                 config=str(path.relative_to(out)), cwd=str(directory), checkpoint_steps=steps, targets=targets,
                 command=[str(binary), "train", "--headless"], binary_sha256=selected_build["sha256"]))
-            if expanded: jobs[-1].update(binary_family=binary_family, policy_family=policy_family, kind=candidate.get("kind", "candidate"))
+            if expanded or per_game_learners:
+                jobs[-1].update(binary_family=binary_family, policy_family=policy_family, kind=candidate.get("kind", "candidate"))
             if metadata is not None:
                 jobs[-1]["policy_layout"] = policy_layout.describe(out / "policy-metadata", path, task, policy_family,
                     out / "policy-layouts" / f"job-{len(jobs)-1:04d}", 60)
         verify_sources(out, sources, current=True)
         frozen = {str(p.relative_to(out)): sha(p) for p in out.rglob("*") if p.is_file()}
-        value = dict(protocol=BASELINE_PROTOCOL if expanded else PROTOCOL, purpose="development-plumbing", candidates=records, jobs=jobs, suites=suites,
+        value = dict(protocol=LEARNER_PROTOCOL if per_game_learners else BASELINE_PROTOCOL if expanded else PROTOCOL, purpose="development-plumbing", candidates=records, jobs=jobs, suites=suites,
             seeds=args.seeds, steps=args.steps, task_budgets=budgets, learner_recipes=learner_receipts,
             episodes=args.episodes, slots=args.slots,
             appearance_seed=args.appearance_seed, assignments=assignments, learner_geometry=geometry,
@@ -360,7 +403,8 @@ def prepare(args):
             initialization="random-per-game-run", proposal_optimizer="external-existing-native-PROTEIN-or-explicit-candidates",
             cross_game_adaptive_protein_implemented=False, quality_selection_allowed=False, publication_claim_qualified=False,
             numerical_runtime_acceptance_complete=False, caps_calibrated=False, native_vector_initialization_validated=False)
-        if expanded: value.update(baselines=baselines, native_working_root=str(out), gpu_executed=False,
+        if per_game_learners: value["per_game_learners"] = True
+        if expanded or per_game_learners: value.update(baselines=baselines, native_working_root=str(out), gpu_executed=False,
                                   declared_decisions=sum(budgets[j["environment"]]["steps"] for j in jobs))
         if metadata is not None:
             value["policy_layout"] = dict(protocol="native-candidate-policy-layout-v1", preparation_root=str(out),
@@ -376,13 +420,19 @@ def prepare(args):
 
 def inspect(path, current=False):
     value = json.loads(path.read_text()); root = path.parent
-    require(value["protocol"] in (PROTOCOL, BASELINE_PROTOCOL) and not (root / "failure.json").exists(), "Wrong/failed candidate packet")
-    expanded = value["protocol"] == BASELINE_PROTOCOL
+    require(value["protocol"] in (PROTOCOL, BASELINE_PROTOCOL, LEARNER_PROTOCOL) and not (root / "failure.json").exists(), "Wrong/failed candidate packet")
+    per_game_learners = value["protocol"] == LEARNER_PROTOCOL
+    require(value.get("per_game_learners", False) is per_game_learners, "Wrong per-game learner declaration")
+    expanded = bool(value.get("baselines", [])) if per_game_learners else value["protocol"] == BASELINE_PROTOCOL
     for name, digest in value["files_sha256"].items():
         require(not Path(name).is_absolute() and ".." not in Path(name).parts, "Unsafe frozen path")
         require(sha(root / name) == digest, "Changed frozen input: " + name)
     verify_sources(root, value["source_sha256"], current)
     builds = registry_builds(value["native_registry"])
+    if per_game_learners:
+        require(value["native_registry"]["protocol"] == ("native-cnn-candidate-build-v2" if expanded else "native-cnn-candidate-build-v1"),
+                "Wrong per-game learner build registry")
+        require(not current or root.resolve() == Path(value["native_working_root"]), "Cannot launch relocated packet paths")
     if "policy_layout" in value:
         require(value["policy_layout"]["protocol"] == "native-candidate-policy-layout-v1"
                 and value["policy_layout"]["checkpoint_bytes_checked_at_preparation"] is False
@@ -391,6 +441,12 @@ def inspect(path, current=False):
         require(not current or root.resolve() == Path(value["policy_layout"]["preparation_root"]), "Cannot launch relocated layout packet")
         metadata_source_binding(policy_layout.inspect_registry(root / "policy-metadata", current), value["native_registry"], value["source_sha256"])
     else: require(all("policy_layout" not in j for j in value["jobs"]), "Layout jobs lack declaration")
+    if per_game_learners and not expanded:
+        for candidate in value["candidates"]:
+            require(candidate.get("kind") != "baseline", "Undeclared baseline in learner panel")
+            snapshot = root / candidate["snapshot"]
+            require(sha(snapshot) == candidate["sha256"] and architecture(snapshot) == candidate["architecture"],
+                    "Candidate differs from frozen learner-panel snapshot")
     if expanded:
         require(value["native_registry"]["protocol"] == "native-cnn-candidate-build-v2"
                 and value["baselines"] and len(set(value["baselines"])) == len(value["baselines"])
@@ -420,14 +476,17 @@ def inspect(path, current=False):
         require(config.getint("base", "seed") == job["seed"] and config.getint("env", "representation_mode") == 1
                 and config.getint("env", "representation_seed") == value["appearance_seed"], "Wrong training RNG/appearance")
         task = job["environment"]; budget = value["task_budgets"][task]
+        rollout = config.getint("vec", "total_agents") * config.getint("train", "horizon") if per_game_learners else 2048
+        require(rollout > 0 and budget["steps"] % rollout == 0 and budget["checkpoint_steps"] % rollout == 0,
+                "Budget/cadence does not match per-game rollout")
         require(config.getint("train", "total_timesteps") == budget["steps"]
-                and config.getint("base", "checkpoint_interval") == budget["checkpoint_steps"]//2048, "Per-game budget/cadence changed")
+                and config.getint("base", "checkpoint_interval") == budget["checkpoint_steps"]//rollout, "Per-game budget/cadence changed")
         shared = normalized(config)
         shared.pop("policy")
         for key in ("seed", "run_id", "checkpoint_dir", "log_dir"): shared["base"].pop(key, None)
         require(task not in common or shared == common[task], "Learner/world changed across CNN candidates")
         common[task] = shared
-        if expanded:
+        if expanded or per_game_learners:
             require((task, job["seed"], job["candidate"]) == (order[index][0], order[index][1], order[index][2]["name"]), "Outcome-independent job order changed")
             binary_family, policy_family = candidate_families(candidate)
             selected = builds[task][binary_family]
@@ -439,7 +498,7 @@ def inspect(path, current=False):
                     and job["config"] == job["id"]+"/config/default.ini", "Wrong declared native output paths")
             if task not in bases:
                 recipe = value["learner_recipes"].get(task)
-                bases[task] = base_config(root / "source", task, budget, value["appearance_seed"], root / recipe["snapshot"] if recipe else None)
+                bases[task] = base_config(root / "source", task, budget, value["appearance_seed"], root / recipe["snapshot"] if recipe else None, per_game_learners)
             expected = panel.read(); expected.read_dict({s: dict(bases[task][s]) for s in bases[task].sections()})
             apply_job(expected, candidate, job["seed"], directory)
             require(normalized(expected) == normalized(config), "Resolved job differs from frozen per-game recipe, including all-family edits")
@@ -457,6 +516,7 @@ def inspect(path, current=False):
                             and sha(manifest) == proof["manifest_sha256"]
                             and ev.validate_manifest(manifest, loaded[0]) == loaded[1], "Baseline/config start manifest differs")
         if current: require(sha(Path(job["command"][0])) == job["binary_sha256"], "Changed executing binary")
+    if per_game_learners: inspect_learner_geometry(root, value, bases)
     return value
 
 
@@ -533,6 +593,8 @@ def coverage(path, out):
 
 
 def run_hardware(value, mode):
+    if value.get("per_game_learners", False):
+        require(mode == "development", "Per-game learner panels require separately scheduled 5090 development mode")
     if mode == "canary5090":
         require(len(value["candidates"]) == 1 and len(value["seeds"]) == 1
                 and max(b["steps"] for b in value["task_budgets"].values()) <= 131072
@@ -816,6 +878,7 @@ def main():
     prep.add_argument("--steps", type=int, default=65536); prep.add_argument("--checkpoint-steps", type=int, default=65536)
     prep.add_argument("--task-budget", action="append", default=[], help="ENV=STEPS:CHECKPOINT_DECISIONS, matched across CNNs")
     prep.add_argument("--learner-recipe", action="append", default=[], help="ENV=INI numeric learner overlay, matched across CNNs")
+    prep.add_argument("--per-game-learners", action="store_true", help="Opt-in v3 per-game rollout/minibatch geometry; development mode only")
     prep.add_argument("--eval-seed", type=int, default=67173); prep.add_argument("--episodes", type=int, default=17)
     prep.add_argument("--slots", type=int, default=16); prep.add_argument("--pong-max-decisions", type=int, default=512)
     prep.add_argument("--breakout-max-frames", type=int, default=2048)

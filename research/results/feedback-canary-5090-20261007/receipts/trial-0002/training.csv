@@ -1,0 +1,7 @@
+candidate,environment,seed,parameters,train_seconds,process_sps,native_avg_sps,native_metrics_ini
+swift-fox-3,connect4cnn,60173,160736,0.714716026,91695.15949821447,,/home/keith/Git/ml/cnn-5090/build/cross-game-feedback/5090-20261007T223659Z/prepared/execution/trial-0002/panel/jobs/connect4cnn/swift-fox-3-s60173/metrics/connect4cnn/swift-fox-3.ini
+swift-fox-3,pongcnn,60173,160224,0.464331534,141140.53257472708,,/home/keith/Git/ml/cnn-5090/build/cross-game-feedback/5090-20261007T223659Z/prepared/execution/trial-0002/panel/jobs/pongcnn/swift-fox-3-s60173/metrics/pongcnn/swift-fox-3.ini
+swift-fox-3,flappycnn,60173,160096,0.414151455,158241.62684639124,,/home/keith/Git/ml/cnn-5090/build/cross-game-feedback/5090-20261007T223659Z/prepared/execution/trial-0002/panel/jobs/flappycnn/swift-fox-3-s60173/metrics/flappycnn/swift-fox-3.ini
+swift-fox-3,breakoutcnn,60173,160224,0.464335383,141139.36262315811,,/home/keith/Git/ml/cnn-5090/build/cross-game-feedback/5090-20261007T223659Z/prepared/execution/trial-0002/panel/jobs/breakoutcnn/swift-fox-3-s60173/metrics/breakoutcnn/swift-fox-3.ini
+swift-fox-3,snakecnn,60173,160352,0.414253376,158202.6938025485,,/home/keith/Git/ml/cnn-5090/build/cross-game-feedback/5090-20261007T223659Z/prepared/execution/trial-0002/panel/jobs/snakecnn/swift-fox-3-s60173/metrics/snakecnn/swift-fox-3.ini
+swift-fox-3,mazecnn,60173,160480,0.514430227,127395.31341730432,,/home/keith/Git/ml/cnn-5090/build/cross-game-feedback/5090-20261007T223659Z/prepared/execution/trial-0002/panel/jobs/mazecnn/swift-fox-3-s60173/metrics/mazecnn/swift-fox-3.ini

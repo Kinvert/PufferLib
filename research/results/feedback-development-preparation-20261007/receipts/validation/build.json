@@ -1,0 +1,24 @@
+{
+  "binary_sha256": "d9c456aaf866586a15ac389f8722c3ab5e83e75d03bff43b09c8b97b1e5de7f0",
+  "command": [
+    "cc",
+    "-std=c11",
+    "-O2",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-ffp-contract=off",
+    "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/prepared/source/research/learner_geometry.c",
+    "-lm",
+    "-o",
+    "/home/claude/cnn/build/cross-game-feedback/development-preparation-20261007/prepared/validation/learner_geometry"
+  ],
+  "compiler": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+  "gpu_runtime_validated": false,
+  "policy_executed": false,
+  "source_sha256": {
+    "research/learner_geometry.c": "9db9a60d1cf87e75d595b2be0d6bc53a424e40c7f192efce9d01128ec3f1d3b1",
+    "src/ini.h": "cd4c83ba12ba40a7bef03ad810246cc0a5880f81e8566f6ac5a089b5c598859f",
+    "src/pufferl.cu": "d3663b45a817a1fb4e89e777d969d4a767ed3f025b1569d714e31c6ce7cd8186"
+  }
+}

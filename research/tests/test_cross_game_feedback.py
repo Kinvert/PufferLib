@@ -95,20 +95,67 @@ class ObjectiveTests(unittest.TestCase):
         self.rows[0].update(score_lower=0.9, score_upper=0.1)
         with self.assertRaisesRegex(ValueError,"Reversed"):tool.aggregate(self.plan,self.analysis,self.config)
 
+    def test_swept_depth_accepts_all_stage_coordinates_and_fixed_depth_refuses_them(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "full.ini"
+            config = tool.panels.panel.read(self.path)
+            architecture = tool.panels.panel.read(tool.ROOT / "research/recipes/general_cnn_discovery.ini")
+            config["policy"] = dict(architecture["policy"])
+            for section in list(config.sections()):
+                if section.startswith("sweep."): config.remove_section(section)
+            for section in architecture.sections():
+                if section.startswith("sweep."): config[section] = dict(architecture[section])
+            with path.open("w") as stream: config.write(stream)
+            loaded, _ = tool.recipe(path)
+            self.assertEqual(len([s for s in loaded.sections() if s.startswith("sweep.")]), 18)
+            config.remove_section("sweep.policy.cnn_depth")
+            with path.open("w") as stream: config.write(stream)
+            with self.assertRaisesRegex(ValueError,"Inactive stage"):
+                tool.recipe(path)
+
+    def test_per_game_budgets_are_positive_and_only_supported_fields_are_allowed(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "tasks.ini"
+            base = self.path.read_text().replace("[search]", "[search]\nlearner_mode=per_game")
+            path.write_text(base + "\n[task.flappycnn]\nsteps=3072\ncheckpoint_steps=1536\n")
+            config, _ = tool.recipe(path)
+            self.assertEqual(tool.recipe_protocol(config), tool.DEVELOPMENT_PROTOCOL)
+            self.assertEqual(tool.task_budgets(config)["flappycnn"], dict(steps=3072,checkpoint_steps=1536))
+            self.assertEqual(tool.task_budgets(config)["connect4cnn"]["steps"], 65536)
+            for suffix in ("[task.bad]\nsteps=2048\ncheckpoint_steps=2048\n",
+                    "[task.flappycnn]\nsteps=0\ncheckpoint_steps=2048\n",
+                    "[task.flappycnn]\nsteps=2048\ncheckpoint_steps=2048\nlearning_rate=.1\n"):
+                path.write_text(base + "\n" + suffix)
+                with self.subTest(suffix=suffix),self.assertRaises(ValueError): tool.recipe(path)
+
     def test_three_mock_panels_feed_native_ledger_and_keep_duplicate(self):
+        self.exercise_mock_loop()
+
+    def test_extended_mock_loop_forwards_per_game_budgets_and_frozen_learner_mode(self):
+        self.exercise_mock_loop(extended=True)
+
+    def exercise_mock_loop(self, extended=False):
         # Process/search/NN calls are mocked. This tests only orchestration.
         with tempfile.TemporaryDirectory() as temporary:
             root=Path(temporary)
-            (root/"recipe.ini").write_text(self.path.read_text())
+            text = self.path.read_text()
+            if extended:
+                text = text.replace("[search]", "[search]\nlearner_mode=per_game")
+                text += "\n[task.pongcnn]\nsteps=131072\ncheckpoint_steps=65536\n"
+            (root/"recipe.ini").write_text(text)
+            config, _ = tool.recipe(root/"recipe.ini")
             (root/"plan.json").write_text("{}")
             (root/"registry-location.json").write_text(json.dumps(dict(original=str(root/"registry.json"))))
             value=dict(dimensions=1,optimizer="fake-native",policy_metadata=str(root),learner_recipes=[],
                 description=dict(coordinates=["cnn_channels_1"]))
+            if extended: value.update(protocol=tool.DEVELOPMENT_PROTOCOL, task_budgets=tool.task_budgets(config), per_game_learners=True)
             plan=copy.deepcopy(self.plan);plan["seeds"]=[60173]
             analysis=copy.deepcopy(self.analysis)
             analysis["observations"]=[{**r,"seed":60173} for r in self.rows if r["seed"]==1]
             plan["planned_evaluations"]=len(analysis["observations"])
-            plan["task_budgets"]={t:dict(steps=100) for t in tool.panels.TASKS}
+            plan["task_budgets"]=tool.task_budgets(config)
+            plan["per_game_learners"]=extended
+            for row in analysis["observations"]: row["decisions"] = plan["task_budgets"][row["environment"]]["steps"]
             plan["jobs"]=[dict(environment=t,seed=60173,config=t+".ini") for t in tool.panels.TASKS]
             analysis["audited_jobs"]=6
             histories=[]; panel_args=[]
@@ -148,7 +195,7 @@ class ObjectiveTests(unittest.TestCase):
                  patch.object(tool.panels,"prepare",side_effect=prepare),\
                  patch.object(tool.panels,"run",side_effect=panel_run),\
                  patch.object(tool.panels,"audit",side_effect=audit):
-                result=tool.run(SimpleNamespace(plan=root/"plan.json",allow_gpu=True,mode="canary5090"))
+                result=tool.run(SimpleNamespace(plan=root/"plan.json",allow_gpu=True,mode="development" if extended else "canary5090"))
             self.assertTrue((root/"build/connect4cnn/hardware-benchmark.lock").is_file())
             self.assertTrue(all(call.args == ("5090",) for call in hardware.call_args_list))
             self.assertEqual(result["status"],"ok")
@@ -157,6 +204,9 @@ class ObjectiveTests(unittest.TestCase):
             self.assertEqual(result["trials"][2]["duplicate_of"],1)
             self.assertEqual(len(panel_args),3)
             self.assertTrue(all(args.steps==65536 and args.seeds==[60173] for args in panel_args))
+            self.assertTrue(all(args.per_game_learners is extended for args in panel_args))
+            if extended:
+                self.assertTrue(all("pongcnn=131072:65536" in args.task_budget for args in panel_args))
             self.assertIn("0 0.5 6 1",histories[1])
             with patch.object(tool,"inspect",return_value=value),\
                  patch.object(tool.panels,"inspect",side_effect=lambda p:json.loads(p.read_text())),\

@@ -1,0 +1,7 @@
+candidate,environment,seed,parameters,train_seconds,process_sps,native_avg_sps,native_metrics_ini
+happy-cat-1,connect4cnn,60173,160736,0.764791202,85691.3623334281,,/home/keith/Git/ml/cnn-5090/build/cross-game-feedback/5090-20261007T223659Z/prepared/execution/trial-0000/panel/jobs/connect4cnn/happy-cat-1-s60173/metrics/connect4cnn/happy-cat-1.ini
+happy-cat-1,pongcnn,60173,160224,0.464393888,141121.5816862775,,/home/keith/Git/ml/cnn-5090/build/cross-game-feedback/5090-20261007T223659Z/prepared/execution/trial-0000/panel/jobs/pongcnn/happy-cat-1-s60173/metrics/pongcnn/happy-cat-1.ini
+happy-cat-1,flappycnn,60173,160096,0.464423337,141112.6331922463,,/home/keith/Git/ml/cnn-5090/build/cross-game-feedback/5090-20261007T223659Z/prepared/execution/trial-0000/panel/jobs/flappycnn/happy-cat-1-s60173/metrics/flappycnn/happy-cat-1.ini
+happy-cat-1,breakoutcnn,60173,160224,0.464136372,141199.87993528764,,/home/keith/Git/ml/cnn-5090/build/cross-game-feedback/5090-20261007T223659Z/prepared/execution/trial-0000/panel/jobs/breakoutcnn/happy-cat-1-s60173/metrics/breakoutcnn/happy-cat-1.ini
+happy-cat-1,snakecnn,60173,160352,0.464337274,141138.78783722196,,/home/keith/Git/ml/cnn-5090/build/cross-game-feedback/5090-20261007T223659Z/prepared/execution/trial-0000/panel/jobs/snakecnn/happy-cat-1-s60173/metrics/snakecnn/happy-cat-1.ini
+happy-cat-1,mazecnn,60173,160480,0.514491802,127380.06659239247,,/home/keith/Git/ml/cnn-5090/build/cross-game-feedback/5090-20261007T223659Z/prepared/execution/trial-0000/panel/jobs/mazecnn/happy-cat-1-s60173/metrics/mazecnn/happy-cat-1.ini

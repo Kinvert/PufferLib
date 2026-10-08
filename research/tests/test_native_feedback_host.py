@@ -52,6 +52,19 @@ class NativeHostChecks(unittest.TestCase):
                     self.assertNotIn("scheduled GPU", result.stderr)
                     self.assertFalse(output.exists())
 
+    def test_full_search_descriptor_returns_before_gpu_branch(self):
+        result = subprocess.run([BINARY, "research_protein_describe",
+            str(ROOT / "research/recipes/cross_game_feedback_prepare.ini")],
+            env={**os.environ, "CUDA_VISIBLE_DEVICES": ""}, text=True, capture_output=True, timeout=10)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        value = json.loads(result.stdout)
+        self.assertEqual(value["dimensions"], 18)
+        self.assertEqual(len(set(value["coordinates"])), 18)
+        self.assertIn("cnn_depth", value["coordinates"])
+        self.assertIn("cnn_residual_3", value["coordinates"])
+        self.assertFalse(value["gpu_queried"])
+        self.assertFalse(value["policy_executed"])
+
     def test_fractional_optimizer_control_is_rejected_before_gpu_query(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary); recipe = root / "recipe.ini"

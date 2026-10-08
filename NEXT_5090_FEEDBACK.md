@@ -1,4 +1,28 @@
-# First task on the 5090: native cross-game feedback canary
+# Completed 5090 feedback canary and current preparation task
+
+October 7: **the canary below is complete**, including real all-six-game score
+aggregation and native PROTEIN feedback. Read
+[the evidence](research/results/feedback-canary-5090-20261007/README.md).
+All three suggestions constructed C16, with nearly zero learning. Do not repeat
+the historical canary commands below.
+
+Current coding adds per-game budgets/learners and all 18 architecture coordinates.
+If asked to check the new preparation on the 5090, pull Kinvert's branch and run
+only:
+
+```bash
+cd ~/Git/ml/cnn-5090
+git pull --ff-only origin cnn-research
+bash research/run_feedback_5090.sh prepare-development
+```
+
+This is GPU-free and uses uncalibrated example settings. It prints the fresh
+packet path and schedules no training. A full learning campaign is not ready
+merely because preparation passes. Read
+[NEXT_FEEDBACK_EXPERIMENT.md](research/NEXT_FEEDBACK_EXPERIMENT.md) for paired
+learner calibration, numerical gates and independent confirmation.
+
+The instructions below describe the retained, completed canary allocation.
 
 Pull Kinvert's `cnn-research` branch, then use the two commands below. No code
 editing is needed on the 5090. This is temporary research, not the upstream PR.
@@ -6,7 +30,7 @@ Do not push to PufferAI/PufferLib. This handoff supersedes earlier no-delivery /
 5090-hold wording **only for this small canary**. No long search is scheduled.
 
 [A clean-checkout build/preparation check](research/results/feedback-delivery-20261007/README.md)
-passes on G240 with a new uv venv. Actual 5090 GPU feedback execution is pending.
+passes on G240 with a new uv venv. Actual 5090 GPU feedback execution completed.
 
 ```bash
 cd ~/Git/ml/cnn-5090

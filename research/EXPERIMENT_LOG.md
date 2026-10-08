@@ -1,5 +1,36 @@
 # CNN experiment history
 
+## Implemented and GPU-free prepared — broader cross-game feedback 20261007
+
+[Actual preparation receipts](results/feedback-development-preparation-20261007/README.md).
+The working six-game aggregate/native-PROTEIN feedback now exposes fixed per-game
+budgets/cadence and learner geometry, plus all 18 architecture controls with
+swept depth. Fifty-one host/scalar/mock tests and four native host checks pass;
+fresh bridge/six-game/three-metadata builds and feedback-v2 preparation pass.
+A distinct one-stage C8 / three-stage fixture panel registers all 24 policies
+and 82 suites across two seeds/six games/all41 drawings, with 656 planned
+checkpoint evaluations and zero executed. Native scalar proofs show exact,
+positive learner updates with an explicit Maze horizon override. Updated offline
+inspection still reads the received feedback-v1 packet. No new GPU query,
+training or numerical/learning/frontier result. Recipes/anchors are uncalibrated
+examples; no search is scheduled and completed canaries must not be repeated.
+
+## Received — successful native feedback canary on RTX 5090 20261007
+
+[Intake/evidence](results/feedback-canary-5090-20261007/README.md).
+Checksum-verified 5090 archive reports all three native-feedback trials complete:
+18 training jobs, 123 all-drawing evaluations, 36 exact repeat/eager checks,
+2,703 assigned episode executions. Execution 102.862s; training processes 9.109s;
+once-per-job checkpoint cost 7.241s; optimizer processes 1.156s. Final unused
+native suggestion replays three observations and reports three GP observations.
+Local artifact checks independently pass all checkpoint/result/CSV hashes,
+weight sizes/finiteness, quotas and repeat/eager byte comparisons, with no GPU.
+All normalized proposals round to C16; duplicates are explicit. Same one-seed
+architecture and almost-zero scores are plumbing evidence, not a quality/frontier
+comparison. Remote source commit bb4d1c10683e06e8373a4f971bee8bc447761279 has
+captured auxiliary Pong modifications; native/active feedback source matches
+G240. Full math/calibration/learning/diversity/confirmation gates remain.
+
 ## Prepared — 5090 cross-game feedback delivery 20261007
 
 [Handoff](../NEXT_5090_FEEDBACK.md). Kinvert authorized delivery to his research
