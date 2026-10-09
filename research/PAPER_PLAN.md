@@ -1,5 +1,18 @@
 # Paper plan: practical compute-efficient visual RL encoders
 
+October9 current priority is [general-purpose architecture selection](GENERALIZATION_PRIORITIES.md)
+after the45-observation5090 prefix. Offline matched-time diagnostics find the
+aggregate winner higher on3/lower on3 games at Nature's measured time allowances,
+versus quality's4/2; Pong supplies74.6% of its net aggregate gain and one seed
+supplies about99.1%. This changes the next-step emphasis: align the search target
+with broad full-curve coverage, diagnose rendering/control and sampling failures,
+test a small controlled architecture matrix, then use fresh confirmation evidence.
+The existing pooled front remains valid descriptively; no robust/generalization
+or SOTA claim follows. Current policy/native sources and failed allocation remain
+unchanged; no GPU work or new campaign is scheduled by this plan. Historical
+zero-execution/no-delivery statements below describe their earlier dates; current
+execution and authorized Kinvert research delivery are recorded in AGENTS.md.
+
 October 6 [native adaptive cross-game prototype](CROSS_GAME_PROTEIN_FEEDBACK.md)
 implements temporary research-core PROTEIN feedback from one shared architecture
 trained separately on all six games and evaluated on all 41 drawings. Equal-game
