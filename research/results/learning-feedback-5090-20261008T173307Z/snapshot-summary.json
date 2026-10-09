@@ -1,0 +1,140 @@
+{
+  "snapshot_utc": "2026-10-08T23:25:01.202319+00:00",
+  "campaign": "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z",
+  "panels": [
+    {
+      "stage": "calibration",
+      "status": "ok",
+      "completed_training_jobs": 24,
+      "planned_training_jobs": 24,
+      "completed_drawing_evaluations": 656,
+      "planned_drawing_evaluations": 656,
+      "completed_repeat_eager_checks": 48
+    },
+    {
+      "stage": "references",
+      "status": "ok",
+      "completed_training_jobs": 24,
+      "planned_training_jobs": 24,
+      "completed_drawing_evaluations": 656,
+      "planned_drawing_evaluations": 656,
+      "completed_repeat_eager_checks": 48
+    },
+    {
+      "stage": "trial-0000",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0001",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0002",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0003",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0004",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0005",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0006",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0007",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0008",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0009",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0010",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0011",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    }
+  ],
+  "completed_training_jobs": 192,
+  "completed_checkpoints": 768,
+  "native_metric_bins": 3520,
+  "timing": "Checkpoint CLOCK_MONOTONIC minus process launch; startup/writes included; evaluation excluded.",
+  "native_metric_semantics": "Original step-bin means, not instantaneous samples or qualified native-average SPS.",
+  "audit_status": "Snapshot consistency checks only; final campaign audit remains separate.",
+  "score_or_frontier_claim": false,
+  "policy_execution": false
+}
