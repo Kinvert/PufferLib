@@ -1,0 +1,24 @@
+{
+  "command": [
+    "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/optimizer/worker",
+    "research_protein_propose",
+    "/home/keith/Git/ml/cnn-5090/build/learning-continuation/5090-20261009-overnight-v2/search/recipe.ini",
+    "/home/keith/Git/ml/cnn-5090/build/learning-continuation/5090-20261009-overnight-v2/search/execution/trial-0045/history.tsv",
+    "/home/keith/Git/ml/cnn-5090/build/learning-continuation/5090-20261009-overnight-v2/search/execution/trial-0045/proposal.json"
+  ],
+  "cwd": "/home/keith/Git/ml/cnn-5090/build/learning-continuation/5090-20261009-overnight-v2/search",
+  "status": "ok",
+  "timeout": 120,
+  "environment": {
+    "PUFFER_CHECKPOINT_RECEIPTS": null,
+    "NVCC_ARCH": "sm_120",
+    "NVCC_EXTRA": null,
+    "NVCC_APPEND_FLAGS": null,
+    "CUDA_HOME": "/usr/local/cuda-13.1",
+    "NCCL_ROOT": "/home/keith/Git/ml/fzero-training/PufferLib-5.0/.venv/lib/python3.12/site-packages/nvidia/nccl"
+  },
+  "launch_monotonic_ns": 3078684302562019,
+  "pid": 3023834,
+  "returncode": 0,
+  "end_monotonic_ns": 3078685317400129
+}

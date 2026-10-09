@@ -1,0 +1,31 @@
+{
+  "schema": "native-learning-continuation-v1",
+  "root": "/home/keith/Git/ml/cnn-5090/build/learning-continuation/5090-20261009-overnight-v2",
+  "source": "/home/keith/Git/ml/cnn-5090-learning",
+  "parent": "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared",
+  "campaign": "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared",
+  "additional_trials": 36,
+  "hours": 12.0,
+  "inherited_observations": 12,
+  "recipe_sha256": "e6f8c1e4e2337449cfa1f50972cb413b068ec5f8a81c7c35d8102acb28b8e6bb",
+  "parent_receipts": {
+    "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/campaign.json": "0790086f0a97513d5a48cbed73effc494f40c3e03d63ba8ee10c347c164e35e2",
+    "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/result.json": "9ddb24246dfcca354d27878e63bd4b2f30d455b0d045634c2d71ed5b34d7567b",
+    "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/plan.json": "5c1cf873e4741bcea60afc8b95c84d6427a93a03be20ce794336c5ae01846447",
+    "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/result.json": "5f591fa4684aee26990498de7bdb9f047230f9cc175b429f90de4545da7a6ee4"
+  },
+  "inherited_history_sha256": "2f7f851769eb338ca9490cbc09cec5ad13bd680209f52e61a997084995f35d58",
+  "hardware": {
+    "gpu_name": "NVIDIA GeForce RTX 5090",
+    "gpu_uuid": "GPU-87022f1b-da24-3ddc-cc42-aed4aca77a6a",
+    "driver": "580.105.08",
+    "host": "keith-MS-7E70",
+    "cuda_compiler": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2025 NVIDIA Corporation\nBuilt on Tue_Dec_16_07:23:41_PM_PST_2025\nCuda compilation tools, release 13.1, V13.1.115\nBuild cuda_13.1.r13.1/compiler.37061995_0\n"
+  },
+  "supervisor": "/home/keith/Git/ml/cnn-5090/research/continue_learning_feedback.py",
+  "supervisor_sha256": "403218c20b57412a30c3034b789d88f30bca66a1e102ead5d1835d0ee72aedee",
+  "native_optimizer": true,
+  "calibration_reused": true,
+  "references_reused": true,
+  "publication_claim_qualified": false
+}
