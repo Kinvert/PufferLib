@@ -1,5 +1,18 @@
 # Paper plan: practical compute-efficient visual RL encoders
 
+October9 latest scope clarification: [current operating requirements](GENERALIZATION_PRIORITIES.md#current-operating-requirements-realistic-images-and-nature-range-curves)
+require practical, human-readable game frames around640x480-class sizes with
+varied aspect ratios, configurable grayscale/RGB native input shapes and explicit
+matched preprocessing. The36x44 specialization and proposed28x24/4x4-cell minimum
+are historical development scopes, not the practical primary benchmark target.
+Portable image contracts/rasterization now precede the next architecture campaign.
+Plan substantial Nature-range training with about8 scheduled checkpoints,
+power-of-two first strides1/2/4/8, fixed per-game learners and **NEVER swept seeds**.
+The current staged wrapper still caps checkpoint count at4 and native image paths
+remain specialized; these changes are specified, not implemented or trained.
+Recalibrate time/memory/batches at new inputs, preserve earlier packets and claims,
+and qualify shared candidate/reference input paths before learning comparisons.
+
 October9 current priority is [general-purpose architecture selection](GENERALIZATION_PRIORITIES.md)
 after the45-observation5090 prefix. Offline matched-time diagnostics find the
 aggregate winner higher on3/lower on3 games at Nature's measured time allowances,

@@ -5,6 +5,104 @@ final aggregate winner as our main deliverable. That graph remains a candidate;
 broader useful score/time coverage is the selection goal. This is a research
 plan, not a GPU allocation or authorization to change the frozen campaign.
 
+## Current operating requirements: realistic images and Nature-range curves
+
+Kinvert's latest October9 clarification supersedes the earlier4x4-cell proposal
+as the practical target. **36x44 grayscale and28x24 boards are historical
+development cases, not the intended primary evidence for useful pixel RL.**
+We are building a CNN for human-played games, including Atari-like tasks, with
+an input path that can later serve larger real-camera images. No robotics
+generalization claim follows merely from supporting RGB tensors.
+
+1. **Training range:** use substantial paired training runs that span the useful
+   region where Nature and compact CNNs compete. Do not spend the primary discovery
+   budget on the much slower end just to reach IMPALA's highest scores. Calibrate
+   per-game budgets on the new image contracts; old tiny-image throughput does not
+   predict the new budgets. All models within a game/image condition receive the
+   same declared learner schedule and decision budget. Report actual elapsed time,
+   not a presumed crossover with IMPALA, which is not measured in this campaign.
+2. **Curve resolution:** aim for about**eight scheduled checkpoints per training
+   run**, distributed through that region, including the final checkpoint. Align
+   schedules to native rollout boundaries. Choose sufficient learning budgets;
+   eight nearly-zero scores are not useful resolution. Preserve declines and all
+   measurements; evaluations and checkpoint overhead are separately recorded.
+   The current staged campaign wrapper still caps exact stages at four, and
+   bounded smoke/mini modes have their own limits. Extending the new main contract
+   to eight requires updating preparation, execution limits, counts and audits,
+   not just editing a cadence in a frozen INI. Keep older readers/packets unchanged.
+3. **Realistic game images:** native frames should be human-readable at roughly
+   **640x480-class dimensions**, with game-appropriate aspect ratios and variation
+   rather than one universal image size. RGB and grayscale must be supported.
+   Draw directly from game geometry at the chosen resolution, including readable
+   pieces/ball/paddles/text where relevant. Do not nearest-neighbor enlarge the
+   old36x44 raster and claim new visual information or realistic-resolution evidence.
+4. **Explicit policy inputs:** support full-size frames and separately declared
+   preprocessing/downsampling modes. Human display dimensions and policy tensor
+   dimensions are distinct controls, both retained in the experiment manifest.
+   Examples for investigation include640x480 and320x240 camera/game inputs and
+   smaller benchmark-defined processed images. These are examples, not one
+   mandatory shape or a license to silently reduce every input to36x44. Match
+   preprocessing, image layout and input bytes across our CNN and every baseline.
+   Hold image conditions fixed across architecture comparisons; don't let a
+   proposal win by secretly receiving an easier/smaller image.
+5. **Seeds are NEVER sweep coordinates.** Fixed training-replica lists,
+   development/final episode suites, appearance/world assignments and the optimizer
+   seed are experiment controls. The optimizer may change CNN coordinates, not
+   hunt for lucky seeds. Fresh confirmation training replicas and withheld
+   evaluation episodes are separate requirements. Record every assigned seed and
+   use the same lists across candidate/reference pairs.
+6. **Architecture and engineering:** support numeric power-of-two first strides
+   **1,2,4,8** with shape-dependent buffers; keep targeted controlled architecture
+   panels alongside native PROTEIN and selectively profile identified bottlenecks.
+   Native C/CUDA construction/training, determinism and headless in-memory pixels
+   remain the implementation direction.
+
+### Immediate implementation order
+
+**A. Portable image contract and realistic raster path.** Replace the specialized
+36x44/channel1 assumptions in ours **and** local Nature/IMPALA/Impoola with explicit
+environment height/width/channels/layout/dtype metadata. Derive convolution,
+pooling, readout and workspace shapes once at construction. Permit different
+game-appropriate shapes per run; fixed shapes within a run remain compatible with
+preallocated buffers and CUDA graphs. Bind all of this to metadata/checkpoints,
+deterministic suites and source receipts. Test portrait, landscape and square
+shapes, grayscale and RGB, rather than only increasing a constant.
+
+Add host shape/storage preflight before allocating or scheduling a GPU worker.
+For context,640x480 RGB contains921,600 values versus1,584 in the old frame:
+about582 times as many scalars. A2048-frame float32 tensor alone is about7.03GiB,
+before rollout storage, activations, gradients and optimizer state. Investigate
+compact uint8 frame storage and conversion on consumption as an explicitly
+validated shared input path; don't casually scale old buffers/batches or alter
+the CUDA stack. Batch/vector geometry must be calibrated consistently for each
+new per-game input condition. Keep information-preserving early stages small;
+resolution portability does not imply that a flat head or every old checkpoint
+can be used at every size.
+
+**B. Eight-checkpoint comparison contract.** Version the main campaign contract
+for a configurable checkpoint count around eight, remove only its relevant
+four-stage bound, and validate complete receipts/counts for the new schedule.
+Keep bounded smoke budgets bounded. Allocate evaluation costs explicitly: going
+from four to eight checkpoints doubles scheduled checkpoint evaluations, before
+any seed/catalog/image-size change. Use new matched per-game calibration at the
+realistic input sizes before choosing substantial main-run budgets.
+
+**C. Broader strides and targeted small CNNs.** Qualify first strides1/2/4/8 and
+the portable image path with independent GPU math/determinism checks before
+learning runs. Run the controlled channel/residual family at the new practical
+input contracts, keeping seeds and learners fixed. Do not assume that the old
+tiny-image winner remains the best architecture or has the same relative speed.
+
+**D. Cross-game native PROTEIN and fresh confirmation.** Use actual checkpoint
+curves across the matched games/image conditions to guide broad frontier gains,
+with task-regression visibility. Confirm selected graphs on new training replicas
+and held-out evaluation suites. Profiling improvements are interleaved selectively,
+with code/math acceptance before timing and no competing jobs during measurements.
+
+These are preparation/implementation directions, not a new GPU launch or a
+rewrite of the failed45-observation allocation. Historical low-resolution results
+remain available as development evidence with their original scope.
+
 ## Deeper findings
 
 Offline diagnostics are retained under
@@ -42,10 +140,10 @@ six games supplied search feedback: neither is an untouched generalization test.
 
 ## Sorted priorities
 
-The October9 follow-up Q&A below refines this order: configurable image metadata
-and a reasonable primary drawing catalog become near-term implementation work,
-not something deferred until the final external benchmark. The original tiny
-stress cases remain in historical evidence, outside the planned new primary set.
+The current operating requirements above take precedence: portable realistic
+image input is the first implementation prerequisite. The original priority
+discussion and first Q&A below remain as dated rationale; their4x4 minimum and
+37-condition proposal are superseded as the practical target, not applied changes.
 
 1. **Make the search target match broad frontier improvement.** Define success
    using whole observed curves, per-game time allowances, paired seed stability,
@@ -129,6 +227,8 @@ October9 follow-up. The numbered questions below refer to the priorities above.
 They record the requested direction for the next implementation. This Q&A does
 not assert that new catalogs, strides, seed contracts or input shapes are already
 implemented, and does not launch training. Historical packets retain their inputs.
+The later clarification at the top of this document overrides the4x4-cell target:
+new primary evidence must use varied, realistic game images, not tiny boards.
 
 ### 1) How would we do this?
 
