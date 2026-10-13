@@ -31,7 +31,9 @@ outstanding.
 Hardware: G240, RTX 5060, driver 591.86, CUDA compiler 12.8.93, `sm_120`.
 No system/CUDA dependency change or CPU neural reference was used.
 
-- Nature RGB640×620, H128, B1/4/16: **18 cases / 72 native calls pass**.
+- Nature, all five distinct RGB shapes, H128, B1/4/16:
+  **90 cases / 360 native calls pass**, including the combined offline raw-array
+  collection audit. The four follow-up shapes and deadline history are below.
   This checks layers/gradients, selected finite differences, parameter
   preservation and eager/graph/repeat/independent-process bytes.
 - One-stage C8/K8/stride4/GAP/projection64, H128, all five distinct RGB image
@@ -89,7 +91,7 @@ observed optimizer calls. Sixty-three focused host/scalar/mock tests pass after
 the integration; those tests execute no neural reference or GPU work.
 
 This does not establish full-policy numerical correctness, useful learning,
-all-shape Nature qualification, an architecture advantage, generalization,
+other graph/core/batch qualification, an architecture advantage, generalization,
 or a Pareto/SOTA result. The new balanced curve-feedback campaign still needs
 real eligible learning controls and measured 5090 runtime calibration. No
 long local campaign, final handoff push or 5090 launch occurred here.
@@ -120,3 +122,27 @@ anchors after all-game eligibility. Four scalar/mocked preparation and
 negative-qualification checks pass; the final focused suite passes 71 tests.
 An initial inconsistent checkpoint-unit fixture and its failed log are retained.
 actual meaningful control learning/qualification remains pending.
+
+Implementation/evidence checkpoint: `b70eab16`. The binaries were built before
+that commit; use their captured source and binary hashes rather than treating
+the recorded predecessor revision alone as the tested state.
+
+A new bounded Nature follow-up completes RGB576×672, 640×420 and 330×576 at
+B1/4/16: 54 new cases/216 calls pass. Together with the retained Pong allocation,
+four distinct shapes now pass under the same catalog/loss contract. The
+900-second allocation then stops before starting 616×616. Its traceback and
+three successful shape receipts remain in `receipts/nature-followup/`; that
+allocation is incomplete and no full-shape collection was created. A separate
+600-second allocation completes the previously unstarted square shape:
+18 cases/72 calls pass. No completed shape or previous training run is repeated.
+All five distinct Nature shapes now individually pass (90 cases/360 calls total)
+under the same catalog/configuration/loss contract. The separate combined index
+now **passes its offline raw-array audit**, with90 cases/360 calls and matching
+catalog/configuration/device receipts. None of this establishes useful learning, full-policy
+numerical acceptance or a timing/Pareto advantage.
+
+The full-frame Copy investigation is recorded in
+[`IMAGE_TRANSPORT_PROFILING.md`](../../IMAGE_TRANSPORT_PROFILING.md).
+Pinned observation buffers already exist. Pixel uploads, action downloads and
+rollout transpose need separate profiling before choosing any shared transport
+optimization; neither pixel dtype nor the production transfer path changed.

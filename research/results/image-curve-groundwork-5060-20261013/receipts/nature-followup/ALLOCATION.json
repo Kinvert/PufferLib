@@ -1,0 +1,18 @@
+{
+  "schema": "realistic-image-nature-followup-v1",
+  "status": "incomplete-deadline",
+  "hardware": "RTX 5060, G240",
+  "planned_new_shapes": ["h576-w672-c3", "h640-w420-c3", "h330-w576-c3", "h616-w616-c3"],
+  "completed_new_shapes": ["h576-w672-c3", "h640-w420-c3", "h330-w576-c3"],
+  "unstarted_shape": "h616-w616-c3",
+  "new_cases_passed": 54,
+  "new_native_calls": 216,
+  "worker_deadline_seconds": 900,
+  "terminal_error": "Campaign deadline before numerical worker",
+  "original_failure_log": "allocation-failure.txt",
+  "raw_allocations": "build/image-panels-20261013/nature-remaining-shapes",
+  "retained_pong_reexecuted": false,
+  "all_shape_collection_created": false,
+  "full_policy_qualified": false,
+  "learning_or_frontier_claim": false
+}

@@ -1,6 +1,7 @@
 # Next 5090 iteration: realistic RGB frames
 
-The native builds and short 5060 checkpoint/evaluator smoke pass. The overnight
+The native builds, short 5060 checkpoint/evaluator smoke and Nature/C8 encoder
+checks on all five RGB shapes atH128/B1/4/16 pass. The overnight
 launch is **not ready**: full-image learning controls, the practical search
 envelope and hardware-specific timing still need qualification. This document
 currently covers reproducible build preparation, not authorization to start an

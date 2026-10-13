@@ -1,5 +1,22 @@
 # General-purpose CNN priorities after the 45-observation campaign
 
+October13 implementation status: realistic per-game RGB frames and the
+initial-plus-eight-checkpoint contract are implemented. The all-six/all41 local
+plumbing panel passes; fixed seed roles, measured Nature-time feedback, all-game
+learning eligibility and history-scaled reporting reserves have focused tests.
+Meaningful full-image learning controls, real curve-feedback qualification and
+the executable overnight5090 handoff remain outstanding. See
+[current progress](REALISTIC_IMAGE_SWEEP_PROGRESS.md). The older four-checkpoint
+statements below describe the retained campaign, not the new panel-v5 contract.
+
+Selective profiling now has a concrete lead: the short full-frame Flappy capture
+puts about63% in Copy versus9% in Model. The observation buffers are already
+pinned; native Copy includes both uploads and action downloads, while rollout
+transpose is separate work. [Transport investigation](IMAGE_TRANSPORT_PROFILING.md)
+records exact frame payloads and acceptance requirements without changing pixels
+or launching a new run. Keep matched learning calibration ahead of speculative
+transport or architecture optimization.
+
 October9. This supersedes the earlier recommendation to simply confirm the
 final aggregate winner as our main deliverable. That graph remains a candidate;
 broader useful score/time coverage is the selection goal. This is a research

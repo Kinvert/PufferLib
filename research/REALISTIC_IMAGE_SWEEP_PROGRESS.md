@@ -67,12 +67,12 @@ declared per-batch partition retains two fresh processes per case and all four
 native modes. The resulting Connect4 RGB576x672/B1/4/16 Nature report passes18
 instances/72 calls. Its following Pong shape fails a strict float64-oracle
 finite-difference probe (relative error3.09765632e-5 versus the unchanged2e-5
-tolerance). Thus **the complete Nature image gate remains failed**. A separate
+tolerance). Thus **that original multishape allocation remains failed**. A separate
 bounded CUDA loss-sensitivity diagnostic is prepared/executed under its own
 receipts; it cannot qualify the failed allocation or change tolerances.
 
-Next: complete the remaining Nature shape checks, then establish useful
-matched image learners and prepare the calibrated5090 launcher. No long local
+Next: establish useful matched image learners, qualify the actual chosen control
+graphs and prepare the calibrated5090 launcher. No long local
 campaign or final push/handoff has been made.
 
 The zero-step Flappy checkpoint also passes exact assigned-episode graph,
@@ -117,6 +117,18 @@ passes 71 tests; its initial unit fixture used inconsistent checkpoint units,
 and both that failed test log and the corrected-fixture pass are retained.
 
 ## October12 shared pipeline follow-up
+
+Additional October13 Nature numerical allocations pass RGB576x672,640x420 and
+330x576/B1/4/16 (54 cases/216 calls). With retained Pong, four distinct shapes
+pass from the same catalog. The900s follow-up stops before616x616 starts and
+remains incomplete. A separate fresh600s allocation checks only that previously
+unstarted square shape; it does not repeat a completed case or restart the
+failed batch. That square allocation now passes18 cases/72 calls. Thus all five
+Nature shapes individually pass90 cases/360 calls under the same catalog/config.
+The separate combined index now passes its offline raw-array audit,90 cases/
+360 calls, with matching catalog/configuration/device receipts. Nature and the
+C8/GAP control both have this five-shape encoder acceptance atH128/B1/4/16;
+other control graphs, full-policy math and useful learning remain separate gates.
 
 The full-RGB all-six-game/all41-drawing aggregate-to-native-PROTEIN loop now
 actually passes three proposals:18 short trainings/123 exact evaluations/

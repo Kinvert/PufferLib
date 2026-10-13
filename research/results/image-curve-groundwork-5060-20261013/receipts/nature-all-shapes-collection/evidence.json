@@ -1,0 +1,13 @@
+{
+  "schema": "native-image-panel-encoder-checks-v1",
+  "candidates": {
+    "nature-cnn": {
+      "connect4cnn": "../nature-remaining-shapes/h576-w672-c3",
+      "pongcnn": "../pong-nature-compensated-check",
+      "flappycnn": "../nature-remaining-shapes/h640-w420-c3",
+      "breakoutcnn": "../nature-remaining-shapes/h330-w576-c3",
+      "snakecnn": "../nature-square-shape",
+      "mazecnn": "../nature-square-shape"
+    }
+  }
+}
