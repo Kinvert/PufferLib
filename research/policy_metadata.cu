@@ -3,9 +3,11 @@
 #include <climits>
 #include <sys/stat.h>
 #define PRECISION_FLOAT
+#ifndef ENV_HEADER
 #define PUFFER_CONNECT4CNN
 #define ENV_HEADER "ocean/connect4cnn/connect4cnn.h"
 #define PUFFER_ENV_NAME "connect4cnn"
+#endif
 #include "src/pufferl.cu"
 
 static void metadata_require(bool ok, const char* message) {
@@ -52,7 +54,99 @@ static const char* metadata_model(Dict* policy, bool allow_flex) {
 #endif
 }
 
+static void metadata_kernel_limits(Weights weights, Dict* policy, long batch) {
+    metadata_require(batch * OBS_SIZE <= INT_MAX, "Image batch exceeds native 32-bit kernel indexing");
+#if defined(C4_IMPALA_CNN) || defined(C4_IMPOOLA_CNN)
+    for (int s = 0; s < 3; s++) {
+        int ci = s ? IMP_C[s - 1] : OBS_CHANNELS;
+        metadata_require(batch * IMP_H[s] * IMP_W[s] * 9 * ci <= INT_MAX
+            && batch * IMP_H[s] * IMP_W[s] * IMP_C[s] <= INT_MAX,
+            "IMPALA stage exceeds native 32-bit kernel indexing");
+        metadata_require(batch * ((IMP_H[s] + 1) / 2) * ((IMP_W[s] + 1) / 2)
+            * 9 * IMP_C[s] <= INT_MAX, "IMPALA residual exceeds native 32-bit kernel indexing");
+    }
+#else
+    NatureWeights* w = dict_get(policy, "encoder") == 4
+        ? &((FlexWeights*)weights.encoder)->net : (NatureWeights*)weights.encoder;
+    for (int i = 0; i < w->count; i++) {
+        NatureLayer d = w->layer[i];
+        metadata_require(batch * d.oh * d.ow * d.co <= INT_MAX
+            && batch * d.oh * d.ow * d.k * d.k * d.ci <= INT_MAX
+            && batch * d.ih * d.iw * d.ci <= INT_MAX,
+            "CNN stage exceeds native 32-bit kernel indexing");
+    }
+#endif
+}
+
+static int metadata_storage(const char* filename) {
+    Ini ini = {}; puf_ini_load_file(&ini, filename);
+    Dict* policy = puf_ini_section(&ini, "policy", 0);
+    Dict* train = puf_ini_section(&ini, "train", 0);
+    Dict* vec = puf_ini_section(&ini, "vec", 0);
+    const char* model = metadata_model(policy, true);
+    int hidden = metadata_integer(policy, "hidden_size", 8, 4096);
+    int layers = metadata_integer(policy, "num_layers", 1, 16);
+    int horizon = metadata_integer(train, "horizon", 1, 65536);
+    int batch = metadata_integer(train, "minibatch_size", 1, 65536);
+    int agents = metadata_integer(vec, "total_agents", 1, 65536);
+    int buffers = metadata_integer(vec, "num_buffers", 1, agents);
+    metadata_require(batch % horizon == 0 && agents % buffers == 0 && hidden % 8 == 0,
+        "Unaligned learner or vector geometry");
+    metadata_require(puf_ini_get(&ini, "base", "async") == 0 && dict_get(vec, "num_policies") == 1,
+        "Storage preflight covers synchronous single-policy jobs only");
+    int actions[] = ACT_SIZES;
+    Arch arch = build_arch(OBS_SIZE, hidden, layers, actions[0], false, horizon, policy);
+    Allocator params = {}, train_acts = {}, grads = {}, rollout_acts = {};
+    Weights weights = weights_create(&arch, &params);
+    metadata_require(params.total_elems <= INT_MAX, "Parameters exceed native optimizer indexing");
+    metadata_kernel_limits(weights, policy, max(batch, agents / buffers));
+    Activations learner = arch_reg_train(&arch, weights, &train_acts, &grads, batch);
+    Activations actor = arch_reg_rollout(&arch, weights, &rollout_acts, agents / buffers);
+    metadata_require(params.mem == NULL && train_acts.mem == NULL && grads.mem == NULL
+        && rollout_acts.mem == NULL, "Storage preflight allocated device memory");
+    long observation_bytes = (long)OBS_SIZE * sizeof(float);
+    // This is a conservative rejection floor, not a peak-VRAM certificate.
+    // Includes two float32 rollout copies, both encoder/head/core registrations,
+    // all actor buffers, params + gradients + three optimizer parameter copies.
+    long rollout_bytes = 2L * agents * horizon * observation_bytes;
+    long environment_bytes = (long)agents * observation_bytes;
+    long floor = params.total_bytes * 4 + grads.total_bytes + train_acts.total_bytes
+        + buffers * rollout_acts.total_bytes + rollout_bytes + environment_bytes;
+    printf("{\"schema\":\"native-image-storage-v1\",\"model\":\"%s\","
+        "\"shape_hwc\":[%d,%d,%d],\"layout\":\"NHWC\",\"dtype\":\"float32\","
+        "\"agents\":%d,\"buffers\":%d,\"horizon\":%d,\"learner_batch\":%d,"
+        "\"parameters\":%ld,\"parameter_bytes\":%ld,\"gradient_bytes\":%ld,"
+        "\"learner_activation_bytes\":%ld,\"actor_activation_bytes_per_buffer\":%ld,"
+        "\"rollout_observation_bytes\":%ld,\"storage_floor_bytes\":%ld,"
+        "\"peak_memory_certified\":false,\"gpu_queried\":false,\"cuda_executed\":false}\n",
+        model, OBS_HEIGHT, OBS_WIDTH, OBS_CHANNELS, agents, buffers, horizon, batch,
+        params.total_elems, params.total_bytes, grads.total_bytes, train_acts.total_bytes,
+        rollout_acts.total_bytes, rollout_bytes, floor);
+    free(learner.encoder); free(learner.decoder); free(learner.network);
+    free(actor.encoder); free(actor.decoder); free(actor.network);
+    free(weights.encoder); free(weights.decoder); free(weights.network);
+    free(params.regs); free(train_acts.regs); free(grads.regs); free(rollout_acts.regs);
+    puf_ini_free(&ini);
+    return 0;
+}
+
 int main(int argc, char** argv) {
+#ifdef CNN_IMAGE_V1
+    if (argc == 2 && !strcmp(argv[1], "--image-info")) {
+        printf("{\"schema\":\"native-image-build-v1\",\"environment\":\"%s\",\"compiled_family\":\"%s\""
+            CNN_IMAGE_INFO_JSON ",\"gpu_queried\":false,\"cuda_executed\":false}\n", PUFFER_ENV_NAME,
+#ifdef C4_IMPOOLA_CNN
+            "impoola"
+#elif defined(C4_IMPALA_CNN)
+            "impala"
+#else
+            "default"
+#endif
+        );
+        return 0;
+    }
+#endif
+    if (argc == 3 && !strcmp(argv[1], "--storage")) return metadata_storage(argv[2]);
     bool allow_flex = argc > 1 && (!strcmp(argv[1], "--describe-flex") || !strcmp(argv[1], "--check-flex-bytes"));
     bool describe = argc == 4 && (!strcmp(argv[1], "--describe") || !strcmp(argv[1], "--describe-flex"));
     bool check = argc == 5 && (!strcmp(argv[1], "--check-bytes") || !strcmp(argv[1], "--check-flex-bytes"));
@@ -96,11 +190,16 @@ int main(int argc, char** argv) {
         metadata_require(params.total_bytes == payload, "Padded parameter layout is not raw-checkpoint qualified");
         checkpoint_bytes = info.st_size;
     }
-    printf("{\"schema\":\"native-policy-metadata-v1\",\"model\":\"%s\","
+    printf("{\"schema\":\"%s\",\"model\":\"%s\","
         "\"observation_shape\":[%d,%d,%d],\"discrete_actions\":%d,\"hidden\":%d,\"layers\":%d,\"horizon\":%d,"
         "\"encoder_parameters\":%ld,\"decoder_parameters\":%ld,\"core_parameters\":%ld,"
         "\"total_parameters\":%ld,\"parameter_payload_bytes\":%ld,\"parameter_allocator_bytes\":%ld,"
         "\"raw_checkpoint_contiguous\":%s,\"checkpoint_bytes\":",
+#ifdef CNN_IMAGE_V1
+        "native-policy-metadata-v2",
+#else
+        "native-policy-metadata-v1",
+#endif
         model, OBS_CHANNELS, OBS_HEIGHT, OBS_WIDTH, actions, hidden, layers, horizon,
         encoder.total_elems, decoder.total_elems, core.total_elems, params.total_elems, payload,
         params.total_bytes, params.total_bytes == payload ? "true" : "false");
@@ -123,7 +222,11 @@ int main(int argc, char** argv) {
         printf("]}"); offset += numel(entry.shape) * sizeof(float);
     }
     metadata_require(offset == params.total_bytes, "Parameter offsets disagree with allocator");
-    printf("],\"cuda_executed\":false,\"gpu_queried\":false,\"weights_initialized\":false,"
+    printf("]");
+#ifdef CNN_IMAGE_V1
+    printf(",\"environment\":\"%s\"" CNN_IMAGE_INFO_JSON, PUFFER_ENV_NAME);
+#endif
+    printf(",\"cuda_executed\":false,\"gpu_queried\":false,\"weights_initialized\":false,"
         "\"policy_executed\":false,\"checkpoint_contents_validated\":false,\"numerical_acceptance\":false}\n");
     // Host descriptor objects die with this isolated process; no alloc_create,
     // CUDA initialization, tensor computation or environment stepping occurs.

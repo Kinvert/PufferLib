@@ -22,10 +22,7 @@ typedef Env Breakout;
 #define HALF_PADDLE_WIDTH 31
 #define Y_OFFSET 50
 #define TICK_RATE 1.0f/60.0f
-#define OBS_CHANNELS 1
-#define OBS_HEIGHT 36
-#define OBS_WIDTH 44
-#define OBS_SIZE (OBS_CHANNELS * OBS_HEIGHT * OBS_WIDTH)
+#include "../connect4cnn/image.h"
 #define BREAKOUTCNN_NUM_REPRESENTATIONS 5
 #define NUM_ATNS 1
 
@@ -201,6 +198,9 @@ static inline void breakoutcnn_rect(obs_t* obs, float x0, float y0,
     }
 }
 
+#ifdef CNN_IMAGE_V1
+#include "image_v1.h"
+#else
 void compute_observations(Breakout* env) {
     obs_t* obs = env->agents[0].observations;
     memset(obs, 0, OBS_SIZE * sizeof(obs_t));
@@ -238,6 +238,8 @@ void compute_observations(Breakout* env) {
         }
     }
 }
+
+#endif
 
 // Collision of a stationary vertical line segment (xw,yw) to (xw,yw+hw)
 // with a moving line segment (x+vx*t,y+vy*t) to (x+vx*t,y+vy*t+h).

@@ -1,0 +1,137 @@
+{
+  "schema": "native-policy-metadata-v2",
+  "model": "flex",
+  "observation_shape": [
+    3,
+    576,
+    672
+  ],
+  "discrete_actions": 7,
+  "hidden": 128,
+  "layers": 1,
+  "horizon": 16,
+  "encoder_parameters": 12396816,
+  "decoder_parameters": 1024,
+  "core_parameters": 49152,
+  "total_parameters": 12446992,
+  "parameter_payload_bytes": 49787968,
+  "parameter_allocator_bytes": 49787968,
+  "raw_checkpoint_contiguous": true,
+  "checkpoint_bytes": null,
+  "parameter_tensors": [
+    {
+      "index": 0,
+      "group": "encoder",
+      "offset_bytes": 0,
+      "elements": 1536,
+      "shape": [
+        8,
+        192
+      ]
+    },
+    {
+      "index": 1,
+      "group": "encoder",
+      "offset_bytes": 6144,
+      "elements": 8,
+      "shape": [
+        8
+      ]
+    },
+    {
+      "index": 2,
+      "group": "encoder",
+      "offset_bytes": 6176,
+      "elements": 576,
+      "shape": [
+        8,
+        72
+      ]
+    },
+    {
+      "index": 3,
+      "group": "encoder",
+      "offset_bytes": 8480,
+      "elements": 8,
+      "shape": [
+        8
+      ]
+    },
+    {
+      "index": 4,
+      "group": "encoder",
+      "offset_bytes": 8512,
+      "elements": 12386304,
+      "shape": [
+        64,
+        193536
+      ]
+    },
+    {
+      "index": 5,
+      "group": "encoder",
+      "offset_bytes": 49553728,
+      "elements": 64,
+      "shape": [
+        64
+      ]
+    },
+    {
+      "index": 6,
+      "group": "encoder",
+      "offset_bytes": 49553984,
+      "elements": 8192,
+      "shape": [
+        128,
+        64
+      ]
+    },
+    {
+      "index": 7,
+      "group": "encoder",
+      "offset_bytes": 49586752,
+      "elements": 128,
+      "shape": [
+        128
+      ]
+    },
+    {
+      "index": 8,
+      "group": "decoder",
+      "offset_bytes": 49587264,
+      "elements": 1024,
+      "shape": [
+        8,
+        128
+      ]
+    },
+    {
+      "index": 9,
+      "group": "core",
+      "offset_bytes": 49591360,
+      "elements": 49152,
+      "shape": [
+        384,
+        128
+      ]
+    }
+  ],
+  "environment": "connect4cnn",
+  "image_contract": {
+    "version": "human-geometry-v1",
+    "shape_hwc": [
+      576,
+      672,
+      3
+    ],
+    "layout": "NHWC",
+    "dtype": "float32",
+    "preprocessing": "none"
+  },
+  "cuda_executed": false,
+  "gpu_queried": false,
+  "weights_initialized": false,
+  "policy_executed": false,
+  "checkpoint_contents_validated": false,
+  "numerical_acceptance": false
+}

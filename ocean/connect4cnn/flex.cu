@@ -222,7 +222,7 @@ static void* flex_create_weights(void* self) {
     int depth = flex_option(enc->config, "cnn_depth", 1, 3);
     int projection = flex_option(enc->config, "cnn_projection", 16, 128);
     assert((projection & (projection - 1)) == 0);
-    int H = 36, W = 44, ci = 1;
+    int H = OBS_HEIGHT, W = OBS_WIDTH, ci = OBS_CHANNELS;
     for (int s = 1; s <= depth; s++) {
         char key[64];
         snprintf(key, sizeof(key), "cnn_channels_%d", s);
@@ -231,7 +231,7 @@ static void* flex_create_weights(void* self) {
         snprintf(key, sizeof(key), "cnn_kernel_%d", s);
         int k = flex_option(enc->config, key, 1, s == 1 ? 8 : 5);
         snprintf(key, sizeof(key), "cnn_stride_%d", s);
-        int stride = flex_option(enc->config, key, s == 1 ? 4 : 1, s == 1 ? 8 : 4);
+        int stride = flex_option(enc->config, key, 1, s == 1 ? 8 : 4);
         assert((stride & (stride - 1)) == 0);
         flex_conv(w, H, W, ci, co, k, stride);
         H = (H + stride - 1) / stride; W = (W + stride - 1) / stride; ci = co;

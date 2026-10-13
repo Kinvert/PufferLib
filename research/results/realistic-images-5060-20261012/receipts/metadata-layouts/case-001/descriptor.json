@@ -1,0 +1,118 @@
+{
+  "schema": "native-policy-metadata-v2",
+  "model": "flex",
+  "observation_shape": [
+    3,
+    576,
+    672
+  ],
+  "discrete_actions": 7,
+  "hidden": 128,
+  "layers": 1,
+  "horizon": 16,
+  "encoder_parameters": 24783360,
+  "decoder_parameters": 1024,
+  "core_parameters": 49152,
+  "total_parameters": 24833536,
+  "parameter_payload_bytes": 99334144,
+  "parameter_allocator_bytes": 99334144,
+  "raw_checkpoint_contiguous": true,
+  "checkpoint_bytes": null,
+  "parameter_tensors": [
+    {
+      "index": 0,
+      "group": "encoder",
+      "offset_bytes": 0,
+      "elements": 2352,
+      "shape": [
+        16,
+        147
+      ]
+    },
+    {
+      "index": 1,
+      "group": "encoder",
+      "offset_bytes": 9408,
+      "elements": 16,
+      "shape": [
+        16
+      ]
+    },
+    {
+      "index": 2,
+      "group": "encoder",
+      "offset_bytes": 9472,
+      "elements": 24772608,
+      "shape": [
+        64,
+        387072
+      ]
+    },
+    {
+      "index": 3,
+      "group": "encoder",
+      "offset_bytes": 99099904,
+      "elements": 64,
+      "shape": [
+        64
+      ]
+    },
+    {
+      "index": 4,
+      "group": "encoder",
+      "offset_bytes": 99100160,
+      "elements": 8192,
+      "shape": [
+        128,
+        64
+      ]
+    },
+    {
+      "index": 5,
+      "group": "encoder",
+      "offset_bytes": 99132928,
+      "elements": 128,
+      "shape": [
+        128
+      ]
+    },
+    {
+      "index": 6,
+      "group": "decoder",
+      "offset_bytes": 99133440,
+      "elements": 1024,
+      "shape": [
+        8,
+        128
+      ]
+    },
+    {
+      "index": 7,
+      "group": "core",
+      "offset_bytes": 99137536,
+      "elements": 49152,
+      "shape": [
+        384,
+        128
+      ]
+    }
+  ],
+  "environment": "connect4cnn",
+  "image_contract": {
+    "version": "human-geometry-v1",
+    "shape_hwc": [
+      576,
+      672,
+      3
+    ],
+    "layout": "NHWC",
+    "dtype": "float32",
+    "preprocessing": "none"
+  },
+  "cuda_executed": false,
+  "gpu_queried": false,
+  "weights_initialized": false,
+  "policy_executed": false,
+  "checkpoint_contents_validated": false,
+  "numerical_acceptance": false
+}

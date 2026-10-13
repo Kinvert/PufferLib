@@ -28,13 +28,15 @@ static void maze_exact_info() {
     const char* encoder = "impala";
 #elif defined(C4_NATURE_CNN)
     const char* encoder = "nature";
+#elif defined(CNN_IMAGE_V1)
+    const char* encoder = "explicit";
 #else
     const char* encoder = "tiny";
 #endif
     printf("{\"environment\":\"%s\",\"default_encoder\":\"%s\",\"float32\":%s,"
         "\"rules\":\"maze-native-v1\",\"receipt_version\":1,"
         "\"evaluation\":\"first-goal-or-native-area-timeout-v1\","
-        "\"levels\":\"seed-rotated-cyclic-v1\"}\n", PUFFER_ENV_NAME, encoder, USE_BF16 ? "false" : "true");
+        "\"levels\":\"seed-rotated-cyclic-v1\"" CNN_IMAGE_INFO_JSON "}\n", PUFFER_ENV_NAME, encoder, USE_BF16 ? "false" : "true");
 }
 static void maze_exact_manifest(int argc, char** argv) {
     maze_exact_require(argc == 3, "eval_exact_manifest requires one full INI path");

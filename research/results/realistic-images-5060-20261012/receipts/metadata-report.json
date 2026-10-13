@@ -1,0 +1,1202 @@
+{
+  "schema": "native-image-metadata-verification-v1",
+  "status": "passed",
+  "layouts": [
+    {
+      "game": "connect4cnn",
+      "candidate": "nature",
+      "config": "connect4cnn/nature.ini",
+      "sha256": "6f64c1f393e748fd07af5ea1a83cbecfe1a206b6883fbee6348740f439c8901d",
+      "shape_hwc": [
+        576,
+        672,
+        3
+      ],
+      "parameters": 44690720,
+      "storage_floor_bytes": 3011514112,
+      "descriptor_sha256": "fbcf43e14aebdfdc479323379c3f7ff3e11c42d5b1603fca87abb7e2c977fd9b"
+    },
+    {
+      "game": "connect4cnn",
+      "candidate": "quality",
+      "config": "connect4cnn/quality.ini",
+      "sha256": "c41682bd601d21ea77e76e75ccf7dc3851586e7411d8c3c1cb0a7946ca9e814b",
+      "shape_hwc": [
+        576,
+        672,
+        3
+      ],
+      "parameters": 24833536,
+      "storage_floor_bytes": 1505923712,
+      "descriptor_sha256": "59afbab48316706f1fdf2860793e82935c3932e99ef925bff7c01a80d45d13be"
+    },
+    {
+      "game": "connect4cnn",
+      "candidate": "c8-res0",
+      "config": "connect4cnn/c8-res0.ini",
+      "sha256": "f7062c48346f8421cdfbd667332ce322c1226c9373a507cfec6def1bf39eede7",
+      "shape_hwc": [
+        576,
+        672,
+        3
+      ],
+      "parameters": 12446408,
+      "storage_floor_bytes": 1289533984,
+      "descriptor_sha256": "5115d3c7e8ecb1b5b0cd8979aab9dde8f158930bccb4c61b305625992cfc3e92"
+    },
+    {
+      "game": "connect4cnn",
+      "candidate": "c8-res1",
+      "config": "connect4cnn/c8-res1.ini",
+      "sha256": "ff2af4a7c7b66fed563895f4a2e26f54116723ed45571f435d484c4285b10b88",
+      "shape_hwc": [
+        576,
+        672,
+        3
+      ],
+      "parameters": 12446992,
+      "storage_floor_bytes": 1568237504,
+      "descriptor_sha256": "3936bb4426044700a1ea4f4f2e3424fb72a43b4e392296101fbf4a03f65dbb6b"
+    },
+    {
+      "game": "connect4cnn",
+      "candidate": "c16-res0",
+      "config": "connect4cnn/c16-res0.ini",
+      "sha256": "10c168379fe3a8d674d4042254f0c20348398f0823d04797ee7568ce60136ade",
+      "shape_hwc": [
+        576,
+        672,
+        3
+      ],
+      "parameters": 24834256,
+      "storage_floor_bytes": 1593029312,
+      "descriptor_sha256": "a6f6310dc769cc21381427509d56af044c9c46f7552e92a5d576abe86cf3378c"
+    },
+    {
+      "game": "connect4cnn",
+      "candidate": "c16-res1",
+      "config": "connect4cnn/c16-res1.ini",
+      "sha256": "2bb51475f79199d8c6e7c293028fd84b0a07248c28bd96a53a7e7126d97f9110",
+      "shape_hwc": [
+        576,
+        672,
+        3
+      ],
+      "parameters": 24836576,
+      "storage_floor_bytes": 2150459392,
+      "descriptor_sha256": "1c25d08d287256c45bda5730f98cf322e7a462e99246a7b4e6e6d00186e34a7c"
+    },
+    {
+      "game": "connect4cnn",
+      "candidate": "stride1-gap",
+      "config": "connect4cnn/stride1-gap.ini",
+      "sha256": "bb3abeb9718f8a82bf7b8dd8ea5bc843b734902027729aa1d111b753b03d495e",
+      "shape_hwc": [
+        576,
+        672,
+        3
+      ],
+      "parameters": 60616,
+      "storage_floor_bytes": 7005825824,
+      "descriptor_sha256": "69a160f536c8f7869b375d267c68cdd31a154002f9b5637916d58f8a6d34a51e"
+    },
+    {
+      "game": "connect4cnn",
+      "candidate": "stride2-gap",
+      "config": "connect4cnn/stride2-gap.ini",
+      "sha256": "21a562f8c7a9e1a16fe59522a870d02fb3aa702efd3c53c9b34174672672138f",
+      "shape_hwc": [
+        576,
+        672,
+        3
+      ],
+      "parameters": 60616,
+      "storage_floor_bytes": 2212326176,
+      "descriptor_sha256": "69a160f536c8f7869b375d267c68cdd31a154002f9b5637916d58f8a6d34a51e"
+    },
+    {
+      "game": "connect4cnn",
+      "candidate": "stride4-gap",
+      "config": "connect4cnn/stride4-gap.ini",
+      "sha256": "1c6a9936dd6aae4125da8d7d328a4fa7767ce8ff941473a53b46b8901a04dcd7",
+      "shape_hwc": [
+        576,
+        672,
+        3
+      ],
+      "parameters": 60616,
+      "storage_floor_bytes": 1013951264,
+      "descriptor_sha256": "69a160f536c8f7869b375d267c68cdd31a154002f9b5637916d58f8a6d34a51e"
+    },
+    {
+      "game": "connect4cnn",
+      "candidate": "stride8-gap",
+      "config": "connect4cnn/stride8-gap.ini",
+      "sha256": "b229baae2934e7c5d80f76e054354d3974c544a298c4035d54f6ba3b7ce97f5c",
+      "shape_hwc": [
+        576,
+        672,
+        3
+      ],
+      "parameters": 60616,
+      "storage_floor_bytes": 714357536,
+      "descriptor_sha256": "69a160f536c8f7869b375d267c68cdd31a154002f9b5637916d58f8a6d34a51e"
+    },
+    {
+      "game": "pongcnn",
+      "candidate": "nature",
+      "config": "pongcnn/nature.ini",
+      "sha256": "49189da352e07f63feee49fc26ca17ddbd1c18e2236e75deaba3369483a3c0b6",
+      "shape_hwc": [
+        640,
+        620,
+        3
+      ],
+      "parameters": 46197536,
+      "storage_floor_bytes": 3103386304,
+      "descriptor_sha256": "df25b7786512b2c3e6e36b555179cfa8d82d152183f27a2d697fc5f654af79d0"
+    },
+    {
+      "game": "pongcnn",
+      "candidate": "quality",
+      "config": "pongcnn/quality.ini",
+      "sha256": "b30fe0f9e4ba6f4347d6317f4895df63607506dc89e78c87b534b262b022e78a",
+      "shape_hwc": [
+        640,
+        620,
+        3
+      ],
+      "parameters": 25455616,
+      "storage_floor_bytes": 1543725632,
+      "descriptor_sha256": "ab8e07a82c94f43588a206e1dadc32b11254406b197f01e54e6aaca607cd6286"
+    },
+    {
+      "game": "pongcnn",
+      "candidate": "c8-res0",
+      "config": "pongcnn/c8-res0.ini",
+      "sha256": "203952d28c39854833d1179bcc73aaaaed327e2764e1ce04adf4c9a91ede043a",
+      "shape_hwc": [
+        640,
+        620,
+        3
+      ],
+      "parameters": 12757192,
+      "storage_floor_bytes": 1321897952,
+      "descriptor_sha256": "50ec21ea01c75bdeaa8d023a7e19a4beb42218cb99171795083b5f91c88175f6"
+    },
+    {
+      "game": "pongcnn",
+      "candidate": "c8-res1",
+      "config": "pongcnn/c8-res1.ini",
+      "sha256": "9ea447968e038f17235666677e4e6ecccd35a6bcd93cea30d4d33d3a4a3e77b9",
+      "shape_hwc": [
+        640,
+        620,
+        3
+      ],
+      "parameters": 12757776,
+      "storage_floor_bytes": 1607605632,
+      "descriptor_sha256": "c2185c400ef867486ca9749d0e12e0c4414c8d5015101ddfa737ef587ced9cec"
+    },
+    {
+      "game": "pongcnn",
+      "candidate": "c16-res0",
+      "config": "pongcnn/c16-res0.ini",
+      "sha256": "e36df4bb64e0cb7fbb5d465166ac54f1ff72a48da73d0da1b88f0682f0dfb889",
+      "shape_hwc": [
+        640,
+        620,
+        3
+      ],
+      "parameters": 25456336,
+      "storage_floor_bytes": 1633020032,
+      "descriptor_sha256": "153e5d1b5e02d76148a6b2b1794ddd8193c22ea7beee03154272bb82e5574ee9"
+    },
+    {
+      "game": "pongcnn",
+      "candidate": "c16-res1",
+      "config": "pongcnn/c16-res1.ini",
+      "sha256": "f7084d15d65302558cffc0609bec91cc0af3db6ec7372778cc06a744ab4a8e63",
+      "shape_hwc": [
+        640,
+        620,
+        3
+      ],
+      "parameters": 25458656,
+      "storage_floor_bytes": 2204458432,
+      "descriptor_sha256": "a4b467c7b3f66bb38e5ec53fb9b992f23be66c7d464595d4d842a8287aa6a6a3"
+    },
+    {
+      "game": "pongcnn",
+      "candidate": "stride1-gap",
+      "config": "pongcnn/stride1-gap.ini",
+      "sha256": "3bcb2f27a5a4bd25b3207ed0b5683e70eb4343bd229469674c6148744185baff",
+      "shape_hwc": [
+        640,
+        620,
+        3
+      ],
+      "parameters": 60104,
+      "storage_floor_bytes": 7181852896,
+      "descriptor_sha256": "2eb04de0216d5330544ec2927c2fb41b4e71d9cb8a527bbf4f389372d1960315"
+    },
+    {
+      "game": "pongcnn",
+      "candidate": "stride2-gap",
+      "config": "pongcnn/stride2-gap.ini",
+      "sha256": "0d4eb2dbb4e126a4570232b4294db9c2904a2b66c3509d1ef54acbb99ccc3b91",
+      "shape_hwc": [
+        640,
+        620,
+        3
+      ],
+      "parameters": 60104,
+      "storage_floor_bytes": 2267881696,
+      "descriptor_sha256": "2eb04de0216d5330544ec2927c2fb41b4e71d9cb8a527bbf4f389372d1960315"
+    },
+    {
+      "game": "pongcnn",
+      "candidate": "stride4-gap",
+      "config": "pongcnn/stride4-gap.ini",
+      "sha256": "43ae7ec9e76b642b1d357deaac85c2b653656433a41c07f1a25f2404fbf5fb45",
+      "shape_hwc": [
+        640,
+        620,
+        3
+      ],
+      "parameters": 60104,
+      "storage_floor_bytes": 1039388896,
+      "descriptor_sha256": "2eb04de0216d5330544ec2927c2fb41b4e71d9cb8a527bbf4f389372d1960315"
+    },
+    {
+      "game": "pongcnn",
+      "candidate": "stride8-gap",
+      "config": "pongcnn/stride8-gap.ini",
+      "sha256": "bfed1ef7f4481507c0478a908db319b54d1ad3ef3fc287b1ff6f14ccdf5600d5",
+      "shape_hwc": [
+        640,
+        620,
+        3
+      ],
+      "parameters": 60104,
+      "storage_floor_bytes": 732926176,
+      "descriptor_sha256": "2eb04de0216d5330544ec2927c2fb41b4e71d9cb8a527bbf4f389372d1960315"
+    },
+    {
+      "game": "flappycnn",
+      "candidate": "nature",
+      "config": "flappycnn/nature.ini",
+      "sha256": "2da4c7903a512189abdaa4474c375220e06058ae4ea64fd87f6cdbd6f9258e56",
+      "shape_hwc": [
+        640,
+        420,
+        3
+      ],
+      "parameters": 30632608,
+      "storage_floor_bytes": 2076234800,
+      "descriptor_sha256": "8ba374ff2f43f81c3f02b6f476201c6b92a225853fd040fc848384955120eb90"
+    },
+    {
+      "game": "flappycnn",
+      "candidate": "quality",
+      "config": "flappycnn/quality.ini",
+      "sha256": "85b8df46e8a0f7956b7f1db8ebf3b9116e242cc45b05fb64cbd336abdd72e143",
+      "shape_hwc": [
+        640,
+        420,
+        3
+      ],
+      "parameters": 17263488,
+      "storage_floor_bytes": 1046186928,
+      "descriptor_sha256": "81e7335f89fd43aac9b84d444d9a161d0c76b2713d9a9b3f97e9ca763ce8df78"
+    },
+    {
+      "game": "flappycnn",
+      "candidate": "c8-res0",
+      "config": "flappycnn/c8-res0.ini",
+      "sha256": "8899a6f921e9bd794dda981fd6104086cf54a174d864bf91b6e08d350478a583",
+      "shape_hwc": [
+        640,
+        420,
+        3
+      ],
+      "parameters": 8661064,
+      "storage_floor_bytes": 895911248,
+      "descriptor_sha256": "ec9efa7151157c4571f25e530e6ed5ac0f1915cf2f6c700756e0d07ef4eb2e5b"
+    },
+    {
+      "game": "flappycnn",
+      "candidate": "c8-res1",
+      "config": "flappycnn/c8-res1.ini",
+      "sha256": "ae97618cdd5af95b0313b78379e16d437911cc0293b6579fa0809a8052dc8180",
+      "shape_hwc": [
+        640,
+        420,
+        3
+      ],
+      "parameters": 8661648,
+      "storage_floor_bytes": 1089458928,
+      "descriptor_sha256": "85cf9896812ebd49bfbd239901a72d4067feadfe3e9b357da1f94f4819b96183"
+    },
+    {
+      "game": "flappycnn",
+      "candidate": "c16-res0",
+      "config": "flappycnn/c16-res0.ini",
+      "sha256": "0e79c7dfddccc901860bc0be45f08aeecae43bbcff8dda22274906fea254f231",
+      "shape_hwc": [
+        640,
+        420,
+        3
+      ],
+      "parameters": 17264208,
+      "storage_floor_bytes": 1106681328,
+      "descriptor_sha256": "b9e1cd8bc694e0271c84a97254d6926d97f325e8dec71bfe8923886af3261d82"
+    },
+    {
+      "game": "flappycnn",
+      "candidate": "c16-res1",
+      "config": "flappycnn/c16-res1.ini",
+      "sha256": "a00da621c7c85200b780c26f46435cb78a32844e39d0ee9c0159459dec66d8e6",
+      "shape_hwc": [
+        640,
+        420,
+        3
+      ],
+      "parameters": 17266528,
+      "storage_floor_bytes": 1493799728,
+      "descriptor_sha256": "0bf717388dbc4cb46a73b3a396fa96990e5e2a8e7a01baa3a777306f2e133b85"
+    },
+    {
+      "game": "flappycnn",
+      "candidate": "stride1-gap",
+      "config": "flappycnn/stride1-gap.ini",
+      "sha256": "e424c049801cf1379490a83cdc061cdba7b693fff20c1485b44eb19370838f96",
+      "shape_hwc": [
+        640,
+        420,
+        3
+      ],
+      "parameters": 59976,
+      "storage_floor_bytes": 4865562192,
+      "descriptor_sha256": "00f45b5edaf53b8891a1640f504807d3c6d5673f00642302ba12bf6098b6012a"
+    },
+    {
+      "game": "flappycnn",
+      "candidate": "stride2-gap",
+      "config": "flappycnn/stride2-gap.ini",
+      "sha256": "8e9cde7ed2893167ad1c8eb92d0775556978f5db84f4c39df95b09ef2eb0e242",
+      "shape_hwc": [
+        640,
+        420,
+        3
+      ],
+      "parameters": 59976,
+      "storage_floor_bytes": 1536742992,
+      "descriptor_sha256": "00f45b5edaf53b8891a1640f504807d3c6d5673f00642302ba12bf6098b6012a"
+    },
+    {
+      "game": "flappycnn",
+      "candidate": "stride4-gap",
+      "config": "flappycnn/stride4-gap.ini",
+      "sha256": "9a6ffe8c2348d73393b184367c63c5795c31e5f77a8de5b54de3f97a3dcf4e29",
+      "shape_hwc": [
+        640,
+        420,
+        3
+      ],
+      "parameters": 59976,
+      "storage_floor_bytes": 704538192,
+      "descriptor_sha256": "00f45b5edaf53b8891a1640f504807d3c6d5673f00642302ba12bf6098b6012a"
+    },
+    {
+      "game": "flappycnn",
+      "candidate": "stride8-gap",
+      "config": "flappycnn/stride8-gap.ini",
+      "sha256": "f5d55e9b999be26a17c648ec5283fc2a815b66de38576950b5cc0af52fb459d1",
+      "shape_hwc": [
+        640,
+        420,
+        3
+      ],
+      "parameters": 59976,
+      "storage_floor_bytes": 497147472,
+      "descriptor_sha256": "00f45b5edaf53b8891a1640f504807d3c6d5673f00642302ba12bf6098b6012a"
+    },
+    {
+      "game": "breakoutcnn",
+      "candidate": "nature",
+      "config": "breakoutcnn/nature.ini",
+      "sha256": "1538ddb8303a2c96b141c02a7f87f0e07a5b104d463c5632948ac7fc696d387e",
+      "shape_hwc": [
+        330,
+        576,
+        3
+      ],
+      "parameters": 20736800,
+      "storage_floor_bytes": 1428748480,
+      "descriptor_sha256": "215dd51b2b42146e6023debed82781896cd98f1d21dbb1b476e900bbd299d250"
+    },
+    {
+      "game": "breakoutcnn",
+      "candidate": "quality",
+      "config": "breakoutcnn/quality.ini",
+      "sha256": "3e3547394681338aec0ae8a5bf1903478aed252b2592b27aff363484e7a0a8e7",
+      "shape_hwc": [
+        330,
+        576,
+        3
+      ],
+      "parameters": 12299264,
+      "storage_floor_bytes": 742858048,
+      "descriptor_sha256": "a52a39968791c499bcf679c85bc83a2f291f1504ceaeb2339a56693be6c38bec"
+    },
+    {
+      "game": "breakoutcnn",
+      "candidate": "c8-res0",
+      "config": "breakoutcnn/c8-res0.ini",
+      "sha256": "1dde35bd323d72e0f912d52a034273df10e533f039e34b2f354e73435ee59cf4",
+      "shape_hwc": [
+        330,
+        576,
+        3
+      ],
+      "parameters": 6179016,
+      "storage_floor_bytes": 635942880,
+      "descriptor_sha256": "bdae96ba4b5512ca30beda5a0ffedf10340b1da7430b06466f2def4a9a544da2"
+    },
+    {
+      "game": "breakoutcnn",
+      "candidate": "c8-res1",
+      "config": "breakoutcnn/c8-res1.ini",
+      "sha256": "030df45356cfbce40c01f88f4bcd95e8f39fa016b8daee7a8b878b47140e2e90",
+      "shape_hwc": [
+        330,
+        576,
+        3
+      ],
+      "parameters": 6179600,
+      "storage_floor_bytes": 773641600,
+      "descriptor_sha256": "f35e395bd2c00effc06d13b4bea2ccd681c064c76ceae7eda36d72ac89889091"
+    },
+    {
+      "game": "breakoutcnn",
+      "candidate": "c16-res0",
+      "config": "breakoutcnn/c16-res0.ini",
+      "sha256": "831add8530d02132f42d3232ff792590b9c40f28d38edbe8d412dcd474abeb04",
+      "shape_hwc": [
+        330,
+        576,
+        3
+      ],
+      "parameters": 12299984,
+      "storage_floor_bytes": 785899648,
+      "descriptor_sha256": "31837ce2e5eef88137aa6f969d384be94fefb61c36eda874f6b2b44e363277a3"
+    },
+    {
+      "game": "breakoutcnn",
+      "candidate": "c16-res1",
+      "config": "breakoutcnn/c16-res1.ini",
+      "sha256": "be16d1f2bb42dc8ce5be7b3b6f2de2b7b75d8791d2aca2471b401d413d9c56fe",
+      "shape_hwc": [
+        330,
+        576,
+        3
+      ],
+      "parameters": 12302304,
+      "storage_floor_bytes": 1061320128,
+      "descriptor_sha256": "b2c78723ae6bcbe37c5d25f06214fcbf8444d4feb25d861bf78929393a7b2637"
+    },
+    {
+      "game": "breakoutcnn",
+      "candidate": "stride1-gap",
+      "config": "breakoutcnn/stride1-gap.ini",
+      "sha256": "5f7a9604c6c3a1df82cf4fe048fb8cfcca8cc738f686ad232f767eaa4d4abd9c",
+      "shape_hwc": [
+        330,
+        576,
+        3
+      ],
+      "parameters": 60104,
+      "storage_floor_bytes": 3441047776,
+      "descriptor_sha256": "0536b5d40b294e38a15fefac3fda44fee024ae2843d7ac7b719b538a8b7790fe"
+    },
+    {
+      "game": "breakoutcnn",
+      "candidate": "stride2-gap",
+      "config": "breakoutcnn/stride2-gap.ini",
+      "sha256": "3923f1147aaaced2c2d07b18278b9d600845627b71d2c64cc846a31cec9c5706",
+      "shape_hwc": [
+        330,
+        576,
+        3
+      ],
+      "parameters": 60104,
+      "storage_floor_bytes": 1087097056,
+      "descriptor_sha256": "0536b5d40b294e38a15fefac3fda44fee024ae2843d7ac7b719b538a8b7790fe"
+    },
+    {
+      "game": "breakoutcnn",
+      "candidate": "stride4-gap",
+      "config": "breakoutcnn/stride4-gap.ini",
+      "sha256": "189fb02c0dc11c199f7713be1c16582ab1f2949a25b8c59b2549125a49b33803",
+      "shape_hwc": [
+        330,
+        576,
+        3
+      ],
+      "parameters": 60104,
+      "storage_floor_bytes": 499798240,
+      "descriptor_sha256": "0536b5d40b294e38a15fefac3fda44fee024ae2843d7ac7b719b538a8b7790fe"
+    },
+    {
+      "game": "breakoutcnn",
+      "candidate": "stride8-gap",
+      "config": "breakoutcnn/stride8-gap.ini",
+      "sha256": "d998cb24066b11e54bf95ce002d51240dce3fbe956b20282c094e38aa37965f3",
+      "shape_hwc": [
+        330,
+        576,
+        3
+      ],
+      "parameters": 60104,
+      "storage_floor_bytes": 352379104,
+      "descriptor_sha256": "0536b5d40b294e38a15fefac3fda44fee024ae2843d7ac7b719b538a8b7790fe"
+    },
+    {
+      "game": "snakecnn",
+      "candidate": "nature",
+      "config": "snakecnn/nature.ini",
+      "sha256": "3c8d39771a22180e78ffdb0feb592d9d5d4152ead8e5d81e6f8910fdaec8c40f",
+      "shape_hwc": [
+        616,
+        616,
+        3
+      ],
+      "parameters": 43781024,
+      "storage_floor_bytes": 2951039824,
+      "descriptor_sha256": "832f0a6b69de5b64e5aa5a701e31601967d2fb205caf0225aeff16dbc5768bcf"
+    },
+    {
+      "game": "snakecnn",
+      "candidate": "quality",
+      "config": "snakecnn/quality.ini",
+      "sha256": "c96962bb70dcfa528e5ef25d536416995d4df356d6b7b1b496487e83a8e714c1",
+      "shape_hwc": [
+        616,
+        616,
+        3
+      ],
+      "parameters": 24345728,
+      "storage_floor_bytes": 1476312208,
+      "descriptor_sha256": "d887dfffaa7979bcefdf8efe0336300546ecbc86a2ac2ad1de9eb89031be3265"
+    },
+    {
+      "game": "snakecnn",
+      "candidate": "c8-res0",
+      "config": "snakecnn/c8-res0.ini",
+      "sha256": "d1d998444b1ce72ca4151c900a3cb5fac17df356998d38a81cf463528fed52e7",
+      "shape_hwc": [
+        616,
+        616,
+        3
+      ],
+      "parameters": 12202312,
+      "storage_floor_bytes": 1264179824,
+      "descriptor_sha256": "1047c881de368f7e7761f8484b87aa6893646daca3cf10cdc6896909000487c4"
+    },
+    {
+      "game": "snakecnn",
+      "candidate": "c8-res1",
+      "config": "snakecnn/c8-res1.ini",
+      "sha256": "e3a9f888996770b46135ccf8987ae997176fcfdbe8e4a5399d7d66545f46f76c",
+      "shape_hwc": [
+        616,
+        616,
+        3
+      ],
+      "parameters": 12202896,
+      "storage_floor_bytes": 1537399824,
+      "descriptor_sha256": "200fdf2cd51d393a704bf0db23aeb4cf1fe8a9ba4c6b863149c31e6b24abaec5"
+    },
+    {
+      "game": "snakecnn",
+      "candidate": "c16-res0",
+      "config": "snakecnn/c16-res0.ini",
+      "sha256": "9507c6a3a0abff2b01dfe5e12200a1ee7d3e33f17a9a9fb92cd933380b4077cc",
+      "shape_hwc": [
+        616,
+        616,
+        3
+      ],
+      "parameters": 24346448,
+      "storage_floor_bytes": 1561704208,
+      "descriptor_sha256": "28e84de3a3382e50749afab12ad9362d0a2d58bed927e0f5ef83d82be2cd9af9"
+    },
+    {
+      "game": "snakecnn",
+      "candidate": "c16-res1",
+      "config": "snakecnn/c16-res1.ini",
+      "sha256": "0c895a88fab7adff11fa6b899d2178eef1f04cd9ff45400d234a1da024bbd78f",
+      "shape_hwc": [
+        616,
+        616,
+        3
+      ],
+      "parameters": 24348768,
+      "storage_floor_bytes": 2108167248,
+      "descriptor_sha256": "a32ad517f8a804ce991b0cdcc843ffe25cab24730f30a6f610badb5289cff533"
+    },
+    {
+      "game": "snakecnn",
+      "candidate": "stride1-gap",
+      "config": "snakecnn/stride1-gap.ini",
+      "sha256": "1c36fffec8eda5442a107bd333f5ccce2d3c212be246c49c5a6d169ae9363f6f",
+      "shape_hwc": [
+        616,
+        616,
+        3
+      ],
+      "parameters": 60232,
+      "storage_floor_bytes": 6867998576,
+      "descriptor_sha256": "f89ddc75c73a1a4aa75b4e5f630ef78e324aa15319cc6602faa8a163717aad98"
+    },
+    {
+      "game": "snakecnn",
+      "candidate": "stride2-gap",
+      "config": "snakecnn/stride2-gap.ini",
+      "sha256": "213e915f95471c47f5e83870cef3be3bbd600eeac266915ab1e92b8c267b749a",
+      "shape_hwc": [
+        616,
+        616,
+        3
+      ],
+      "parameters": 60232,
+      "storage_floor_bytes": 2168815472,
+      "descriptor_sha256": "f89ddc75c73a1a4aa75b4e5f630ef78e324aa15319cc6602faa8a163717aad98"
+    },
+    {
+      "game": "snakecnn",
+      "candidate": "stride4-gap",
+      "config": "snakecnn/stride4-gap.ini",
+      "sha256": "9d9ef9425e6864d3db2f8cd34fc8d0624205ded4bc5910ea5c9bb4c34d3a2f56",
+      "shape_hwc": [
+        616,
+        616,
+        3
+      ],
+      "parameters": 60232,
+      "storage_floor_bytes": 994019696,
+      "descriptor_sha256": "f89ddc75c73a1a4aa75b4e5f630ef78e324aa15319cc6602faa8a163717aad98"
+    },
+    {
+      "game": "snakecnn",
+      "candidate": "stride8-gap",
+      "config": "snakecnn/stride8-gap.ini",
+      "sha256": "ec5c20c1124185152d84a1a2bcabc09b337c7bbe9b46cf0b00328944053b9a41",
+      "shape_hwc": [
+        616,
+        616,
+        3
+      ],
+      "parameters": 60232,
+      "storage_floor_bytes": 700320752,
+      "descriptor_sha256": "f89ddc75c73a1a4aa75b4e5f630ef78e324aa15319cc6602faa8a163717aad98"
+    },
+    {
+      "game": "mazecnn",
+      "candidate": "nature",
+      "config": "mazecnn/nature.ini",
+      "sha256": "d92244af1db39df21307c2173d01adbf795bde2985a645afdd32a53d88b0a230",
+      "shape_hwc": [
+        616,
+        616,
+        3
+      ],
+      "parameters": 43781152,
+      "storage_floor_bytes": 2951042528,
+      "descriptor_sha256": "904735372191e244e68f5d44102158928da240ac0875a7605281d5623347c473"
+    },
+    {
+      "game": "mazecnn",
+      "candidate": "quality",
+      "config": "mazecnn/quality.ini",
+      "sha256": "433d2ac1fd0827aa906f872dd50b99f5f2bdd0e2c0fef35c17c127d649f00924",
+      "shape_hwc": [
+        616,
+        616,
+        3
+      ],
+      "parameters": 24345856,
+      "storage_floor_bytes": 1476314912,
+      "descriptor_sha256": "6e52270f4265050d9db688c0696f1956ba1a1273399322ade332dfa00ec68133"
+    },
+    {
+      "game": "mazecnn",
+      "candidate": "c8-res0",
+      "config": "mazecnn/c8-res0.ini",
+      "sha256": "3110f7475133e799d77f76467954be811fd33e7c0c0cbae9a9d7abe12f3bafd9",
+      "shape_hwc": [
+        616,
+        616,
+        3
+      ],
+      "parameters": 12202440,
+      "storage_floor_bytes": 1264182528,
+      "descriptor_sha256": "46d19a5776343c3491c3ee4803f63ea0aae818d7cfb2d9edcb778340c7d1ef8f"
+    },
+    {
+      "game": "mazecnn",
+      "candidate": "c8-res1",
+      "config": "mazecnn/c8-res1.ini",
+      "sha256": "8bf7bd2ad531ba93f5ab337b121a6ae62399fa7712c997c93c7f86e06e531de1",
+      "shape_hwc": [
+        616,
+        616,
+        3
+      ],
+      "parameters": 12203024,
+      "storage_floor_bytes": 1537402528,
+      "descriptor_sha256": "787672793d456d593b19d31121831177e431f8c350cc453e154cac88c635d444"
+    },
+    {
+      "game": "mazecnn",
+      "candidate": "c16-res0",
+      "config": "mazecnn/c16-res0.ini",
+      "sha256": "bd6c8b959bcdad24232c188e7088a4958e4163c5c5074b12b452d163344d3624",
+      "shape_hwc": [
+        616,
+        616,
+        3
+      ],
+      "parameters": 24346576,
+      "storage_floor_bytes": 1561706912,
+      "descriptor_sha256": "5a9559f759e3678f729e246d6d9856f0fbe37d654fdf3884615320de09c63e96"
+    },
+    {
+      "game": "mazecnn",
+      "candidate": "c16-res1",
+      "config": "mazecnn/c16-res1.ini",
+      "sha256": "8b783cc86a7e4b453a37c0e2963a71f21700b1862341196c7e80b4fa73f56146",
+      "shape_hwc": [
+        616,
+        616,
+        3
+      ],
+      "parameters": 24348896,
+      "storage_floor_bytes": 2108169952,
+      "descriptor_sha256": "c4d3f03f48e62a4f56c8bb30f2f5a737c988142ce9a0d7163ee223f82382099f"
+    },
+    {
+      "game": "mazecnn",
+      "candidate": "stride1-gap",
+      "config": "mazecnn/stride1-gap.ini",
+      "sha256": "5a1709a01ac3e6ca4be91ba7131f26d0b29f9f4645692cfabf41129f65c23cdf",
+      "shape_hwc": [
+        616,
+        616,
+        3
+      ],
+      "parameters": 60360,
+      "storage_floor_bytes": 6868001280,
+      "descriptor_sha256": "b0c0d1bec447c826ac197023e5941a814b1cf70947caebbe831b3c543a2a8f25"
+    },
+    {
+      "game": "mazecnn",
+      "candidate": "stride2-gap",
+      "config": "mazecnn/stride2-gap.ini",
+      "sha256": "0278a1e6d12c356641a115c4a72e8c640db60b64c11ffc6b480ce5b345760747",
+      "shape_hwc": [
+        616,
+        616,
+        3
+      ],
+      "parameters": 60360,
+      "storage_floor_bytes": 2168818176,
+      "descriptor_sha256": "b0c0d1bec447c826ac197023e5941a814b1cf70947caebbe831b3c543a2a8f25"
+    },
+    {
+      "game": "mazecnn",
+      "candidate": "stride4-gap",
+      "config": "mazecnn/stride4-gap.ini",
+      "sha256": "14447a1a9c88a28587456b211f07d067798a3f9a1cc1565ad0eec7af3cbb7ba7",
+      "shape_hwc": [
+        616,
+        616,
+        3
+      ],
+      "parameters": 60360,
+      "storage_floor_bytes": 994022400,
+      "descriptor_sha256": "b0c0d1bec447c826ac197023e5941a814b1cf70947caebbe831b3c543a2a8f25"
+    },
+    {
+      "game": "mazecnn",
+      "candidate": "stride8-gap",
+      "config": "mazecnn/stride8-gap.ini",
+      "sha256": "ddcc6e1010cb5cbe1a85eebc400ff71fd7e29b72ba7752bd679bf338e0dcb548",
+      "shape_hwc": [
+        616,
+        616,
+        3
+      ],
+      "parameters": 60360,
+      "storage_floor_bytes": 700323456,
+      "descriptor_sha256": "b0c0d1bec447c826ac197023e5941a814b1cf70947caebbe831b3c543a2a8f25"
+    }
+  ],
+  "negative_cases": [
+    {
+      "task": "connect4cnn",
+      "case": "index-overflow",
+      "expected_rejection": true,
+      "timing": {
+        "command": [
+          "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/metadata/connect4cnn/default",
+          "--storage",
+          "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/rejects/connect4cnn/index-overflow/config.ini"
+        ],
+        "cwd": "/home/claude/cnn-audit-20261008",
+        "status": "failed",
+        "timeout": 30,
+        "environment": {
+          "PUFFER_CHECKPOINT_RECEIPTS": null,
+          "NVCC_ARCH": null,
+          "NVCC_EXTRA": null,
+          "NVCC_APPEND_FLAGS": null,
+          "CUDA_HOME": "/usr/local/cuda",
+          "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+        },
+        "launch_monotonic_ns": 559176327592096,
+        "pid": 1038199,
+        "returncode": 1,
+        "error": "Process failed: /home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/rejects/connect4cnn/index-overflow/native.txt",
+        "end_monotonic_ns": 559176391560014
+      }
+    },
+    {
+      "task": "connect4cnn",
+      "case": "encoder5",
+      "expected_rejection": true,
+      "timing": {
+        "command": [
+          "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/metadata/connect4cnn/default",
+          "--storage",
+          "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/rejects/connect4cnn/encoder5/config.ini"
+        ],
+        "cwd": "/home/claude/cnn-audit-20261008",
+        "status": "failed",
+        "timeout": 30,
+        "environment": {
+          "PUFFER_CHECKPOINT_RECEIPTS": null,
+          "NVCC_ARCH": null,
+          "NVCC_EXTRA": null,
+          "NVCC_APPEND_FLAGS": null,
+          "CUDA_HOME": "/usr/local/cuda",
+          "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+        },
+        "launch_monotonic_ns": 559176393043807,
+        "pid": 1038200,
+        "returncode": 1,
+        "error": "Process failed: /home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/rejects/connect4cnn/encoder5/native.txt",
+        "end_monotonic_ns": 559176456977311
+      }
+    },
+    {
+      "task": "pongcnn",
+      "case": "index-overflow",
+      "expected_rejection": true,
+      "timing": {
+        "command": [
+          "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/metadata/pongcnn/default",
+          "--storage",
+          "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/rejects/pongcnn/index-overflow/config.ini"
+        ],
+        "cwd": "/home/claude/cnn-audit-20261008",
+        "status": "failed",
+        "timeout": 30,
+        "environment": {
+          "PUFFER_CHECKPOINT_RECEIPTS": null,
+          "NVCC_ARCH": null,
+          "NVCC_EXTRA": null,
+          "NVCC_APPEND_FLAGS": null,
+          "CUDA_HOME": "/usr/local/cuda",
+          "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+        },
+        "launch_monotonic_ns": 559176458208521,
+        "pid": 1038201,
+        "returncode": 1,
+        "error": "Process failed: /home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/rejects/pongcnn/index-overflow/native.txt",
+        "end_monotonic_ns": 559176522365347
+      }
+    },
+    {
+      "task": "pongcnn",
+      "case": "encoder5",
+      "expected_rejection": true,
+      "timing": {
+        "command": [
+          "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/metadata/pongcnn/default",
+          "--storage",
+          "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/rejects/pongcnn/encoder5/config.ini"
+        ],
+        "cwd": "/home/claude/cnn-audit-20261008",
+        "status": "failed",
+        "timeout": 30,
+        "environment": {
+          "PUFFER_CHECKPOINT_RECEIPTS": null,
+          "NVCC_ARCH": null,
+          "NVCC_EXTRA": null,
+          "NVCC_APPEND_FLAGS": null,
+          "CUDA_HOME": "/usr/local/cuda",
+          "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+        },
+        "launch_monotonic_ns": 559176523611316,
+        "pid": 1038202,
+        "returncode": 1,
+        "error": "Process failed: /home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/rejects/pongcnn/encoder5/native.txt",
+        "end_monotonic_ns": 559176587594195
+      }
+    },
+    {
+      "task": "flappycnn",
+      "case": "index-overflow",
+      "expected_rejection": true,
+      "timing": {
+        "command": [
+          "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/metadata/flappycnn/default",
+          "--storage",
+          "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/rejects/flappycnn/index-overflow/config.ini"
+        ],
+        "cwd": "/home/claude/cnn-audit-20261008",
+        "status": "failed",
+        "timeout": 30,
+        "environment": {
+          "PUFFER_CHECKPOINT_RECEIPTS": null,
+          "NVCC_ARCH": null,
+          "NVCC_EXTRA": null,
+          "NVCC_APPEND_FLAGS": null,
+          "CUDA_HOME": "/usr/local/cuda",
+          "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+        },
+        "launch_monotonic_ns": 559176589158212,
+        "pid": 1038203,
+        "returncode": 1,
+        "error": "Process failed: /home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/rejects/flappycnn/index-overflow/native.txt",
+        "end_monotonic_ns": 559176653223024
+      }
+    },
+    {
+      "task": "flappycnn",
+      "case": "encoder5",
+      "expected_rejection": true,
+      "timing": {
+        "command": [
+          "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/metadata/flappycnn/default",
+          "--storage",
+          "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/rejects/flappycnn/encoder5/config.ini"
+        ],
+        "cwd": "/home/claude/cnn-audit-20261008",
+        "status": "failed",
+        "timeout": 30,
+        "environment": {
+          "PUFFER_CHECKPOINT_RECEIPTS": null,
+          "NVCC_ARCH": null,
+          "NVCC_EXTRA": null,
+          "NVCC_APPEND_FLAGS": null,
+          "CUDA_HOME": "/usr/local/cuda",
+          "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+        },
+        "launch_monotonic_ns": 559176654496424,
+        "pid": 1038204,
+        "returncode": 1,
+        "error": "Process failed: /home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/rejects/flappycnn/encoder5/native.txt",
+        "end_monotonic_ns": 559176718524763
+      }
+    },
+    {
+      "task": "breakoutcnn",
+      "case": "index-overflow",
+      "expected_rejection": true,
+      "timing": {
+        "command": [
+          "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/metadata/breakoutcnn/default",
+          "--storage",
+          "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/rejects/breakoutcnn/index-overflow/config.ini"
+        ],
+        "cwd": "/home/claude/cnn-audit-20261008",
+        "status": "failed",
+        "timeout": 30,
+        "environment": {
+          "PUFFER_CHECKPOINT_RECEIPTS": null,
+          "NVCC_ARCH": null,
+          "NVCC_EXTRA": null,
+          "NVCC_APPEND_FLAGS": null,
+          "CUDA_HOME": "/usr/local/cuda",
+          "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+        },
+        "launch_monotonic_ns": 559176719698961,
+        "pid": 1038205,
+        "returncode": 1,
+        "error": "Process failed: /home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/rejects/breakoutcnn/index-overflow/native.txt",
+        "end_monotonic_ns": 559176783604270
+      }
+    },
+    {
+      "task": "breakoutcnn",
+      "case": "encoder5",
+      "expected_rejection": true,
+      "timing": {
+        "command": [
+          "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/metadata/breakoutcnn/default",
+          "--storage",
+          "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/rejects/breakoutcnn/encoder5/config.ini"
+        ],
+        "cwd": "/home/claude/cnn-audit-20261008",
+        "status": "failed",
+        "timeout": 30,
+        "environment": {
+          "PUFFER_CHECKPOINT_RECEIPTS": null,
+          "NVCC_ARCH": null,
+          "NVCC_EXTRA": null,
+          "NVCC_APPEND_FLAGS": null,
+          "CUDA_HOME": "/usr/local/cuda",
+          "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+        },
+        "launch_monotonic_ns": 559176784840187,
+        "pid": 1038206,
+        "returncode": 1,
+        "error": "Process failed: /home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/rejects/breakoutcnn/encoder5/native.txt",
+        "end_monotonic_ns": 559176849375031
+      }
+    },
+    {
+      "task": "mazecnn",
+      "case": "index-overflow",
+      "expected_rejection": true,
+      "timing": {
+        "command": [
+          "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/metadata/mazecnn/default",
+          "--storage",
+          "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/rejects/mazecnn/index-overflow/config.ini"
+        ],
+        "cwd": "/home/claude/cnn-audit-20261008",
+        "status": "failed",
+        "timeout": 30,
+        "environment": {
+          "PUFFER_CHECKPOINT_RECEIPTS": null,
+          "NVCC_ARCH": null,
+          "NVCC_EXTRA": null,
+          "NVCC_APPEND_FLAGS": null,
+          "CUDA_HOME": "/usr/local/cuda",
+          "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+        },
+        "launch_monotonic_ns": 559176850536059,
+        "pid": 1038207,
+        "returncode": 1,
+        "error": "Process failed: /home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/rejects/mazecnn/index-overflow/native.txt",
+        "end_monotonic_ns": 559176914519578
+      }
+    },
+    {
+      "task": "mazecnn",
+      "case": "encoder5",
+      "expected_rejection": true,
+      "timing": {
+        "command": [
+          "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/metadata/mazecnn/default",
+          "--storage",
+          "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/rejects/mazecnn/encoder5/config.ini"
+        ],
+        "cwd": "/home/claude/cnn-audit-20261008",
+        "status": "failed",
+        "timeout": 30,
+        "environment": {
+          "PUFFER_CHECKPOINT_RECEIPTS": null,
+          "NVCC_ARCH": null,
+          "NVCC_EXTRA": null,
+          "NVCC_APPEND_FLAGS": null,
+          "CUDA_HOME": "/usr/local/cuda",
+          "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+        },
+        "launch_monotonic_ns": 559176915809682,
+        "pid": 1038208,
+        "returncode": 1,
+        "error": "Process failed: /home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/rejects/mazecnn/encoder5/native.txt",
+        "end_monotonic_ns": 559176980091186
+      }
+    },
+    {
+      "task": "snakecnn",
+      "case": "index-overflow",
+      "expected_rejection": true,
+      "timing": {
+        "command": [
+          "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/metadata/snakecnn/default",
+          "--storage",
+          "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/rejects/snakecnn/index-overflow/config.ini"
+        ],
+        "cwd": "/home/claude/cnn-audit-20261008",
+        "status": "failed",
+        "timeout": 30,
+        "environment": {
+          "PUFFER_CHECKPOINT_RECEIPTS": null,
+          "NVCC_ARCH": null,
+          "NVCC_EXTRA": null,
+          "NVCC_APPEND_FLAGS": null,
+          "CUDA_HOME": "/usr/local/cuda",
+          "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+        },
+        "launch_monotonic_ns": 559176981194631,
+        "pid": 1038209,
+        "returncode": 1,
+        "error": "Process failed: /home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/rejects/snakecnn/index-overflow/native.txt",
+        "end_monotonic_ns": 559177045202266
+      }
+    },
+    {
+      "task": "snakecnn",
+      "case": "encoder5",
+      "expected_rejection": true,
+      "timing": {
+        "command": [
+          "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/metadata/snakecnn/default",
+          "--storage",
+          "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/rejects/snakecnn/encoder5/config.ini"
+        ],
+        "cwd": "/home/claude/cnn-audit-20261008",
+        "status": "failed",
+        "timeout": 30,
+        "environment": {
+          "PUFFER_CHECKPOINT_RECEIPTS": null,
+          "NVCC_ARCH": null,
+          "NVCC_EXTRA": null,
+          "NVCC_APPEND_FLAGS": null,
+          "CUDA_HOME": "/usr/local/cuda",
+          "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+        },
+        "launch_monotonic_ns": 559177046347848,
+        "pid": 1038210,
+        "returncode": 1,
+        "error": "Process failed: /home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/rejects/snakecnn/encoder5/native.txt",
+        "end_monotonic_ns": 559177110381613
+      }
+    }
+  ],
+  "baseline_construction": [
+    {
+      "family": "impala",
+      "parameters": 17514304,
+      "numerical_acceptance": false
+    },
+    {
+      "family": "impoola",
+      "parameters": 151360,
+      "numerical_acceptance": false
+    }
+  ],
+  "gpu_queried": false,
+  "cuda_executed": false,
+  "cpu_neural_reference": false,
+  "numerical_acceptance": false,
+  "peak_memory_certified": false,
+  "inputs_sha256": "5b266a11b86e123afe9013cea22333baf1ef2cdd43ac4e97893a7584ac0cf6a4"
+}

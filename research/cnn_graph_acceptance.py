@@ -24,6 +24,7 @@ import dense_alias_acceptance as fixtures
 
 ROOT = panels.ROOT
 SCHEMA = "native-cnn-graph-check-v1"
+IMAGE_SCHEMA = "native-cnn-image-graph-check-v2"
 MODES = ("eager-0", "eager-1", "graph-0", "graph-1")
 RTOL, ATOL = 8e-4, 6e-5
 TOLERANCES = {"flex": [RTOL, ATOL], "nature": [3e-4, 3e-5]}
@@ -35,12 +36,25 @@ require, sha, save = fixtures.require, fixtures.sha, fixtures.save
 
 def bundle(args):
     root = args.out.resolve(); root.mkdir(parents=True, exist_ok=False)
+    shape = getattr(args, "image_shape", None)
+    batches = getattr(args, "batches", None)
+    if shape is None:
+        require(batches is None, "Custom batches require an explicit image contract")
+    else:
+        require(len(shape) == 3 and all(type(v) is int for v in shape)
+                and all(36 <= v <= 1024 for v in shape[:2]) and shape[2] in (1,3), "Invalid image shape")
+        batches = batches or [1,4,16]
+        require(batches == sorted(set(batches)) and batches[0] == 1
+                and all(type(v) is int and 1 <= v <= 64 for v in batches), "Invalid bounded image batches")
     inputs = {}
     for kind in ("native", "reference"):
         lib = getattr(args, kind).resolve(); receipts = Path(str(lib)+".build")
         sources = fixtures.sources(receipts / "source.sha256", ROOT)
         command = (receipts / "command.txt").read_text()
         environment = (receipts / "environment.txt").read_text()
+        if shape is not None:
+            require("CNN_TEST_IMAGE=" + ",".join(map(str, shape)) + "\n" in environment,
+                    "Native/reference compile image differs")
         require("NVCC_ARCH=native" not in environment, "Explicit compile architecture required")
         if kind == "native":
             require("test_nature.cu" in command and "C4_DENSE_PATCH_ALIAS=0" in environment,
@@ -55,16 +69,24 @@ def bundle(args):
         inputs[str(lib)] = sha(lib)
     inputs.update({str(ROOT/n):sha(ROOT/n) for n in TOOLS})
     files = {str(p.relative_to(root)):sha(p) for p in root.rglob("*") if p.is_file()}
-    value = dict(schema=SCHEMA, originals_sha256=inputs, files_sha256=files,
+    value = dict(schema=IMAGE_SCHEMA if shape is not None else SCHEMA, originals_sha256=inputs, files_sha256=files,
                  rtol=RTOL, atol=ATOL, tolerances=TOLERANCES, cpu_neural_reference=False)
+    if shape is not None: value.update(shape_hwc=shape, batches=batches, layout="NHWC", dtype="float32")
     save(root / "bundle.json", value); inspect_bundle(root, current=True)
     return value
 
 
 def inspect_bundle(root, current=False):
     value = json.loads((root / "bundle.json").read_text())
-    require(value["schema"] == SCHEMA and value["rtol"] == RTOL and value["atol"] == ATOL
+    require(value["schema"] in (SCHEMA, IMAGE_SCHEMA) and value["rtol"] == RTOL and value["atol"] == ATOL
             and value["cpu_neural_reference"] is False, "Changed numerical protocol")
+    if value["schema"] == IMAGE_SCHEMA:
+        shape, batches = value["shape_hwc"], value["batches"]
+        require(len(shape) == 3 and all(type(v) is int for v in shape)
+                and all(36 <= v <= 1024 for v in shape[:2]) and shape[2] in (1,3)
+                and batches == sorted(set(batches)) and batches[0] == 1
+                and all(type(v) is int and 1 <= v <= 64 for v in batches)
+                and value["layout"] == "NHWC" and value["dtype"] == "float32", "Invalid image-check contract")
     if "tolerances" in value: require(value["tolerances"] == TOLERANCES, "Changed family tolerances")
     fixtures.verify_files(root, value["files_sha256"])
     if current:
@@ -83,13 +105,15 @@ def settings(config):
     return 0, values
 
 
-def cases():
+def cases(contract=None):
+    if contract and contract["schema"] == IMAGE_SCHEMA:
+        return [(b,s) for b in contract["batches"] for s in ("signed","smooth","zero")]
     return [(b,s) for b in (1,64) for s in ("signed","smooth","zero")] + [(2048,"signed")]
 
 
-def topology(model, values):
+def topology(model, values, shape=(36,44,1)):
     # Independent scalar shape/layout arithmetic only; no images/weights/math.
-    result=[]; h,w,ci,offset=36,44,1,0
+    result=[]; h,w,ci=shape; offset=0
     def conv(co,k,s,same=True,skip=False):
         nonlocal h,w,ci,offset
         oh=(h+s-1)//s if same else (h-k)//s+1
@@ -107,7 +131,7 @@ def topology(model, values):
         for stage in range(depth):
             co,k,s,pool,skip=values[3+stage*5:8+stage*5]
             require(co in (8,16,32) and 1<=k<=(8 if stage==0 else 5)
-                    and s in ((4,8) if stage==0 else (1,2,4)) and pool in (0,1,2) and skip in (0,1), "Invalid stage")
+                    and s in ((1,2,4,8) if stage==0 else (1,2,4)) and pool in (0,1,2) and skip in (0,1), "Invalid stage")
             conv(co,k,s)
             if skip: conv(ci,3,1,skip=True)
             if pool:
@@ -121,7 +145,7 @@ def topology(model, values):
 
 def fixture(rows, count, batch, state):
     rng=np.random.default_rng(73173+batch)
-    x=rng.uniform(0,1,(batch,1584)).astype(np.float32)
+    x=rng.uniform(0,1,(batch,math.prod(rows[0][:3]))).astype(np.float32)
     weights=np.empty(count,dtype=np.float32)
     for row in rows:
         ci,co,k,offset,kind=row[2],row[5],row[6],row[10],row[11]
@@ -141,7 +165,7 @@ def worker(out):
     require(packet["parent"]==os.getppid() and packet["token"]==os.environ.get("PUFFER_GRAPH_CHECK_TOKEN"), "Scheduled parent required")
     model, values=settings(panels.panel.read(out/"config.ini")); spec=np.array(values,dtype=np.int32)
     rtol,atol=bundle_value.get("tolerances",{}).get("nature" if model else "flex",[RTOL,ATOL])
-    rows,count=topology(model,values)
+    rows,count=topology(model,values,bundle_value.get("shape_hwc",(36,44,1)))
     native=ctypes.CDLL(str(root/"native.so")); reference=ctypes.CDLL(str(root/"reference.so"))
     floats=np.ctypeslib.ndpointer(dtype=np.float32,flags="C_CONTIGUOUS")
     ints=np.ctypeslib.ndpointer(dtype=np.int32,flags="C_CONTIGUOUS")
@@ -153,6 +177,11 @@ def worker(out):
     native.naturetest_read_params.argtypes=[floats]; native.naturetest_read_trace.argtypes=[floats]
     reference.flexref_layout.argtypes=[ctypes.c_int,ctypes.c_int,ints,ints]
     reference.flexref_run.argtypes=[ctypes.c_int,ctypes.c_int,ints,ctypes.c_int]+[doubles]*7
+    if bundle_value["schema"] == IMAGE_SCHEMA:
+        for lib, name in ((native,"naturetest_image_shape"),(reference,"flexref_image_shape")):
+            function = getattr(lib,name); function.argtypes = [ints]
+            compiled = np.empty(3,dtype=np.int32); function(compiled)
+            require(compiled.tolist() == bundle_value["shape_hwc"], "Library compiled image contract differs")
     actual_layout=np.empty(1+13*12,dtype=np.int32)
     require(reference.flexref_layout(model,128,spec,actual_layout)==count
             and actual_layout[:1+13*len(rows)].tolist()==[len(rows)]+sum(rows,[]), "Independent native/scalar layout differs")
@@ -161,7 +190,7 @@ def worker(out):
     def call(data,batch,trace,out_trace,grad,loss=None):
         require(reference.flexref_run(model,128,spec,batch,*(pointer(a) for a in (*data,trace,out_trace,grad,loss)))==0, "CUDA graph oracle failed")
     receipts=[]
-    for batch,state in cases():
+    for batch,state in cases(bundle_value):
         directory=arrays/f"b{batch}-{state}"; directory.mkdir()
         data=fixture(rows,count,batch,state)
         for name,a in zip(("input","parameters","upstream"),data): a.tofile(directory/(name+".f32"))
@@ -216,12 +245,12 @@ def worker(out):
 
 
 def run(bundle_root, config, out, expected="5090", timeout=120):
-    bundle_root=bundle_root.resolve(); inspect_bundle(bundle_root,current=True)
+    bundle_root=bundle_root.resolve(); contract=inspect_bundle(bundle_root,current=True)
     require(0<timeout<=120, "Bounded graph worker deadline required")
     out=out.resolve(); out.mkdir(parents=True,exist_ok=False); shutil.copyfile(config,out/"config.ini")
     settings(panels.panel.read(out/"config.ini"))
     token=secrets.token_hex(16)
-    request=dict(schema=SCHEMA,bundle=str(bundle_root),bundle_sha256=sha(bundle_root/"bundle.json"),
+    request=dict(schema=contract["schema"],bundle=str(bundle_root),bundle_sha256=sha(bundle_root/"bundle.json"),
         config_sha256=sha(out/"config.ini"),parent=os.getpid(),token=token,hardware=expected,timeout=timeout)
     save(out/"request.json",request)
     try:
@@ -245,10 +274,11 @@ def run(bundle_root, config, out, expected="5090", timeout=120):
 
 def audit(out, completing=False):
     request=json.loads((out/"request.json").read_text())
-    require(request["schema"]==SCHEMA and sha(out/"config.ini")==request["config_sha256"],"Changed graph request")
+    require(request["schema"] in (SCHEMA,IMAGE_SCHEMA) and sha(out/"config.ini")==request["config_sha256"],"Changed graph request")
     require(sha(Path(request["bundle"])/"bundle.json")==request["bundle_sha256"],"Changed graph bundle")
     bundle_value=inspect_bundle(Path(request["bundle"]))
-    model,values=settings(panels.panel.read(out/"config.ini")); rows,count=topology(model,values)
+    require(request["schema"] == bundle_value["schema"], "Graph request/bundle version differs")
+    model,values=settings(panels.panel.read(out/"config.ini")); rows,count=topology(model,values,bundle_value.get("shape_hwc",(36,44,1)))
     rtol,atol=bundle_value.get("tolerances",{}).get("nature" if model else "flex",[RTOL,ATOL])
     prior=None
     for index in range(2):
@@ -256,11 +286,11 @@ def audit(out, completing=False):
         require((directory/"request.json").read_bytes()==(out/"request.json").read_bytes()
                 and sha(directory/"config.ini")==request["config_sha256"],"Worker input changed")
         record=json.loads((directory/"worker.json").read_text())
-        require(record["status"]=="passed" and [(c["batch"],c["state"]) for c in record["cases"]]==cases(),"Incomplete graph panel")
+        require(record["status"]=="passed" and [(c["batch"],c["state"]) for c in record["cases"]]==cases(bundle_value),"Incomplete graph panel")
         fixtures.verify_files(arrays,record["arrays_sha256"])
         require(record["arrays_sha256"]=={str(p.relative_to(arrays)):sha(p) for p in arrays.rglob("*") if p.is_file()},"Changed array inventory")
         require(prior is None or prior==record["arrays_sha256"],"Independent process arrays differ"); prior=record["arrays_sha256"]
-        for batch,state in cases():
+        for batch,state in cases(bundle_value):
             folder=arrays/f"b{batch}-{state}"; data=fixture(rows,count,batch,state)
             for name,a in zip(("input","parameters","upstream"),data): require((folder/(name+".f32")).read_bytes()==a.tobytes(),"Changed fixture")
             for mode in MODES:
@@ -291,9 +321,10 @@ def audit(out, completing=False):
                 and timing["cwd"]==str(directory) and 0<timing["launch_monotonic_ns"]<timing["end_monotonic_ns"], "Failed/changed worker")
         if index: require(previous_end<=timing["launch_monotonic_ns"],"Workers overlap")
         previous_end=timing["end_monotonic_ns"]
-    result=dict(status="passed",schema=SCHEMA,config_sha256=request["config_sha256"],cases=14,native_calls=56,
-        batches=[1,64,2048],hidden_size=128,cpu_neural_reference=False,full_policy_qualified=False,
+    result=dict(status="passed",schema=request["schema"],config_sha256=request["config_sha256"],cases=2*len(cases(bundle_value)),native_calls=8*len(cases(bundle_value)),
+        batches=sorted({b for b,s in cases(bundle_value)}),hidden_size=128,cpu_neural_reference=False,full_policy_qualified=False,
         backward_contract="independent CUDA on actual float32 activations/branches",publication_claim_qualified=False)
+    if request["schema"] == IMAGE_SCHEMA: result.update(shape_hwc=bundle_value["shape_hwc"],layout="NHWC",dtype="float32")
     if not completing:
         report=json.loads((out/"REPORT.json").read_text()); require({k:report[k] for k in result}==result,"Changed graph report")
     return result
@@ -302,6 +333,7 @@ def audit(out, completing=False):
 def main():
     p=argparse.ArgumentParser(description=__doc__); sub=p.add_subparsers(dest="command",required=True)
     b=sub.add_parser("bundle"); b.add_argument("--native",type=Path,required=True); b.add_argument("--reference",type=Path,required=True)
+    b.add_argument("--image-shape",type=int,nargs=3); b.add_argument("--batches",type=int,nargs="+")
     r=sub.add_parser("run"); r.add_argument("--bundle",type=Path,required=True); r.add_argument("--config",type=Path,required=True)
     r.add_argument("--hardware",choices=("5060","5090"),required=True); r.add_argument("--timeout",type=int,default=120)
     sub.add_parser("audit"); sub.add_parser("_worker")

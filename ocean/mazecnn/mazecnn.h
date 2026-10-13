@@ -30,10 +30,7 @@ typedef Env Grid;
 #define VISION 5
 #define WINDOW (2*VISION + 1)
 #define MAX_SIZE 47
-#define OBS_CHANNELS 1
-#define OBS_HEIGHT 36
-#define OBS_WIDTH 44
-#define OBS_SIZE (OBS_CHANNELS * OBS_HEIGHT * OBS_WIDTH)
+#include "../connect4cnn/image.h"
 #define MAZECNN_NUM_REPRESENTATIONS 6
 #define NUM_ATNS 1
 
@@ -97,6 +94,9 @@ void add_log(Grid* env, int idx) {
     env->log.n += 1.0;
 }
 
+#ifdef CNN_IMAGE_V1
+#include "image_v1.h"
+#else
 void compute_observations(Grid* env) {
     obs_t* obs = env->agents[0].observations;
     memset(obs, 0, OBS_SIZE * sizeof(obs_t));
@@ -119,6 +119,8 @@ void compute_observations(Grid* env) {
     }
     if (env->representation == 3) for (int i = 0; i < OBS_SIZE; i++) obs[i] = 1 - obs[i];
 }
+
+#endif
 
 void puf_reset(Env* env) {
 env->tick = 0;

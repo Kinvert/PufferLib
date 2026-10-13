@@ -1,0 +1,29 @@
+{
+  "status": "passed",
+  "legacy_schema": "native-policy-metadata-v1",
+  "cases": [
+    {
+      "family": "flex",
+      "parameters": 160736,
+      "descriptor_sha256": "5588c7ce906b2341260742f133b5c39078cc0b3b33c71001aaddc2e880b3f6ed"
+    },
+    {
+      "family": "nature",
+      "parameters": 138528,
+      "descriptor_sha256": "ec37629ba5023a3ca9248937fc0ecfce36e7ce346ebee92f80576c54b3762882"
+    },
+    {
+      "family": "impala",
+      "parameters": 270496,
+      "descriptor_sha256": "07c9a972b4a8f1e17c717646350834fdd0ad7535c10624915673d2cd96c0691e"
+    },
+    {
+      "family": "impoola",
+      "parameters": 151712,
+      "descriptor_sha256": "043a46d0cd9ba0c9197447f7aa59b5e18bd71e4e88e38025a07befd4eb2d626e"
+    }
+  ],
+  "gpu_queried": false,
+  "cuda_executed": false,
+  "numerical_acceptance": false
+}

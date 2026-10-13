@@ -1,0 +1,1 @@
+{"environment":"snakecnn","default_encoder":"explicit","float32":true,"rules":"snake-local-episodic-v1","receipt_version":1,"evaluation":"first-death-or-game-horizon-v1","image_contract":{"version":"human-geometry-v1","shape_hwc":[616,616,3],"layout":"NHWC","dtype":"float32","preprocessing":"none"}}

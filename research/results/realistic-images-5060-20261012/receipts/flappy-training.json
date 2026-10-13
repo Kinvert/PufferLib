@@ -1,0 +1,44 @@
+{
+  "status": "passed",
+  "hardware": {
+    "gpu_name": "NVIDIA GeForce RTX 5060",
+    "gpu_uuid": "GPU-56b0df25-b4c9-46eb-e498-bc5c71904097",
+    "driver": "591.86",
+    "host": "G240",
+    "cuda_compiler": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2025 NVIDIA Corporation\nBuilt on Fri_Feb_21_20:23:50_PST_2025\nCuda compilation tools, release 12.8, V12.8.93\nBuild cuda_12.8.r12.8/compiler.35583870_0\n"
+  },
+  "shape_hwc": [
+    640,
+    420,
+    3
+  ],
+  "steps": 256,
+  "training_seed": 7,
+  "learner_batch": 16,
+  "actor_batch": 4,
+  "checkpoints": [
+    {
+      "step": 128,
+      "sha256": "c68c9fab03d9dde1c74f150ed7491751ff89c01fed9c5867e8165bf827ee32f1",
+      "train_seconds": 1.010183289
+    },
+    {
+      "step": 256,
+      "sha256": "b39c78ee635e58250c600cc55d0ddeb682bacb844da0e4fcea1694f8d6e29cfe",
+      "train_seconds": 1.382823721
+    }
+  ],
+  "process_seconds": 1.467584817,
+  "process_sps": 174.43625542768203,
+  "inputs_sha256": {
+    "/home/claude/cnn-audit-20261008/build/image-portability-20261012/flappy-policy-v3/puffer": "5f4530f54fe8c08b47e457a8812ced994f4fcffa625a90bc8296534800cc3eb4",
+    "/home/claude/cnn-audit-20261008/build/image-portability-20261012/flappy-policy-v3/metadata": "d07ca23292be5af45c6f8946deeda9334ee1baf93a253e6d973a9f238de82ce1",
+    "/home/claude/cnn-audit-20261008/build/image-portability-20261012/inputs/flappycnn/stride4-gap.ini": "9a6ffe8c2348d73393b184367c63c5795c31e5f77a8de5b54de3f97a3dcf4e29",
+    "/home/claude/cnn-audit-20261008/build/image-portability-20261012/graph-stride4/REPORT.json": "3a2495942708cf4b49b1b704c6d9152643825b07da6743f93c86ee8fc427bdbf",
+    "/home/claude/cnn-audit-20261008/ocean/flappycnn/flappycnn.h": "ce315e3fd219ecf071280bb474c88fba20aa9085c4223850f44e581998eeeeb0"
+  },
+  "parameters": 59976,
+  "learning_or_frontier_claim": false,
+  "full_policy_numerical_qualification": false,
+  "evaluation_executed": false
+}

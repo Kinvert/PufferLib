@@ -50,12 +50,14 @@ static void breakout_exact_info() {
     const char* encoder = "impala";
 #elif defined(C4_NATURE_CNN)
     const char* encoder = "nature";
+#elif defined(CNN_IMAGE_V1)
+    const char* encoder = "explicit";
 #else
     const char* encoder = "tiny";
 #endif
     printf("{\"environment\":\"%s\",\"default_encoder\":\"%s\",\"float32\":%s,"
         "\"rules\":\"breakout-native-v1\",\"receipt_version\":1,"
-        "\"evaluation\":\"first-terminal-or-frame-cap-v1\"}\n",
+        "\"evaluation\":\"first-terminal-or-frame-cap-v1\"" CNN_IMAGE_INFO_JSON "}\n",
         PUFFER_ENV_NAME, encoder, USE_BF16 ? "false" : "true");
 }
 

@@ -17,7 +17,7 @@ static int graph(int model, int hidden, const int* settings, std::vector<Op>& op
     int depth = settings[0], projection = settings[1], gap = settings[2];
     if (depth < 1 || depth > 3 || projection < 16 || projection > 128
             || (projection & (projection - 1)) || gap < 0 || gap > 1) return -1;
-    int h = 36, w = 44, ci = 1, offset = 0;
+    int h = CNN_REF_HEIGHT, w = CNN_REF_WIDTH, ci = CNN_REF_CHANNELS, offset = 0;
     auto conv = [&](int co, int k, int s, bool skip) {
         int oh = (h + s - 1) / s, ow = (w + s - 1) / s;
         int ph = std::max((oh - 1) * s + k - h, 0) / 2;
@@ -28,7 +28,7 @@ static int graph(int model, int hidden, const int* settings, std::vector<Op>& op
     for (int j = 0; j < depth; j++) {
         const int* p = settings + 3 + 5 * j;
         if ((p[0] != 8 && p[0] != 16 && p[0] != 32) || p[1] < 1
-                || p[1] > (j == 0 ? 8 : 5) || p[2] < (j == 0 ? 4 : 1)
+                || p[1] > (j == 0 ? 8 : 5) || p[2] < 1
                 || p[2] > (j == 0 ? 8 : 4) || (p[2] & (p[2]-1))
                 || p[3] < 0 || p[3] > 2 || p[4] < 0 || p[4] > 1) return -1;
         conv(p[0], p[1], p[2], false);
@@ -118,6 +118,10 @@ extern "C" int flexref_layout(int model,int hidden,const int* settings,int* rows
     return params; // Scalar metadata only, no device query/allocation.
 }
 
+extern "C" void flexref_image_shape(int* shape) {
+    shape[0] = CNN_REF_HEIGHT; shape[1] = CNN_REF_WIDTH; shape[2] = CNN_REF_CHANNELS;
+}
+
 extern "C" int flexref_run(int model,int hidden,const int* settings,int batch,
         const double* input,const double* weights,const double* upstream,
         const double* native_trace,double* trace,double* gradient,double* loss) {
@@ -127,9 +131,10 @@ extern "C" int flexref_run(int model,int hidden,const int* settings,int batch,
     if(params<0) return -1;
     try {
         Storage storage;
-        double* x=storage.add(size_t(batch)*1584), *w=storage.add(params), *g=storage.add(batch*hidden);
+        size_t input_size = size_t(batch) * CNN_REF_HEIGHT * CNN_REF_WIDTH * CNN_REF_CHANNELS;
+        double* x=storage.add(input_size), *w=storage.add(params), *g=storage.add(batch*hidden);
         double* dw=storage.add(params);
-        checked(cudaMemcpy(x,input,size_t(batch)*1584*sizeof(double),cudaMemcpyHostToDevice));
+        checked(cudaMemcpy(x,input,input_size*sizeof(double),cudaMemcpyHostToDevice));
         checked(cudaMemcpy(w,weights,params*sizeof(double),cudaMemcpyHostToDevice));
         checked(cudaMemcpy(g,upstream,batch*hidden*sizeof(double),cudaMemcpyHostToDevice));
         std::vector<double*> xs={x}, ys;

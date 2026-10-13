@@ -16,9 +16,11 @@ struct ImpalaActivations {
     int batch;
 };
 
-static constexpr int IMP_H[3] = {36, 18, 9};
-static constexpr int IMP_W[3] = {44, 22, 11};
+static constexpr int IMP_H[3] = {OBS_HEIGHT, (OBS_HEIGHT + 1) / 2, (OBS_HEIGHT + 3) / 4};
+static constexpr int IMP_W[3] = {OBS_WIDTH, (OBS_WIDTH + 1) / 2, (OBS_WIDTH + 3) / 4};
 static constexpr int IMP_C[3] = {16, 32, 32};
+static constexpr int IMP_SPATIAL = ((OBS_HEIGHT + 7) / 8) * ((OBS_WIDTH + 7) / 8);
+static constexpr int IMP_FLAT = IMP_SPATIAL * 32;
 
 __global__ void imp_patches(const precision_t* input, precision_t* patches,
         int B, int H, int W, int C, bool relu) {
@@ -124,13 +126,13 @@ __global__ void imp_pool_grad(const precision_t* grad, const int* winner, precis
 
 __global__ void imp_readout(const precision_t* input, precision_t* output, int B, bool gap) {
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
-    int D = gap ? 32 : 960;
+    int D = gap ? 32 : IMP_FLAT;
     if (idx >= B * D) return;
     float sum = 0;
     if (gap) {
         int b = idx / 32, c = idx % 32;
-        for (int p = 0; p < 30; p++) sum += fmaxf(0.0f, to_float(input[(b * 30 + p) * 32 + c]));
-        sum /= 30;
+        for (int p = 0; p < IMP_SPATIAL; p++) sum += fmaxf(0.0f, to_float(input[(b * IMP_SPATIAL + p) * 32 + c]));
+        sum /= IMP_SPATIAL;
     } else sum = fmaxf(0.0f, to_float(input[idx]));
     output[idx] = from_float(sum);
 }
@@ -138,8 +140,8 @@ __global__ void imp_readout(const precision_t* input, precision_t* output, int B
 __global__ void imp_readout_grad(const precision_t* input, const precision_t* grad,
         precision_t* output, int B, bool gap) {
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
-    if (idx >= B * 960) return;
-    float v = gap ? to_float(grad[(idx / 960) * 32 + idx % 32]) / 30 : to_float(grad[idx]);
+    if (idx >= B * IMP_FLAT) return;
+    float v = gap ? to_float(grad[(idx / IMP_FLAT) * 32 + idx % 32]) / IMP_SPATIAL : to_float(grad[idx]);
     output[idx] = from_float(to_float(input[idx]) > 0 ? v : 0.0f);
 }
 
@@ -213,7 +215,7 @@ static void imp_backward(void* weights, void* activations, Prec upstream, cudaSt
     imp_bias_grad<<<w->hidden, 256, 0, stream>>>(g.data, a->bias_grad[15].data, a->batch, w->hidden);
     Prec gr = {.data = a->grad[1].data, .shape = {a->batch, w->readout}};
     puf_mm_nn(&g, &w->weight[15], &gr, stream);
-    imp_readout_grad<<<grid_size(a->batch * 960), BLOCK_SIZE, 0, stream>>>(a->conv[14].data, gr.data, g.data, a->batch, w->gap);
+    imp_readout_grad<<<grid_size(a->batch * IMP_FLAT), BLOCK_SIZE, 0, stream>>>(a->conv[14].data, gr.data, g.data, a->batch, w->gap);
     for (int s = 2; s >= 0; s--) {
         int H = IMP_H[s], W = IMP_W[s], C = IMP_C[s], i = s * 5;
         int PH = (H + 1) / 2, PW = (W + 1) / 2, n = a->batch * PH * PW * C;
@@ -238,7 +240,7 @@ static void imp_reg_params(void* weights, Allocator* alloc) {
     ImpalaWeights* w = (ImpalaWeights*)weights;
     for (int s = 0; s < 3; s++) {
         for (int j = 0; j < 5; j++) {
-            int i = s * 5 + j, ci = j ? IMP_C[s] : (s ? IMP_C[s - 1] : 1);
+            int i = s * 5 + j, ci = j ? IMP_C[s] : (s ? IMP_C[s - 1] : OBS_CHANNELS);
             w->weight[i] = {.shape = {IMP_C[s], 9 * ci}};
             w->bias[i] = {.shape = {IMP_C[s]}};
         }
@@ -267,7 +269,7 @@ static void imp_reg_rollout(void* weights, void* activations, Allocator* alloc, 
         int H = IMP_H[s], W = IMP_W[s], C = IMP_C[s];
         for (int j = 0; j < 5; j++) {
             int h = j ? (H + 1) / 2 : H, width = j ? (W + 1) / 2 : W;
-            int ci = j ? C : (s ? IMP_C[s - 1] : 1);
+            int ci = j ? C : (s ? IMP_C[s - 1] : OBS_CHANNELS);
             a->conv[s * 5 + j] = {.shape = {B * h * width, C}};
             alloc_register(alloc, &a->conv[s * 5 + j]);
             max_patch = max(max_patch, h * width * 9 * ci);
@@ -289,11 +291,16 @@ static void imp_reg_train(void* weights, void* activations, Allocator* acts, All
     alloc_register(acts, &a->input);
     a->grad_patches = {.shape = {numel(a->patches.shape)}};
     alloc_register(acts, &a->grad_patches);
+    int grad_size = w->hidden, skip_size = 0;
+    for (int s = 0; s < 3; s++) {
+        grad_size = max(grad_size, IMP_H[s] * IMP_W[s] * IMP_C[s]);
+        skip_size = max(skip_size, ((IMP_H[s] + 1) / 2) * ((IMP_W[s] + 1) / 2) * IMP_C[s]);
+    }
     for (int i = 0; i < 2; i++) {
-        a->grad[i] = {.shape = {(int64_t)B * max(36 * 44 * 16, w->hidden)}};
+        a->grad[i] = {.shape = {(int64_t)B * grad_size}};
         alloc_register(acts, &a->grad[i]);
     }
-    a->skip_grad = {.shape = {(int64_t)B * 18 * 22 * 16}};
+    a->skip_grad = {.shape = {(int64_t)B * skip_size}};
     alloc_register(acts, &a->skip_grad);
     for (int s = 0; s < 3; s++) {
         a->winner[s] = {.shape = {numel(a->pool[s].shape)}};
@@ -308,14 +315,13 @@ static void imp_reg_train(void* weights, void* activations, Allocator* acts, All
 
 static void* imp_create_weights(void* self) {
     Encoder* enc = (Encoder*)self;
-    static_assert(OBS_CHANNELS == 1 && OBS_HEIGHT == 36 && OBS_WIDTH == 44, "IMPALA Connect4 input contract");
     assert(enc->in_dim == OBS_SIZE && enc->out_dim > 0);
     ImpalaWeights* w = (ImpalaWeights*)calloc(1, sizeof(*w));
     w->hidden = enc->out_dim;
 #ifdef C4_IMPOOLA_CNN
     w->gap = true;
 #endif
-    w->readout = w->gap ? 32 : 960;
+    w->readout = w->gap ? 32 : IMP_FLAT;
     return w;
 }
 

@@ -22,6 +22,10 @@ static Allocator params, acts, grads, rollout;
 static Prec input, upstream;
 static cudaStream_t test_stream;
 
+extern "C" void naturetest_image_shape(int* shape) {
+    shape[0] = OBS_HEIGHT; shape[1] = OBS_WIDTH; shape[2] = OBS_CHANNELS;
+}
+
 extern "C" int naturetest_alias_enabled() {
 #ifdef C4_DENSE_PATCH_ALIAS
     return 1;

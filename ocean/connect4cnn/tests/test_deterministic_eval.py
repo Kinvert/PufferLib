@@ -7,6 +7,7 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import deterministic_eval as ev
@@ -120,6 +121,39 @@ class EvaluationTest(unittest.TestCase):
         self.suite["offset"] += 64
         self.suite["episodes"] = 1
         self.assertEqual(original[-1:], list(ev.manifest_rows(self.suite)))
+
+    def image_suite(self):
+        binary = self.root/"native-image"; binary.write_bytes(b"artifact fixture, not executed")
+        info = dict(environment="connect4cnn", empty_observation_hash="986021af4619ab25",
+                    image_contract=dict(version="human-geometry-v1",shape_hwc=[576,672,3],
+                                        layout="NHWC",dtype="float32",preprocessing="none"))
+        args = argparse.Namespace(out=self.root/"image-suite", binary=binary, seed=self.suite["seed"],
+                                  episodes=65,offset=31,slots=64,representation=3,purpose="development")
+        with patch.object(ev.subprocess,"check_output",return_value=json.dumps(info)) as call:
+            ev.create_suite(args)
+        call.assert_called_once_with([str(binary),"eval_exact_info"],text=True,timeout=30)
+        return ev.load_suite(args.out/"suite.json"), info
+
+    def test_image_suite_changes_pixels_without_changing_episode_assignments(self):
+        suite, info = self.image_suite()
+        self.assertEqual(suite["protocol"],"connect4-fixed-suite-v2")
+        self.assertEqual(suite["image_contract"],info["image_contract"])
+        self.assertEqual(list(ev.manifest_rows(suite)),list(ev.manifest_rows(self.suite)))
+        self.assertEqual(suite["binary_sha256"],ev.sha(self.root/"native-image"))
+
+    def test_visible_empty_board_requires_native_image_hash(self):
+        suite, _ = self.image_suite(); rows = self.receipts()
+        with self.assertRaisesRegex(ValueError,"Initial observation"):
+            ev.audit_csv(self.write_receipts(rows),suite,"connect4cnn")
+        for row in rows: row["start_observation_hash"] = suite["empty_observation_hash"]
+        self.assertEqual(ev.audit_csv(self.write_receipts(rows),suite,"connect4cnn")["episodes"],65)
+
+    def test_image_suite_rejects_bad_shape_layout_and_preprocessing(self):
+        suite, _ = self.image_suite()
+        for key,value in (("shape_hwc",[576,672,4]),("shape_hwc",[576,True,3]),
+                          ("layout","NCHW"),("dtype","uint8"),("preprocessing","resize-36x44")):
+            contract = dict(suite["image_contract"]); contract[key] = value
+            with self.assertRaises(ValueError): ev.validate_suite({**suite,"image_contract":contract})
 
 
 if __name__ == "__main__":

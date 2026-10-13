@@ -37,8 +37,15 @@ def manifest_rows(suite):
 
 
 def validate_suite(suite):
-    require(suite["protocol"] == "connect4-fixed-suite-v1" and
+    require(suite["protocol"] in ("connect4-fixed-suite-v1", "connect4-fixed-suite-v2") and
             suite["rules"] == ENVIRONMENT_RULES, "Unsupported suite/rules")
+    if suite["protocol"] == "connect4-fixed-suite-v2":
+        image=suite["image_contract"]; shape=image["shape_hwc"]
+        require(image["version"]=="human-geometry-v1" and image["layout"]=="NHWC"
+                and image["dtype"]=="float32" and image["preprocessing"]=="none"
+                and len(shape)==3 and all(type(v) is int for v in shape)
+                and all(36<=v<=1024 for v in shape[:2]) and shape[2] in (1,3)
+                and re.fullmatch(r"[0-9a-f]{16}",suite["empty_observation_hash"]), "Invalid image suite contract")
     for key, low, high in (("seed", 0, 2**32-1), ("offset", 0, 2**32-1),
                            ("episodes", 1, 1000000), ("slots", 1, 1024),
                            ("representation", 0, 9)):
@@ -54,6 +61,13 @@ def create_suite(args):
                  seed=args.seed, offset=args.offset, episodes=args.episodes,
                  slots=args.slots, representation=args.representation,
                  sampling="native-philox-categorical-v1", purpose=args.purpose)
+    binary=getattr(args,"binary",None)
+    if binary is not None:
+        identity=json.loads(subprocess.check_output([str(binary),"eval_exact_info"],text=True,timeout=30))
+        if "image_contract" in identity:
+            require(identity["environment"]=="connect4cnn", "Image suite requires the pixel game")
+            suite.update(protocol="connect4-fixed-suite-v2",image_contract=identity["image_contract"],
+                         empty_observation_hash=identity["empty_observation_hash"],binary_sha256=sha(binary))
     validate_suite(suite)
     out = args.out.resolve()
     out.mkdir(parents=True, exist_ok=False)
@@ -111,7 +125,7 @@ def empty_observation_hash(size):
 def audit_csv(path, suite, environment):
     representation = suite["representation"] if environment == "connect4cnn" else 0
     result = episodes(path, suite, suite["slots"], representation)
-    expected_hash = empty_observation_hash(36*44 if environment == "connect4cnn" else 42)
+    expected_hash = suite["empty_observation_hash"] if suite["protocol"] == "connect4-fixed-suite-v2" else empty_observation_hash(36*44 if environment == "connect4cnn" else 42)
     with path.open() as stream:
         for row in csv.DictReader(stream):
             require(row["start_observation_hash"] == expected_hash, "Initial observation differs")
@@ -128,6 +142,10 @@ def run(args):
     require(info["float32"] and info["rules"] == ENVIRONMENT_RULES and info["receipt_version"] == 2,
             "Need a current float32 exact-evaluation build")
     require(info["environment"] in ("connect4", "connect4cnn"), "Unsupported environment")
+    if "image_contract" in info:
+        require(suite["protocol"]=="connect4-fixed-suite-v2" and suite["image_contract"]==info["image_contract"]
+                and suite["empty_observation_hash"]==info["empty_observation_hash"], "Suite/binary image differs")
+    else: require(suite["protocol"]=="connect4-fixed-suite-v1", "Image suite cannot use a legacy binary")
     config = load_config(config_path, info, args.family)
     require(checkpoint.is_file() and checkpoint.stat().st_size > 0, "Explicit weights file required")
     require(args.timeout > 0, "Timeout must be positive")
@@ -214,6 +232,7 @@ def main():
     sub = parser.add_subparsers(dest="command", required=True)
     create = sub.add_parser("suite", help="GPU-free immutable episode manifest")
     create.add_argument("--out", type=Path, required=True)
+    create.add_argument("--binary", type=Path, help="Bind a new-image suite to this native build's image contract; host metadata only")
     create.add_argument("--seed", type=int, required=True)
     create.add_argument("--episodes", type=int, default=1000)
     create.add_argument("--offset", type=int, default=0)

@@ -13,10 +13,7 @@
 #define SNAKECNN_NUM_REPRESENTATIONS 6
 #define SNAKEBENCH_RULES "snake-local-episodic-v1"
 #if SNAKEBENCH_PIXELS
-#define OBS_CHANNELS 1
-#define OBS_HEIGHT 36
-#define OBS_WIDTH 44
-#define OBS_SIZE (OBS_HEIGHT * OBS_WIDTH)
+#include "../connect4cnn/image.h"
 #else
 #define OBS_SIZE (SNAKEBENCH_WINDOW * SNAKEBENCH_WINDOW * 8)
 #endif
@@ -109,6 +106,9 @@ void puf_init(Env* env, Dict* kwargs) {
     snakebench_require(env->grid && env->snake, "allocation failed");
 }
 
+#if SNAKEBENCH_PIXELS && defined(CNN_IMAGE_V1)
+#include "image_v1.h"
+#else
 void compute_observations(Env* env) {
     obs_t* obs = env->agents[0].observations;
     memset(obs, 0, OBS_SIZE * sizeof(obs_t));
@@ -148,6 +148,8 @@ void compute_observations(Env* env) {
     }
 #endif
 }
+
+#endif
 
 void puf_reset(Env* env) {
     memset(env->grid, 0, env->width * env->height * sizeof(unsigned char));
