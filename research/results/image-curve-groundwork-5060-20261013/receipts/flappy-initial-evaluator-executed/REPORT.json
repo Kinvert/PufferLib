@@ -1,0 +1,41 @@
+{
+  "status": "passed",
+  "hardware": {
+    "gpu_name": "NVIDIA GeForce RTX 5060",
+    "gpu_uuid": "GPU-56b0df25-b4c9-46eb-e498-bc5c71904097",
+    "driver": "591.86",
+    "host": "G240",
+    "cuda_compiler": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2025 NVIDIA Corporation\nBuilt on Fri_Feb_21_20:23:50_PST_2025\nCuda compilation tools, release 12.8, V12.8.93\nBuild cuda_12.8.r12.8/compiler.35583870_0\n"
+  },
+  "image_contract": {
+    "version": "human-geometry-v1",
+    "shape_hwc": [
+      640,
+      420,
+      3
+    ],
+    "layout": "NHWC",
+    "dtype": "float32",
+    "preprocessing": "none"
+  },
+  "packet_sha256": "dae63d0230f1e5c571de6500c8613c4399c16e85192c89faf87c93e9f38db882",
+  "comparison": {
+    "name": "image-checkpoint",
+    "task": "flappycnn",
+    "family": "flex",
+    "parameters": 59976,
+    "episodes": 5,
+    "slots": 4,
+    "tail_offset": 4,
+    "tail_episodes": 1,
+    "repeat_equal": true,
+    "eager_equal": true,
+    "independent_tail_equal": true,
+    "policy_math_certified": false,
+    "frontier_superiority_certified": false
+  },
+  "process_seconds": 5.73002936,
+  "gpu_executed": true,
+  "policy_math_certified": false,
+  "learning_or_frontier_claim": false
+}

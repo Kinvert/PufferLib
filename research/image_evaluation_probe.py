@@ -19,7 +19,7 @@ from claim import require, save, sha
 def run(args):
     plan_path=args.plan.resolve(); root=plan_path.parent
     plan=panels.inspect(plan_path)
-    require(plan["protocol"]==panels.IMAGE_PROTOCOL,"Need a retained image panel")
+    require(panels.image_protocol(plan["protocol"]),"Need a retained image panel")
     require(args.hardware=="5060" and 0<args.timeout<=90 and 0<args.campaign_timeout<=240,
             "Probe is limited to a short local 5060 inference allocation")
     require(0<=args.job<len(plan["jobs"]),"Unknown job")

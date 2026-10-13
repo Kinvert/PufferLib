@@ -179,7 +179,7 @@ def process(command, cwd, log, timeout, environment=None):
     require(not log.exists(), f"Refusing to overwrite {log}")
     result = dict(command=list(map(str, command)), cwd=str(cwd), status="starting", timeout=timeout,
                   environment={key: (environment or os.environ).get(key) for key in
-                               ("PUFFER_CHECKPOINT_RECEIPTS", "NVCC_ARCH", "NVCC_EXTRA", "NVCC_APPEND_FLAGS", "CUDA_HOME", "NCCL_ROOT")})
+                               ("PUFFER_CHECKPOINT_RECEIPTS", "PUFFER_SAVE_INITIAL_CHECKPOINT", "NVCC_ARCH", "NVCC_EXTRA", "NVCC_APPEND_FLAGS", "CUDA_HOME", "NCCL_ROOT")})
     metadata = log.with_suffix(log.suffix+".json")
     save(metadata, result, exclusive=True)
     child = None

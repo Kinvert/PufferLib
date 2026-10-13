@@ -1,0 +1,10 @@
+{
+  "schema": "realistic-image-seed-roles-v1",
+  "development_training": [7, 42, 69],
+  "development_evaluation": [7007, 7008, 7009],
+  "confirmation_training": [104729, 130363, 155921],
+  "confirmation_evaluation": [420, 1337, 9001],
+  "appearance_seed": 17,
+  "optimizer_seed": 83,
+  "seed_sweep_allowed": false
+}

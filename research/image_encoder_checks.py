@@ -13,7 +13,7 @@ from claim import require, save, sha
 SCHEMA="native-image-panel-encoder-checks-v1"
 
 
-def freeze(manifest, output, jobs, contracts, panel_root):
+def freeze(manifest, output, jobs, contracts, panel_root, evaluation_slots=None):
     import cnn_graph_acceptance as graphs
     value=json.loads(manifest.read_text())
     require(value["schema"]==SCHEMA and set(value["candidates"])=={j["candidate"] for j in jobs},
@@ -30,7 +30,7 @@ def freeze(manifest, output, jobs, contracts, panel_root):
             graphs.inspect_bundle(Path(request["bundle"]),current=True)
             name=f"proof-{len(proofs):04d}"; target=output/name; target.mkdir()
             files={}
-            for filename in ("REPORT.json","request.json","config.ini","worker-0/worker.json","worker-1/worker.json"):
+            for filename in ["REPORT.json","request.json","config.ini"] + [f"worker-{i}/worker.json" for i in range(report.get("workers",2))]:
                 dest=target/filename; dest.parent.mkdir(parents=True,exist_ok=True)
                 shutil.copyfile(original/filename,dest); files[filename]=sha(dest)
             proofs[key]=dict(path=name,original=str(original),files_sha256=files,report=report)
@@ -38,11 +38,11 @@ def freeze(manifest, output, jobs, contracts, panel_root):
     recorded=dict(schema=SCHEMA,checks=checks,proofs=list(proofs.values()),
                   manifest_sha256=sha(manifest),raw_arrays_copied=False,full_policy_qualified=False)
     save(output/"checks.json",recorded)
-    inspect(output,jobs,contracts,panel_root,current=True)
+    inspect(output,jobs,contracts,panel_root,current=True,evaluation_slots=evaluation_slots)
     return recorded
 
 
-def inspect(output, jobs, contracts, panel_root, current=False):
+def inspect(output, jobs, contracts, panel_root, current=False, evaluation_slots=None):
     import cnn_graph_acceptance as graphs
     value=json.loads((output/"checks.json").read_text())
     require(value["schema"]==SCHEMA and value["raw_arrays_copied"] is False and value["full_policy_qualified"] is False,
@@ -51,7 +51,9 @@ def inspect(output, jobs, contracts, panel_root, current=False):
     proofs={p["path"]:p for p in value["proofs"]}; require(len(proofs)==len(value["proofs"]),"Duplicate encoder proof IDs")
     for name,proof in proofs.items():
         require(Path(name).name==name and name.startswith("proof-"),"Unsafe encoder proof path")
-        require(set(proof["files_sha256"])=={"REPORT.json","request.json","config.ini","worker-0/worker.json","worker-1/worker.json"},
+        workers=proof["report"].get("workers",2)
+        require(type(workers) is int and 2<=workers<=128 and workers%2==0,"Invalid numerical worker coverage")
+        require(set(proof["files_sha256"])==set(["REPORT.json","request.json","config.ini"] + [f"worker-{i}/worker.json" for i in range(workers)]),
                 "Incomplete encoder check receipts")
         for file,digest in proof["files_sha256"].items(): require(sha(output/name/file)==digest,"Changed encoder receipt")
         report=json.loads((output/name/"REPORT.json").read_text())
@@ -78,6 +80,9 @@ def inspect(output, jobs, contracts, panel_root, current=False):
         checked=configparser.ConfigParser(interpolation=None); checked.read(output/name/"config.ini")
         require(config.getint("vec","total_agents")//config.getint("vec","num_buffers") in report["batches"]
                 and config.getint("train","minibatch_size") in report["batches"],"Actor/learner batch leaves CUDA coverage")
+        if evaluation_slots is not None:
+            require(type(evaluation_slots) is int and evaluation_slots in report["batches"],
+                    "Evaluator batch leaves independent CUDA coverage")
         require(graphs.settings(config)[0]==graphs.settings(checked)[0]
                 and graphs.topology(*graphs.settings(config),shape=tuple(report["shape_hwc"]))
                 ==graphs.topology(*graphs.settings(checked),shape=tuple(report["shape_hwc"])),

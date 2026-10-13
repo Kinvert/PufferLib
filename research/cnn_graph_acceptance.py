@@ -38,6 +38,10 @@ require, sha, save = fixtures.require, fixtures.sha, fixtures.save
 def bundle(args):
     root = args.out.resolve(); root.mkdir(parents=True, exist_ok=False)
     shape = getattr(args, "image_shape", None)
+    compact=getattr(args,"compact_mode_exports",False)
+    partition=getattr(args,"partition_batches",False)
+    require(type(compact) is bool and (not compact or shape is not None),"Compact exports require an explicit image protocol")
+    require(type(partition) is bool and (not partition or shape is not None),"Batch worker partitions require an image protocol")
     batches = getattr(args, "batches", None)
     if shape is None:
         require(batches is None, "Custom batches require an explicit image contract")
@@ -71,8 +75,11 @@ def bundle(args):
     inputs.update({str(ROOT/n):sha(ROOT/n) for n in TOOLS})
     files = {str(p.relative_to(root)):sha(p) for p in root.rglob("*") if p.is_file()}
     value = dict(schema=IMAGE_SCHEMA if shape is not None else SCHEMA, originals_sha256=inputs, files_sha256=files,
-                 rtol=RTOL, atol=ATOL, tolerances=TOLERANCES, cpu_neural_reference=False)
+                 rtol=RTOL, atol=ATOL, tolerances=TOLERANCES, cpu_neural_reference=False,
+                 finite_difference_loss="float64-compensated-dense-and-loss-v1")
     if shape is not None: value.update(shape_hwc=shape, batches=batches, layout="NHWC", dtype="float32")
+    if compact: value["compact_mode_exports"]=True
+    if partition: value["worker_partition"]="per-batch-v1"
     save(root / "bundle.json", value); inspect_bundle(root, current=True)
     return value
 
@@ -88,7 +95,13 @@ def inspect_bundle(root, current=False):
                 and batches == sorted(set(batches)) and batches[0] == 1
                 and all(type(v) is int and 1 <= v <= 64 for v in batches)
                 and value["layout"] == "NHWC" and value["dtype"] == "float32", "Invalid image-check contract")
+    require("compact_mode_exports" not in value or value["schema"]==IMAGE_SCHEMA and value["compact_mode_exports"] is True,
+            "Changed mode export contract")
+    require("worker_partition" not in value or value["schema"]==IMAGE_SCHEMA and value["worker_partition"]=="per-batch-v1",
+            "Changed numerical worker partition")
     if "tolerances" in value: require(value["tolerances"] == TOLERANCES, "Changed family tolerances")
+    if "finite_difference_loss" in value:
+        require(value["finite_difference_loss"]=="float64-compensated-dense-and-loss-v1","Changed finite-difference loss arithmetic contract")
     fixtures.verify_files(root, value["files_sha256"])
     if current:
         for n,h in value["originals_sha256"].items(): require(sha(n)==h, "Changed graph-check source: "+n)
@@ -110,6 +123,13 @@ def cases(contract=None):
     if contract and contract["schema"] == IMAGE_SCHEMA:
         return [(b,s) for b in contract["batches"] for s in ("signed","smooth","zero")]
     return [(b,s) for b in (1,64) for s in ("signed","smooth","zero")] + [(2048,"signed")]
+
+
+def worker_groups(contract):
+    full=cases(contract)
+    if contract.get("worker_partition")=="per-batch-v1":
+        return [[case for case in full if case[0]==batch] for batch in contract["batches"] for _ in range(2)]
+    return [full,full]
 
 
 def topology(model, values, shape=(36,44,1)):
@@ -160,14 +180,42 @@ def fixture(rows, count, batch, state):
     return x,weights,upstream
 
 
+def export_mode(directory, mode, data, compact):
+    """Keep every path; hardlink only after comparing the real current bytes."""
+    for name,array in data:
+        path=directory/(mode+"-"+name+".f32")
+        if compact and mode!="eager-0":
+            original=directory/("eager-0-"+name+".f32")
+            require(original.read_bytes()==array.tobytes(),"Compact export differs from actual current native bytes")
+            os.link(original,path)
+        else: array.tofile(path)
+
+
+def array_hashes(directory, compact=False):
+    hashes={}; physical={}
+    for path in directory.rglob("*"):
+        if not path.is_file(): continue
+        stat=path.stat(); key=(stat.st_dev,stat.st_ino,stat.st_size,stat.st_mtime_ns)
+        if compact and key in physical: digest=physical[key]
+        else: digest=sha(path); physical[key]=digest
+        hashes[str(path.relative_to(directory))]=digest
+    return hashes
+
+
 def worker(out):
     packet=json.loads((out/"request.json").read_text()); root=Path(packet["bundle"])
     bundle_value=inspect_bundle(root,current=True)
+    require(out.name.startswith("worker-") and out.name[7:].isdigit(),"Unassigned numerical worker")
+    index=int(out.name[7:]); groups=worker_groups(bundle_value)
+    require(index<len(groups),"Numerical worker index leaves frozen partition")
+    assigned=groups[index]
     require(packet["parent"]==os.getppid() and packet["token"]==os.environ.get("PUFFER_GRAPH_CHECK_TOKEN"), "Scheduled parent required")
     model, values=settings(panels.panel.read(out/"config.ini")); spec=np.array(values,dtype=np.int32)
     rtol,atol=bundle_value.get("tolerances",{}).get("nature" if model else "flex",[RTOL,ATOL])
     rows,count=topology(model,values,bundle_value.get("shape_hwc",(36,44,1)))
     native=ctypes.CDLL(str(root/"native.so")); reference=ctypes.CDLL(str(root/"reference.so"))
+    if "finite_difference_loss" in bundle_value:
+        require(reference.flexref_stable_loss_contract()==1,"Compiled reference differs from loss arithmetic contract")
     floats=np.ctypeslib.ndpointer(dtype=np.float32,flags="C_CONTIGUOUS")
     ints=np.ctypeslib.ndpointer(dtype=np.int32,flags="C_CONTIGUOUS")
     doubles=ctypes.POINTER(ctypes.c_double)
@@ -191,7 +239,7 @@ def worker(out):
     def call(data,batch,trace,out_trace,grad,loss=None):
         require(reference.flexref_run(model,128,spec,batch,*(pointer(a) for a in (*data,trace,out_trace,grad,loss)))==0, "CUDA graph oracle failed")
     receipts=[]
-    for batch,state in cases(bundle_value):
+    for batch,state in assigned:
         directory=arrays/f"b{batch}-{state}"; directory.mkdir()
         data=fixture(rows,count,batch,state)
         for name,a in zip(("input","parameters","upstream"),data): a.tofile(directory/(name+".f32"))
@@ -233,16 +281,18 @@ def worker(out):
                                     call((precise[0],changed,precise[2]),batch,None,None,None,loss)
                                     losses.append(float(loss[0]))
                                 derivative=(losses[0]-losses[1])/2e-6
+                                probe=dict(index=index,losses=losses,epsilon=1e-6,analytic=float(strict_grad[index]))
+                                save(directory/f"finite-difference-{index}.json",probe)
                                 np.testing.assert_allclose(derivative,strict_grad[index],rtol=2e-5,atol=1e-8)
-                                receipt["finite_differences"].append(dict(index=index,losses=losses,epsilon=1e-6,analytic=float(strict_grad[index])))
-                for name,a in zip(("output","gradient","trace","device-parameters"),(output,grad,trace,params)):
-                    a.tofile(directory/(mode+"-"+name+".f32"))
+                                receipt["finite_differences"].append(probe)
+                export_mode(directory,mode,zip(("output","gradient","trace","device-parameters"),(output,grad,trace,params)),
+                            bundle_value.get("compact_mode_exports",False))
                 first=signature
         finally: native.naturetest_close()
         save(directory/"case.json",receipt); receipts.append(receipt)
         print(f"PASS b{batch}-{state}",flush=True)
     save(out/"worker.json",dict(status="passed",cases=receipts,
-         arrays_sha256={str(p.relative_to(arrays)):sha(p) for p in arrays.rglob("*") if p.is_file()}))
+         arrays_sha256=array_hashes(arrays,bundle_value.get("compact_mode_exports",False))))
 
 
 def worker_timeout(timeout, deadline=None):
@@ -268,7 +318,7 @@ def run(bundle_root, config, out, expected="5090", timeout=120, deadline=None):
         with fixtures.LOCK.open("a") as lock:
             fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
             hardware=panels.hardware(expected)
-            for index in range(2):
+            for index in range(len(worker_groups(contract))):
                 directory=out/f"worker-{index}"; directory.mkdir()
                 shutil.copyfile(out/"config.ini",directory/"config.ini"); shutil.copyfile(out/"request.json",directory/"request.json")
                 require(panels.hardware(expected)==hardware, "Hardware changed or GPU busy")
@@ -291,17 +341,19 @@ def audit(out, completing=False):
     require(request["schema"] == bundle_value["schema"], "Graph request/bundle version differs")
     model,values=settings(panels.panel.read(out/"config.ini")); rows,count=topology(model,values,bundle_value.get("shape_hwc",(36,44,1)))
     rtol,atol=bundle_value.get("tolerances",{}).get("nature" if model else "flex",[RTOL,ATOL])
-    prior=None
-    for index in range(2):
+    prior={}
+    for index,assigned in enumerate(worker_groups(bundle_value)):
         directory=out/f"worker-{index}"; arrays=directory/"arrays"
         require((directory/"request.json").read_bytes()==(out/"request.json").read_bytes()
                 and sha(directory/"config.ini")==request["config_sha256"],"Worker input changed")
         record=json.loads((directory/"worker.json").read_text())
-        require(record["status"]=="passed" and [(c["batch"],c["state"]) for c in record["cases"]]==cases(bundle_value),"Incomplete graph panel")
-        fixtures.verify_files(arrays,record["arrays_sha256"])
-        require(record["arrays_sha256"]=={str(p.relative_to(arrays)):sha(p) for p in arrays.rglob("*") if p.is_file()},"Changed array inventory")
-        require(prior is None or prior==record["arrays_sha256"],"Independent process arrays differ"); prior=record["arrays_sha256"]
-        for batch,state in cases(bundle_value):
+        require(record["status"]=="passed" and [(c["batch"],c["state"]) for c in record["cases"]]==assigned,"Incomplete graph panel")
+        if not bundle_value.get("compact_mode_exports",False): fixtures.verify_files(arrays,record["arrays_sha256"])
+        require(record["arrays_sha256"]==array_hashes(arrays,bundle_value.get("compact_mode_exports",False)),"Changed array inventory")
+        key=tuple(assigned)
+        require(key not in prior or prior[key]==record["arrays_sha256"],"Independent process arrays differ")
+        prior[key]=record["arrays_sha256"]
+        for batch,state in assigned:
             folder=arrays/f"b{batch}-{state}"; data=fixture(rows,count,batch,state)
             for name,a in zip(("input","parameters","upstream"),data): require((folder/(name+".f32")).read_bytes()==a.tobytes(),"Changed fixture")
             for mode in MODES:
@@ -340,6 +392,10 @@ def audit(out, completing=False):
         batches=sorted({b for b,s in cases(bundle_value)}),hidden_size=128,cpu_neural_reference=False,full_policy_qualified=False,
         backward_contract="independent CUDA on actual float32 activations/branches",publication_claim_qualified=False)
     if request["schema"] == IMAGE_SCHEMA: result.update(shape_hwc=bundle_value["shape_hwc"],layout="NHWC",dtype="float32")
+    if bundle_value.get("compact_mode_exports",False): result["compact_mode_exports"]=True
+    if "worker_partition" in bundle_value:
+        result.update(worker_partition=bundle_value["worker_partition"],workers=len(worker_groups(bundle_value)))
+    if "finite_difference_loss" in bundle_value: result["finite_difference_loss"]=bundle_value["finite_difference_loss"]
     if not completing:
         report=json.loads((out/"REPORT.json").read_text()); require({k:report[k] for k in result}==result,"Changed graph report")
     return result
@@ -349,6 +405,7 @@ def main():
     p=argparse.ArgumentParser(description=__doc__); sub=p.add_subparsers(dest="command",required=True)
     b=sub.add_parser("bundle"); b.add_argument("--native",type=Path,required=True); b.add_argument("--reference",type=Path,required=True)
     b.add_argument("--image-shape",type=int,nargs=3); b.add_argument("--batches",type=int,nargs="+")
+    b.add_argument("--compact-mode-exports",action="store_true"); b.add_argument("--partition-batches",action="store_true")
     r=sub.add_parser("run"); r.add_argument("--bundle",type=Path,required=True); r.add_argument("--config",type=Path,required=True)
     r.add_argument("--hardware",choices=("5060","5090"),required=True); r.add_argument("--timeout",type=int,default=120)
     sub.add_parser("audit"); sub.add_parser("_worker")

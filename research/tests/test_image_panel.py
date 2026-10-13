@@ -61,5 +61,19 @@ class ImagePanelTests(unittest.TestCase):
         value["task_budgets"]["pongcnn"]["steps"]=2048
         with self.assertRaises(ValueError): panels.run_hardware(value,"image5060")
 
+    def test_explicit_confirmation_evaluation_seeds_do_not_require_consecutive_numbers(self):
+        training = [104729,130363,155921]
+        self.assertEqual(panels.evaluation_seeds(training,420,[420,1337,9001]),[420,1337,9001])
+        for values in ([420,1337], [420,420,9001], [1337,420,9001], [420,True,9001], [420,1337,2**32]):
+            with self.assertRaises(ValueError): panels.evaluation_seeds(training,420,values)
+        self.assertEqual(panels.evaluation_seeds([7,42,69],7007),[7007,7008,7009])
+
+    def test_versioned_initial_plus_eight_checkpoints_keeps_legacy_schedule(self):
+        budget = dict(steps=512,checkpoint_steps=64)
+        self.assertEqual(panels.checkpoint_schedule(budget),list(range(64,513,64)))
+        self.assertEqual(panels.checkpoint_schedule(budget,True),[0]+list(range(64,513,64)))
+        for budget in (dict(steps=513,checkpoint_steps=64),dict(steps=256,checkpoint_steps=64)):
+            with self.assertRaises(ValueError): panels.checkpoint_schedule(budget,True)
+
 
 if __name__=="__main__": unittest.main()

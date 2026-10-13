@@ -1,0 +1,82 @@
+{
+  "status": "passed",
+  "hardware": {
+    "gpu_name": "NVIDIA GeForce RTX 5060",
+    "gpu_uuid": "GPU-56b0df25-b4c9-46eb-e498-bc5c71904097",
+    "driver": "591.86",
+    "host": "G240",
+    "cuda_compiler": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2025 NVIDIA Corporation\nBuilt on Fri_Feb_21_20:23:50_PST_2025\nCuda compilation tools, release 12.8, V12.8.93\nBuild cuda_12.8.r12.8/compiler.35583870_0\n"
+  },
+  "shape_hwc": [
+    640,
+    420,
+    3
+  ],
+  "steps": 512,
+  "training_seed": 7,
+  "learner_batch": 16,
+  "actor_batch": 4,
+  "checkpoints": [
+    {
+      "step": 0,
+      "sha256": "ad052ee2c42ece06fe785836ccecf124edb2892c6d2f62ceae9ce08575f41ace",
+      "train_seconds": 0.304864897
+    },
+    {
+      "step": 64,
+      "sha256": "f2ab0845d26f4c74f7160f5205373268e1ef875dfb4b2018d55b5627aaf468a4",
+      "train_seconds": 0.60801324
+    },
+    {
+      "step": 128,
+      "sha256": "d9b3c8ed2ae1d646d68286d6f85a5fdb995112dfe77a5be11c466b00c34699c2",
+      "train_seconds": 0.798268855
+    },
+    {
+      "step": 192,
+      "sha256": "dcad1ede5226f80f04a45dc736027b5d23945f09f5eb14a75cf0bff837c69c98",
+      "train_seconds": 0.983189025
+    },
+    {
+      "step": 256,
+      "sha256": "c4ad69dcee60f982f72634058756dfc453f72bcc6599ab46fa1f0a53ae026db8",
+      "train_seconds": 1.169486389
+    },
+    {
+      "step": 320,
+      "sha256": "b07ab32ab557c27e85264999cf3ba2e2882f520f6b46127108eb668497b514b0",
+      "train_seconds": 1.357526166
+    },
+    {
+      "step": 384,
+      "sha256": "621b0312619a614dc51a3710850c9b1afe6986a1106e3d9a45a965c627f05517",
+      "train_seconds": 1.543549342
+    },
+    {
+      "step": 448,
+      "sha256": "4e62bd69a8259f57c8bf331b0c85e9df064516c10d57c16b95f32011d9e41210",
+      "train_seconds": 1.729847984
+    },
+    {
+      "step": 512,
+      "sha256": "727a2d751bab123e3c07c8732b16092720f2792444ce2464e6172a618ddd275e",
+      "train_seconds": 1.917665339
+    }
+  ],
+  "process_seconds": 2.019283315,
+  "process_sps": 253.55530657668015,
+  "inputs_sha256": {
+    "/home/claude/cnn-audit-20261008/build/image-panels-20261013/flappy-initial-policy/puffer": "84ac79eca78807a75890c0f704f726ceb1fa0a8bc8b861a53c7c872b80dcb0bc",
+    "/home/claude/cnn-audit-20261008/build/image-panels-20261013/flappy-initial-policy/metadata": "cdefcdf4e5bba7170e0f4ecd2084da401a1535e0e83f719c57eb45b08d787208",
+    "/home/claude/cnn-audit-20261008/build/image-panels-20261013/flappy-initial-eight.ini": "021789c774719a2b33131ace5f85a48d40c1e38aac835bf8351ad37cb5aefabe",
+    "/home/claude/cnn-audit-20261008/build/image-panels-20261013/flappy-initial-eight-cuda/REPORT.json": "91099a2c188984ebcfdd8e2a0aa955f02a63bf4c714946132c9b3f792cce14b2",
+    "/home/claude/cnn-audit-20261008/ocean/flappycnn/flappycnn.h": "ce315e3fd219ecf071280bb474c88fba20aa9085c4223850f44e581998eeeeb0",
+    "/home/claude/cnn-audit-20261008/build/image-panels-20261013/flappy-initial-policy/source.sha256": "388d43cf0559e98a740c136eebf75598d063942fcb62bf30f6469c5da5924e46",
+    "/home/claude/cnn-audit-20261008/build/image-panels-20261013/flappy-initial-policy/binaries.sha256": "729ab52e6f72ac66267f8f8217573f11c285e4c32f3aaa29bc4db871531ee8a1"
+  },
+  "parameters": 59976,
+  "learning_or_frontier_claim": false,
+  "full_policy_numerical_qualification": false,
+  "evaluation_executed": false,
+  "initial_checkpoint_executed": true
+}

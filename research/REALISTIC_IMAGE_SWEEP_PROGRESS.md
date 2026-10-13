@@ -4,6 +4,118 @@ October 12, 2026. Active implementation in `/home/claude/cnn-audit-20261008`;
 the retained `/home/claude/cnn` checkout and prior campaign are untouched.
 This is temporary Kinvert research, not the eventual upstream PR.
 
+## October12 curve/seed/stopping implementation
+
+October 13 follow-up: controller tests now cover clean stopping both before the
+first trial and after two complete panels. They verify the final native replay,
+absence of a partially launched next trial, and rejection of altered admission
+receipts. These are mocked orchestration checks, not GPU runtime evidence.
+
+The separate Pong loss diagnostic identified cancellation in the test oracle's
+large double-precision dense reduction. Compensated summation is now confined
+to the independent oracle's loss-forward path; production encoder kernels,
+probe perturbations and acceptance tolerances are unchanged. At the original
+perturbation, the diagnostic error falls from `1.56889e-5` to `2.85371e-8`.
+The historical failed allocation remains failed. A fresh full Pong allocation
+against the new, explicitly versioned loss contract now **passes** RGB640x620,
+B1/4/16: 18 cases, 72 calls and six independent worker processes. This is encoder
+numerical evidence; it does not qualify all other shapes or establish learning.
+
+`image_validation_collection.py` can audit and combine separately completed
+shape allocations from one frozen catalog. It refuses missing shapes, failed
+checks, changed configurations/bundles and mixed hardware. It executes no CUDA
+or CPU neural reference and does not restart any allocation.
+
+The Flappy RGB640x420 initial-save path now executes successfully. Two fresh
+native runs each save finite full-policy weights at 0/64/128/192/256/320/384/
+448/512 decisions, with byte-identical SHA256 values at every matching stage.
+The policy has 59,976 parameters; process times are 2.019283315s and 2.019242834s.
+These startup-dominated 512-decision checks do not establish sustained speed or
+learning. Matching B1/4/16 CUDA checks pass 18 cases/72 calls beforehand.
+
+`build_image_delivery.sh` compiles and registers all six default RGB native
+trainers and their host metadata using the existing uv Python 3.12 venv. Actual
+six-game compilation and host registration pass. The first launcher attempt
+incorrectly resolved the venv interpreter symlink, losing its packages; a second
+metadata import lacked the shared `claim` module path. Both failures are retained.
+The launcher now preserves the venv path and imports metadata through the normal
+panel module. Completed native builds were reused for fresh host registrations;
+no failed or completed GPU allocation was restarted.
+
+Image panel-v5 now declares the same policy's initial checkpoint plus exactly
+eight trained checkpoints. The research-only native save option is disabled
+for ordinary/legacy training. Its full shared-panel execution subsequently passes
+as recorded below. Explicit episode-seed
+lists and a frozen development/confirmation
+role document are checked during preparation and inspection; confirmation
+cannot enter curve search.
+
+Feedback-v4 now calls the balanced eight-Nature-time-anchor objective and
+reconstructs it during its offline native receipt audit. It requires a measured,
+audited Nature panel, fixed normalization/role inputs and identical per-game
+pixels, learners, budgets, worlds, core, episode assignments and native sources.
+The new runtime-pilot tool measures complete trials and reporting; the overnight
+branch requires that proof, reserves a whole next panel and separates
+`budget_stop` from failure. These integrations have scalar and mocked controller
+tests, not a completed real new-version learning campaign.
+
+Nature's original full-image harness initialization failed its selector guard;
+that test-only wiring is fixed. Subsequent fixed-tolerance numerical comparisons
+reached all cases but hit export/hashing deadlines. All failed allocations are
+retained. Optional exact-byte hardlinks reduce duplicate export storage, and a
+declared per-batch partition retains two fresh processes per case and all four
+native modes. The resulting Connect4 RGB576x672/B1/4/16 Nature report passes18
+instances/72 calls. Its following Pong shape fails a strict float64-oracle
+finite-difference probe (relative error3.09765632e-5 versus the unchanged2e-5
+tolerance). Thus **the complete Nature image gate remains failed**. A separate
+bounded CUDA loss-sensitivity diagnostic is prepared/executed under its own
+receipts; it cannot qualify the failed allocation or change tolerances.
+
+Next: complete the remaining Nature shape checks, then establish useful
+matched image learners and prepare the calibrated5090 launcher. No long local
+campaign or final push/handoff has been made.
+
+The zero-step Flappy checkpoint also passes exact assigned-episode graph,
+repeat, eager and independent-tail comparisons: five episodes/four slots,
+5.73002936s supervision window. This verifies loading/evaluating the measured
+initial policy; it is not full-policy numerical or learning evidence.
+
+The new all-game image panel-v5 now **passes** its bounded 5060 execution and
+offline receipt audit: six jobs, 54 finite checkpoints, 369/369 drawing/checkpoint
+evaluations (including 41 initial-policy evaluations), and 12 exact repeat/eager
+checks. Each job trains 512 decisions with one assigned episode per drawing.
+The campaign takes 599.80070706s; training processes total 13.530211734s.
+This is checkpoint/evaluator plumbing, not learning or frontier evidence.
+
+The curve-feedback learning gate is now implemented and scalar-tested. It
+recomputes fixed final-versus-initial improvements for every development seed
+and refuses an unlearned game, including a rehashed counterfeit gate receipt.
+Actual eligible full-image learning controls remain outstanding. Reporting
+reserves now scale with discovery history and slower observed optimizer calls,
+with matching admission/audit tests. The final overnight handoff remains unfinished.
+
+`report_image_feedback.py` re-audits image panels/curve-feedback before exporting
+process SPS, all monotonic checkpoint intervals, raw native SPS/uptime bins,
+selected affordable anchors and per-panel interactive curves. It retains
+zero-step startup cost without inventing initial training SPS and flags rather
+than alters native uptime anomalies. Its actual GPU-free report of the completed
+5060 panel passes (six jobs/54 checkpoints/110 native bins). Three export tests
+and nine related budget/reserve checks pass. Runtime-pilot calibration now
+measures this full report, including exports/HTML, rather than only the audit.
+The campaign report route still requires a real eligible feedback-v4 pilot;
+no learning or frontier qualification follows from the successful smoke report.
+
+`prepare_image_calibration.py` adds GPU-free paired-control preparation and
+offline qualification. It derives budgets/learners from explicit curve-v4
+inputs, requires all fixed development seeds and both all-shape numerical
+manifests, then freezes quality/Nature initial+eight-checkpoint panels. Its
+qualification path preserves a complete negative report and refuses to create
+Nature anchors for an unlearned game. Four scalar/mocked assignment, manifest
+and negative-qualification checks pass; actual native preparation and full
+control qualification remain pending. The final focused host/scalar/mock suite
+passes 71 tests; its initial unit fixture used inconsistent checkpoint units,
+and both that failed test log and the corrected-fixture pass are retained.
+
 ## October12 shared pipeline follow-up
 
 The full-RGB all-six-game/all41-drawing aggregate-to-native-PROTEIN loop now
@@ -22,9 +134,10 @@ share the campaign deadline and native layout/storage admission precedes CUDA.
 
 Read[the retained report](results/realistic-image-panel-5060-20261012/README.md),
 [pipeline contracts](REALISTIC_IMAGE_PIPELINE.md) and[overnight specification](IMAGE_OVERNIGHT_PROTOCOL.md).
-Remaining work is meaningful new-image Nature/learner calibration, the versioned
-curve/coverage objective, seed-role enforcement and12h admission/reporting,
-followed by a verified5090 handoff. No long campaign has launched here.
+At that earlier checkpoint the curve/seed/admission work was still unimplemented.
+Its later code/testing status is recorded above. Meaningful new-image
+Nature/learner calibration, real new-version acceptance and a verified5090
+handoff remain outstanding. No long campaign has launched here.
 
 The requested end state is a calibrated overnight 5090 architecture search,
 matched per-game learners and fixed seeds, about eight checkpoint observations,

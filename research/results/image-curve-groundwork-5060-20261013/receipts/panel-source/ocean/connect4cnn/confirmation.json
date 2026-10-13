@@ -1,0 +1,24 @@
+{
+  "version": "connect4-confirmation-v1",
+  "purpose": "Frozen architecture confirmation; no adaptive search or per-model learner tuning",
+  "development_campaign": "sweep._u86vi03",
+  "steps": 13312000,
+  "checkpoints": 13,
+  "seeds": [173, 174, 175, 176, 177],
+  "eval_seed": 20173,
+  "eval_games": 1024,
+  "timeout": 2400,
+  "canary": {"steps": 65536, "checkpoints": 4, "seeds": [9173], "eval_seed": 29173, "eval_games": 128, "timeout": 120},
+  "variants": ["flex_quality", "nature_cnn", "flex_fast", "impala_cnn", "flex_small", "impoola_cnn"],
+  "selection": {
+    "flex_quality": "brave-comet-51: maximum development training score",
+    "flex_fast": "cosmic-wolf-116: minimum native cost with development training score >= 0.8",
+    "flex_small": "clever-otter-60: minimum parameters with development training score >= 0.85"
+  },
+  "parameters": {"flex_quality": 160736, "flex_fast": 261856, "flex_small": 109768, "nature_cnn": 138528, "impala_cnn": 270496, "impoola_cnn": 151712},
+  "policies": {
+    "flex_quality": {"encoder": 4, "cnn_depth": 1, "cnn_projection": 64, "cnn_global_pool": 0, "cnn_channels_1": 16, "cnn_kernel_1": 7, "cnn_stride_1": 4, "cnn_pool_1": 0, "cnn_residual_1": 0},
+    "flex_fast": {"encoder": 4, "cnn_depth": 1, "cnn_projection": 64, "cnn_global_pool": 0, "cnn_channels_1": 32, "cnn_kernel_1": 4, "cnn_stride_1": 4, "cnn_pool_1": 0, "cnn_residual_1": 0},
+    "flex_small": {"encoder": 4, "cnn_depth": 1, "cnn_projection": 64, "cnn_global_pool": 0, "cnn_channels_1": 8, "cnn_kernel_1": 8, "cnn_stride_1": 4, "cnn_pool_1": 0, "cnn_residual_1": 0}
+  }
+}

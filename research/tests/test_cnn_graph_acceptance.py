@@ -28,6 +28,16 @@ class GraphTests(unittest.TestCase):
         self.assertIn((2048,"signed"),tool.cases()); self.assertIn((1,"zero"),tool.cases())
         self.assertEqual(len(tool.MODES),4)
 
+    def test_partition_preserves_two_processes_per_case_and_every_native_call(self):
+        contract=dict(schema=tool.IMAGE_SCHEMA,batches=[1,4,16],worker_partition="per-batch-v1")
+        groups=tool.worker_groups(contract)
+        self.assertEqual(len(groups),6)
+        self.assertEqual(sum(map(len,groups)),18)
+        self.assertEqual(groups[0],groups[1]); self.assertEqual(groups[2],groups[3]); self.assertEqual(groups[4],groups[5])
+        from collections import Counter
+        self.assertEqual(Counter(case for group in groups for case in group),Counter({case:2 for case in tool.cases(contract)}))
+        self.assertEqual(tool.worker_groups({}),[tool.cases(),tool.cases()])
+
     def test_unsupported_graphs_fail_metadata_before_library_load(self):
         with patch.object(ctypes,"CDLL",side_effect=AssertionError("No load")):
             for encoder in (0,1,3,5):
@@ -53,6 +63,25 @@ class GraphTests(unittest.TestCase):
         self.assertEqual(tool.worker_timeout(30),30)
         for timeout in (float("nan"),float("inf"),0,121):
             with self.assertRaises(ValueError): tool.worker_timeout(timeout)
+
+    def test_compact_exports_keep_all_paths_and_refuse_any_different_mode_byte(self):
+        import numpy as np
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp); value=np.array([1.,-2.,3.],dtype=np.float32)
+            tool.export_mode(root,"eager-0",[("gradient",value)],True)
+            tool.export_mode(root,"graph-0",[("gradient",value.copy())],True)
+            self.assertEqual((root/"eager-0-gradient.f32").stat().st_ino,(root/"graph-0-gradient.f32").stat().st_ino)
+            self.assertEqual(tool.array_hashes(root),tool.array_hashes(root,True))
+            changed=value.copy();changed[0]=4.
+            with self.assertRaisesRegex(ValueError,"actual current native bytes"):
+                tool.export_mode(root,"graph-1",[("gradient",changed)],True)
+            self.assertFalse((root/"graph-1-gradient.f32").exists())
+            before=tool.array_hashes(root,True)
+            (root/"graph-0-gradient.f32").write_bytes(changed.tobytes())
+            after=tool.array_hashes(root,True)
+            self.assertNotEqual(before,after)
+            self.assertEqual(after["eager-0-gradient.f32"],after["graph-0-gradient.f32"])
+            self.assertEqual(after,tool.array_hashes(root))
 
 
 if __name__=="__main__": unittest.main()

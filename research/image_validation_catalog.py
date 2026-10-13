@@ -54,12 +54,15 @@ def build(args):
             # current production, then freezes today's supervisor source. No
             # old CUDA result is carried into this fresh, unexecuted catalog.
             graphs.bundle(argparse.Namespace(native=libraries/"native.so",reference=libraries/"reference.so",
-                out=directory/"bundle",image_shape=[h,w,c],batches=batches))
+                out=directory/"bundle",image_shape=[h,w,c],batches=batches,
+                compact_mode_exports=getattr(args,"compact_mode_exports",False),partition_batches=getattr(args,"partition_batches",False)))
             shapes[name]=dict(shape_hwc=[h,w,c],bundle=str((directory/"bundle").relative_to(out)),
                               bundle_sha256=sha(directory/"bundle/bundle.json"))
         value=dict(schema=SCHEMA,games=games,shapes=shapes,batches=batches,registry_sha256=sha(args.registry),
                    gpu_queried=False,cuda_executed=False,numerical_acceptance=False)
         if reuse: value["retained_libraries_catalog_sha256"]=sha(reuse.resolve()/"catalog.json")
+        if getattr(args,"compact_mode_exports",False): value["compact_mode_exports"]=True
+        if getattr(args,"partition_batches",False): value["worker_partition"]="per-batch-v1"
         save(out/"catalog.json",value); inspect(out,current=True); return value
     except BaseException as error:
         save(out/"failure.json",dict(status="failed",error=str(error))); raise
@@ -76,6 +79,8 @@ def inspect(root,current=False):
         require(sha(bundle/"bundle.json")==record["bundle_sha256"] and descriptor["schema"]==graphs.IMAGE_SCHEMA
                 and descriptor["shape_hwc"]==record["shape_hwc"] and descriptor["batches"]==value["batches"],
                 "Changed image numerical bundle")
+        require(descriptor.get("compact_mode_exports",False)==value.get("compact_mode_exports",False),"Changed numerical export mode")
+        require(descriptor.get("worker_partition")==value.get("worker_partition"),"Changed catalog numerical worker partition")
     return value
 
 
@@ -109,6 +114,8 @@ if __name__=="__main__":
     parser=argparse.ArgumentParser(description=__doc__); sub=parser.add_subparsers(dest="command",required=True)
     b=sub.add_parser("build"); b.add_argument("--registry",type=Path,required=True); b.add_argument("--batches",type=int,nargs="+",default=[1,4,16])
     b.add_argument("--libraries-from",type=Path,help="Recheck unchanged owned native sources/binaries and freeze fresh tooling; never reuse numerical results")
+    b.add_argument("--compact-mode-exports",action="store_true",help="Hardlink exactly verified repeat/mode bytes; preserve every call/path/comparison")
+    b.add_argument("--partition-batches",action="store_true",help="Two independent worker processes per batch; unchanged cases/calls/tolerances")
     r=sub.add_parser("run"); r.add_argument("--catalog",type=Path,required=True); r.add_argument("--name",required=True)
     r.add_argument("--config",type=Path,required=True); r.add_argument("--hardware",choices=("5060","5090"),required=True)
     r.add_argument("--timeout",type=int,default=120)

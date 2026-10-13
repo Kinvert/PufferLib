@@ -25,6 +25,11 @@ ROOT = panels.ROOT
 PROTOCOL = "cross-game-native-protein-research-v1"
 DEVELOPMENT_PROTOCOL = "cross-game-native-protein-research-v2"
 IMAGE_PROTOCOL = "cross-game-native-protein-research-v3"
+CURVE_PROTOCOL = "cross-game-native-protein-research-v4"
+
+
+def image_protocol(protocol):
+    return protocol in (IMAGE_PROTOCOL, CURVE_PROTOCOL)
 require, save, sha = panels.require, panels.save, panels.sha
 
 
@@ -49,7 +54,9 @@ def recipe_protocol(config):
     if config.has_option("search","image_contract"):
         require(config.get("search","image_contract")=="human-geometry-v1" and per_game_learners(config),
                 "Image feedback requires the explicit native image contract and per-game learners")
-        return IMAGE_PROTOCOL
+        objective = config.get("search", "curve_objective", fallback=None)
+        require(objective in (None, "balanced-eight-nature-time-anchors-v1"), "Unknown image curve objective")
+        return CURVE_PROTOCOL if objective is not None else IMAGE_PROTOCOL
     return DEVELOPMENT_PROTOCOL if per_game_learners(config) or any(s.startswith("task.") for s in config.sections()) else PROTOCOL
 
 
@@ -100,9 +107,15 @@ def recipe(path):
     require(config.getint("search", "eval_seed") <= 2**32-len(seeds), "Evaluation seed allocation overflows")
     require(not set(range(config.getint("search", "eval_seed"), config.getint("search", "eval_seed")+len(seeds))) & set(seeds), "Evaluation seed overlaps training")
     budgets = task_budgets(config)
-    if recipe_protocol(config)==IMAGE_PROTOCOL:
+    if image_protocol(recipe_protocol(config)):
         require(1<=config.getint("search","image_storage_limit_mib",fallback=4096)<=12288,
                 "Invalid image proposal storage admission bound")
+    if recipe_protocol(config)==CURVE_PROTOCOL:
+        import image_curve_bindings as bindings
+        evaluations=bindings.evaluation(config)
+        require(not set(evaluations)&set(seeds) and config.get("search","seed_role")=="development",
+                "Curve search requires disjoint development evaluation/training seeds")
+        for budget in budgets.values(): panels.checkpoint_schedule(budget,True)
     if not per_game_learners(config):
         require(all(b["steps"] % 2048 == b["checkpoint_steps"] % 2048 == 0 for b in budgets.values()),
                 "Decisions/cadence must be 2048 multiples")
@@ -130,7 +143,7 @@ def optimizer_receipts(directory, current=False):
 
 def inspect(root, current=False):
     value = json.loads((root / "plan.json").read_text())
-    require(value["protocol"] in (PROTOCOL, DEVELOPMENT_PROTOCOL, IMAGE_PROTOCOL), "Wrong research feedback protocol")
+    require(value["protocol"] in (PROTOCOL, DEVELOPMENT_PROTOCOL, IMAGE_PROTOCOL, CURVE_PROTOCOL), "Wrong research feedback protocol")
     require(not current or str(root.resolve()) == value["preparation_root"], "Cannot run relocated research packet")
     for name, digest in value["files_sha256"].items():
         require(sha(root / name) == digest, "Changed research input: " + name)
@@ -150,7 +163,18 @@ def inspect(root, current=False):
     require(optimizer_receipts(root / "optimizer-build") == value["optimizer_receipts"], "Changed frozen optimizer build")
     config, _ = recipe(root / "recipe.ini")
     require(value["protocol"] == recipe_protocol(config), "Wrong recipe feedback contract")
-    if value["protocol"]==IMAGE_PROTOCOL:
+    if value["protocol"]==CURVE_PROTOCOL:
+        import image_curve_bindings as bindings
+        reference=bindings.inspect(root,config)
+        require(reference["objective"]==value["normalized_objective"],"Changed curve feedback objective")
+        if "runtime_calibration_sha256" in value:
+            import image_campaign_budget as budget
+            reserve=json.loads((root/"runtime-calibration.json").read_text()); budget.validate(reserve)
+            budget.verify_pilot(reserve)
+            require(sha(root/"runtime-calibration.json")==value["runtime_calibration_sha256"]
+                    and budget.identities(config,reference)==(reserve["conditions_sha256"],reserve["search_envelope_sha256"])
+                    and reserve["hardware"]==reference["hardware"],"Runtime reserve differs from measured curve/hardware/envelope")
+    if image_protocol(value["protocol"]):
         registry=json.loads((root/"registry.json").read_text())
         layout=panels.policy_layout.inspect_registry(root/"policy-metadata",current=current)
         require("image_validation_catalog" in value and "encoder_validation" not in value
@@ -158,7 +182,7 @@ def inspect(root, current=False):
                 and value["image_contracts"]==registry["image_contracts"]==layout["image_contracts"]
                 and {r["environment"] for r in value["learner_recipes"]}==set(panels.TASKS),
                 "Incomplete image feedback binding")
-    if value["protocol"] in (DEVELOPMENT_PROTOCOL, IMAGE_PROTOCOL):
+    if value["protocol"] in (DEVELOPMENT_PROTOCOL, IMAGE_PROTOCOL, CURVE_PROTOCOL):
         require(value["task_budgets"] == task_budgets(config)
                 and value["per_game_learners"] is per_game_learners(config), "Changed per-game feedback allocation")
         bases = {task: panels.base_config(root / "source", task, value["task_budgets"][task],
@@ -166,12 +190,16 @@ def inspect(root, current=False):
             next((root / r["file"] for r in value["learner_recipes"] if r["environment"] == task), None),
             value["per_game_learners"]) for task in panels.TASKS}
         panels.inspect_learner_geometry(root, value, bases)
-        if value["protocol"]==IMAGE_PROTOCOL:
+        if value["protocol"]==CURVE_PROTOCOL:
+            import image_curve_bindings as bindings
+            bindings.feedback_conditions(root,value,config,bases)
+        if image_protocol(value["protocol"]):
             import image_validation_catalog as image_checks
             catalog=image_checks.inspect(Path(value["image_validation_catalog"]),current=current)
             require(all(catalog["shapes"][catalog["games"][t]]["shape_hwc"]==value["image_contracts"][t]["shape_hwc"]
                         and bases[t].getint("vec","total_agents")//bases[t].getint("vec","num_buffers") in catalog["batches"]
-                        and bases[t].getint("train","minibatch_size") in catalog["batches"] for t in panels.TASKS),
+                        and bases[t].getint("train","minibatch_size") in catalog["batches"]
+                        and config.getint("search","slots") in catalog["batches"] for t in panels.TASKS),
                     "Image feedback shape/batch exceeds CUDA catalog")
     return value
 
@@ -179,7 +207,7 @@ def inspect(root, current=False):
 def prepare(args):
     config, seeds = recipe(args.recipe)
     registry = json.loads(args.registry.read_text())
-    images=recipe_protocol(config)==IMAGE_PROTOCOL
+    images=image_protocol(recipe_protocol(config))
     require(registry["protocol"] == (panels.IMAGE_BUILD if images else "native-cnn-candidate-build-v1"), "Use matching fresh game builds")
     if images:
         require(getattr(args,"image_validation_catalog",None) is not None and getattr(args,"encoder_validation",None) is None,
@@ -191,6 +219,9 @@ def prepare(args):
     out = args.out.resolve(); out.mkdir(parents=True, exist_ok=False)
     shutil.copyfile(args.recipe, out / "recipe.ini")
     shutil.copyfile(args.registry, out / "registry.json")
+    if recipe_protocol(config)==CURVE_PROTOCOL:
+        import image_curve_bindings as bindings
+        bindings.prepare(args,out,config)
     shutil.copytree(args.optimizer_build, out / "optimizer-build")
     learners = []
     for raw in getattr(args, "learner_recipe", []):
@@ -201,7 +232,7 @@ def prepare(args):
         learners.append(dict(environment=task, file=str(destination.relative_to(out))))
     save(out / "registry-location.json", dict(original=str(args.registry.resolve())), exclusive=True)
     sources = panels.capture(out)
-    extended = recipe_protocol(config) in (DEVELOPMENT_PROTOCOL, IMAGE_PROTOCOL)
+    extended = recipe_protocol(config) in (DEVELOPMENT_PROTOCOL, IMAGE_PROTOCOL, CURVE_PROTOCOL)
     budgets = task_budgets(config)
     if extended:
         bases = {task: panels.base_config(ROOT, task, budgets[task], config.getint("search", "appearance_seed"),
@@ -223,7 +254,8 @@ def prepare(args):
         learner_recipes=learners,
         dimensions=description["dimensions"], description=description,
         source_sha256=sources, files_sha256={str(p.relative_to(out)): sha(p) for p in out.rglob("*") if p.is_file()},
-        normalized_objective="equal-game mean of clipped fixed-anchor exact final-checkpoint scores; Pong lower bound",
+        normalized_objective=config.get("search","curve_objective") if recipe_protocol(config)==CURVE_PROTOCOL
+            else "equal-game mean of clipped fixed-anchor exact final-checkpoint scores; Pong lower bound",
         optimizer_cost="sum final monotonic checkpoint training seconds once per game/seed",
         temporary_research_core=True, native_optimizer=True, cross_game_feedback_implemented=True,
         publication_claim_qualified=False, broader_encoder_math_qualified=False)
@@ -240,6 +272,10 @@ def prepare(args):
                     for t in panels.TASKS),"Wrong numerical image catalog for game builds")
         value.update(image_validation_catalog=str(args.image_validation_catalog.resolve()),
                      image_validation_catalog_sha256=sha(args.image_validation_catalog/"catalog.json"),image_contracts=registry["image_contracts"])
+    if recipe_protocol(config)==CURVE_PROTOCOL and getattr(args,"runtime_calibration",None) is not None:
+        shutil.copyfile(args.runtime_calibration,out/"runtime-calibration.json")
+        value["runtime_calibration_sha256"]=sha(out/"runtime-calibration.json")
+        value["files_sha256"]["runtime-calibration.json"]=value["runtime_calibration_sha256"]
     save(out / "plan.json", value, exclusive=True)
     inspect(out, current=True)
     return value
@@ -283,6 +319,18 @@ def run(args):
     config, seeds = recipe(root / "recipe.ini"); settings = config["search"]
     count = settings.getint("max_runs"); timeout = settings.getint("campaign_timeout")
     expected = "5060" if args.mode in ("smoke", "validation5060", "image5060") else "5090"
+    reserve=None; runtime_identities=None
+    if value.get("protocol")==CURVE_PROTOCOL:
+        import image_campaign_budget as budget
+        require(args.mode in ("development","curve-pilot5090") and timeout<=budget.MAX_SECONDS,
+                "Real curve feedback requires bounded 5090 development/pilot mode")
+        if args.mode=="curve-pilot5090":
+            require(count<=3 and timeout<=4*3600 and "runtime_calibration_sha256" not in value,
+                    "Runtime pilot is separate from calibrated overnight discovery")
+        else:
+            require("runtime_calibration_sha256" in value,"Overnight discovery needs an actual hardware-matched complete-panel pilot")
+            reserve=json.loads((root/"runtime-calibration.json").read_text())
+            runtime_identities=budget.identities(config,json.loads((root/"nature-reference.json").read_text()))
     if args.mode=="image5060":
         require(value["protocol"]==IMAGE_PROTOCOL and count<=3 and len(seeds)==1
                 and max(b["steps"] for b in task_budgets(config).values())<=1024
@@ -333,6 +381,14 @@ def run(args):
         return proposal, timing
     try:
         for index in range(count):
+            if reserve is not None:
+                admission=budget.admit(reserve,record.get("hardware",reserve["hardware"]),*runtime_identities,
+                    record["started_monotonic_ns"],time.monotonic_ns(),timeout,
+                    [(r["completed_monotonic_ns"]-r["optimizer_process"]["launch_monotonic_ns"])/1e9 for r in record["trials"]],
+                    [budget.seconds(r["optimizer_process"]) for r in record["trials"]])
+                record.setdefault("panel_admissions",[]).append(admission)
+                save(execution/"progress.json",record)
+                if admission["status"]=="budget_stop": break
             trial = execution / f"trial-{index:04d}"
             proposal, timing = propose(trial)
             name = ("happy-cat-1", "mystic-tree-2", "swift-fox-3")[index] if index < 3 else f"quiet-owl-{index+1}"
@@ -372,20 +428,27 @@ def run(args):
                 policy_metadata=Path(value["policy_metadata"]), seeds=seeds,
                 steps=settings.getint("steps"), checkpoint_steps=settings.getint("checkpoint_steps"),
                 task_budget=[f"{task}={b['steps']}:{b['checkpoint_steps']}" for task, b in task_budgets(config).items()]
-                    if recipe_protocol(config) in (DEVELOPMENT_PROTOCOL, IMAGE_PROTOCOL) else [],
+                    if recipe_protocol(config) in (DEVELOPMENT_PROTOCOL, IMAGE_PROTOCOL, CURVE_PROTOCOL) else [],
                 per_game_learners=per_game_learners(config),
                 learner_recipe=[r["environment"] + "=" + str(root / r["file"]) for r in value["learner_recipes"]], appearance_seed=settings.getint("appearance_seed"),
                 eval_seed=settings.getint("eval_seed"), episodes=settings.getint("episodes"), slots=settings.getint("slots"),
                 pong_max_decisions=settings.getint("pong_max_decisions"), breakout_max_frames=settings.getint("breakout_max_frames"),image_math=image_math)
+            if value.get("protocol")==CURVE_PROTOCOL:
+                import image_curve_bindings as bindings
+                prep.evaluation_seeds=bindings.evaluation(config)
+                prep.seed_roles=root/"seed-roles.json"; prep.seed_role="development"; prep.include_initial=True
             # Registry source snapshots live in the original build directory.
             prep.registry = Path(json.loads((root / "registry-location.json").read_text())["original"])
             with contextlib.redirect_stdout(io.StringIO()):
                 plan = panels.prepare(prep)
                 panels.run(SimpleNamespace(plan=prep.out / "plan.json", allow_gpu=True,
-                    mode={"smoke": "research", "canary5090": "canary5090", "development": "development", "validation5060": "validation5060", "image5060":"image5060"}[args.mode],
+                    mode={"smoke": "research", "canary5090": "canary5090", "development": "development", "validation5060": "validation5060", "image5060":"image5060", "curve-pilot5090":"development"}[args.mode],
                     timeout=remaining(timeout), train_timeout=settings.getint("train_timeout"), eval_timeout=settings.getint("eval_timeout")))
                 analysis = panels.audit(prep.out / "plan.json", trial / "review")
-            feedback = aggregate(plan, analysis, config)
+            if value.get("protocol")==CURVE_PROTOCOL:
+                import image_curve_feedback as curves
+                feedback=curves.aggregate(plan,analysis,prep.out,json.loads((root/"nature-reference.json").read_text()))
+            else: feedback = aggregate(plan, analysis, config)
             save(trial / "feedback.json", feedback, exclusive=True)
             fields = ["0", format(feedback["score"], ".17g"), format(feedback["cost"], ".17g")]
             fields.extend(format(x, ".9g") for x in proposal["normalized"])
@@ -397,11 +460,13 @@ def run(args):
             if math_check: record["trials"][-1]["encoder_check"]=math_check
             if "image_validation_catalog" in value:
                 record["trials"][-1]["image_proposal_preflight_sha256"]=sha(admission_path/"REPORT.json")
+            if value.get("protocol")==CURVE_PROTOCOL: record["trials"][-1]["completed_monotonic_ns"]=time.monotonic_ns()
             record["history"] = history
             save(execution / "progress.json", record)
         # Explicit unused final proposal confirms the last panel reached native observe.
         final, timing = propose(execution / "final-feedback")
-        record.update(status="ok", final_observations_replayed=final["observations_replayed"],
+        stopped=bool(record.get("panel_admissions") and record["panel_admissions"][-1]["status"]=="budget_stop")
+        record.update(status="budget_stop" if stopped else "ok", final_observations_replayed=final["observations_replayed"],
             final_unused_proposal=final, final_optimizer_process=timing)
     except BaseException as error:
         record.update(status="failed", error=f"{type(error).__name__}: {error}")
@@ -418,9 +483,15 @@ def audit(args):
     config, seeds = recipe(root / "recipe.ini")
     result_path = root / "execution/result.json"
     result = json.loads(result_path.read_text())
-    require(result["status"] == "ok" and result["plan_sha256"] == sha(args.plan), "Incomplete or foreign feedback run")
-    require(len(result["trials"]) == config.getint("search", "max_runs"), "Missing feedback trial")
+    stopped=result["status"]=="budget_stop"
+    require((result["status"]=="ok" or stopped and value["protocol"]==CURVE_PROTOCOL)
+            and result["plan_sha256"] == sha(args.plan), "Incomplete or foreign feedback run")
+    require(len(result["trials"])<=config.getint("search","max_runs") if stopped
+            else len(result["trials"])==config.getint("search","max_runs"),"Missing feedback trial")
     args.out.mkdir(parents=True, exist_ok=False)
+    if value.get("protocol")==CURVE_PROTOCOL:
+        import image_curve_bindings as bindings
+        bindings.audit_reference(root,config,args.out/"nature-reference")
     history = f"PUFFER_CROSS_GAME_V1 {value['dimensions']}\n"
     previous_end = result["started_monotonic_ns"]
     learners, architectures, summaries = {}, [], []
@@ -476,7 +547,7 @@ def audit(args):
         panel_root = trial / "panel"; plan = panels.inspect(panel_root / "plan.json")
         require(plan["seeds"] == seeds and len(plan["candidates"]) == 1
             and plan["candidates"][0]["architecture"] == spec, "Panel changed assigned architecture/seeds")
-        if value.get("protocol") in (DEVELOPMENT_PROTOCOL, IMAGE_PROTOCOL):
+        if value.get("protocol") in (DEVELOPMENT_PROTOCOL, IMAGE_PROTOCOL, CURVE_PROTOCOL):
             require(plan["task_budgets"] == value["task_budgets"]
                     and plan.get("per_game_learners", False) is value["per_game_learners"], "Panel changed frozen per-game allocation")
         for job in plan["jobs"]:
@@ -486,9 +557,15 @@ def audit(args):
             else: learners[key] = fixed
         with contextlib.redirect_stdout(io.StringIO()):
             analysis = panels.audit(panel_root / "plan.json", args.out / f"trial-{index:04d}")
-        feedback = aggregate(plan, analysis, config)
+        if value.get("protocol")==CURVE_PROTOCOL:
+            import image_curve_feedback as curves
+            feedback=curves.aggregate(plan,analysis,trial/"panel",json.loads((root/"nature-reference.json").read_text()))
+        else: feedback = aggregate(plan, analysis, config)
         require(feedback == entry["feedback"] == json.loads((trial / "feedback.json").read_text()), "Feedback does not match exact outcomes")
         panel_result = json.loads((panel_root / "execution/result.json").read_text())
+        if value.get("protocol")==CURVE_PROTOCOL:
+            require(panel_result["ended_monotonic_ns"]<=entry["completed_monotonic_ns"]
+                    <=result["ended_monotonic_ns"],"Invalid audited complete-panel clock")
         require(previous_end <= panel_result["started_monotonic_ns"] < panel_result["ended_monotonic_ns"], "Optimizer overlaps panel")
         previous_end = panel_result["ended_monotonic_ns"]
         fields = ["0", format(feedback["score"], ".17g"), format(feedback["cost"], ".17g")]
@@ -496,6 +573,21 @@ def audit(args):
         history += " ".join(fields) + "\n"
         summaries.append(dict(index=index, feedback=feedback, duplicate_of=entry["duplicate_of"]))
     proposal(root / "execution/final-feedback", result["final_unused_proposal"], result["final_optimizer_process"])
+    if value.get("protocol")==CURVE_PROTOCOL and "runtime_calibration_sha256" in value:
+        import image_campaign_budget as budget
+        reserve=json.loads((root/"runtime-calibration.json").read_text())
+        identity=budget.identities(config,json.loads((root/"nature-reference.json").read_text()))
+        require(len(result["panel_admissions"])==len(summaries)+(1 if stopped else 0),"Missing panel admission receipts")
+        for i,admission in enumerate(result["panel_admissions"]):
+            before=result["started_monotonic_ns"] if i==0 else result["trials"][i-1]["completed_monotonic_ns"]
+            after=result["trials"][i]["optimizer_process"]["launch_monotonic_ns"] if i<len(summaries) else result["final_optimizer_process"]["launch_monotonic_ns"]
+            require(before<=admission["checked_monotonic_ns"]<after,"Admission clock leaves between-panel boundary")
+            replay=budget.admit(reserve,result["hardware"],*identity,result["started_monotonic_ns"],
+                admission["checked_monotonic_ns"],config.getint("search","campaign_timeout"),
+                [(r["completed_monotonic_ns"]-r["optimizer_process"]["launch_monotonic_ns"])/1e9 for r in result["trials"][:i]],
+                [budget.seconds(r["optimizer_process"]) for r in result["trials"][:i]])
+            require(replay==admission and replay["status"]==("budget_stop" if stopped and i==len(summaries) else "admit-complete-panel"),
+                    "Changed calibrated complete-panel admission")
     require(result["history"] == history and result["final_observations_replayed"] == len(summaries)
         and previous_end <= result["ended_monotonic_ns"], "Final feedback was not observed")
     if len(summaries) > config.getint("protein", "num_random_samples"):
@@ -505,6 +597,7 @@ def audit(args):
         publication_claim_qualified=False, broader_encoder_math_qualified=False,
         optimizer_process_seconds=math.fsum((r["optimizer_process"]["end_monotonic_ns"]-r["optimizer_process"]["launch_monotonic_ns"])/1e9
             for r in result["trials"]) + (result["final_optimizer_process"]["end_monotonic_ns"]-result["final_optimizer_process"]["launch_monotonic_ns"])/1e9)
+    if value.get("protocol")==CURVE_PROTOCOL: report["termination"]=result["status"]
     save(args.out / "analysis.json", report, exclusive=True)
     return report
 
@@ -517,9 +610,12 @@ def main():
     prep.add_argument("--learner-recipe", action="append", default=[], help="ENV=INI overlay fixed across every candidate")
     prep.add_argument("--encoder-validation", type=Path, help="Require independent CUDA graph checks before every candidate")
     prep.add_argument("--image-validation-catalog",type=Path,help="All-shape independent CUDA bundles for explicit image feedback")
+    for name in ("nature-reference", "nature-panel", "nature-audit", "seed-roles"):
+        prep.add_argument("--"+name,type=Path,help="Required frozen native calibration/seed binding for image curve v4")
+    prep.add_argument("--runtime-calibration",type=Path,help="Measured complete-panel pilot reserve; required for overnight discovery")
     check = sub.add_parser("inspect"); check.add_argument("--out", type=Path, required=True)
     execute = sub.add_parser("run"); execute.add_argument("--plan", type=Path, required=True)
-    execute.add_argument("--mode", choices=("smoke", "canary5090", "development", "validation5060", "image5060"), required=True)
+    execute.add_argument("--mode", choices=("smoke", "canary5090", "development", "validation5060", "image5060", "curve-pilot5090"), required=True)
     execute.add_argument("--allow-gpu", action="store_true")
     review = sub.add_parser("audit")
     review.add_argument("--plan", type=Path, required=True); review.add_argument("--out", type=Path, required=True)

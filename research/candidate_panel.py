@@ -36,6 +36,7 @@ PROTOCOL = "native-cnn-candidate-panel-v1"
 BASELINE_PROTOCOL = "native-cnn-candidate-panel-v2"
 LEARNER_PROTOCOL = "native-cnn-candidate-panel-v3"
 IMAGE_PROTOCOL = "native-cnn-candidate-panel-v4"
+IMAGE_CURVE_PROTOCOL = "native-cnn-candidate-panel-v5"
 IMAGE_BUILD = "native-cnn-candidate-image-build-v1"
 TASKS = tuple(panel.ENVIRONMENTS)
 BASELINES = {
@@ -43,6 +44,18 @@ BASELINES = {
     "impala_cnn": dict(name="impala-cnn", architecture={"encoder": 0}, binary_family="impala", policy_family="impala"),
     "impoola_cnn": dict(name="impoola-cnn", architecture={"encoder": 0}, binary_family="impoola", policy_family="impoola"),
 }
+
+
+def image_protocol(protocol):
+    return protocol in (IMAGE_PROTOCOL, IMAGE_CURVE_PROTOCOL)
+
+
+def checkpoint_schedule(budget, initial=False):
+    trained = list(range(budget["checkpoint_steps"], budget["steps"], budget["checkpoint_steps"])) + [budget["steps"]]
+    if initial:
+        require(len(trained) == 8 and budget["steps"] % budget["checkpoint_steps"] == 0,
+                "Image curve panels require exactly eight rollout-aligned trained checkpoints")
+    return ([0] if initial else []) + trained
 
 
 def registry_builds(registry):
@@ -308,6 +321,28 @@ def check_starts(task, binary, config, suite_path, directory):
                 manifest=str(directory / "episodes.csv"), manifest_sha256=sha(directory / "episodes.csv"))
 
 
+def evaluation_seeds(training, base, explicit=None):
+    require(type(base) is int and 0 <= base < 2**32, "Invalid evaluation base seed")
+    values = explicit if explicit is not None else list(range(base, base + len(training)))
+    require(isinstance(values, list) and len(values) == len(training) and values
+            and values[0] == base and len(set(values)) == len(values)
+            and all(type(s) is int and 0 <= s < 2**32 for s in values),
+            "Need one distinct explicit evaluation seed per ordered training replica")
+    return values
+
+
+def inspect_seed_roles(value, root):
+    import image_seed_roles
+    declaration = value["seed_roles"]
+    require(set(declaration) == {"file", "sha256", "role"} and declaration["file"] == "seed-roles.json"
+            and sha(root / declaration["file"]) == declaration["sha256"], "Changed seed role declaration")
+    roles = json.loads((root / declaration["file"]).read_text())
+    image_seed_roles.check_panel(roles, declaration["role"], value["seeds"],
+        evaluation_seeds(value["seeds"], value["eval_seed"], value.get("evaluation_seeds")), value["appearance_seed"])
+    require(value["purpose"] == declaration["role"], "Panel purpose differs from frozen seed role")
+    return roles
+
+
 def prepare(args):
     records = candidates(args.candidate, args.native_campaign)
     baselines = getattr(args, "baselines", [])
@@ -317,7 +352,8 @@ def prepare(args):
     expanded = bool(baselines)
     per_game_learners = getattr(args, "per_game_learners", False)
     require(args.seeds and len(set(args.seeds)) == len(args.seeds) and all(type(s) is int and 0 <= s < 2**32 for s in args.seeds), "Invalid paired training seeds")
-    require(0 <= args.appearance_seed < 2**32 and 0 <= args.eval_seed <= 2**32-len(args.seeds), "Invalid appearance/evaluation seeds")
+    require(type(args.appearance_seed) is int and 0 <= args.appearance_seed < 2**32, "Invalid appearance seed")
+    evaluations = evaluation_seeds(args.seeds, args.eval_seed, getattr(args, "evaluation_seeds", None))
     require(1 <= args.episodes <= 1000000 and 1 <= args.slots <= 1024, "Invalid exact episode quota/slots")
     require(1 <= args.pong_max_decisions <= 16777216 and 1 <= args.breakout_max_frames <= 16777216, "Invalid administrative caps")
     overrides = {}
@@ -337,10 +373,21 @@ def prepare(args):
         recipes[task] = Path(filename).resolve()
     registry_path = args.registry.resolve(); registry = json.loads(registry_path.read_text())
     images = registry["protocol"] == IMAGE_BUILD
+    initial = getattr(args, "include_initial", False)
+    require(type(initial) is bool and (images or not initial), "Initial curve controls require image builds")
+    for budget in budgets.values(): checkpoint_schedule(budget, initial)
+    role_file = getattr(args, "seed_roles", None)
+    require(images or getattr(args, "evaluation_seeds", None) is None and role_file is None,
+            "Explicit evaluation lists/seed roles require the image panel contract")
+    role = getattr(args, "seed_role", "development")
+    if role_file is not None:
+        import image_seed_roles
+        roles = json.loads(role_file.read_text())
+        image_seed_roles.check_panel(roles, role, args.seeds, evaluations, args.appearance_seed)
     if images:
         require(per_game_learners and set(recipes) == set(TASKS) and getattr(args,"policy_metadata",None) is not None,
                 "Image panels require explicit per-game learners and image metadata")
-        require(not set(range(args.eval_seed,args.eval_seed+len(args.seeds))) & set(args.seeds),
+        require(not set(evaluations) & set(args.seeds),
                 "Image evaluation and training seeds overlap")
     require(matching_registry(registry, baselines, per_game_learners)
             and set(registry["binaries"]) == set(TASKS), "Need complete matching fresh build registry; build --baselines for references")
@@ -355,6 +402,9 @@ def prepare(args):
             bridge.validate_identity(task, family, record["info"], panel.ENVIRONMENTS[task])
     out = args.out.resolve(); out.mkdir(parents=True, exist_ok=False)
     try:
+        if role_file is not None:
+            shutil.copyfile(role_file, out / "seed-roles.json")
+            require(json.loads((out / "seed-roles.json").read_text()) == roles, "Seed roles changed during capture")
         bases = {}
         for task in TASKS:
             bases[task] = base_config(ROOT, task, budgets[task], args.appearance_seed, recipes.get(task), per_game_learners)
@@ -390,7 +440,7 @@ def prepare(args):
         jobs, suites, worlds = [], {}, {}
         for task, seed, candidate in job_order(records, args.seeds):
             budget = budgets[task]
-            steps = list(range(budget["checkpoint_steps"], budget["steps"], budget["checkpoint_steps"])) + [budget["steps"]]
+            steps = checkpoint_schedule(budget, initial)
             config = panel.read(); config.read_dict({s: dict(bases[task][s]) for s in bases[task].sections()})
             directory = out / "jobs" / task / f"{candidate['name']}-s{seed}"; (directory / "config").mkdir(parents=True)
             apply_job(config, candidate, seed, directory)
@@ -405,8 +455,9 @@ def prepare(args):
             for representation in range(panel.ENVIRONMENTS[task]):
                 key = f"{task}/s{seed}/r{representation}"; suite_path = out / "suites" / key / "suite.json"
                 if key not in suites:
-                    kwargs = dict(binary=binary, config=path, out=suite_path.parent, seed=args.eval_seed+args.seeds.index(seed),
-                        offset=0, episodes=args.episodes, slots=args.slots, representation=representation, purpose="development",
+                    kwargs = dict(binary=binary, config=path, out=suite_path.parent, seed=evaluations[args.seeds.index(seed)],
+                        offset=0, episodes=args.episodes, slots=args.slots, representation=representation,
+                        purpose="heldout" if role_file is not None and role == "confirmation" else "development",
                         max_decisions=args.pong_max_decisions, max_frames=args.breakout_max_frames, level_offset=0,
                         training_level_count=0, level_count=config.getint("env", "num_maps", fallback=1))
                     with redirect_stdout(io.StringIO()): ev.create_suite(SimpleNamespace(**kwargs))
@@ -432,7 +483,7 @@ def prepare(args):
                         out/"image-storage"/f"job-{len(jobs)-1:04d}",60,jobs[-1]["policy_layout"]["parameters"])
         verify_sources(out, sources, current=True)
         frozen = {str(p.relative_to(out)): sha(p) for p in out.rglob("*") if p.is_file()}
-        value = dict(protocol=IMAGE_PROTOCOL if images else LEARNER_PROTOCOL if per_game_learners else BASELINE_PROTOCOL if expanded else PROTOCOL, purpose="development-plumbing", candidates=records, jobs=jobs, suites=suites,
+        value = dict(protocol=IMAGE_CURVE_PROTOCOL if initial else IMAGE_PROTOCOL if images else LEARNER_PROTOCOL if per_game_learners else BASELINE_PROTOCOL if expanded else PROTOCOL, purpose=role if role_file is not None else "development-plumbing", candidates=records, jobs=jobs, suites=suites,
             seeds=args.seeds, steps=args.steps, task_budgets=budgets, learner_recipes=learner_receipts,
             episodes=args.episodes, slots=args.slots,
             appearance_seed=args.appearance_seed, assignments=assignments, learner_geometry=geometry,
@@ -444,10 +495,15 @@ def prepare(args):
             numerical_runtime_acceptance_complete=False, caps_calibrated=False, native_vector_initialization_validated=False)
         if per_game_learners: value["per_game_learners"] = True
         if images: value["image_contracts"] = registry["image_contracts"]
+        if initial: value["initial_checkpoint"] = "same-policy-before-first-update-v1"
+        if getattr(args, "evaluation_seeds", None) is not None: value["evaluation_seeds"] = evaluations
+        if role_file is not None:
+            value["seed_roles"] = dict(file="seed-roles.json", sha256=sha(out / "seed-roles.json"), role=role)
+            inspect_seed_roles(value, out)
         if images and getattr(args,"image_math",None) is not None:
             import image_encoder_checks
             value["image_encoder_checks"] = image_encoder_checks.freeze(args.image_math.resolve(),out/"image-encoder-checks",
-                jobs,value["image_contracts"],out)
+                jobs,value["image_contracts"],out,evaluation_slots=args.slots)
             value["files_sha256"] = {str(p.relative_to(out)):sha(p) for p in out.rglob("*") if p.is_file()}
         if expanded or per_game_learners: value.update(baselines=baselines, native_working_root=str(out), gpu_executed=False,
                                   declared_decisions=sum(budgets[j["environment"]]["steps"] for j in jobs))
@@ -465,10 +521,13 @@ def prepare(args):
 
 def inspect(path, current=False):
     value = json.loads(path.read_text()); root = path.parent
-    require(value["protocol"] in (PROTOCOL, BASELINE_PROTOCOL, LEARNER_PROTOCOL, IMAGE_PROTOCOL) and not (root / "failure.json").exists(), "Wrong/failed candidate packet")
-    images = value["protocol"] == IMAGE_PROTOCOL
+    require(value["protocol"] in (PROTOCOL, BASELINE_PROTOCOL, LEARNER_PROTOCOL, IMAGE_PROTOCOL, IMAGE_CURVE_PROTOCOL) and not (root / "failure.json").exists(), "Wrong/failed candidate packet")
+    images = image_protocol(value["protocol"])
+    initial = value["protocol"] == IMAGE_CURVE_PROTOCOL
+    require((value.get("initial_checkpoint") == "same-policy-before-first-update-v1") if initial
+            else "initial_checkpoint" not in value, "Wrong initial checkpoint contract")
     require(images is (value["native_registry"]["protocol"] == IMAGE_BUILD), "Image panel protocol cannot be downgraded")
-    per_game_learners = value["protocol"] in (LEARNER_PROTOCOL, IMAGE_PROTOCOL)
+    per_game_learners = value["protocol"] in (LEARNER_PROTOCOL, IMAGE_PROTOCOL, IMAGE_CURVE_PROTOCOL)
     require(value.get("per_game_learners", False) is per_game_learners, "Wrong per-game learner declaration")
     expanded = bool(value.get("baselines", [])) if per_game_learners else value["protocol"] == BASELINE_PROTOCOL
     for name, digest in value["files_sha256"].items():
@@ -484,8 +543,9 @@ def inspect(path, current=False):
         import import_image_builds
         require(json.loads((root/"image-builds/registry.json").read_text())==value["native_registry"],"Frozen image builds differ")
         import_image_builds.inspect(root/"image-builds",value["native_registry"],current=current)
-        require(not set(range(value["eval_seed"],value["eval_seed"]+len(value["seeds"]))) & set(value["seeds"]),
+        require(not set(evaluation_seeds(value["seeds"], value["eval_seed"], value.get("evaluation_seeds"))) & set(value["seeds"]),
                 "Image training/evaluation seed overlap")
+        if "seed_roles" in value: inspect_seed_roles(value, root)
     if per_game_learners:
         require(matching_registry(value["native_registry"], value.get("baselines", []), True),
                 "Wrong per-game learner build registry")
@@ -524,7 +584,7 @@ def inspect(path, current=False):
             else: require(architecture(snapshot) == candidate["architecture"], "Candidate differs from actual discovery snapshot")
     require(len(value["jobs"]) == len(value["candidates"])*len(TASKS)*len(value["seeds"]), "Incomplete candidate/game cross product")
     expected = len(value["candidates"])*len(value["seeds"])*sum(panel.ENVIRONMENTS[t]*
-        ((b["steps"]-1)//b["checkpoint_steps"]+1) for t, b in value["task_budgets"].items())
+        len(checkpoint_schedule(b, initial)) for t, b in value["task_budgets"].items())
     require(value["planned_evaluations"] == expected, "Incomplete drawing/checkpoint cross product")
     common, bases = {}, {}
     order = list(job_order(value["candidates"], value["seeds"]))
@@ -543,6 +603,7 @@ def inspect(path, current=False):
         require(config.getint("base", "seed") == job["seed"] and config.getint("env", "representation_mode") == 1
                 and config.getint("env", "representation_seed") == value["appearance_seed"], "Wrong training RNG/appearance")
         task = job["environment"]; budget = value["task_budgets"][task]
+        require(job["checkpoint_steps"] == checkpoint_schedule(budget, initial), "Job changes scheduled curve checkpoints")
         rollout = config.getint("vec", "total_agents") * config.getint("train", "horizon") if per_game_learners else 2048
         require(rollout > 0 and budget["steps"] % rollout == 0 and budget["checkpoint_steps"] % rollout == 0,
                 "Budget/cadence does not match per-game rollout")
@@ -576,6 +637,12 @@ def inspect(path, current=False):
             ev = bridge.adapter(task); loaded = ev.load_suite(root / target["suite"])
             if images:
                 suite = loaded if task == "connect4cnn" else loaded[0]
+                require(suite["seed"] == evaluation_seeds(value["seeds"], value["eval_seed"],
+                        value.get("evaluation_seeds"))[value["seeds"].index(job["seed"])]
+                        and suite["slots"] == value["slots"] and suite["episodes"] == value["episodes"],
+                        "Drawing suite changes assigned episode seed/quota/slots")
+                require(suite["purpose"] == ("heldout" if value.get("seed_roles", {}).get("role") == "confirmation" else "development"),
+                        "Drawing suite changes development/confirmation purpose")
                 contract = suite.get("image_contract") if task == "connect4cnn" else suite["binary_info"].get("image_contract")
                 require(contract == value["image_contracts"][task], "Drawing suite uses a different image contract")
             if expanded:
@@ -590,7 +657,7 @@ def inspect(path, current=False):
     if per_game_learners: inspect_learner_geometry(root, value, bases)
     if images and "image_encoder_checks" in value:
         import image_encoder_checks
-        require(image_encoder_checks.inspect(root/"image-encoder-checks",value["jobs"],value["image_contracts"],root,current)
+        require(image_encoder_checks.inspect(root/"image-encoder-checks",value["jobs"],value["image_contracts"],root,current,evaluation_slots=value["slots"])
                 ==value["image_encoder_checks"],"Image numerical evidence binding changed")
     return value
 
@@ -669,10 +736,10 @@ def coverage(path, out):
 
 def run_hardware(value, mode):
     if mode == "image5060":
-        require(value["protocol"] == IMAGE_PROTOCOL and len(value["candidates"]) <= 2 and len(value["seeds"]) == 1
+        require(image_protocol(value["protocol"]) and len(value["candidates"]) <= 2 and len(value["seeds"]) == 1
                 and max(b["steps"] for b in value["task_budgets"].values()) <= 1024
-                and all(len(j["checkpoint_steps"]) <= 8 for j in value["jobs"])
-                and value["episodes"] <= 5 and value["slots"] == 4 and value["planned_evaluations"] <= 656
+                and all(len(j["checkpoint_steps"]) <= (9 if value["protocol"] == IMAGE_CURVE_PROTOCOL else 8) for j in value["jobs"])
+                and value["episodes"] <= 5 and value["slots"] == 4 and value["planned_evaluations"] <= (738 if value["protocol"] == IMAGE_CURVE_PROTOCOL else 656)
                 and "image_encoder_checks" in value,
                 "Image smoke exceeds short 5060 allocation")
         require(all(c["architecture"]["encoder"] in (2,4) for c in value["candidates"]), "Image smoke excludes slow build families")
@@ -738,7 +805,7 @@ def run(args):
     root = args.plan.resolve().parent; value = inspect(args.plan.resolve(), current=True)
     require(args.timeout > 0 and args.train_timeout > 0 and args.eval_timeout > 0, "Positive process/campaign deadlines required")
     expected = run_hardware(value, args.mode)
-    if value["protocol"] == IMAGE_PROTOCOL: require("image_encoder_checks" in value,"Image training requires matched per-game CUDA evidence")
+    if image_protocol(value["protocol"]): require("image_encoder_checks" in value,"Image training requires matched per-game CUDA evidence")
     if args.mode in ("mini", "research", "canary5090", "validation5060", "image5060"):
         require(args.timeout <= (600 if args.mode == "canary5090" else 900)
                 and args.train_timeout <= 30 and args.eval_timeout <= (90 if args.mode=="image5060" else 30),
@@ -768,13 +835,15 @@ def run(args):
             with lock_path.open("a") as lock:
                 fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
                 info = hardware(expected)
-                if value["protocol"] == IMAGE_PROTOCOL:
+                if image_protocol(value["protocol"]):
                     import image_encoder_checks
                     require(image_encoder_checks.hardware(root/"image-encoder-checks")==info,
                             "Image numerical checks belong to different hardware/toolchain")
                 if "hardware" in record: require(info == record["hardware"], "Hardware changed within campaign")
                 else: record["hardware"] = info
                 environment = dict(os.environ, PUFFER_CHECKPOINT_RECEIPTS="1")
+                environment.pop("PUFFER_SAVE_INITIAL_CHECKPOINT", None)
+                if value["protocol"] == IMAGE_CURVE_PROTOCOL: environment["PUFFER_SAVE_INITIAL_CHECKPOINT"] = "1"
                 timed = process(job["command"], directory, directory / "train.txt", remaining(args.train_timeout), environment)
             checkpoint_root = directory / "checkpoints" / task / job["candidate"]
             paths = {step: checkpoint_root / f"{step:016d}.bin" for step in job["checkpoint_steps"]}
@@ -806,7 +875,7 @@ def run(args):
                     save(out / "progress.json", record)
             # A same-batch repeat/eager smoke for every candidate/game, using
             # drawing 0 and its final checkpoint. This is not independent math.
-            if args.mode in ("smoke", "mini", "canary5090", "validation5060", "image5060") or args.mode == "development" and value["protocol"] in (LEARNER_PROTOCOL, IMAGE_PROTOCOL):
+            if args.mode in ("smoke", "mini", "canary5090", "validation5060", "image5060") or args.mode == "development" and value["protocol"] in (LEARNER_PROTOCOL, IMAGE_PROTOCOL, IMAGE_CURVE_PROTOCOL):
                 target = job["targets"][0]; step = job["checkpoint_steps"][-1]
                 reference = out / "evaluations" / f"job-{index:04d}" / f"s{step}-r0" / "episodes.csv"
                 for mode in ("repeat", "eager"):
@@ -873,7 +942,9 @@ def audit(path, out):
         inputs.track(directory / "train.txt.json"); inputs.track(directory / "train.txt")
         require(timed == entry["process"] and timed["status"] == "ok" and timed["returncode"] == 0
                 and timed["command"] == job["command"] and timed["cwd"] == job["cwd"]
-                and timed["environment"]["PUFFER_CHECKPOINT_RECEIPTS"] == "1", "Wrong native training process receipt")
+                and timed["environment"]["PUFFER_CHECKPOINT_RECEIPTS"] == "1"
+                and timed["environment"].get("PUFFER_SAVE_INITIAL_CHECKPOINT") ==
+                    ("1" if value["protocol"] == IMAGE_CURVE_PROTOCOL else None), "Wrong native training process receipt")
         require(previous_end is None or timed["launch_monotonic_ns"] >= previous_end, "Training processes overlap")
         previous_end = timed["end_monotonic_ns"]
         seconds = (timed["end_monotonic_ns"]-timed["launch_monotonic_ns"])/1e9
@@ -937,7 +1008,7 @@ def audit(path, out):
         require(sha(reference) == entry["episodes_sha256"], "Repeat differs from original evaluation")
         evaluate(dict(job_index=entry["job_index"], step=job["checkpoint_steps"][-1], representation=0), Path(entry["result"]))
     if result["status"] == "ok" and (result["mode"] in ("smoke", "mini", "canary5090", "validation5060")
-            or result["mode"] == "image5060" or result["mode"] == "development" and value["protocol"] in (LEARNER_PROTOCOL, IMAGE_PROTOCOL)):
+            or result["mode"] == "image5060" or result["mode"] == "development" and value["protocol"] in (LEARNER_PROTOCOL, IMAGE_PROTOCOL, IMAGE_CURVE_PROTOCOL)):
         require(repeat_keys == {(i, mode) for i in range(len(value["jobs"])) for mode in ("repeat", "eager")}, "Missing smoke repeat/eager check")
     inputs.verify()
     out = out.resolve(); out.mkdir(parents=True, exist_ok=False)
@@ -947,7 +1018,7 @@ def audit(path, out):
         repeat_checks=len(result["repeat_checks"]), hardware=result.get("hardware"), inputs_sha256=inputs.hashes, frontier_claim_qualified=False,
         quality_selection_allowed=False, cross_game_aggregate_score=None, native_vector_initialization_validated=False,
         warning="Short plumbing results are not learning evidence, independent numerical acceptance, calibrated budgets/caps or a publication frontier.")
-    if value["protocol"] == BASELINE_PROTOCOL or value["protocol"] in (LEARNER_PROTOCOL, IMAGE_PROTOCOL) and value.get("baselines"):
+    if value["protocol"] == BASELINE_PROTOCOL or value["protocol"] in (LEARNER_PROTOCOL, IMAGE_PROTOCOL, IMAGE_CURVE_PROTOCOL) and value.get("baselines"):
         curves = candidate_frontiers(value, observations, result["mode"])
         analysis["curve_status"] = curves["status"]
         write_frontiers(out, curves)
@@ -978,6 +1049,10 @@ def main():
     prep.add_argument("--policy-metadata", type=Path, help="Existing three-family host registration build; check layouts before GPU use")
     prep.add_argument("--image-math",type=Path,help="Completed per-candidate/per-game independent CUDA check manifest; mandatory for image execution")
     prep.add_argument("--seeds", nargs="+", type=int, default=[57173]); prep.add_argument("--appearance-seed", type=int, default=35173)
+    prep.add_argument("--evaluation-seeds", nargs="+", type=int, help="Image panels: explicit paired episode seeds, in training-replica order")
+    prep.add_argument("--seed-roles", type=Path, help="Frozen development/confirmation seed-role JSON; never a search coordinate")
+    prep.add_argument("--seed-role", choices=("development", "confirmation"), default="development")
+    prep.add_argument("--include-initial", action="store_true", help="Image v5: save/evaluate this policy before updates plus exactly eight trained checkpoints")
     prep.add_argument("--steps", type=int, default=65536); prep.add_argument("--checkpoint-steps", type=int, default=65536)
     prep.add_argument("--task-budget", action="append", default=[], help="ENV=STEPS:CHECKPOINT_DECISIONS, matched across CNNs")
     prep.add_argument("--learner-recipe", action="append", default=[], help="ENV=INI numeric learner overlay, matched across CNNs")

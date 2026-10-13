@@ -1,0 +1,13 @@
+{
+  "schema": "native-image-panel-encoder-checks-v1",
+  "candidates": {
+    "initial-eight": {
+      "connect4cnn": "../initial-eight-remaining-cuda/h576-w672-c3",
+      "pongcnn": "../initial-eight-remaining-cuda/h640-w620-c3",
+      "flappycnn": "../flappy-initial-eight-cuda",
+      "breakoutcnn": "../initial-eight-remaining-cuda/h330-w576-c3",
+      "snakecnn": "../initial-eight-remaining-cuda/h616-w616-c3",
+      "mazecnn": "../initial-eight-remaining-cuda/h616-w616-c3"
+    }
+  }
+}

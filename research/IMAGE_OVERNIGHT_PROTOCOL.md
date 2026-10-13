@@ -21,7 +21,12 @@ confirmation training replicas104729/130363/155921 and final episode
 seeds420/1337/9001 before selecting a graph. Appearance/optimizer seeds also
 stay fixed. **Never sweep seeds.** Confirmation cannot feed PROTEIN, learner
 selection or architecture revisions. Existing seed7 plumbing is development.
-These lists must also be enforced by the remaining campaign implementation.
+`image_seed_roles.py` validates these roles. Image panels accept explicit
+`--evaluation-seeds` and a frozen `--seed-roles` JSON with `--seed-role`.
+Preparation and inspection enforce the full ordered assignments. Confirmation
+suites use the existing evaluator's `heldout` purpose; this means reserved
+episode/training seeds, not unseen games or drawings. Curve-feedback preparation
+requires development roles and refuses confirmation feedback.
 
 Different episode seeds are not unseen games, styles or Maze levels. Maze's
 deterministic table remains shared unless a new prefix/table contract is added.
@@ -33,10 +38,23 @@ rollout-aligned checkpoints including the final one. Old tiny-image SPS and
 in each game's paired development controls before search eligibility. Retain
 unsuccessful calibration recipes/cost; do not drop a failed game from selection.
 
-## Curve and coverage objective to implement
+`image_learning_gate.py` now enforces this before curve-feedback preparation.
+The calibration panel must contain the fixed quality/Nature controls, their
+initial checkpoints and at least three development replicas. Every game needs
+one control with normalized final mean ≥0.1, every seed ≥0.025, and final-minus-
+initial improvement ≥0.025 on every seed. The floors are fixed eligibility
+filters, not significance tests. High initial returns and best earlier
+checkpoints cannot qualify the gate. Frozen receipt inspection recomputes the
+gate, even if an altered gate file and its checksum are both rewritten.
 
-The v3 plumbing loop still uses a final-checkpoint average. This replacement
-needs its own objective version; never relabel previous feedback.
+## Curve and coverage objective
+
+The v3 plumbing loop retains its final-checkpoint average. New feedback-v4 opts
+in through `search.curve_objective=balanced-eight-nature-time-anchors-v1` and
+uses `image_curve_feedback.py`; never relabel previous feedback. Image panel-v5
+includes the policy's measured initial checkpoint plus eight trained checkpoints.
+These new paths have scalar/control-flow tests; a complete new-version native
+panel and real curve-feedback campaign still require execution and acceptance.
 
 1. Freeze an audited Nature calibration panel. Its eight monotonic checkpoint
    times become anchors for each game/training replica. Freeze finite per-game
@@ -44,7 +62,9 @@ needs its own objective version; never relabel previous feedback.
 2. At each anchor use the candidate's latest chronological **actually
    affordable** checkpoint. No best-so-far return, interpolation, extrapolated
    learning, best seed or selected drawing. Preserve declines. If none is
-   affordable, use a declared measured untrained control, not invented zero.
+   affordable, use its own audited initial checkpoint from the same complete
+   panel, not invented zero or another architecture's random policy. An explicit
+   research-only native option saves that policy before the first update.
 3. Normalize lower/upper scores to[0,1] with frozen offset/target. Average
    drawings equally inside a replica, replicas equally inside a game. Keep
    Pong's conservative lower bound separate from its upper bound.
@@ -70,12 +90,34 @@ VRAM. Native policy layout/storage/index rejection must precede CUDA validation.
 A storage floor is not a measured peak-memory certificate.
 
 Reserve an entire next all-game panel, numerical checks, audit, final native
-feedback replay and reporting before admitting a proposal. Estimate
-conservatively from actual5090 calibration and the search envelope. Stop between
-complete panels when another cannot fit inside approximately12h. Record
-`budget_stop` separately from failure. Unexpected hard-deadline exhaustion keeps
-partial/failure evidence; never submit a truncated mean. Numerical workers now
-share the outer deadline; that is not yet complete-panel admission logic.
+feedback replay and reporting before admitting a proposal.
+`image_campaign_budget.py` derives a reserve from an independently audited
+complete feedback-v4 pilot on the execution hardware. Whole trial windows cover
+proposal, admission, numerical checks, preparation, training, all evaluations
+and auditing. Its separate post-panel reserve includes measured final replay
+and the full audited `report_image_feedback.py` exports/interactive curves.
+The pilot report and its files are bound by hashes; audit-only timing does not
+qualify the reporting reserve. Discovery reserves twice the slowest measured panel and raises
+that estimate when later completed trials are slower. It stops before the next
+proposal with a separately audited `budget_stop`, then performs final native
+feedback replay. This is an empirical estimate, not a runtime guarantee for an
+unmeasured graph. Unexpected deadline failures remain failures with no partial
+observation. Numerical workers separately share the outer deadline.
+
+Uncalibrated development runs are refused. `curve-pilot5090` is a separate
+bounded, at-most-three-trial runtime pilot; it still requires the real measured
+Nature curves and fixed seeds. The pilot needs actual eligible learning recipes
+and a calibrated search envelope, which remain outstanding. No existing64-step
+plumbing packet qualifies it. After its full artifact audit, the budget tool can
+freeze measured reserves; arbitrary bare estimates do not satisfy the gate.
+
+Reporting admission now scales its reserve with the complete history plus the
+next proposed panel, never below the measured pilot report. Slower observed
+optimizer processes can also increase the final replay reserve. Admission and
+offline audit use the same calculation; scalar and mocked stopping tests pass.
+A report for three observations is no longer charged as if it covered a larger
+history for free. The estimates remain empirical; actual 5090 pilot/envelope
+qualification and the full overnight launcher are still outstanding.
 
 ## Evidence affecting calibration
 

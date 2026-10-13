@@ -134,7 +134,16 @@ class ObjectiveTests(unittest.TestCase):
     def test_extended_mock_loop_forwards_per_game_budgets_and_frozen_learner_mode(self):
         self.exercise_mock_loop(extended=True)
 
-    def exercise_mock_loop(self, extended=False):
+    def test_curve_mock_loop_routes_initial_checkpoints_fixed_roles_and_curve_feedback_to_native_history(self):
+        self.exercise_mock_loop(extended=True,curve=True)
+
+    def test_curve_budget_stop_keeps_completed_panels_and_observes_last_feedback(self):
+        self.exercise_mock_loop(extended=True,curve=True,stop_after=2)
+
+    def test_curve_budget_stop_before_first_panel_submits_no_observation(self):
+        self.exercise_mock_loop(extended=True,curve=True,stop_after=0)
+
+    def exercise_mock_loop(self, extended=False, curve=False, stop_after=None):
         # Process/search/NN calls are mocked. This tests only orchestration.
         with tempfile.TemporaryDirectory() as temporary:
             root=Path(temporary)
@@ -143,13 +152,25 @@ class ObjectiveTests(unittest.TestCase):
                 text = text.replace("[search]", "[search]\nlearner_mode=per_game")
                 text += "\n[task.pongcnn]\nsteps=131072\ncheckpoint_steps=65536\n"
             (root/"recipe.ini").write_text(text)
+            if curve:
+                cfg=tool.panels.panel.read(root/"recipe.ini")
+                cfg["search"].update(image_contract="human-geometry-v1",curve_objective="balanced-eight-nature-time-anchors-v1",
+                    training_seeds="7,42,69",eval_seed="7007",evaluation_seeds="7007,7008,7009",seed_role="development",
+                    checkpoint_steps="8192",campaign_timeout="600")
+                cfg["task.pongcnn"]["checkpoint_steps"]="16384"
+                with (root/"recipe.ini").open("w") as f: cfg.write(f)
+                (root/"nature-reference.json").write_text("{}")
             config, _ = tool.recipe(root/"recipe.ini")
             (root/"plan.json").write_text("{}")
             (root/"registry-location.json").write_text(json.dumps(dict(original=str(root/"registry.json"))))
             value=dict(dimensions=1,optimizer="fake-native",policy_metadata=str(root),learner_recipes=[],
                 description=dict(coordinates=["cnn_channels_1"]))
             if extended: value.update(protocol=tool.DEVELOPMENT_PROTOCOL, task_budgets=tool.task_budgets(config), per_game_learners=True)
-            plan=copy.deepcopy(self.plan);plan["seeds"]=[60173]
+            if curve: value["protocol"]=tool.CURVE_PROTOCOL
+            if stop_after is not None:
+                value["runtime_calibration_sha256"]="mock-runtime-binding"
+                (root/"runtime-calibration.json").write_text(json.dumps(dict(hardware="fake-5090")))
+            plan=copy.deepcopy(self.plan);plan["seeds"]=[7,42,69] if curve else [60173]
             analysis=copy.deepcopy(self.analysis)
             analysis["observations"]=[{**r,"seed":60173} for r in self.rows if r["seed"]==1]
             plan["planned_evaluations"]=len(analysis["observations"])
@@ -189,30 +210,57 @@ class ObjectiveTests(unittest.TestCase):
                 destination=args.plan.parent/"execution";destination.mkdir()
                 start=time.monotonic_ns();end=time.monotonic_ns()
                 (destination/"result.json").write_text(json.dumps(dict(started_monotonic_ns=start,ended_monotonic_ns=end)))
+            def admission(reserve,hardware,conditions,envelope,started,now,timeout,observed,optimizer):
+                return dict(status="budget_stop" if len(observed)==stop_after else "admit-complete-panel",
+                    checked_monotonic_ns=now,partial_feedback_allowed=False)
             with patch.object(tool,"ROOT",root),patch.object(tool,"inspect",return_value=value),\
                  patch.object(tool.panels,"hardware",return_value="fake-5090") as hardware,\
                  patch.object(tool.panels,"process",side_effect=process),\
                  patch.object(tool.panels,"prepare",side_effect=prepare),\
                  patch.object(tool.panels,"run",side_effect=panel_run),\
-                 patch.object(tool.panels,"audit",side_effect=audit):
-                result=tool.run(SimpleNamespace(plan=root/"plan.json",allow_gpu=True,mode="development" if extended else "canary5090"))
+                 patch.object(tool.panels,"audit",side_effect=audit),\
+                 patch("image_curve_feedback.aggregate",return_value=dict(score=.37,cost=12)) as curve_feedback,\
+                 patch("image_campaign_budget.identities",return_value=("conditions","envelope")),\
+                 patch("image_campaign_budget.admit",side_effect=admission):
+                result=tool.run(SimpleNamespace(plan=root/"plan.json",allow_gpu=True,
+                    mode="development" if stop_after is not None else "curve-pilot5090" if curve else "development" if extended else "canary5090"))
+                completed=3 if stop_after is None else stop_after
+                self.assertEqual(curve_feedback.call_count,completed if curve else 0)
             self.assertTrue((root/"build/connect4cnn/hardware-benchmark.lock").is_file())
             self.assertTrue(all(call.args == ("5090",) for call in hardware.call_args_list))
-            self.assertEqual(result["status"],"ok")
-            self.assertEqual([len(h.splitlines())-1 for h in histories],[0,1,2,3])
-            self.assertEqual(result["final_observations_replayed"],3)
-            self.assertEqual(result["trials"][2]["duplicate_of"],1)
-            self.assertEqual(len(panel_args),3)
-            self.assertTrue(all(args.steps==65536 and args.seeds==[60173] for args in panel_args))
+            self.assertEqual(result["status"],"ok" if stop_after is None else "budget_stop")
+            self.assertEqual([len(h.splitlines())-1 for h in histories],list(range(completed+1)))
+            self.assertEqual(result["final_observations_replayed"],completed)
+            if completed==3: self.assertEqual(result["trials"][2]["duplicate_of"],1)
+            self.assertEqual(len(panel_args),completed)
+            if stop_after is not None:
+                self.assertEqual(len(result["panel_admissions"]),completed+1)
+                self.assertFalse((root/f"execution/trial-{completed:04d}").exists())
+            self.assertTrue(all(args.steps==65536 and args.seeds==([7,42,69] if curve else [60173]) for args in panel_args))
             self.assertTrue(all(args.per_game_learners is extended for args in panel_args))
             if extended:
-                self.assertTrue(all("pongcnn=131072:65536" in args.task_budget for args in panel_args))
-            self.assertIn("0 0.5 6 1",histories[1])
+                self.assertTrue(all(("pongcnn=131072:16384" if curve else "pongcnn=131072:65536") in args.task_budget for args in panel_args))
+            if curve:
+                self.assertTrue(all(a.include_initial and a.seed_role=="development" and a.evaluation_seeds==[7007,7008,7009]
+                                    and a.seed_roles==root/"seed-roles.json" for a in panel_args))
+            if completed: self.assertIn("0 0.37 12 1" if curve else "0 0.5 6 1",histories[1])
             with patch.object(tool,"inspect",return_value=value),\
                  patch.object(tool.panels,"inspect",side_effect=lambda p:json.loads(p.read_text())),\
-                 patch.object(tool.panels,"audit",side_effect=audit):
+                 patch.object(tool.panels,"audit",side_effect=audit),\
+                 patch("image_curve_bindings.audit_reference"),\
+                 patch("image_curve_feedback.aggregate",return_value=dict(score=.37,cost=12)),\
+                 patch("image_campaign_budget.identities",return_value=("conditions","envelope")),\
+                 patch("image_campaign_budget.admit",side_effect=admission):
                 reviewed=tool.audit(SimpleNamespace(plan=root/"plan.json",out=root/"review"))
                 self.assertEqual(reviewed["status"],"ok")
+                if stop_after is not None:
+                    self.assertEqual(reviewed["termination"],"budget_stop")
+                    changed=copy.deepcopy(result)
+                    changed["panel_admissions"][-1]["status"]="admit-complete-panel"
+                    (root/"execution/result.json").write_text(json.dumps(changed))
+                    with self.assertRaisesRegex(ValueError,"admission"):
+                        tool.audit(SimpleNamespace(plan=root/"plan.json",out=root/"review-admission-changed"))
+                    (root/"execution/result.json").write_text(json.dumps(result))
                 # Changing the history cannot pass a fresh offline audit.
                 (root/"execution/final-feedback/history.tsv").write_text("changed")
                 with self.assertRaisesRegex(ValueError,"history"):
