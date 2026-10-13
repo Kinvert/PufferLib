@@ -57,6 +57,52 @@ generalization claim follows merely from supporting RGB tensors.
    Native C/CUDA construction/training, determinism and headless in-memory pixels
    remain the implementation direction.
 
+### October12 sizing clarification: use the intended human view
+
+Kinvert asks to infer sensible image dimensions from `puf_render`, Raylib client
+construction and the resolved game configuration. Use those as the starting
+point for each game's intended layout/aspect ratio. Target roughly640x480-class
+human-readable images: landscape, portrait and square layouts are all legitimate.
+No4K requirement, no tiny universal image contract and no requirement that every
+game be exactly640x480. Where resizing is appropriate, use one proportional scale
+and retain content geometry, rather than stretching the game into4:3. Consider
+both total pixel count and readability of the smallest important objects.
+
+Source inspection in the retained research checkout finds these human windows
+(**width x height**); these are renderer/config facts, not implemented policy inputs:
+
+| Game | Human-view dimensions from code/config | Implication |
+|---|---|---|
+| Connect4 |672x576,7x6 cells at96 pixels | Already a reasonable landscape board; preserve its7:6 aspect. |
+| Pong |620x640 with current500x640 court and60-pixel side padding each side | Nearly square/portrait; include paddle margins when mapping the visible scene. |
+| Flappy |420x640 | Preserve portrait layout. |
+| Breakout |576x330 | Preserve its wide court; this is already in the approximate practical range. |
+| SnakeCNN |312x312 with current26x26 board and12-pixel display cells | A square display can reasonably use larger cells, e.g.624x624 at24 pixels/cell; policy visibility is a separate decision. |
+| MazeCNN |752x752 from47x47 display storage at16 pixels/cell | The viewer allocates a square full-map canvas; avoid treating that as the policy's local field of view. |
+
+Evidence: [Connect4 viewer](../ocean/connect4/connect4.h),
+[Pong viewer](../ocean/pong/pong.h) and [configuration](../config/pongcnn.ini),
+[Flappy viewer](../ocean/flappy/flappy.h) and [configuration](../config/flappycnn.ini),
+[Breakout viewer](../ocean/breakout/breakout.h) and [configuration](../config/breakoutcnn.ini),
+[SnakeCNN viewer](../ocean/snakecnn/game.h) and [configuration](../config/snakecnn.ini),
+and [MazeCNN viewer](../ocean/mazecnn/mazecnn.h). Resolve captured per-run overrides
+before inferring dimensions; source defaults aren't every campaign's final config.
+
+The human/debug viewer is an intent guide, not automatically the correct policy
+camera. SnakeCNN/MazeCNN currently observe an11x11 local crop while their viewers
+show the whole board/map. Render that allowed view at a readable scale or declare
+a separately versioned full-view benchmark; don't silently reveal previously
+hidden state or diagnostic overlays. Keep native game width/height/physics apart
+from observation/display dimensions: resizing the raster must not resize the world
+or alter collisions, timing or RNG. Record viewport, margins/HUD, native frame
+shape, policy shape, channels and any preprocessing separately.
+
+The headless policy raster should be generated directly from the same intended
+geometry/colors at the chosen size. A GUI/Raylib window or screen capture is not
+required during training. Every encoder receives the same declared frame and
+preprocessing for a condition. Final dimensions are selected once for a versioned
+experiment and frozen across models/seeds, not inferred differently for each trial.
+
 ### Immediate implementation order
 
 **A. Portable image contract and realistic raster path.** Replace the specialized
