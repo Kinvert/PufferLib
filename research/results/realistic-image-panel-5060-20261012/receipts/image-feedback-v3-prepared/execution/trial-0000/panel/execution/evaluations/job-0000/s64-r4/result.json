@@ -1,0 +1,59 @@
+{
+  "architecture": {
+    "cnn_channels_1": "8",
+    "cnn_depth": "1",
+    "cnn_global_pool": "1",
+    "cnn_kernel_1": "8",
+    "cnn_pool_1": "0",
+    "cnn_projection": "64",
+    "cnn_residual_1": "0",
+    "cnn_stride_1": "4",
+    "encoder": "4",
+    "hidden_size": "128",
+    "num_layers": "1"
+  },
+  "binary_info": {
+    "default_encoder": "explicit",
+    "empty_observation_hash": "986021af4619ab25",
+    "environment": "connect4cnn",
+    "float32": true,
+    "image_contract": {
+      "dtype": "float32",
+      "layout": "NHWC",
+      "preprocessing": "none",
+      "shape_hwc": [
+        576,
+        672,
+        3
+      ],
+      "version": "human-geometry-v1"
+    },
+    "receipt_version": 2,
+    "rules": "connect4-full-board-draw-v2"
+  },
+  "binary_sha256": "78be77a202f63c2704d51c9802b53adfc30437529c2ef2b9343f2550a3ebb280",
+  "checkpoint": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0000/panel/jobs/connect4cnn/happy-cat-1-s7/checkpoints/connect4cnn/happy-cat-1/0000000000000064.bin",
+  "checkpoint_sha256": "f411cac4da5307df1b41310fe0cd50af63674c1b275a7be905d3b92364175f14",
+  "command": [
+    "/home/claude/cnn-audit-20261008/build/image-portability-20261012/connect4cnn-final-policy/puffer",
+    "eval_exact",
+    "--headless"
+  ],
+  "config": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0000/panel/jobs/connect4cnn/happy-cat-1-s7/config/default.ini",
+  "counts": {
+    "episodes": 1,
+    "score": -1,
+    "wins": 0
+  },
+  "cwd": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0000/panel/execution/evaluations/job-0000/s64-r4",
+  "effective_ini_sha256": "5030b8bd67eff54bd9828dc1b3a65458cd9f917674d9f5e8f724835ab2891dbc",
+  "episodes_sha256": "314452d96b77e08d61e5430009e03c348ac5b6ad6c3f007b7ddd9a15ab4fa8eb",
+  "evaluation_process_seconds": 0.6152439099969342,
+  "family": "flex",
+  "note": "Source HEAD is runner context; binary hash identifies execution. Raw weights require the supplied training INI/build family.",
+  "parameters": 60616,
+  "source_head": "6a0a2190751fd7747fb4e937d5850470cfc0a3ba",
+  "status": "ok",
+  "suite_sha256": "ee740eede099384bf7af18bb07faad1e612326527624c688a35e7654a5e5bb98",
+  "training_ini_sha256": "a8a686749ebd1d2afd4f7fd5cb1ca99454eea0e4b06e4c563dfce6244cf8328e"
+}

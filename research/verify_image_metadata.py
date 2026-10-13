@@ -28,7 +28,7 @@ def run(args):
     root = args.out.resolve(); root.mkdir(parents=True, exist_ok=False)
     try:
         source = args.inputs.resolve(); inputs = json.loads((source/"inputs.json").read_text())
-        require(inputs["schema"] == "realistic-image-validation-inputs-v1" and inputs["seed_sweep_allowed"] is False,
+        require(inputs["schema"] in ("realistic-image-validation-inputs-v1","realistic-image-validation-inputs-v2") and inputs["seed_sweep_allowed"] is False,
                 "Need unswept-seed image validation inputs")
         builds = {task:{"default":args.builds.resolve()/f"{task}-metadata-{args.build_suffix}"} for task in layouts.HEADERS}
         for family in ("impala", "impoola"):

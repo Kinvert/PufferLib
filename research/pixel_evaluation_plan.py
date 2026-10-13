@@ -64,7 +64,11 @@ def validate_identity(task, family, identity, count):
     require(identity["environment"] == task and identity["rules"] == panel.ENVIRONMENT_RULES[task]
             and identity["float32"] is True and identity["receipt_version"] == (2 if task == "connect4cnn" else 1),
             "Wrong binary environment/rules/precision")
-    require(identity["default_encoder"] == ("tiny" if family == "default" else family), "Wrong compiled encoder family")
+    default = "explicit" if "image_contract" in identity else "tiny"
+    require(identity["default_encoder"] == (default if family == "default" else family), "Wrong compiled encoder family")
+    if "image_contract" in identity:
+        from checkpoint_preflight import validate_image_contract
+        validate_image_contract(identity["image_contract"])
     if task in ("pongcnn", "flappycnn") or "representation_count" in identity:
         available = identity.get("representation_count", 4 if task == "flappycnn" else 0)
         require(type(available) is int and available >= count, "Stale native drawing catalog")

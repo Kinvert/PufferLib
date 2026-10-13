@@ -1,0 +1,85 @@
+{
+  "binary": "/home/claude/cnn-audit-20261008/build/image-portability-20261012/breakoutcnn-final-policy/puffer",
+  "binary_info": {
+    "default_encoder": "explicit",
+    "environment": "breakoutcnn",
+    "evaluation": "first-terminal-or-frame-cap-v1",
+    "float32": true,
+    "image_contract": {
+      "dtype": "float32",
+      "layout": "NHWC",
+      "preprocessing": "none",
+      "shape_hwc": [
+        330,
+        576,
+        3
+      ],
+      "version": "human-geometry-v1"
+    },
+    "receipt_version": 1,
+    "rules": "breakout-native-v1"
+  },
+  "binary_sha256": "a6c1767bc00bd2ba3e3c60800ce28f34150493889f9c1f3d0f135eea5a5b8ee8",
+  "checkpoint": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/jobs/breakoutcnn/mystic-tree-2-s7/checkpoints/breakoutcnn/mystic-tree-2/0000000000000064.bin",
+  "checkpoint_sha256": "ee3afa6c9e77ea1f3ec81907a05744ed032d7d98936f9bbf2a0f8f9ad25c1f62",
+  "command": [
+    "/home/claude/cnn-audit-20261008/build/image-portability-20261012/breakoutcnn-final-policy/puffer",
+    "eval_exact",
+    "--headless"
+  ],
+  "config": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/jobs/breakoutcnn/mystic-tree-2-s7/config/default.ini",
+  "counts": {
+    "capped": 0,
+    "completed": 1,
+    "episodes": 1,
+    "estimand": "score accumulated through first native terminal or fixed frame cap; all assigned episodes",
+    "mean_decisions": 181.0,
+    "mean_frames": 542.0,
+    "mean_perf": 0.0011574074160307646,
+    "mean_score": 1.0,
+    "policy_runtime_certified": false,
+    "score": 1
+  },
+  "cwd": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0003/s64-r1",
+  "effective_env_ini_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "effective_ini_sha256": "715301b066ae626df8d64ec7378f601ed961ab20b4ba1286f404678bee17d35e",
+  "episodes_sha256": "9dac4c10a0ba1df38aecb11d8d23c78221e68c837de4cede12b10b8810e80a2b",
+  "evaluation": "first-terminal-or-frame-cap-v1",
+  "evaluation_process_seconds": 1.567687585,
+  "evaluation_representation": 1,
+  "family": "flex",
+  "gpu_runtime_qualified": false,
+  "manifest_sha256": "3eb0190b728c3a296de2a6ab8893636cc86731a9128397aae56171a772f5d6b1",
+  "max_frames": 2048,
+  "note": "Evaluator GPU acceptance is pending. These receipts do not certify frontier superiority or SOTA. Tooling snapshots describe the launcher; compiled native provenance requires separate build receipts.",
+  "parameters": 55720,
+  "policy": {
+    "cnn_channels_1": "8",
+    "cnn_depth": "1",
+    "cnn_global_pool": "1",
+    "cnn_kernel_1": "8",
+    "cnn_pool_1": "0",
+    "cnn_projection": "32",
+    "cnn_residual_1": "0",
+    "cnn_stride_1": "4",
+    "encoder": "4",
+    "hidden_size": "128",
+    "num_layers": "1"
+  },
+  "prepare_only": false,
+  "rules": "breakout-native-v1",
+  "status": "ok",
+  "suite": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/suites/breakoutcnn/s7/r1/suite.json",
+  "suite_sha256": "0bac5af928c1ccbbb4d4d47e4a08ca4a48321a629731e50ab583dc3cb332cdd7",
+  "tooling_sha256": {
+    "ocean/breakoutcnn/exact_eval.py": "28a6a6fb6ec3a291bc68c895bf32a15b35b5555791a6896daf9add20ead8fcc7",
+    "ocean/connect4cnn/claim.py": "c1fb06be57a10952a27c1fbb6369612ccfbc4e45a63b66f1c424157d99fd5f43",
+    "ocean/connect4cnn/deterministic_eval.py": "e176ac25295357344a0def44958d2e48f00b63713681cc3181ff073100aa1ca1"
+  },
+  "training_appearance": {
+    "representation": "0",
+    "representation_mode": "1",
+    "representation_seed": "17"
+  },
+  "training_ini_sha256": "5370776daa402ba70c2ff3d69ece19e73f080b429d67a57a135a5dc7dbabfb6a"
+}

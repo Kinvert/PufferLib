@@ -35,6 +35,8 @@ import checkpoint_preflight as policy_layout
 PROTOCOL = "native-cnn-candidate-panel-v1"
 BASELINE_PROTOCOL = "native-cnn-candidate-panel-v2"
 LEARNER_PROTOCOL = "native-cnn-candidate-panel-v3"
+IMAGE_PROTOCOL = "native-cnn-candidate-panel-v4"
+IMAGE_BUILD = "native-cnn-candidate-image-build-v1"
 TASKS = tuple(panel.ENVIRONMENTS)
 BASELINES = {
     "nature_cnn": dict(name="nature-cnn", architecture={"encoder": 2}, binary_family="default", policy_family="nature"),
@@ -46,6 +48,15 @@ BASELINES = {
 def registry_builds(registry):
     if registry["protocol"] == "native-cnn-candidate-build-v1":
         return {task: {"default": record} for task, record in registry["binaries"].items()}
+    if registry["protocol"] == IMAGE_BUILD:
+        require(set(registry["image_contracts"]) == set(TASKS) and set(registry["binaries"]) == set(TASKS),
+                "Incomplete per-game image build registry")
+        for task, variants in registry["binaries"].items():
+            policy_layout.validate_image_contract(registry["image_contracts"][task])
+            require("default" in variants and set(variants) <= {"default", "impala", "impoola"}, "Missing default or unsupported image build")
+            for record in variants.values():
+                require(record["info"]["image_contract"] == registry["image_contracts"][task], "Image build families use different inputs")
+        return registry["binaries"]
     require(registry["protocol"] == "native-cnn-candidate-build-v2", "Unknown build registry")
     require(all(set(builds) == {"default", "impala", "impoola"} for builds in registry["binaries"].values()),
             "Need all baseline build families")
@@ -57,6 +68,10 @@ def candidate_families(candidate):
 
 
 def matching_registry(registry, baselines, per_game_learners):
+    if registry["protocol"] == IMAGE_BUILD:
+        builds = registry_builds(registry)
+        return per_game_learners and all(BASELINES[name]["binary_family"] in variants
+                                        for variants in builds.values() for name in baselines)
     # Nature selector 2 shares the normal binary; learner-v3 may reuse it.
     if per_game_learners and baselines == ["nature_cnn"]:
         return registry["protocol"] in ("native-cnn-candidate-build-v1", "native-cnn-candidate-build-v2")
@@ -66,7 +81,7 @@ def matching_registry(registry, baselines, per_game_learners):
 def metadata_source_binding(registry, native_registry, sources):
     # Owned build_arch/weights_create files, excluding unrelated test/docs.
     for name, digest in registry["sources"].items():
-        production = name.startswith("src/") or (name.startswith("ocean/connect4cnn/")
+        production = name.startswith("src/") or (name.startswith("ocean/")
             and "/tests/" not in name and Path(name).suffix in (".h", ".cu", ".c"))
         if production:
             require(native_registry["source_sha256"].get(name) == sources.get(name) == digest,
@@ -321,10 +336,19 @@ def prepare(args):
         require(separator and task in TASKS and task not in recipes, "Invalid/duplicate per-game learner")
         recipes[task] = Path(filename).resolve()
     registry_path = args.registry.resolve(); registry = json.loads(registry_path.read_text())
+    images = registry["protocol"] == IMAGE_BUILD
+    if images:
+        require(per_game_learners and set(recipes) == set(TASKS) and getattr(args,"policy_metadata",None) is not None,
+                "Image panels require explicit per-game learners and image metadata")
+        require(not set(range(args.eval_seed,args.eval_seed+len(args.seeds))) & set(args.seeds),
+                "Image evaluation and training seeds overlap")
     require(matching_registry(registry, baselines, per_game_learners)
             and set(registry["binaries"]) == set(TASKS), "Need complete matching fresh build registry; build --baselines for references")
     builds = registry_builds(registry)
     verify_sources(registry_path.parent, registry["source_sha256"], current=True)
+    if images:
+        import import_image_builds
+        import_image_builds.inspect(registry_path.parent,registry,current=True)
     for task, variants in builds.items():
         for family, record in variants.items():
             require(sha(Path(record["path"])) == record["sha256"], "Changed native build")
@@ -337,10 +361,15 @@ def prepare(args):
         geometry = panel.native_geometry(out, bases)
         assignments = panel.mixed_assignments(out, bases, args.appearance_seed)
         sources = capture(out)
+        if images: shutil.copytree(registry_path.parent,out/"image-builds")
         metadata = getattr(args, "policy_metadata", None)
         if metadata is not None:
             metadata_registry = policy_layout.freeze(metadata, out / "policy-metadata")
             metadata_source_binding(metadata_registry, registry, sources)
+            if images:
+                require(metadata_registry.get("schema") == policy_layout.IMAGE_SCHEMA
+                        and metadata_registry["image_contracts"] == registry["image_contracts"],
+                        "Trainer and metadata image contracts differ")
         shutil.copyfile(registry_path, out / "registry.json")
         learner_receipts = {}
         for task, path in recipes.items():
@@ -398,9 +427,12 @@ def prepare(args):
             if metadata is not None:
                 jobs[-1]["policy_layout"] = policy_layout.describe(out / "policy-metadata", path, task, policy_family,
                     out / "policy-layouts" / f"job-{len(jobs)-1:04d}", 60)
+                if images:
+                    jobs[-1]["image_storage"] = policy_layout.storage(out/"policy-metadata",path,task,policy_family,
+                        out/"image-storage"/f"job-{len(jobs)-1:04d}",60,jobs[-1]["policy_layout"]["parameters"])
         verify_sources(out, sources, current=True)
         frozen = {str(p.relative_to(out)): sha(p) for p in out.rglob("*") if p.is_file()}
-        value = dict(protocol=LEARNER_PROTOCOL if per_game_learners else BASELINE_PROTOCOL if expanded else PROTOCOL, purpose="development-plumbing", candidates=records, jobs=jobs, suites=suites,
+        value = dict(protocol=IMAGE_PROTOCOL if images else LEARNER_PROTOCOL if per_game_learners else BASELINE_PROTOCOL if expanded else PROTOCOL, purpose="development-plumbing", candidates=records, jobs=jobs, suites=suites,
             seeds=args.seeds, steps=args.steps, task_budgets=budgets, learner_recipes=learner_receipts,
             episodes=args.episodes, slots=args.slots,
             appearance_seed=args.appearance_seed, assignments=assignments, learner_geometry=geometry,
@@ -411,6 +443,12 @@ def prepare(args):
             cross_game_adaptive_protein_implemented=False, quality_selection_allowed=False, publication_claim_qualified=False,
             numerical_runtime_acceptance_complete=False, caps_calibrated=False, native_vector_initialization_validated=False)
         if per_game_learners: value["per_game_learners"] = True
+        if images: value["image_contracts"] = registry["image_contracts"]
+        if images and getattr(args,"image_math",None) is not None:
+            import image_encoder_checks
+            value["image_encoder_checks"] = image_encoder_checks.freeze(args.image_math.resolve(),out/"image-encoder-checks",
+                jobs,value["image_contracts"],out)
+            value["files_sha256"] = {str(p.relative_to(out)):sha(p) for p in out.rglob("*") if p.is_file()}
         if expanded or per_game_learners: value.update(baselines=baselines, native_working_root=str(out), gpu_executed=False,
                                   declared_decisions=sum(budgets[j["environment"]]["steps"] for j in jobs))
         if metadata is not None:
@@ -427,8 +465,10 @@ def prepare(args):
 
 def inspect(path, current=False):
     value = json.loads(path.read_text()); root = path.parent
-    require(value["protocol"] in (PROTOCOL, BASELINE_PROTOCOL, LEARNER_PROTOCOL) and not (root / "failure.json").exists(), "Wrong/failed candidate packet")
-    per_game_learners = value["protocol"] == LEARNER_PROTOCOL
+    require(value["protocol"] in (PROTOCOL, BASELINE_PROTOCOL, LEARNER_PROTOCOL, IMAGE_PROTOCOL) and not (root / "failure.json").exists(), "Wrong/failed candidate packet")
+    images = value["protocol"] == IMAGE_PROTOCOL
+    require(images is (value["native_registry"]["protocol"] == IMAGE_BUILD), "Image panel protocol cannot be downgraded")
+    per_game_learners = value["protocol"] in (LEARNER_PROTOCOL, IMAGE_PROTOCOL)
     require(value.get("per_game_learners", False) is per_game_learners, "Wrong per-game learner declaration")
     expanded = bool(value.get("baselines", [])) if per_game_learners else value["protocol"] == BASELINE_PROTOCOL
     for name, digest in value["files_sha256"].items():
@@ -436,6 +476,16 @@ def inspect(path, current=False):
         require(sha(root / name) == digest, "Changed frozen input: " + name)
     verify_sources(root, value["source_sha256"], current)
     builds = registry_builds(value["native_registry"])
+    if images:
+        require(value["native_registry"]["protocol"] == IMAGE_BUILD
+                and value["image_contracts"] == value["native_registry"]["image_contracts"]
+                and set(value["learner_recipes"]) == set(TASKS) and "policy_layout" in value,
+                "Missing/mismatched portable image contract or learner/layout binding")
+        import import_image_builds
+        require(json.loads((root/"image-builds/registry.json").read_text())==value["native_registry"],"Frozen image builds differ")
+        import_image_builds.inspect(root/"image-builds",value["native_registry"],current=current)
+        require(not set(range(value["eval_seed"],value["eval_seed"]+len(value["seeds"]))) & set(value["seeds"]),
+                "Image training/evaluation seed overlap")
     if per_game_learners:
         require(matching_registry(value["native_registry"], value.get("baselines", []), True),
                 "Wrong per-game learner build registry")
@@ -446,7 +496,11 @@ def inspect(path, current=False):
                 and value["policy_layout"]["numerical_acceptance"] is False
                 and value["policy_layout"]["full_learner_memory_accepted"] is False, "Wrong candidate policy-layout scope")
         require(not current or root.resolve() == Path(value["policy_layout"]["preparation_root"]), "Cannot launch relocated layout packet")
-        metadata_source_binding(policy_layout.inspect_registry(root / "policy-metadata", current), value["native_registry"], value["source_sha256"])
+        metadata_registry = policy_layout.inspect_registry(root / "policy-metadata", current)
+        metadata_source_binding(metadata_registry, value["native_registry"], value["source_sha256"])
+        if images:
+            require(metadata_registry.get("schema") == policy_layout.IMAGE_SCHEMA
+                    and metadata_registry["image_contracts"] == value["image_contracts"], "Image metadata differs")
     else: require(all("policy_layout" not in j for j in value["jobs"]), "Layout jobs lack declaration")
     if per_game_learners and not expanded:
         for candidate in value["candidates"]:
@@ -476,6 +530,12 @@ def inspect(path, current=False):
     order = list(job_order(value["candidates"], value["seeds"]))
     for index, job in enumerate(value["jobs"]):
         if "policy_layout" in value: inspect_job_layout(value, root, index)
+        if images:
+            declaration=value["policy_layout"]; recorded=Path(declaration["preparation_root"])
+            proof=policy_layout.inspect_storage(root/"policy-metadata",root/job["config"],job["environment"],
+                job["policy_family"],root/"image-storage"/f"job-{index:04d}",recorded/"policy-metadata",
+                recorded/job["config"],Path(declaration["repository_root"]),job["policy_layout"]["parameters"])
+            require(proof==job["image_storage"],"Job storage floor differs from actual native registration")
         config = panel.read(root / job["config"])
         candidate = next(c for c in value["candidates"] if c["name"] == job["candidate"])
         if candidate.get("kind") != "baseline":
@@ -514,6 +574,10 @@ def inspect(path, current=False):
         require([t["representation"] for t in job["targets"]] == list(range(panel.ENVIRONMENTS[job["environment"]])), "Missing drawing target")
         for target in job["targets"]:
             ev = bridge.adapter(task); loaded = ev.load_suite(root / target["suite"])
+            if images:
+                suite = loaded if task == "connect4cnn" else loaded[0]
+                contract = suite.get("image_contract") if task == "connect4cnn" else suite["binary_info"].get("image_contract")
+                require(contract == value["image_contracts"][task], "Drawing suite uses a different image contract")
             if expanded:
                 proof = target["start_check"]
                 if task == "connect4cnn": require(proof == dict(proof="declared-empty-boards-and-identity-seeds", native_manifest_executed=False), "Wrong Connect4 start proof")
@@ -524,6 +588,10 @@ def inspect(path, current=False):
                             and ev.validate_manifest(manifest, loaded[0]) == loaded[1], "Baseline/config start manifest differs")
         if current: require(sha(Path(job["command"][0])) == job["binary_sha256"], "Changed executing binary")
     if per_game_learners: inspect_learner_geometry(root, value, bases)
+    if images and "image_encoder_checks" in value:
+        import image_encoder_checks
+        require(image_encoder_checks.inspect(root/"image-encoder-checks",value["jobs"],value["image_contracts"],root,current)
+                ==value["image_encoder_checks"],"Image numerical evidence binding changed")
     return value
 
 
@@ -600,6 +668,18 @@ def coverage(path, out):
 
 
 def run_hardware(value, mode):
+    if mode == "image5060":
+        require(value["protocol"] == IMAGE_PROTOCOL and len(value["candidates"]) <= 2 and len(value["seeds"]) == 1
+                and max(b["steps"] for b in value["task_budgets"].values()) <= 1024
+                and all(len(j["checkpoint_steps"]) <= 8 for j in value["jobs"])
+                and value["episodes"] <= 5 and value["slots"] == 4 and value["planned_evaluations"] <= 656
+                and "image_encoder_checks" in value,
+                "Image smoke exceeds short 5060 allocation")
+        require(all(c["architecture"]["encoder"] in (2,4) for c in value["candidates"]), "Image smoke excludes slow build families")
+        for job in value["jobs"]:
+            require(job.get("policy_layout") and job["image_storage"]["storage_floor_bytes"] < 4*2**30,
+                    "Image smoke leaves host storage rejection bound")
+        return "5060"
     if mode == "validation5060":
         require(len(value["candidates"]) <= 2 and len(value["seeds"]) == 1
                 and max(b["steps"] for b in value["task_budgets"].values()) <= 131072
@@ -658,9 +738,10 @@ def run(args):
     root = args.plan.resolve().parent; value = inspect(args.plan.resolve(), current=True)
     require(args.timeout > 0 and args.train_timeout > 0 and args.eval_timeout > 0, "Positive process/campaign deadlines required")
     expected = run_hardware(value, args.mode)
-    if args.mode in ("mini", "research", "canary5090", "validation5060"):
+    if value["protocol"] == IMAGE_PROTOCOL: require("image_encoder_checks" in value,"Image training requires matched per-game CUDA evidence")
+    if args.mode in ("mini", "research", "canary5090", "validation5060", "image5060"):
         require(args.timeout <= (600 if args.mode == "canary5090" else 900)
-                and args.train_timeout <= 30 and args.eval_timeout <= 30,
+                and args.train_timeout <= 30 and args.eval_timeout <= (90 if args.mode=="image5060" else 30),
                 "Mini requires bounded campaign/process deadlines")
     out = root / "execution"; out.mkdir(exist_ok=False)
     deadline = time.monotonic() + args.timeout
@@ -687,6 +768,10 @@ def run(args):
             with lock_path.open("a") as lock:
                 fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
                 info = hardware(expected)
+                if value["protocol"] == IMAGE_PROTOCOL:
+                    import image_encoder_checks
+                    require(image_encoder_checks.hardware(root/"image-encoder-checks")==info,
+                            "Image numerical checks belong to different hardware/toolchain")
                 if "hardware" in record: require(info == record["hardware"], "Hardware changed within campaign")
                 else: record["hardware"] = info
                 environment = dict(os.environ, PUFFER_CHECKPOINT_RECEIPTS="1")
@@ -721,7 +806,7 @@ def run(args):
                     save(out / "progress.json", record)
             # A same-batch repeat/eager smoke for every candidate/game, using
             # drawing 0 and its final checkpoint. This is not independent math.
-            if args.mode in ("smoke", "mini", "canary5090", "validation5060") or args.mode == "development" and value["protocol"] == LEARNER_PROTOCOL:
+            if args.mode in ("smoke", "mini", "canary5090", "validation5060", "image5060") or args.mode == "development" and value["protocol"] in (LEARNER_PROTOCOL, IMAGE_PROTOCOL):
                 target = job["targets"][0]; step = job["checkpoint_steps"][-1]
                 reference = out / "evaluations" / f"job-{index:04d}" / f"s{step}-r0" / "episodes.csv"
                 for mode in ("repeat", "eager"):
@@ -852,7 +937,7 @@ def audit(path, out):
         require(sha(reference) == entry["episodes_sha256"], "Repeat differs from original evaluation")
         evaluate(dict(job_index=entry["job_index"], step=job["checkpoint_steps"][-1], representation=0), Path(entry["result"]))
     if result["status"] == "ok" and (result["mode"] in ("smoke", "mini", "canary5090", "validation5060")
-            or result["mode"] == "development" and value["protocol"] == LEARNER_PROTOCOL):
+            or result["mode"] == "image5060" or result["mode"] == "development" and value["protocol"] in (LEARNER_PROTOCOL, IMAGE_PROTOCOL)):
         require(repeat_keys == {(i, mode) for i in range(len(value["jobs"])) for mode in ("repeat", "eager")}, "Missing smoke repeat/eager check")
     inputs.verify()
     out = out.resolve(); out.mkdir(parents=True, exist_ok=False)
@@ -862,7 +947,7 @@ def audit(path, out):
         repeat_checks=len(result["repeat_checks"]), hardware=result.get("hardware"), inputs_sha256=inputs.hashes, frontier_claim_qualified=False,
         quality_selection_allowed=False, cross_game_aggregate_score=None, native_vector_initialization_validated=False,
         warning="Short plumbing results are not learning evidence, independent numerical acceptance, calibrated budgets/caps or a publication frontier.")
-    if value["protocol"] == BASELINE_PROTOCOL or value["protocol"] == LEARNER_PROTOCOL and value.get("baselines"):
+    if value["protocol"] == BASELINE_PROTOCOL or value["protocol"] in (LEARNER_PROTOCOL, IMAGE_PROTOCOL) and value.get("baselines"):
         curves = candidate_frontiers(value, observations, result["mode"])
         analysis["curve_status"] = curves["status"]
         write_frontiers(out, curves)
@@ -891,6 +976,7 @@ def main():
     prep.add_argument("--candidate", action="append", default=[]); prep.add_argument("--native-campaign", action="append", default=[], type=Path)
     prep.add_argument("--baselines", nargs="+", choices=tuple(BASELINES), default=[], help="Fixed references, not discovery dimensions")
     prep.add_argument("--policy-metadata", type=Path, help="Existing three-family host registration build; check layouts before GPU use")
+    prep.add_argument("--image-math",type=Path,help="Completed per-candidate/per-game independent CUDA check manifest; mandatory for image execution")
     prep.add_argument("--seeds", nargs="+", type=int, default=[57173]); prep.add_argument("--appearance-seed", type=int, default=35173)
     prep.add_argument("--steps", type=int, default=65536); prep.add_argument("--checkpoint-steps", type=int, default=65536)
     prep.add_argument("--task-budget", action="append", default=[], help="ENV=STEPS:CHECKPOINT_DECISIONS, matched across CNNs")
@@ -903,7 +989,7 @@ def main():
     review = sub.add_parser("audit"); review.add_argument("--plan", type=Path, required=True); review.add_argument("--out", type=Path, required=True)
     ledger = sub.add_parser("coverage"); ledger.add_argument("--plan", type=Path, required=True); ledger.add_argument("--out", type=Path, required=True)
     execute = sub.add_parser("run"); execute.add_argument("--plan", type=Path, required=True)
-    execute.add_argument("--mode", choices=("smoke", "mini", "research", "canary5090", "development", "validation5060"), required=True); execute.add_argument("--allow-gpu", action="store_true")
+    execute.add_argument("--mode", choices=("smoke", "mini", "research", "canary5090", "development", "validation5060", "image5060"), required=True); execute.add_argument("--allow-gpu", action="store_true")
     execute.add_argument("--timeout", type=int, default=900); execute.add_argument("--train-timeout", type=int, default=60)
     execute.add_argument("--eval-timeout", type=int, default=30)
     args = parser.parse_args()

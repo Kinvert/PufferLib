@@ -17,6 +17,7 @@ from pathlib import Path
 import secrets
 import shutil
 import sys
+import time
 
 import numpy as np
 import candidate_panel as panels
@@ -244,14 +245,24 @@ def worker(out):
          arrays_sha256={str(p.relative_to(arrays)):sha(p) for p in arrays.rglob("*") if p.is_file()}))
 
 
-def run(bundle_root, config, out, expected="5090", timeout=120):
+def worker_timeout(timeout, deadline=None):
+    require(math.isfinite(timeout) and 0<timeout<=120, "Bounded graph worker deadline required")
+    if deadline is None: return timeout
+    require(math.isfinite(deadline), "Invalid campaign deadline")
+    remaining=deadline-time.monotonic()
+    require(remaining>0, "Campaign deadline before numerical worker")
+    return min(timeout,remaining)
+
+
+def run(bundle_root, config, out, expected="5090", timeout=120, deadline=None):
     bundle_root=bundle_root.resolve(); contract=inspect_bundle(bundle_root,current=True)
-    require(0<timeout<=120, "Bounded graph worker deadline required")
+    worker_timeout(timeout,deadline)
     out=out.resolve(); out.mkdir(parents=True,exist_ok=False); shutil.copyfile(config,out/"config.ini")
     settings(panels.panel.read(out/"config.ini"))
     token=secrets.token_hex(16)
     request=dict(schema=contract["schema"],bundle=str(bundle_root),bundle_sha256=sha(bundle_root/"bundle.json"),
         config_sha256=sha(out/"config.ini"),parent=os.getpid(),token=token,hardware=expected,timeout=timeout)
+    if deadline is not None: request["campaign_deadline_monotonic_ns"]=int(deadline*1e9)
     save(out/"request.json",request)
     try:
         with fixtures.LOCK.open("a") as lock:
@@ -262,7 +273,7 @@ def run(bundle_root, config, out, expected="5090", timeout=120):
                 shutil.copyfile(out/"config.ini",directory/"config.ini"); shutil.copyfile(out/"request.json",directory/"request.json")
                 require(panels.hardware(expected)==hardware, "Hardware changed or GPU busy")
                 command=[sys.executable,str(Path(__file__).resolve()),"_worker","--out",str(directory)]
-                panels.process(command,directory,directory/"worker.log",timeout,
+                panels.process(command,directory,directory/"worker.log",worker_timeout(timeout,deadline),
                     dict(os.environ,PUFFER_GRAPH_CHECK_TOKEN=token,OPENBLAS_NUM_THREADS="1",OMP_NUM_THREADS="1"))
             require(panels.hardware(expected)==hardware,"Hardware changed at completion")
         inspect_bundle(bundle_root,current=True)
@@ -319,6 +330,10 @@ def audit(out, completing=False):
         command=[sys.executable,str(Path(__file__).resolve()),"_worker","--out",str(directory)]
         require(timing["returncode"]==0 and timing["status"]=="ok" and timing["command"]==command
                 and timing["cwd"]==str(directory) and 0<timing["launch_monotonic_ns"]<timing["end_monotonic_ns"], "Failed/changed worker")
+        require(0<timing["timeout"]<=request["timeout"], "Worker exceeds declared numerical timeout")
+        if "campaign_deadline_monotonic_ns" in request:
+            require(timing["launch_monotonic_ns"]<request["campaign_deadline_monotonic_ns"],
+                    "Numerical worker launched after campaign deadline")
         if index: require(previous_end<=timing["launch_monotonic_ns"],"Workers overlap")
         previous_end=timing["end_monotonic_ns"]
     result=dict(status="passed",schema=request["schema"],config_sha256=request["config_sha256"],cases=2*len(cases(bundle_value)),native_calls=8*len(cases(bundle_value)),

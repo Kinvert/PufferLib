@@ -4,6 +4,28 @@ October 12, 2026. Active implementation in `/home/claude/cnn-audit-20261008`;
 the retained `/home/claude/cnn` checkout and prior campaign are untouched.
 This is temporary Kinvert research, not the eventual upstream PR.
 
+## October12 shared pipeline follow-up
+
+The full-RGB all-six-game/all41-drawing aggregate-to-native-PROTEIN loop now
+actually passes three proposals:18 short trainings/123 exact evaluations/
+36 repeat-eager checks, with270 independent CUDA process/case instances/
+1080 calls on all five image shapes. Final native replay observes all three,
+including a preserved rounded duplicate. The complete offline raw receipt audit
+passes. The loop takes600.494s; this is64-decision plumbing, not learning.
+
+The earlier eight-checkpoint packet is **failed**, not superseded as a pass:
+six trainings/48 finite checkpoints/280 of328 evaluations/ten repeat checks,
+then Maze's30s evaluation timeout. A separate five-episode final-Maze
+graph/repeat/eager probe passes exact rows at36.6–36.8s/process. No horizons or
+assigned episodes were shortened in that diagnostic. Numerical workers now
+share the campaign deadline and native layout/storage admission precedes CUDA.
+
+Read[the retained report](results/realistic-image-panel-5060-20261012/README.md),
+[pipeline contracts](REALISTIC_IMAGE_PIPELINE.md) and[overnight specification](IMAGE_OVERNIGHT_PROTOCOL.md).
+Remaining work is meaningful new-image Nature/learner calibration, the versioned
+curve/coverage objective, seed-role enforcement and12h admission/reporting,
+followed by a verified5090 handoff. No long campaign has launched here.
+
 The requested end state is a calibrated overnight 5090 architecture search,
 matched per-game learners and fixed seeds, about eight checkpoint observations,
 targeted controls, native PROTEIN feedback across all six games, complete
@@ -132,16 +154,18 @@ readout small. Do not reuse the old M2048/64-actor recipe without calibration.
 
 ## Remaining work before the 5090 handoff
 
-1. Complete portable per-game build/metadata/checkpoint/suite bindings and
-   memory/index rejection tests. Confirm native baseline construction with
-   fresh builds. Avoid sending new images through old 36x44 metadata gates.
+1. Shared portable build/metadata/checkpoint/suite bindings now execute, including
+   pre-CUDA native memory/index rejection and complete all-game feedback. Qualify
+   needed baseline image math and calibrated batches; don't route new images
+   through old36x44 metadata tools.
 2. Extend the versioned main campaign to roughly eight scheduled checkpoints;
    retain old bounded smoke contracts and historical receipts.
 3. Freeze disjoint development/confirmation training and episode seed lists;
    never sweep seeds. Choose realistic-image per-game learner/vector geometry
    with memory and learning calibration, identically across architectures.
-4. Qualify needed new-image graphs/batches; run short reserved 5060 all-game
-   train/checkpoint/exact-eval/repeat-eager/aggregate-to-native-PROTEIN smokes.
+4. The bounded full-RGB5060 all-game train/checkpoint/exact-eval/repeat-eager/
+   aggregate-to-PROTEIN smoke now passes. Qualify additional needed new-image
+   graphs/batches, targeted spatial controls and Nature comparisons.
    No competing GPU processes, CPU CNN reference, long G240 training or retries
    of completed allocations.
 5. Implement the predeclared curve/coverage objective and targeted controls

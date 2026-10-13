@@ -57,8 +57,17 @@ def prepare(out):
     out.mkdir(parents=True, exist_ok=False)
     candidates = {**CONTROLS, **{f"c{c}-res{r}": architecture(c,r) for c in (8,16) for r in (0,1)},
                   **{f"stride{s}-gap": architecture(stride=s,gap=1) for s in (1,2,4,8)}}
-    entries=[]; sources={}
+    entries=[]; sources={}; learners={}
     for game,(height,width) in SHAPES.items():
+        base,_=config(game,CONTROLS["nature"])
+        learner=configparser.ConfigParser(interpolation=None)
+        allowed={"base":("async","cudagraphs","reset_every_horizon"),
+                 "vec":("total_agents","num_buffers","num_threads"),
+                 "train":tuple(k for k in base["train"] if k not in ("gpus","total_timesteps"))}
+        learner.read_dict({s:{k:base[s][k] for k in keys} for s,keys in allowed.items()})
+        learner_path=out/"learners"/(game+".ini"); learner_path.parent.mkdir(exist_ok=True)
+        with learner_path.open("x") as stream: learner.write(stream)
+        learners[game]=dict(path=str(learner_path.relative_to(out)),sha256=hashlib.sha256(learner_path.read_bytes()).hexdigest())
         for name,arch in candidates.items():
             value,paths=config(game,arch)
             path=out/game/(name+".ini"); path.parent.mkdir(exist_ok=True)
@@ -66,7 +75,7 @@ def prepare(out):
             entries.append(dict(game=game,candidate=name,config=str(path.relative_to(out)),
                 sha256=hashlib.sha256(path.read_bytes()).hexdigest(),shape_hwc=[height,width,3]))
             sources.update({str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in paths})
-    result=dict(schema="realistic-image-validation-inputs-v1",entries=entries,source_sha256=sources,
+    result=dict(schema="realistic-image-validation-inputs-v2",entries=entries,source_sha256=sources,learner_recipes=learners,
         native_frame_and_policy_shape_equal=True,preprocessing="none",layout="NHWC",dtype="float32",
         historical_input_default_unchanged=True,seed_sweep_allowed=False,
         training_seeds=[7],appearance_seed=17,calibrated_for_learning=False,gpu_executed=False)

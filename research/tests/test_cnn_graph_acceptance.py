@@ -44,5 +44,15 @@ class GraphTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,"deadline"): tool.run(root,root/"missing",root/"out",timeout=121)
             self.assertFalse((root/"out").exists())
 
+    def test_each_worker_uses_remaining_outer_deadline(self):
+        with patch.object(tool.time,"monotonic",side_effect=[100.,117.,120.]):
+            self.assertEqual(tool.worker_timeout(120,120),20)
+            self.assertEqual(tool.worker_timeout(120,120),3)
+            with self.assertRaisesRegex(ValueError,"Campaign deadline"):
+                tool.worker_timeout(120,120)
+        self.assertEqual(tool.worker_timeout(30),30)
+        for timeout in (float("nan"),float("inf"),0,121):
+            with self.assertRaises(ValueError): tool.worker_timeout(timeout)
+
 
 if __name__=="__main__": unittest.main()

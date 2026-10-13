@@ -1,0 +1,58 @@
+{
+  "score": 0.5,
+  "score_upper": 0.5,
+  "cost": 3.856273881,
+  "training_jobs_charged": 6,
+  "games": [
+    {
+      "environment": "connect4cnn",
+      "cells": 10,
+      "offset": 0.0,
+      "target": 1.0,
+      "normalized_lower": 0.0,
+      "normalized_upper": 0.0
+    },
+    {
+      "environment": "pongcnn",
+      "cells": 7,
+      "offset": 0.0,
+      "target": 1.0,
+      "normalized_lower": 0.0,
+      "normalized_upper": 0.0
+    },
+    {
+      "environment": "flappycnn",
+      "cells": 7,
+      "offset": 0.0,
+      "target": 1.0,
+      "normalized_lower": 0.0,
+      "normalized_upper": 0.0
+    },
+    {
+      "environment": "breakoutcnn",
+      "cells": 5,
+      "offset": 0.0,
+      "target": 1.0,
+      "normalized_lower": 1.0,
+      "normalized_upper": 1.0
+    },
+    {
+      "environment": "snakecnn",
+      "cells": 6,
+      "offset": 0.0,
+      "target": 1.0,
+      "normalized_lower": 1.0,
+      "normalized_upper": 1.0
+    },
+    {
+      "environment": "mazecnn",
+      "cells": 6,
+      "offset": 0.0,
+      "target": 1.0,
+      "normalized_lower": 1.0,
+      "normalized_upper": 1.0
+    }
+  ],
+  "conservative_pong": true,
+  "publication_claim_qualified": false
+}

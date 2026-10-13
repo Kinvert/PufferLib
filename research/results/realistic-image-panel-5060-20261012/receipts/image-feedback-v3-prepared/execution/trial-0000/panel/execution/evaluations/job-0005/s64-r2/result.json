@@ -1,0 +1,101 @@
+{
+  "binary": "/home/claude/cnn-audit-20261008/build/image-portability-20261012/mazecnn-final-policy/puffer",
+  "binary_info": {
+    "default_encoder": "explicit",
+    "environment": "mazecnn",
+    "evaluation": "first-goal-or-native-area-timeout-v1",
+    "float32": true,
+    "image_contract": {
+      "dtype": "float32",
+      "layout": "NHWC",
+      "preprocessing": "none",
+      "shape_hwc": [
+        616,
+        616,
+        3
+      ],
+      "version": "human-geometry-v1"
+    },
+    "levels": "seed-rotated-cyclic-v1",
+    "receipt_version": 1,
+    "rules": "maze-native-v1"
+  },
+  "binary_sha256": "2cfe6ff80ff9bde70edf4d3d585b7b354d66f7fae270688e5293ce1908f43971",
+  "checkpoint": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0000/panel/jobs/mazecnn/happy-cat-1-s7/checkpoints/mazecnn/happy-cat-1/0000000000000064.bin",
+  "checkpoint_sha256": "7ea25f723b3fec8c585e72c5d31b4de0e09e8627afb8e1ca4c44f763e9c2f2db",
+  "command": [
+    "/home/claude/cnn-audit-20261008/build/image-portability-20261012/mazecnn-final-policy/puffer",
+    "eval_exact",
+    "--headless"
+  ],
+  "config": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0000/panel/jobs/mazecnn/happy-cat-1-s7/config/default.ini",
+  "counts": {
+    "duplicate_native_log_entries": 0,
+    "episodes": 1,
+    "estimand": "success-fraction-all-assigned-episodes-v1",
+    "heldout_exclusion_certified": false,
+    "mean_decisions": 73.0,
+    "mean_return": 1.0,
+    "policy_runtime_certified": false,
+    "success_fraction": 1.0,
+    "successes": 1,
+    "timeouts": 0
+  },
+  "cwd": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0000/panel/execution/evaluations/job-0005/s64-r2",
+  "effective_env_ini_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "effective_ini_sha256": "1de3911fc460ded29987b1f690e61cfce5c17da4e53c1b22a12f8f5fa10aba41",
+  "episodes_sha256": "dd6921c32d604ce27fecf9866f1b6d2ea5961bbb4ca0bfe1619679141b8bbf26",
+  "estimand": "success-fraction-all-assigned-episodes-v1",
+  "evaluation": "first-goal-or-native-area-timeout-v1",
+  "evaluation_process_seconds": 1.467505653,
+  "evaluation_representation": 2,
+  "evaluation_world": {
+    "map_size": -1,
+    "num_maps": 8192
+  },
+  "family": "flex",
+  "gpu_runtime_qualified": false,
+  "heldout_exclusion_certified": false,
+  "level_panel": {
+    "count": 8192,
+    "offset": 0
+  },
+  "manifest_sha256": "4a47d3f1fce4951e638c54a951b4b7bfea1b236c708a44b628ca03953702ce64",
+  "note": "GPU acceptance remains pending. A matching prefix INI is a declaration, not verified checkpoint training/selection provenance. Compiled native provenance needs build receipts.",
+  "parameters": 60360,
+  "policy": {
+    "cnn_channels_1": "8",
+    "cnn_depth": "1",
+    "cnn_global_pool": "1",
+    "cnn_kernel_1": "8",
+    "cnn_pool_1": "0",
+    "cnn_projection": "64",
+    "cnn_residual_1": "0",
+    "cnn_stride_1": "4",
+    "encoder": "4",
+    "hidden_size": "128",
+    "num_layers": "1"
+  },
+  "prepare_only": false,
+  "rules": "maze-native-v1",
+  "spawn_csv_sha256": "4a47d3f1fce4951e638c54a951b4b7bfea1b236c708a44b628ca03953702ce64",
+  "spawn_ini_sha256": "cec6e441b5a2c250304cf797d104b75d0cab85e724e0bcaa94383579db296c19",
+  "status": "ok",
+  "suite": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0000/panel/suites/mazecnn/s7/r2/suite.json",
+  "suite_sha256": "e18daeaf8c37c60567494f9e166bb493cdf2bc65f34dedb5a8e06648961a337f",
+  "tooling_sha256": {
+    "ocean/connect4cnn/claim.py": "c1fb06be57a10952a27c1fbb6369612ccfbc4e45a63b66f1c424157d99fd5f43",
+    "ocean/connect4cnn/deterministic_eval.py": "e176ac25295357344a0def44958d2e48f00b63713681cc3181ff073100aa1ca1",
+    "ocean/mazecnn/exact_eval.py": "07c1b7a873e148ac28692252ef650a329814967fe758fa4f44ecdbdb2d9ae919"
+  },
+  "training_appearance": {
+    "representation": "0",
+    "representation_mode": "1",
+    "representation_seed": "17"
+  },
+  "training_ini_sha256": "4cefb64d9a6bfa103a8f31a27e3bb0249aadf421e129e52662fa4be4120a9323",
+  "training_world": {
+    "map_size": -1,
+    "num_maps": 8192
+  }
+}

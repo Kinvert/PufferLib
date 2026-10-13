@@ -1,0 +1,591 @@
+{
+  "schema": "native-image-proposal-preflight-v1",
+  "status": "passed",
+  "candidate_sha256": "726ecce92b7347a6823c8ce111324874ae3543fa5e5ae849e427b8b2052b2d85",
+  "storage_limit_bytes": 4294967296,
+  "image_contracts": {
+    "connect4cnn": {
+      "version": "human-geometry-v1",
+      "shape_hwc": [
+        576,
+        672,
+        3
+      ],
+      "layout": "NHWC",
+      "dtype": "float32",
+      "preprocessing": "none"
+    },
+    "pongcnn": {
+      "version": "human-geometry-v1",
+      "shape_hwc": [
+        640,
+        620,
+        3
+      ],
+      "layout": "NHWC",
+      "dtype": "float32",
+      "preprocessing": "none"
+    },
+    "flappycnn": {
+      "version": "human-geometry-v1",
+      "shape_hwc": [
+        640,
+        420,
+        3
+      ],
+      "layout": "NHWC",
+      "dtype": "float32",
+      "preprocessing": "none"
+    },
+    "breakoutcnn": {
+      "version": "human-geometry-v1",
+      "shape_hwc": [
+        330,
+        576,
+        3
+      ],
+      "layout": "NHWC",
+      "dtype": "float32",
+      "preprocessing": "none"
+    },
+    "snakecnn": {
+      "version": "human-geometry-v1",
+      "shape_hwc": [
+        616,
+        616,
+        3
+      ],
+      "layout": "NHWC",
+      "dtype": "float32",
+      "preprocessing": "none"
+    },
+    "mazecnn": {
+      "version": "human-geometry-v1",
+      "shape_hwc": [
+        616,
+        616,
+        3
+      ],
+      "layout": "NHWC",
+      "dtype": "float32",
+      "preprocessing": "none"
+    }
+  },
+  "cases": [
+    {
+      "environment": "connect4cnn",
+      "config_sha256": "9ab1737bb409a5fa63282288c7878ff1c4f182664cae62edfb50868f29c681af",
+      "layout": {
+        "family": "flex",
+        "actions": 7,
+        "descriptor_sha256": "1c0d1b4e62d38b7b24559ef2812ffa71d38b809c46f039cc749e3bf3ffc6a8e7",
+        "parameters": 56232,
+        "bytes": 224928,
+        "command": [
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/connect4cnn/default",
+          "--describe-flex",
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/connect4cnn/config.ini",
+          "7"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/connect4cnn/default",
+            "--describe-flex",
+            "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/connect4cnn/config.ini",
+            "7"
+          ],
+          "cwd": "/home/claude/cnn-audit-20261008",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 564253128317789,
+          "pid": 1088033,
+          "returncode": 0,
+          "end_monotonic_ns": 564253242630847
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/connect4cnn/default": "8e84627698dcde6b5881fd39ce20c89c33f65851cbb81fad6ad209a8ef076c8c",
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/connect4cnn/config.ini": "9ab1737bb409a5fa63282288c7878ff1c4f182664cae62edfb50868f29c681af"
+        },
+        "numerical_acceptance": false,
+        "runtime_binary_source_certified": false
+      },
+      "storage": {
+        "family": "flex",
+        "parameters": 56232,
+        "storage_floor_bytes": 1013854368,
+        "descriptor_sha256": "9f52876afcac2e73b72cea4b5e9f2a3e327a1ddfbdba98eb98cd96438e30ceea",
+        "command": [
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/connect4cnn/default",
+          "--storage",
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/connect4cnn/config.ini"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/connect4cnn/default",
+            "--storage",
+            "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/connect4cnn/config.ini"
+          ],
+          "cwd": "/home/claude/cnn-audit-20261008",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 564253291460297,
+          "pid": 1088034,
+          "returncode": 0,
+          "end_monotonic_ns": 564253355567709
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/connect4cnn/default": "8e84627698dcde6b5881fd39ce20c89c33f65851cbb81fad6ad209a8ef076c8c",
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/connect4cnn/config.ini": "9ab1737bb409a5fa63282288c7878ff1c4f182664cae62edfb50868f29c681af"
+        },
+        "peak_memory_certified": false,
+        "numerical_acceptance": false
+      }
+    },
+    {
+      "environment": "pongcnn",
+      "config_sha256": "bddce84f5a3a0513483e87c5594cd2b3e3a792516cd11201214dfdfd12cb60c8",
+      "layout": {
+        "family": "flex",
+        "actions": 3,
+        "descriptor_sha256": "ccec5122454d80eda507d83af0e5e81051c4287d9de318a57776f0da55183091",
+        "parameters": 55720,
+        "bytes": 222880,
+        "command": [
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/pongcnn/default",
+          "--describe-flex",
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/pongcnn/config.ini",
+          "3"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/pongcnn/default",
+            "--describe-flex",
+            "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/pongcnn/config.ini",
+            "3"
+          ],
+          "cwd": "/home/claude/cnn-audit-20261008",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 564253383952220,
+          "pid": 1088035,
+          "returncode": 0,
+          "end_monotonic_ns": 564253498158874
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/pongcnn/default": "cba8dcac9fe718e30d72c72b92155eb47199a0ec84dc83afe72df444ec0b6665",
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/pongcnn/config.ini": "bddce84f5a3a0513483e87c5594cd2b3e3a792516cd11201214dfdfd12cb60c8"
+        },
+        "numerical_acceptance": false,
+        "runtime_binary_source_certified": false
+      },
+      "storage": {
+        "family": "flex",
+        "parameters": 55720,
+        "storage_floor_bytes": 1039292000,
+        "descriptor_sha256": "60bcadd7201d0fc8e98c021f856bd94df8ee5de69bff3bc409d5fd86088b2e4e",
+        "command": [
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/pongcnn/default",
+          "--storage",
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/pongcnn/config.ini"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/pongcnn/default",
+            "--storage",
+            "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/pongcnn/config.ini"
+          ],
+          "cwd": "/home/claude/cnn-audit-20261008",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 564253549877044,
+          "pid": 1088036,
+          "returncode": 0,
+          "end_monotonic_ns": 564253614004987
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/pongcnn/default": "cba8dcac9fe718e30d72c72b92155eb47199a0ec84dc83afe72df444ec0b6665",
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/pongcnn/config.ini": "bddce84f5a3a0513483e87c5594cd2b3e3a792516cd11201214dfdfd12cb60c8"
+        },
+        "peak_memory_certified": false,
+        "numerical_acceptance": false
+      }
+    },
+    {
+      "environment": "flappycnn",
+      "config_sha256": "625b826679a6a5dbea13d1746c889a25b1a05b5facbfd44d02bd9aca82e097f9",
+      "layout": {
+        "family": "flex",
+        "actions": 2,
+        "descriptor_sha256": "a249c604a1292c7fedea13f24eb4a1a26ef36a921fef7a2f48bc73f695a9f7f8",
+        "parameters": 55592,
+        "bytes": 222368,
+        "command": [
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/flappycnn/default",
+          "--describe-flex",
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/flappycnn/config.ini",
+          "2"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/flappycnn/default",
+            "--describe-flex",
+            "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/flappycnn/config.ini",
+            "2"
+          ],
+          "cwd": "/home/claude/cnn-audit-20261008",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 564253641661425,
+          "pid": 1088037,
+          "returncode": 0,
+          "end_monotonic_ns": 564253755893841
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/flappycnn/default": "262e9acbf39676bdd6f33c29211101a64d0fe463a2a4bbed205e1464ccbf8746",
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/flappycnn/config.ini": "625b826679a6a5dbea13d1746c889a25b1a05b5facbfd44d02bd9aca82e097f9"
+        },
+        "numerical_acceptance": false,
+        "runtime_binary_source_certified": false
+      },
+      "storage": {
+        "family": "flex",
+        "parameters": 55592,
+        "storage_floor_bytes": 704441296,
+        "descriptor_sha256": "1b577d101bcca5c6a19f9c63e7037224cbffa77ba4c3935675cc1655be7a76d8",
+        "command": [
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/flappycnn/default",
+          "--storage",
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/flappycnn/config.ini"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/flappycnn/default",
+            "--storage",
+            "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/flappycnn/config.ini"
+          ],
+          "cwd": "/home/claude/cnn-audit-20261008",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 564253809150018,
+          "pid": 1088038,
+          "returncode": 0,
+          "end_monotonic_ns": 564253873177576
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/flappycnn/default": "262e9acbf39676bdd6f33c29211101a64d0fe463a2a4bbed205e1464ccbf8746",
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/flappycnn/config.ini": "625b826679a6a5dbea13d1746c889a25b1a05b5facbfd44d02bd9aca82e097f9"
+        },
+        "peak_memory_certified": false,
+        "numerical_acceptance": false
+      }
+    },
+    {
+      "environment": "breakoutcnn",
+      "config_sha256": "76fb22e09fc0d1ce80dcc284ad7cc9880fffedd3d38a485ed42ac6d5d1a52d0a",
+      "layout": {
+        "family": "flex",
+        "actions": 3,
+        "descriptor_sha256": "0dcddcd6c4c1f701d3e8811415f55560ae799c4bcb1fd7d9bdb7bc44e4cd658c",
+        "parameters": 55720,
+        "bytes": 222880,
+        "command": [
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/breakoutcnn/default",
+          "--describe-flex",
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/breakoutcnn/config.ini",
+          "3"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/breakoutcnn/default",
+            "--describe-flex",
+            "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/breakoutcnn/config.ini",
+            "3"
+          ],
+          "cwd": "/home/claude/cnn-audit-20261008",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 564253901070172,
+          "pid": 1088039,
+          "returncode": 0,
+          "end_monotonic_ns": 564254015291922
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/breakoutcnn/default": "b9342772691f6edb2f6ccb06b9adbe725a00b9d347cdc76b0505c12a812a86cb",
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/breakoutcnn/config.ini": "76fb22e09fc0d1ce80dcc284ad7cc9880fffedd3d38a485ed42ac6d5d1a52d0a"
+        },
+        "numerical_acceptance": false,
+        "runtime_binary_source_certified": false
+      },
+      "storage": {
+        "family": "flex",
+        "parameters": 55720,
+        "storage_floor_bytes": 499701344,
+        "descriptor_sha256": "5bba2490be23d64a49a760eef5d638de79d013046fc068401ca3dd3399577118",
+        "command": [
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/breakoutcnn/default",
+          "--storage",
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/breakoutcnn/config.ini"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/breakoutcnn/default",
+            "--storage",
+            "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/breakoutcnn/config.ini"
+          ],
+          "cwd": "/home/claude/cnn-audit-20261008",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 564254062044861,
+          "pid": 1088040,
+          "returncode": 0,
+          "end_monotonic_ns": 564254126049647
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/breakoutcnn/default": "b9342772691f6edb2f6ccb06b9adbe725a00b9d347cdc76b0505c12a812a86cb",
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/breakoutcnn/config.ini": "76fb22e09fc0d1ce80dcc284ad7cc9880fffedd3d38a485ed42ac6d5d1a52d0a"
+        },
+        "peak_memory_certified": false,
+        "numerical_acceptance": false
+      }
+    },
+    {
+      "environment": "snakecnn",
+      "config_sha256": "792a064dfde4c559d231393761c124edd13b2eb11515e9e10221b542a03cbf41",
+      "layout": {
+        "family": "flex",
+        "actions": 4,
+        "descriptor_sha256": "d531da74f62d38dac2acf6564c23b17c6379553c28c127185ff45c3c4357fd44",
+        "parameters": 55848,
+        "bytes": 223392,
+        "command": [
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/snakecnn/default",
+          "--describe-flex",
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/snakecnn/config.ini",
+          "4"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/snakecnn/default",
+            "--describe-flex",
+            "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/snakecnn/config.ini",
+            "4"
+          ],
+          "cwd": "/home/claude/cnn-audit-20261008",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 564254153796699,
+          "pid": 1088041,
+          "returncode": 0,
+          "end_monotonic_ns": 564254268287090
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/snakecnn/default": "abf23a7383b49b71768ddc99f5df9f79b09b5b49c5e07cde54b9126f169afc03",
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/snakecnn/config.ini": "792a064dfde4c559d231393761c124edd13b2eb11515e9e10221b542a03cbf41"
+        },
+        "numerical_acceptance": false,
+        "runtime_binary_source_certified": false
+      },
+      "storage": {
+        "family": "flex",
+        "parameters": 55848,
+        "storage_floor_bytes": 993922800,
+        "descriptor_sha256": "86af61ca17adc0782cebc24ccc11742a677b9896fc21fc4d1b6353ba72c19399",
+        "command": [
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/snakecnn/default",
+          "--storage",
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/snakecnn/config.ini"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/snakecnn/default",
+            "--storage",
+            "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/snakecnn/config.ini"
+          ],
+          "cwd": "/home/claude/cnn-audit-20261008",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 564254320527878,
+          "pid": 1088042,
+          "returncode": 0,
+          "end_monotonic_ns": 564254434636757
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/snakecnn/default": "abf23a7383b49b71768ddc99f5df9f79b09b5b49c5e07cde54b9126f169afc03",
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/snakecnn/config.ini": "792a064dfde4c559d231393761c124edd13b2eb11515e9e10221b542a03cbf41"
+        },
+        "peak_memory_certified": false,
+        "numerical_acceptance": false
+      }
+    },
+    {
+      "environment": "mazecnn",
+      "config_sha256": "7d09fe2c2b7a77fda7799848515e808215ffbbaf095d59a439f041aba96efbae",
+      "layout": {
+        "family": "flex",
+        "actions": 5,
+        "descriptor_sha256": "73958efe4355473629bbe395d01a642ec147be8516465559ef3c2e1b67ab8b8c",
+        "parameters": 55976,
+        "bytes": 223904,
+        "command": [
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/mazecnn/default",
+          "--describe-flex",
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/mazecnn/config.ini",
+          "5"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/mazecnn/default",
+            "--describe-flex",
+            "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/mazecnn/config.ini",
+            "5"
+          ],
+          "cwd": "/home/claude/cnn-audit-20261008",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 564254467640274,
+          "pid": 1088054,
+          "returncode": 0,
+          "end_monotonic_ns": 564254581938655
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/mazecnn/default": "18a41e1edbc65bbd54af4275121b78b48a0aea20f3c49bd061a264fed89bea2c",
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/mazecnn/config.ini": "7d09fe2c2b7a77fda7799848515e808215ffbbaf095d59a439f041aba96efbae"
+        },
+        "numerical_acceptance": false,
+        "runtime_binary_source_certified": false
+      },
+      "storage": {
+        "family": "flex",
+        "parameters": 55976,
+        "storage_floor_bytes": 993925504,
+        "descriptor_sha256": "ca44c33ce73e433fe27ee7060d3d17766a6b9b3caebc02cda50db72abc96ea9f",
+        "command": [
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/mazecnn/default",
+          "--storage",
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/mazecnn/config.ini"
+        ],
+        "timing": {
+          "command": [
+            "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/mazecnn/default",
+            "--storage",
+            "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/mazecnn/config.ini"
+          ],
+          "cwd": "/home/claude/cnn-audit-20261008",
+          "status": "ok",
+          "timeout": 60,
+          "environment": {
+            "PUFFER_CHECKPOINT_RECEIPTS": null,
+            "NVCC_ARCH": null,
+            "NVCC_EXTRA": null,
+            "NVCC_APPEND_FLAGS": null,
+            "CUDA_HOME": "/usr/local/cuda",
+            "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+          },
+          "launch_monotonic_ns": 564254630696110,
+          "pid": 1088055,
+          "returncode": 0,
+          "end_monotonic_ns": 564254745355252
+        },
+        "inputs_sha256": {
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata/mazecnn/default": "18a41e1edbc65bbd54af4275121b78b48a0aea20f3c49bd061a264fed89bea2c",
+          "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight/mazecnn/config.ini": "7d09fe2c2b7a77fda7799848515e808215ffbbaf095d59a439f041aba96efbae"
+        },
+        "peak_memory_certified": false,
+        "numerical_acceptance": false
+      }
+    }
+  ],
+  "cuda_executed": false,
+  "gpu_queried": false,
+  "peak_memory_certified": false,
+  "preparation_root": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/image-proposal-preflight",
+  "metadata_root": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/policy-metadata"
+}

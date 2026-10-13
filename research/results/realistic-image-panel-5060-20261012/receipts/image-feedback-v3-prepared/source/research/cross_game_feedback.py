@@ -1,0 +1,532 @@
+#!/usr/bin/env python3
+"""Temporary multi-game trial orchestration; PROTEIN/search/training stay native.
+
+Native proposal processes replay the fixed observation ledger and exit before
+any policy runs. Python only prepares existing panels, audits exact outcomes,
+reduces scalar objectives and supervises processes. This is not PR delivery code.
+"""
+import argparse
+import contextlib
+import fcntl
+import io
+import json
+import math
+import os
+from pathlib import Path
+import shutil
+import sys
+import time
+from types import SimpleNamespace
+
+import candidate_panel as panels
+from claim import common_settings
+
+ROOT = panels.ROOT
+PROTOCOL = "cross-game-native-protein-research-v1"
+DEVELOPMENT_PROTOCOL = "cross-game-native-protein-research-v2"
+IMAGE_PROTOCOL = "cross-game-native-protein-research-v3"
+require, save, sha = panels.require, panels.save, panels.sha
+
+
+def task_budgets(config):
+    overrides = {}
+    for section in config.sections():
+        if not section.startswith("task."): continue
+        task = section[5:]
+        require(task in panels.TASKS and set(config[section]) == {"steps", "checkpoint_steps"}, "Invalid per-game budget section")
+        overrides[task] = {key: config.getint(section, key) for key in ("steps", "checkpoint_steps")}
+    return panels.panel.resolve_budgets(panels.TASKS, config.getint("search", "steps"),
+        config.getint("search", "checkpoint_steps"), overrides)
+
+
+def per_game_learners(config):
+    mode = config.get("search", "learner_mode", fallback="fixed")
+    require(mode in ("fixed", "per_game"), "Invalid learner_mode")
+    return mode == "per_game"
+
+
+def recipe_protocol(config):
+    if config.has_option("search","image_contract"):
+        require(config.get("search","image_contract")=="human-geometry-v1" and per_game_learners(config),
+                "Image feedback requires the explicit native image contract and per-game learners")
+        return IMAGE_PROTOCOL
+    return DEVELOPMENT_PROTOCOL if per_game_learners(config) or any(s.startswith("task.") for s in config.sections()) else PROTOCOL
+
+
+def recipe(path):
+    config = panels.read_ini(path)
+    required = {"search", "protein", "policy"} | {"objective." + task for task in panels.TASKS}
+    require(required <= set(config.sections()), "Incomplete research recipe/objectives")
+    require(config.getint("policy", "encoder") == 4 and config.getint("policy", "hidden_size") == 128
+            and config.getint("policy", "num_layers") == 1, "Research requires encoder4/H128/L1")
+    # Reuse the existing grammar/constructor contract; no learner/core/world search.
+    panels.architecture(path)
+    keys = [s for s in config.sections() if s.startswith("sweep.")]
+    require(keys and all(s.startswith("sweep.policy.cnn_") for s in keys), "Only CNN coordinates may vary")
+    tasks = {s for s in config.sections() if s.startswith("task.")}
+    require(set(config.sections()) == required | set(keys) | tasks, "Unsupported recipe section; use fixed learner overlays")
+    max_depth = config.getint("sweep.policy.cnn_depth", "max") if config.has_section("sweep.policy.cnn_depth") else config.getint("policy", "cnn_depth")
+    require(max_depth in (1, 2, 3), "Invalid maximum CNN depth")
+    for stage in range(1, max_depth + 1):
+        for name in ("channels", "kernel", "stride", "pool", "residual"):
+            key = f"cnn_{name}_{stage}"
+            require(config.getfloat("policy", key) in panels.LIMITS[4]["policy." + key][1], "Missing/invalid potentially active stage: " + key)
+    for section in keys:
+        coordinate = section[6:]
+        require(coordinate in panels.LIMITS[4], "Unsupported CNN coordinate")
+        distribution, values = panels.LIMITS[4][coordinate]
+        require(config.get(section, "distribution") == distribution, "Wrong coordinate distribution")
+        lo, hi = config.getint(section, "min"), config.getint(section, "max")
+        require(lo in values and hi in values and lo < hi, "Bad CNN range")
+        require(config.has_option("policy", coordinate[7:]), "Missing CNN coordinate default")
+        require(lo <= config.getint("policy", coordinate[7:]) <= hi, "Default outside range")
+        if coordinate[-1:].isdigit():
+            require(int(coordinate[-1]) <= max_depth, "Inactive stage must not consume search dimensions")
+    seeds = [int(v.strip()) for v in config.get("search", "training_seeds").split(",")]
+    require(seeds and len(seeds) == len(set(seeds)) and all(0 <= s < 2**32 for s in seeds), "Bad training seeds")
+    for task in panels.TASKS:
+        section = "objective." + task
+        offset, target = config.getfloat(section, "offset"), config.getfloat(section, "target")
+        require(math.isfinite(offset) and math.isfinite(target) and target > offset, "Invalid fixed objective anchors")
+    require(1 <= config.getint("search", "max_runs") <= 512, "Invalid proposal count")
+    for key in ("steps", "checkpoint_steps", "episodes", "slots", "pong_max_decisions",
+                "breakout_max_frames", "campaign_timeout", "train_timeout", "eval_timeout", "proposal_timeout"):
+        require(config.getint("search", key) > 0, "Invalid positive search setting: " + key)
+    for key in ("appearance_seed", "eval_seed"):
+        require(0 <= config.getint("search", key) < 2**32, "Invalid panel seed")
+    require(config.getint("search", "eval_seed") <= 2**32-len(seeds), "Evaluation seed allocation overflows")
+    require(not set(range(config.getint("search", "eval_seed"), config.getint("search", "eval_seed")+len(seeds))) & set(seeds), "Evaluation seed overlaps training")
+    budgets = task_budgets(config)
+    if recipe_protocol(config)==IMAGE_PROTOCOL:
+        require(1<=config.getint("search","image_storage_limit_mib",fallback=4096)<=12288,
+                "Invalid image proposal storage admission bound")
+    if not per_game_learners(config):
+        require(all(b["steps"] % 2048 == b["checkpoint_steps"] % 2048 == 0 for b in budgets.values()),
+                "Decisions/cadence must be 2048 multiples")
+    require(0 <= config.getint("protein", "seed") < 2**32
+        and 0 <= config.getint("protein", "num_random_samples") <= 100
+        and 1 <= config.getint("protein", "gp_training_iter") <= 100, "Invalid optimizer controls")
+    return config, seeds
+
+
+def optimizer_receipts(directory, current=False):
+    directory = directory.resolve()
+    for ledger, base in (("source.sha256", directory / "source"), ("binary.sha256", directory)):
+        for line in (directory / ledger).read_text().splitlines():
+            digest, name = line.split(None, 1); name = name.lstrip(" *")
+            path = Path(name)
+            if ledger == "binary.sha256": path = directory / path.name
+            else:
+                require(not path.is_absolute() and ".." not in path.parts, "Unsafe build source receipt")
+                path = base / path
+                if current: require(sha(ROOT / name) == digest, "Stale optimizer build: " + name)
+            require(sha(path) == digest, "Changed optimizer receipt: " + name)
+    require("PUFFER_RESEARCH_PROTEIN_FEEDBACK" in (directory / "environment.txt").read_text(), "Wrong optimizer build")
+    return {str(p.relative_to(directory)): sha(p) for p in directory.rglob("*") if p.is_file()}
+
+
+def inspect(root, current=False):
+    value = json.loads((root / "plan.json").read_text())
+    require(value["protocol"] in (PROTOCOL, DEVELOPMENT_PROTOCOL, IMAGE_PROTOCOL), "Wrong research feedback protocol")
+    require(not current or str(root.resolve()) == value["preparation_root"], "Cannot run relocated research packet")
+    for name, digest in value["files_sha256"].items():
+        require(sha(root / name) == digest, "Changed research input: " + name)
+    panels.verify_sources(root, value["source_sha256"], current)
+    if "encoder_validation" in value:
+        import cnn_graph_acceptance as graph_checks
+        graph_checks.inspect_bundle(Path(value["encoder_validation"]), current=current)
+        require(sha(Path(value["encoder_validation"])/"bundle.json") == value["encoder_validation_sha256"], "Changed numerical gate")
+    if "image_validation_catalog" in value:
+        import image_validation_catalog as image_checks
+        image_checks.inspect(Path(value["image_validation_catalog"]),current=current)
+        require(sha(Path(value["image_validation_catalog"])/"catalog.json")==value["image_validation_catalog_sha256"],
+                "Changed all-game image numerical catalog")
+    if current:
+        require(sha(Path(value["optimizer"])) == value["optimizer_sha256"], "Changed native optimizer")
+        require(optimizer_receipts(Path(value["optimizer_build"]), current=True) == value["optimizer_receipts"], "Changed native build packet")
+    require(optimizer_receipts(root / "optimizer-build") == value["optimizer_receipts"], "Changed frozen optimizer build")
+    config, _ = recipe(root / "recipe.ini")
+    require(value["protocol"] == recipe_protocol(config), "Wrong recipe feedback contract")
+    if value["protocol"]==IMAGE_PROTOCOL:
+        registry=json.loads((root/"registry.json").read_text())
+        layout=panels.policy_layout.inspect_registry(root/"policy-metadata",current=current)
+        require("image_validation_catalog" in value and "encoder_validation" not in value
+                and registry["protocol"]==panels.IMAGE_BUILD and layout.get("schema")==panels.policy_layout.IMAGE_SCHEMA
+                and value["image_contracts"]==registry["image_contracts"]==layout["image_contracts"]
+                and {r["environment"] for r in value["learner_recipes"]}==set(panels.TASKS),
+                "Incomplete image feedback binding")
+    if value["protocol"] in (DEVELOPMENT_PROTOCOL, IMAGE_PROTOCOL):
+        require(value["task_budgets"] == task_budgets(config)
+                and value["per_game_learners"] is per_game_learners(config), "Changed per-game feedback allocation")
+        bases = {task: panels.base_config(root / "source", task, value["task_budgets"][task],
+            config.getint("search", "appearance_seed"),
+            next((root / r["file"] for r in value["learner_recipes"] if r["environment"] == task), None),
+            value["per_game_learners"]) for task in panels.TASKS}
+        panels.inspect_learner_geometry(root, value, bases)
+        if value["protocol"]==IMAGE_PROTOCOL:
+            import image_validation_catalog as image_checks
+            catalog=image_checks.inspect(Path(value["image_validation_catalog"]),current=current)
+            require(all(catalog["shapes"][catalog["games"][t]]["shape_hwc"]==value["image_contracts"][t]["shape_hwc"]
+                        and bases[t].getint("vec","total_agents")//bases[t].getint("vec","num_buffers") in catalog["batches"]
+                        and bases[t].getint("train","minibatch_size") in catalog["batches"] for t in panels.TASKS),
+                    "Image feedback shape/batch exceeds CUDA catalog")
+    return value
+
+
+def prepare(args):
+    config, seeds = recipe(args.recipe)
+    registry = json.loads(args.registry.read_text())
+    images=recipe_protocol(config)==IMAGE_PROTOCOL
+    require(registry["protocol"] == (panels.IMAGE_BUILD if images else "native-cnn-candidate-build-v1"), "Use matching fresh game builds")
+    if images:
+        require(getattr(args,"image_validation_catalog",None) is not None and getattr(args,"encoder_validation",None) is None,
+                "Image feedback requires the all-shape validation catalog, not a single legacy bundle")
+    panels.verify_sources(args.registry.parent, registry["source_sha256"], current=True)
+    optimizer = args.optimizer_build.resolve() / "worker"
+    require(optimizer.is_file() and (args.optimizer_build / "source-check.txt").is_file(), "Missing native optimizer receipts")
+    receipts = optimizer_receipts(args.optimizer_build, current=True)
+    out = args.out.resolve(); out.mkdir(parents=True, exist_ok=False)
+    shutil.copyfile(args.recipe, out / "recipe.ini")
+    shutil.copyfile(args.registry, out / "registry.json")
+    shutil.copytree(args.optimizer_build, out / "optimizer-build")
+    learners = []
+    for raw in getattr(args, "learner_recipe", []):
+        task, separator, filename = raw.partition("=")
+        require(separator and task in panels.TASKS and task not in [r['environment'] for r in learners], "Invalid/duplicate per-game learner")
+        destination = out / "learners" / (task + ".ini"); destination.parent.mkdir(exist_ok=True)
+        shutil.copyfile(filename, destination)
+        learners.append(dict(environment=task, file=str(destination.relative_to(out))))
+    save(out / "registry-location.json", dict(original=str(args.registry.resolve())), exclusive=True)
+    sources = panels.capture(out)
+    extended = recipe_protocol(config) in (DEVELOPMENT_PROTOCOL, IMAGE_PROTOCOL)
+    budgets = task_budgets(config)
+    if extended:
+        bases = {task: panels.base_config(ROOT, task, budgets[task], config.getint("search", "appearance_seed"),
+            next((out / r["file"] for r in learners if r["environment"] == task), None), per_game_learners(config)) for task in panels.TASKS}
+        geometry = panels.panel.native_geometry(out, bases)
+    with contextlib.redirect_stdout(io.StringIO()):
+        layout = panels.policy_layout.freeze(args.policy_metadata, out / "policy-metadata")
+    panels.metadata_source_binding(layout, registry, sources)
+    if images:
+        require(layout.get("schema")==panels.policy_layout.IMAGE_SCHEMA and layout["image_contracts"]==registry["image_contracts"]
+                and {r["environment"] for r in learners}==set(panels.TASKS),"Incomplete image learners/metadata")
+    command = [str(optimizer), "research_protein_describe", str(out / "recipe.ini")]
+    panels.process(command, out, out / "describe.txt", 30)
+    description = json.loads((out / "describe.txt").read_text())
+    require(description["gpu_queried"] is False and description["policy_executed"] is False, "Descriptor ran GPU/model")
+    value = dict(protocol=recipe_protocol(config), preparation_root=str(out), optimizer=str(optimizer),
+        optimizer_sha256=sha(optimizer), optimizer_build=str(args.optimizer_build.resolve()), optimizer_receipts=receipts,
+        policy_metadata=str(args.policy_metadata.resolve()), seeds=seeds,
+        learner_recipes=learners,
+        dimensions=description["dimensions"], description=description,
+        source_sha256=sources, files_sha256={str(p.relative_to(out)): sha(p) for p in out.rglob("*") if p.is_file()},
+        normalized_objective="equal-game mean of clipped fixed-anchor exact final-checkpoint scores; Pong lower bound",
+        optimizer_cost="sum final monotonic checkpoint training seconds once per game/seed",
+        temporary_research_core=True, native_optimizer=True, cross_game_feedback_implemented=True,
+        publication_claim_qualified=False, broader_encoder_math_qualified=False)
+    if extended: value.update(task_budgets=budgets, per_game_learners=per_game_learners(config), learner_geometry=geometry)
+    if getattr(args, "encoder_validation", None):
+        import cnn_graph_acceptance as graph_checks
+        graph_checks.inspect_bundle(args.encoder_validation, current=True)
+        value.update(encoder_validation=str(args.encoder_validation.resolve()),
+                     encoder_validation_sha256=sha(args.encoder_validation/"bundle.json"))
+    if images:
+        import image_validation_catalog as image_checks
+        catalog=image_checks.inspect(args.image_validation_catalog.resolve(),current=True)
+        require(all(catalog["shapes"][catalog["games"][t]]["shape_hwc"]==registry["image_contracts"][t]["shape_hwc"]
+                    for t in panels.TASKS),"Wrong numerical image catalog for game builds")
+        value.update(image_validation_catalog=str(args.image_validation_catalog.resolve()),
+                     image_validation_catalog_sha256=sha(args.image_validation_catalog/"catalog.json"),image_contracts=registry["image_contracts"])
+    save(out / "plan.json", value, exclusive=True)
+    inspect(out, current=True)
+    return value
+
+
+def aggregate(plan, analysis, config):
+    require(analysis["status"] == "ok" and not analysis["missing_evaluations"]
+            and analysis["audited_jobs"] == len(plan["jobs"]), "Incomplete panel cannot supply successful feedback")
+    require(len(plan["candidates"]) == 1, "One architecture per feedback observation")
+    rows = analysis["observations"]
+    require(len(rows) == plan["planned_evaluations"], "Incomplete objective cells")
+    games, costs = [], []
+    identities = set()
+    for task in panels.TASKS:
+        offset = config.getfloat("objective." + task, "offset")
+        target = config.getfloat("objective." + task, "target")
+        normalize = lambda score: max(0.0, min(1.0, (score - offset) / (target - offset)))
+        selected = [r for r in rows if r["environment"] == task and r["decisions"] == plan["task_budgets"][task]["steps"]]
+        wanted = {(seed, drawing) for seed in plan["seeds"] for drawing in range(panels.panel.ENVIRONMENTS[task])}
+        require(len(selected) == len(wanted) and {(r["seed"], r["representation"]) for r in selected} == wanted,
+                "Missing/duplicate game-seed-drawing feedback cell")
+        require(all(math.isfinite(r[k]) for r in selected for k in ("score_lower", "score_upper", "train_seconds")), "Nonfinite objective")
+        require(all(r["score_lower"] <= r["score_upper"] for r in selected), "Reversed objective bounds")
+        for seed in plan["seeds"]:
+            shared = {r["train_seconds"] for r in selected if r["seed"] == seed}
+            require(len(shared) == 1 and next(iter(shared)) > 0, "Drawing duplicated or changed training cost")
+            identity = task, seed; require(identity not in identities, "Duplicate training charge")
+            identities.add(identity); costs.append(next(iter(shared)))
+        games.append(dict(environment=task, cells=len(selected), offset=offset, target=target,
+            normalized_lower=math.fsum(normalize(r["score_lower"]) for r in selected) / len(selected),
+            normalized_upper=math.fsum(normalize(r["score_upper"]) for r in selected) / len(selected)))
+    return dict(score=math.fsum(g["normalized_lower"] for g in games)/len(games),
+        score_upper=math.fsum(g["normalized_upper"] for g in games)/len(games),
+        cost=math.fsum(costs), training_jobs_charged=len(costs), games=games,
+        conservative_pong=True, publication_claim_qualified=False)
+
+
+def run(args):
+    require(args.allow_gpu, "Scheduled feedback run requires --allow-gpu")
+    root = args.plan.resolve().parent; value = inspect(root, current=True)
+    config, seeds = recipe(root / "recipe.ini"); settings = config["search"]
+    count = settings.getint("max_runs"); timeout = settings.getint("campaign_timeout")
+    expected = "5060" if args.mode in ("smoke", "validation5060", "image5060") else "5090"
+    if args.mode=="image5060":
+        require(value["protocol"]==IMAGE_PROTOCOL and count<=3 and len(seeds)==1
+                and max(b["steps"] for b in task_budgets(config).values())<=1024
+                and all(b["steps"]//b["checkpoint_steps"]<=8 for b in task_budgets(config).values())
+                and settings.getint("episodes")<=5 and settings.getint("slots")==4 and timeout<=900,
+                "Image feedback leaves short all-game 5060 smoke bounds")
+    if args.mode == "validation5060":
+        require(count <= 3 and len(seeds) == 1 and max(b["steps"] for b in task_budgets(config).values()) <= 131072
+                and all(b["checkpoint_steps"] == b["steps"] for b in task_budgets(config).values())
+                and settings.getint("episodes") <= 17 and settings.getint("slots") <= 16
+                and timeout <= 900 and "encoder_validation" in value, "Validation exceeds bounded 5060 allocation")
+    if args.mode in ("smoke", "canary5090"):
+        require(recipe_protocol(config) == PROTOCOL and count <= 3 and len(seeds) == 1 and settings.getint("steps") <= 131072
+            and settings.getint("checkpoint_steps") == settings.getint("steps")
+            and settings.getint("episodes") <= 17 and settings.getint("slots") <= 16
+            and 0 < timeout <= 600, "Feedback canary exceeds bounded allocation")
+    limit = 30 if args.mode in ("smoke", "canary5090", "validation5060", "image5060") else 3600
+    require(0 < timeout <= 172800 and all(0 < settings.getint(k) <= limit for k in
+            ("train_timeout", "proposal_timeout")) and 0<settings.getint("eval_timeout")<=(90 if args.mode=="image5060" else limit),
+            "Unbounded research deadlines")
+    execution = root / "execution"; execution.mkdir(exist_ok=False)
+    history = "PUFFER_CROSS_GAME_V1 " + str(value["dimensions"]) + "\n"
+    record = dict(status="running", mode=args.mode, trials=[], started_monotonic_ns=time.monotonic_ns(),
+        learning_quality_claim=False, plan_sha256=sha(args.plan), history=history)
+    deadline = time.monotonic() + timeout
+    def remaining(limit):
+        require(deadline > time.monotonic(), "Research campaign deadline reached")
+        return min(limit, deadline - time.monotonic())
+    def propose(directory):
+        inspect(root, current=True)
+        directory.mkdir(exist_ok=False)
+        ledger = directory / "history.tsv"; ledger.write_text(history)
+        before = sha(ledger)
+        output = directory / "proposal.json"
+        command = [value["optimizer"], "research_protein_propose", str(root / "recipe.ini"), str(ledger), str(output)]
+        lock_path = ROOT / "build/connect4cnn/hardware-benchmark.lock"
+        lock_path.parent.mkdir(parents=True, exist_ok=True)
+        with lock_path.open("a") as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            hardware = panels.hardware(expected)
+            if "hardware" in record: require(hardware == record["hardware"], "Changed research hardware")
+            else: record["hardware"] = hardware
+            timing = panels.process(command, root, directory / "native.txt", remaining(settings.getint("proposal_timeout")))
+        require(sha(ledger) == before, "Native proposal changed fixed history")
+        proposal = json.loads(output.read_text())
+        require(proposal["observations_replayed"] == len(record["trials"])
+                and len(proposal["normalized"]) == value["dimensions"], "Native feedback replay incomplete")
+        return proposal, timing
+    try:
+        for index in range(count):
+            trial = execution / f"trial-{index:04d}"
+            proposal, timing = propose(trial)
+            name = ("happy-cat-1", "mystic-tree-2", "swift-fox-3")[index] if index < 3 else f"quiet-owl-{index+1}"
+            candidate = panels.panel.read(); candidate["policy"] = dict(config["policy"])
+            require(set(proposal["policy"]) == set(value["description"]["coordinates"]), "Native coordinate set changed")
+            for key, number in proposal["policy"].items():
+                require(type(number) in (int, float) and math.isfinite(number) and number == int(number), "Invalid discrete native coordinate")
+                candidate["policy"][key] = str(int(number))
+            candidate_path = trial / "candidate.ini"
+            with candidate_path.open("x") as stream: candidate.write(stream)
+            panels.architecture(candidate_path)
+            spec = panels.architecture(candidate_path)
+            duplicate = next((r["index"] for r in record["trials"] if r["architecture"] == spec), None)
+            math_check = None
+            image_math = None
+            if "image_validation_catalog" in value:
+                import image_proposal_preflight as preflight
+                import image_validation_catalog as image_checks
+                admission_path=trial/"image-proposal-preflight"
+                preflight.run(root,value,config,candidate_path,admission_path,deadline)
+                preflight.inspect(root,value,config,candidate_path,admission_path)
+                math_path=trial/"image-encoder-checks"
+                result=image_checks.run(SimpleNamespace(catalog=Path(value["image_validation_catalog"]),name=name,
+                    config=candidate_path,out=math_path,hardware=expected,timeout=min(120,remaining(120)),deadline=deadline))
+                require(result["hardware"]==record["hardware"],"Image encoder checks changed hardware")
+                image_math=math_path/"evidence.json"
+                math_check=dict(report=str(math_path/"REPORT.json"),sha256=sha(math_path/"REPORT.json"))
+            if "encoder_validation" in value:
+                import cnn_graph_acceptance as graph_checks
+                math_path=trial/"encoder-check"
+                result=graph_checks.run(Path(value["encoder_validation"]),candidate_path,math_path,expected,
+                                        min(120,remaining(120)))
+                require(result["hardware"]==record["hardware"],"Encoder check changed hardware")
+                math_check=dict(report=str(math_path/"REPORT.json"),sha256=sha(math_path/"REPORT.json"))
+            prep = SimpleNamespace(out=trial / "panel", registry=root / "registry.json",
+                candidate=[name + "=" + str(candidate_path)], native_campaign=[], baselines=[],
+                policy_metadata=Path(value["policy_metadata"]), seeds=seeds,
+                steps=settings.getint("steps"), checkpoint_steps=settings.getint("checkpoint_steps"),
+                task_budget=[f"{task}={b['steps']}:{b['checkpoint_steps']}" for task, b in task_budgets(config).items()]
+                    if recipe_protocol(config) in (DEVELOPMENT_PROTOCOL, IMAGE_PROTOCOL) else [],
+                per_game_learners=per_game_learners(config),
+                learner_recipe=[r["environment"] + "=" + str(root / r["file"]) for r in value["learner_recipes"]], appearance_seed=settings.getint("appearance_seed"),
+                eval_seed=settings.getint("eval_seed"), episodes=settings.getint("episodes"), slots=settings.getint("slots"),
+                pong_max_decisions=settings.getint("pong_max_decisions"), breakout_max_frames=settings.getint("breakout_max_frames"),image_math=image_math)
+            # Registry source snapshots live in the original build directory.
+            prep.registry = Path(json.loads((root / "registry-location.json").read_text())["original"])
+            with contextlib.redirect_stdout(io.StringIO()):
+                plan = panels.prepare(prep)
+                panels.run(SimpleNamespace(plan=prep.out / "plan.json", allow_gpu=True,
+                    mode={"smoke": "research", "canary5090": "canary5090", "development": "development", "validation5060": "validation5060", "image5060":"image5060"}[args.mode],
+                    timeout=remaining(timeout), train_timeout=settings.getint("train_timeout"), eval_timeout=settings.getint("eval_timeout")))
+                analysis = panels.audit(prep.out / "plan.json", trial / "review")
+            feedback = aggregate(plan, analysis, config)
+            save(trial / "feedback.json", feedback, exclusive=True)
+            fields = ["0", format(feedback["score"], ".17g"), format(feedback["cost"], ".17g")]
+            fields.extend(format(x, ".9g") for x in proposal["normalized"])
+            history += " ".join(fields) + "\n"
+            record["trials"].append(dict(index=index, name=name, proposal=proposal, optimizer_process=timing,
+                architecture=spec, duplicate_of=duplicate,
+                feedback=feedback, feedback_sha256=sha(trial / "feedback.json"), candidate_sha256=sha(candidate_path),
+                audit_sha256=sha(trial / "review/analysis.json")))
+            if math_check: record["trials"][-1]["encoder_check"]=math_check
+            if "image_validation_catalog" in value:
+                record["trials"][-1]["image_proposal_preflight_sha256"]=sha(admission_path/"REPORT.json")
+            record["history"] = history
+            save(execution / "progress.json", record)
+        # Explicit unused final proposal confirms the last panel reached native observe.
+        final, timing = propose(execution / "final-feedback")
+        record.update(status="ok", final_observations_replayed=final["observations_replayed"],
+            final_unused_proposal=final, final_optimizer_process=timing)
+    except BaseException as error:
+        record.update(status="failed", error=f"{type(error).__name__}: {error}")
+        raise
+    finally:
+        record["ended_monotonic_ns"] = time.monotonic_ns()
+        save(execution / "result.json", record)
+    return record
+
+
+def audit(args):
+    """Recompute scalar feedback from native panel audits; no query or policy."""
+    root = args.plan.resolve().parent; value = inspect(root)
+    config, seeds = recipe(root / "recipe.ini")
+    result_path = root / "execution/result.json"
+    result = json.loads(result_path.read_text())
+    require(result["status"] == "ok" and result["plan_sha256"] == sha(args.plan), "Incomplete or foreign feedback run")
+    require(len(result["trials"]) == config.getint("search", "max_runs"), "Missing feedback trial")
+    args.out.mkdir(parents=True, exist_ok=False)
+    history = f"PUFFER_CROSS_GAME_V1 {value['dimensions']}\n"
+    previous_end = result["started_monotonic_ns"]
+    learners, architectures, summaries = {}, [], []
+    def proposal(directory, expected, timing):
+        nonlocal previous_end
+        require((directory / "history.tsv").read_text() == history, "Changed feedback history")
+        require(json.loads((directory / "proposal.json").read_text()) == expected, "Changed native proposal")
+        require(json.loads((directory / "native.txt.json").read_text()) == timing, "Changed proposal timing")
+        require(timing["status"] == "ok" and timing["returncode"] == 0
+            and timing["cwd"] == str(root) and timing["command"] == [value["optimizer"], "research_protein_propose",
+                str(root / "recipe.ini"), str(directory / "history.tsv"), str(directory / "proposal.json")]
+            and 0 < timing["timeout"] <= config.getint("search", "proposal_timeout")
+            and previous_end <= timing["launch_monotonic_ns"] < timing["end_monotonic_ns"], "Invalid proposal command/clock")
+        require(expected["protocol"] == "native-cross-game-protein-v1" and expected["trial"] == len(summaries)
+            and expected["observations_replayed"] == len(summaries)
+            and (expected["success_observations"] == 0 if not summaries
+                 else 1 <= expected["success_observations"] <= len(summaries))
+            and expected["failure_observations"] == 0,
+            "Incomplete native observation replay")
+        previous_end = timing["end_monotonic_ns"]
+    for index, entry in enumerate(result["trials"]):
+        require(entry["index"] == index, "Unassigned/reordered trial")
+        trial = root / "execution" / f"trial-{index:04d}"
+        proposal(trial, entry["proposal"], entry["optimizer_process"])
+        for name, key in (("feedback.json", "feedback_sha256"), ("candidate.ini", "candidate_sha256"),
+                          ("review/analysis.json", "audit_sha256")):
+            require(sha(trial / name) == entry[key], "Changed trial receipt: " + name)
+        spec = panels.architecture(trial / "candidate.ini")
+        require(spec == entry["architecture"], "Changed trial architecture")
+        require(entry["duplicate_of"] == next((i for i, a in enumerate(architectures) if a == spec), None), "Hidden architecture duplicate")
+        assigned = panels.panel.read(trial / "candidate.ini")
+        for key, number in entry["proposal"]["policy"].items():
+            require(assigned.getfloat("policy", key) == number, "Candidate does not use native proposal")
+        architectures.append(spec)
+        if "encoder_validation" in value:
+            import cnn_graph_acceptance as graph_checks
+            math_path=trial/"encoder-check"
+            require(entry["encoder_check"]==dict(report=str(math_path/"REPORT.json"),sha256=sha(math_path/"REPORT.json"))
+                    and sha(math_path/"config.ini")==sha(trial/"candidate.ini"),"Changed proposal numerical check")
+            graph_checks.audit(math_path)
+        if "image_validation_catalog" in value:
+            import image_proposal_preflight as preflight
+            admission_path=trial/"image-proposal-preflight"
+            require(entry["image_proposal_preflight_sha256"]==sha(admission_path/"REPORT.json"),
+                    "Changed pre-CUDA image admission")
+            preflight.inspect(root,value,config,trial/"candidate.ini",admission_path)
+            math_path=trial/"image-encoder-checks"; math_report=json.loads((math_path/"REPORT.json").read_text())
+            require(entry["encoder_check"]==dict(report=str(math_path/"REPORT.json"),sha256=sha(math_path/"REPORT.json"))
+                    and math_report["config_sha256"]==sha(trial/"candidate.ini") and math_report["status"]=="passed",
+                    "Changed all-game image numerical checks")
+            import cnn_graph_acceptance as graph_checks
+            for check in math_report["checks"].values(): graph_checks.audit(math_path/check["path"])
+        panel_root = trial / "panel"; plan = panels.inspect(panel_root / "plan.json")
+        require(plan["seeds"] == seeds and len(plan["candidates"]) == 1
+            and plan["candidates"][0]["architecture"] == spec, "Panel changed assigned architecture/seeds")
+        if value.get("protocol") in (DEVELOPMENT_PROTOCOL, IMAGE_PROTOCOL):
+            require(plan["task_budgets"] == value["task_budgets"]
+                    and plan.get("per_game_learners", False) is value["per_game_learners"], "Panel changed frozen per-game allocation")
+        for job in plan["jobs"]:
+            key = job["environment"], job["seed"]
+            fixed = common_settings(panels.panel.read(panel_root / job["config"]))
+            if key in learners: require(learners[key] == fixed, "Learner/world/budget changed across candidates")
+            else: learners[key] = fixed
+        with contextlib.redirect_stdout(io.StringIO()):
+            analysis = panels.audit(panel_root / "plan.json", args.out / f"trial-{index:04d}")
+        feedback = aggregate(plan, analysis, config)
+        require(feedback == entry["feedback"] == json.loads((trial / "feedback.json").read_text()), "Feedback does not match exact outcomes")
+        panel_result = json.loads((panel_root / "execution/result.json").read_text())
+        require(previous_end <= panel_result["started_monotonic_ns"] < panel_result["ended_monotonic_ns"], "Optimizer overlaps panel")
+        previous_end = panel_result["ended_monotonic_ns"]
+        fields = ["0", format(feedback["score"], ".17g"), format(feedback["cost"], ".17g")]
+        fields.extend(format(x, ".9g") for x in entry["proposal"]["normalized"])
+        history += " ".join(fields) + "\n"
+        summaries.append(dict(index=index, feedback=feedback, duplicate_of=entry["duplicate_of"]))
+    proposal(root / "execution/final-feedback", result["final_unused_proposal"], result["final_optimizer_process"])
+    require(result["history"] == history and result["final_observations_replayed"] == len(summaries)
+        and previous_end <= result["ended_monotonic_ns"], "Final feedback was not observed")
+    if len(summaries) > config.getint("protein", "num_random_samples"):
+        require(result["final_unused_proposal"]["gp_observations"] > 0, "GP feedback path did not run")
+    report = dict(status="ok", protocol=value.get("protocol", PROTOCOL), trials=summaries,
+        result_sha256=sha(result_path), policy_execution_in_audit=False, native_feedback_receipts_audited=True,
+        publication_claim_qualified=False, broader_encoder_math_qualified=False,
+        optimizer_process_seconds=math.fsum((r["optimizer_process"]["end_monotonic_ns"]-r["optimizer_process"]["launch_monotonic_ns"])/1e9
+            for r in result["trials"]) + (result["final_optimizer_process"]["end_monotonic_ns"]-result["final_optimizer_process"]["launch_monotonic_ns"])/1e9)
+    save(args.out / "analysis.json", report, exclusive=True)
+    return report
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__); sub = parser.add_subparsers(dest="command", required=True)
+    prep = sub.add_parser("prepare")
+    for name in ("recipe", "registry", "optimizer-build", "policy-metadata", "out"):
+        prep.add_argument("--" + name, type=Path, required=True)
+    prep.add_argument("--learner-recipe", action="append", default=[], help="ENV=INI overlay fixed across every candidate")
+    prep.add_argument("--encoder-validation", type=Path, help="Require independent CUDA graph checks before every candidate")
+    prep.add_argument("--image-validation-catalog",type=Path,help="All-shape independent CUDA bundles for explicit image feedback")
+    check = sub.add_parser("inspect"); check.add_argument("--out", type=Path, required=True)
+    execute = sub.add_parser("run"); execute.add_argument("--plan", type=Path, required=True)
+    execute.add_argument("--mode", choices=("smoke", "canary5090", "development", "validation5060", "image5060"), required=True)
+    execute.add_argument("--allow-gpu", action="store_true")
+    review = sub.add_parser("audit")
+    review.add_argument("--plan", type=Path, required=True); review.add_argument("--out", type=Path, required=True)
+    args = parser.parse_args()
+    if args.command == "prepare":
+        value = prepare(args)
+    elif args.command == "inspect": value = inspect(args.out)
+    elif args.command == "audit": value = audit(args)
+    else: value = run(args)
+    print(json.dumps(value, indent=2))
+
+
+if __name__ == "__main__": main()

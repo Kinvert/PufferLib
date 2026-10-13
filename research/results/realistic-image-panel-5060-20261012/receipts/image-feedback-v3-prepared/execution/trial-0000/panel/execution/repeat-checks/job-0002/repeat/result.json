@@ -1,0 +1,84 @@
+{
+  "binary": "/home/claude/cnn-audit-20261008/build/image-portability-20261012/flappycnn-final-policy/puffer",
+  "binary_info": {
+    "default_encoder": "explicit",
+    "environment": "flappycnn",
+    "float32": true,
+    "image_contract": {
+      "dtype": "float32",
+      "layout": "NHWC",
+      "preprocessing": "none",
+      "shape_hwc": [
+        640,
+        420,
+        3
+      ],
+      "version": "human-geometry-v1"
+    },
+    "receipt_version": 1,
+    "representation_count": 7,
+    "rules": "flappy-native-v1"
+  },
+  "binary_sha256": "1dcd83a10a1a0c82d6f076bb3f384a54980f635441684f1deb2c4e544aaf5c5d",
+  "checkpoint": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0000/panel/jobs/flappycnn/happy-cat-1-s7/checkpoints/flappycnn/happy-cat-1/0000000000000064.bin",
+  "checkpoint_sha256": "f2ab0845d26f4c74f7160f5205373268e1ef875dfb4b2018d55b5627aaf468a4",
+  "command": [
+    "/home/claude/cnn-audit-20261008/build/image-portability-20261012/flappycnn-final-policy/puffer",
+    "eval_exact",
+    "--headless"
+  ],
+  "config": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0000/panel/jobs/flappycnn/happy-cat-1-s7/config/default.ini",
+  "counts": {
+    "capped": 0,
+    "episodes": 1,
+    "mean_decisions": 37.0,
+    "mean_perf": 0.0,
+    "mean_pipes": 0.0,
+    "mean_return": -0.20742815732955933,
+    "pipes": 0,
+    "policy_runtime_certified": false
+  },
+  "cwd": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0000/panel/execution/repeat-checks/job-0002/repeat",
+  "effective_env_ini_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "effective_ini_sha256": "65667e758998fd10cb138cc3cbc54652c6b01ec12a4fd8557f639d16bc2322af",
+  "episodes_sha256": "c7b9224178b94dc94da54f80bc948466bbfd18d81897b91122b8120382db60db",
+  "evaluation_process_seconds": 0.715600063,
+  "evaluation_representation": 0,
+  "family": "flex",
+  "gpu_runtime_qualified": false,
+  "manifest_sha256": "3a9191d6f44d6c60db9ccade672bbf1d4ff19193eb991f1de0008ad9d750438f",
+  "note": "GPU runtime/repeatability remains unqualified until scheduled acceptance. Tooling snapshots aren't compiled build provenance. Evaluation is not training time.",
+  "parameters": 59976,
+  "policy": {
+    "cnn_channels_1": "8",
+    "cnn_depth": "1",
+    "cnn_global_pool": "1",
+    "cnn_kernel_1": "8",
+    "cnn_pool_1": "0",
+    "cnn_projection": "64",
+    "cnn_residual_1": "0",
+    "cnn_stride_1": "4",
+    "encoder": "4",
+    "hidden_size": "128",
+    "num_layers": "1"
+  },
+  "prepare_only": false,
+  "rules": "flappy-native-v1",
+  "spawn_csv_sha256": "3a9191d6f44d6c60db9ccade672bbf1d4ff19193eb991f1de0008ad9d750438f",
+  "spawn_ini_sha256": "88dc5391ebcb37d6101ba9ea8706cbd51c2fbca93ec71360130451a9f62c5155",
+  "status": "ok",
+  "suite": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0000/panel/suites/flappycnn/s7/r0/suite.json",
+  "suite_configuration_integrity": "sha256-and-derived-config",
+  "suite_sha256": "266d3361ff20114514cc15c88b3c96b1522bceac174758d218feb6b341f7c93f",
+  "tooling_sha256": {
+    "ocean/connect4cnn/claim.py": "c1fb06be57a10952a27c1fbb6369612ccfbc4e45a63b66f1c424157d99fd5f43",
+    "ocean/connect4cnn/deterministic_eval.py": "e176ac25295357344a0def44958d2e48f00b63713681cc3181ff073100aa1ca1",
+    "ocean/flappycnn/exact_eval.py": "5e9f3fb4ea06b45ca77bcc3be9c8d0134ebdb61d0d780edba77ca35e7efa28ff"
+  },
+  "training_appearance": {
+    "representation": "0",
+    "representation_mode": "1",
+    "representation_seed": "17"
+  },
+  "training_ini_sha256": "494c3fceecb9084f107cbee205e32be70af56dc2688a327c46acc7f91a7dc5be"
+}

@@ -295,6 +295,71 @@ def describe(metadata, config_path, task, family, output, timeout):
     return register(metadata, config_path, task, family, output, timeout)
 
 
+def validate_storage(value, config, image_contract, parameters):
+    validate_image_contract(image_contract)
+    require(value["schema"] == "native-image-storage-v1" and value["shape_hwc"] == image_contract["shape_hwc"]
+            and value["layout"] == "NHWC" and value["dtype"] == "float32"
+            and value["parameters"] == parameters and value["cuda_executed"] is False
+            and value["gpu_queried"] is False and value["peak_memory_certified"] is False,
+            "Wrong image storage descriptor")
+    require(value["agents"] == config.getint("vec","total_agents")
+            and value["buffers"] == config.getint("vec","num_buffers")
+            and value["horizon"] == config.getint("train","horizon")
+            and value["learner_batch"] == config.getint("train","minibatch_size"), "Wrong image storage geometry")
+    fields=("parameter_bytes","gradient_bytes","learner_activation_bytes","actor_activation_bytes_per_buffer",
+            "rollout_observation_bytes","storage_floor_bytes")
+    require(all(type(value[k]) is int and value[k]>0 for k in fields), "Invalid image storage counts")
+    obs=math.prod(image_contract["shape_hwc"])*4
+    require(value["rollout_observation_bytes"] == 2*value["agents"]*value["horizon"]*obs,
+            "Wrong float-frame rollout storage")
+    floor=4*value["parameter_bytes"]+value["gradient_bytes"]+value["learner_activation_bytes"]
+    floor+=value["buffers"]*value["actor_activation_bytes_per_buffer"]+value["rollout_observation_bytes"]+value["agents"]*obs
+    require(value["storage_floor_bytes"] == floor,"Image storage floor components disagree")
+
+
+def storage(metadata, config_path, task, family, output, timeout, parameters):
+    registry=inspect_registry(metadata,current=True)
+    require(registry.get("schema")==IMAGE_SCHEMA,"Storage gate requires per-game image tools")
+    binary=metadata/binary_key(registry,task,family); config_path=config_path.resolve()
+    output.mkdir(parents=True,exist_ok=False)
+    command=[str(binary),"--storage",str(config_path)]
+    inputs={str(p):sha(p) for p in (binary,config_path)}
+    timed=process(command,ROOT,output/"native.txt",timeout)
+    value=json.loads((output/"native.txt").read_text())
+    config=configparser.ConfigParser(interpolation=None); require(config.read(config_path),"Missing storage INI")
+    validate_storage(value,config,registry["image_contracts"][task],parameters)
+    require(all(sha(Path(p))==h for p,h in inputs.items()),"Image storage inputs changed")
+    save(output/"descriptor.json",value,exclusive=True)
+    record=dict(family=family,parameters=parameters,storage_floor_bytes=value["storage_floor_bytes"],
+                descriptor_sha256=sha(output/"descriptor.json"),command=command,timing=timed,inputs_sha256=inputs,
+                peak_memory_certified=False,numerical_acceptance=False)
+    save(output/"result.json",record,exclusive=True); return record
+
+
+def inspect_storage(metadata, config_path, task, family, directory, recorded_metadata,
+                    recorded_config, repository_root, parameters, timeout=60):
+    registry=inspect_registry(metadata); require(registry.get("schema")==IMAGE_SCHEMA,"Missing image storage tools")
+    record=json.loads((directory/"result.json").read_text()); value=json.loads((directory/"descriptor.json").read_text())
+    require(value==json.loads((directory/"native.txt").read_text())
+            and sha(directory/"descriptor.json")==record["descriptor_sha256"],"Storage stdout/descriptor differs")
+    config=configparser.ConfigParser(interpolation=None); require(config.read(config_path),"Missing storage recipe")
+    validate_storage(value,config,registry["image_contracts"][task],parameters)
+    key=binary_key(registry,task,family); binary=recorded_metadata/key
+    command=[str(binary),"--storage",str(recorded_config)]
+    timing=json.loads((directory/"native.txt.json").read_text())
+    require(timing==record["timing"] and timing["command"]==record["command"]==command
+            and timing["cwd"]==str(repository_root) and timing["timeout"]==timeout
+            and timing["status"]=="ok" and timing["returncode"]==0
+            and type(timing["launch_monotonic_ns"]) is int and type(timing["end_monotonic_ns"]) is int
+            and timing["launch_monotonic_ns"]<timing["end_monotonic_ns"],"Wrong storage process proof")
+    require(record["family"]==family and record["parameters"]==parameters
+            and record["storage_floor_bytes"]==value["storage_floor_bytes"]
+            and record["inputs_sha256"]=={str(binary):registry["binaries"][key],str(recorded_config):sha(config_path)}
+            and record["peak_memory_certified"] is False and record["numerical_acceptance"] is False,
+            "Wrong image storage binding")
+    return record
+
+
 def check(metadata, config_path, checkpoint, task, family, output, timeout):
     return register(metadata, config_path, task, family, output, timeout, checkpoint)
 

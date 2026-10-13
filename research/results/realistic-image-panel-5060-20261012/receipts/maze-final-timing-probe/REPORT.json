@@ -1,0 +1,87 @@
+{
+  "schema": "native-image-evaluation-probe-v1",
+  "status": "passed",
+  "inputs_sha256": {
+    "/home/claude/cnn-audit-20261008/build/image-panels-20261012/eight-checkpoint-validated/plan.json": "db0cb4f942f61e435cabfc534954817864195b348fc68bddb0fc19ee9268ebab",
+    "/home/claude/cnn-audit-20261008/build/image-portability-20261012/mazecnn-final-policy/puffer": "2cfe6ff80ff9bde70edf4d3d585b7b354d66f7fae270688e5293ce1908f43971",
+    "/home/claude/cnn-audit-20261008/build/image-panels-20261012/eight-checkpoint-validated/jobs/mazecnn/happy-cat-1-s7/config/default.ini": "c1f9705a68715b01ee63c3ed5979f55979b230c9ebcf316fa119450bdff37313",
+    "/home/claude/cnn-audit-20261008/build/image-panels-20261012/eight-checkpoint-validated/suites/mazecnn/s7/r0/suite.json": "5d262fc71c572f881758b29343629173fef4635ea338518b3125c99fa5de5a2f",
+    "/home/claude/cnn-audit-20261008/build/image-panels-20261012/eight-checkpoint-validated/jobs/mazecnn/happy-cat-1-s7/checkpoints/mazecnn/happy-cat-1/0000000000000512.bin": "e972471edf9ed323ffa6e88cbb452bc52208938c3142389265952aafb86dd5dd"
+  },
+  "job_index": 5,
+  "environment": "mazecnn",
+  "step": 512,
+  "drawing": 0,
+  "original_panel_status": "failed",
+  "checkpoint_sha256": "e972471edf9ed323ffa6e88cbb452bc52208938c3142389265952aafb86dd5dd",
+  "episodes": 5,
+  "slots": 4,
+  "restarted_panel": false,
+  "training_executed": false,
+  "frontier_claim_qualified": false,
+  "started_monotonic_ns": 563465175488641,
+  "processes": [
+    {
+      "mode": "graph",
+      "result_sha256": "fb6e23db376f3264c0b7037001d2b4f945f1d491e2372335d781aef4415878f8",
+      "episodes_sha256": "4f517b0c83c36ad0c360c1769060b96a3fa05bd1408ed5b6ce82ff14e255e58d",
+      "seconds": 36.839275484,
+      "counts": {
+        "duplicate_native_log_entries": 0,
+        "episodes": 5,
+        "estimand": "success-fraction-all-assigned-episodes-v1",
+        "heldout_exclusion_certified": false,
+        "mean_decisions": 667.8,
+        "mean_return": 0.4,
+        "policy_runtime_certified": false,
+        "success_fraction": 0.4,
+        "successes": 2,
+        "timeouts": 3
+      }
+    },
+    {
+      "mode": "repeat",
+      "result_sha256": "64d79538636188338fed15fabc96acecd93abc8dcc13f177722e16e1d7fca07f",
+      "episodes_sha256": "4f517b0c83c36ad0c360c1769060b96a3fa05bd1408ed5b6ce82ff14e255e58d",
+      "seconds": 36.637196481,
+      "counts": {
+        "duplicate_native_log_entries": 0,
+        "episodes": 5,
+        "estimand": "success-fraction-all-assigned-episodes-v1",
+        "heldout_exclusion_certified": false,
+        "mean_decisions": 667.8,
+        "mean_return": 0.4,
+        "policy_runtime_certified": false,
+        "success_fraction": 0.4,
+        "successes": 2,
+        "timeouts": 3
+      }
+    },
+    {
+      "mode": "eager",
+      "result_sha256": "eabe2de0848df90676dfa2085f98dedeb8c77ae4aac47681d555ef849e83f2c9",
+      "episodes_sha256": "4f517b0c83c36ad0c360c1769060b96a3fa05bd1408ed5b6ce82ff14e255e58d",
+      "seconds": 36.826157077,
+      "counts": {
+        "duplicate_native_log_entries": 0,
+        "episodes": 5,
+        "estimand": "success-fraction-all-assigned-episodes-v1",
+        "heldout_exclusion_certified": false,
+        "mean_decisions": 667.8,
+        "mean_return": 0.4,
+        "policy_runtime_certified": false,
+        "success_fraction": 0.4,
+        "successes": 2,
+        "timeouts": 3
+      }
+    }
+  ],
+  "hardware": {
+    "gpu_name": "NVIDIA GeForce RTX 5060",
+    "gpu_uuid": "GPU-56b0df25-b4c9-46eb-e498-bc5c71904097",
+    "driver": "591.86",
+    "host": "G240",
+    "cuda_compiler": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2025 NVIDIA Corporation\nBuilt on Fri_Feb_21_20:23:50_PST_2025\nCuda compilation tools, release 12.8, V12.8.93\nBuild cuda_12.8.r12.8/compiler.35583870_0\n"
+  },
+  "ended_monotonic_ns": 563576781283096
+}
