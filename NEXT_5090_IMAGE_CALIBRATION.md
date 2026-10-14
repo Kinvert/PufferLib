@@ -6,6 +6,11 @@ realistic RGB games/all41 drawings. It prepares the next architecture sweep;
 **it does not start PROTEIN or certify a winner.** All code/configuration is
 provided. Do not edit sources/INIs or substitute an older sweep launcher.
 
+After this calibration completes and every game passes its learning gate, follow
+[`NEXT_5090_IMAGE_DISCOVERY.md`](NEXT_5090_IMAGE_DISCOVERY.md) for the measured
+three-observation pilot and subsequent approximately12h architecture search.
+Preparation alone cannot unlock either run.
+
 ## Get an isolated checkout
 
 From your existing Kinvert/PufferLib checkout, preserving its retained campaigns:

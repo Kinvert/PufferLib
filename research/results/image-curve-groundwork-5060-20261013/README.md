@@ -1,5 +1,11 @@
 # Realistic-image curve groundwork — RTX 5060
 
+October14 retention update: with explicit owner approval, the historical raw
+`build/image-panels-20261013` tree was deleted after verified compact receipt
+preservation. Sources, logs, configurations, hashes and summaries remain; local
+arrays/weights/binaries no longer support raw replay. See AGENTS.md for the
+archive path/hash. The historical outcomes below remain unchanged.
+
 October 13, 2026. Worktree: `/home/claude/cnn-audit-20261008`.
 This is temporary Kinvert research, not an upstream PR or a performance claim.
 Historical allocations and the original checkout remain unchanged.

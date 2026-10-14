@@ -3,7 +3,10 @@
 The fixed three-model calibration delivery now has its own launcher and complete
 instructions: read [`NEXT_5090_IMAGE_CALIBRATION.md`](../NEXT_5090_IMAGE_CALIBRATION.md).
 Its explicit run performs hardware-matched checks, a timing probe and conditional
-all-game learning calibration. It does not launch PROTEIN. The older build-only
+all-game learning calibration. It does not launch PROTEIN. The subsequent measured
+pilot and overnight discovery commands are in
+[`NEXT_5090_IMAGE_DISCOVERY.md`](../NEXT_5090_IMAGE_DISCOVERY.md); they refuse
+missing or failed calibration/pilot receipts. The older build-only
 notes below remain background; use the new handoff commands for this iteration.
 
 The native builds, short 5060 checkpoint/evaluator smoke and Nature/C8 encoder
@@ -74,8 +77,8 @@ The discovery budget will be approximately 12 hours, with reserves for a whole
 next panel and reporting that grow with the retained history. Failures remain
 failures; no partial-game averages, completed-allocation retries or best-seed
 selection. Actual 5090 calibration, not tiny-image or 5060 SPS, must determine
-the usable budgets and envelope. Final run/report commands will be added after
-these gates pass. No 5090 source editing should be required.
+the usable budgets and envelope. The discovery handoff now supplies run/report
+commands, gated on those actual measurements. No 5090 source editing is required.
 
 Local proof: [October 13 report](results/image-curve-groundwork-5060-20261013/README.md).
 Protocol: [overnight specification](IMAGE_OVERNIGHT_PROTOCOL.md).

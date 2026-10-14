@@ -58,3 +58,46 @@ and archive hash are in `receipts/handoff.json`. The small committed selection
 does not include binaries, arrays or a full source/toolchain closure and cannot
 independently replay numerical checks. The5090 must prepare its own fresh tree;
 G240 paths are provenance, not portable launch inputs.
+
+## October14 discovery follow-up
+
+The subsequent no-edit handoff is `NEXT_5090_IMAGE_DISCOVERY.md` at repository
+root. It imports every completed measured-pilot observation into native PROTEIN,
+retains all duplicates/failures and exports imported/new policy curves once.
+Only18 CNN coordinates vary. Three pilot observations and successful full
+reporting within its four-hour window are mandatory before the approximate12h
+sweep; failed/unfinished launch receipts are rejected. The pilot/search envelopes,
+actual Nature anchors, per-game learners, budgets, images and seed roles must
+match. The opt-in5090 budget allows a24GiB registered storage floor and requires
+an actual same-UUID query with4GiB additional free headroom before each proposal.
+This does not certify peak VRAM or every architecture in the envelope.
+
+Final host/scalar/mock verification passes92 tests in1.049s through the existing
+uv Python3.12 venv, with bytecode writes disabled. Coverage includes pilot history
+replay, imported reporting costs, legacy-memory compatibility, native proposal
+receipt chronology, calibration/seed/checkpoint bindings, failed reporting and
+completed-allocation restart refusal. No GPU query or policy execution occurred
+in these tests. The shell wrapper passes `bash -n`; `git diff --check` passes.
+
+Earlier actual host-only native registration passes24 game/first-stride cases
+(six RGB games, strides1/2/4/8), with independent scalar parameter counts. The
+largest registered storage floor for C8/K8/GAP/projection64/H128 is11.9924GiB,
+Pong stride1. Receipts remain in `build/image-memory-envelope-20261014`; this
+does not qualify all search combinations or execute a CNN. A fresh native
+PROTEIN bridge describes all18 coordinates with `gpu_queried=false` and
+`policy_executed=false`; descriptor/build receipts remain in
+`build/image-discovery-native-20261014`. The actual published `prepare-pilot`
+command against the prepared-only calibration rejects it before allocating
+the optimizer/output tree: preparation alone is not learning evidence.
+
+No actual5090 full-image learning calibration or feedback-v4 measured pilot has
+been received. Consequently no calibrated overnight allocation or learning/
+Pareto/generalization claim is established by this delivery. The remote launcher
+must obtain those measurements; no long campaign was launched here.
+
+Under the owner's disk-cleanup authorization, three historical local raw trees
+were retired after compact receipt verification; see AGENTS.md and the notices
+on their original reports. Their arrays/weights/binaries cannot be replayed
+locally. The fresh96MiB prepared calibration tree described above is separate
+and remains. No new large evidence archive, build or GPU run was created during
+the final handoff review.

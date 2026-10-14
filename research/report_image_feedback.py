@@ -108,11 +108,21 @@ def report(plan_path, out, panel_only=False):
                 roots.append(("calibration", controls.parent, panels.inspect(controls),
                     json.loads((out/"review/nature-reference/panel/analysis.json").read_text())))
                 anchor_rows = []; selection_rows = []
+                entries=[]
+                if "initial_history" in plan:
+                    parent=Path(plan["initial_history"]["parent_plan"]).parent
+                    inherited=json.loads((parent/"execution/result.json").read_text())
+                    for entry in inherited["trials"]:
+                        name=f"trial-{entry['index']:04d}"
+                        entries.append(("pilot-"+name,parent/"execution"/name/"panel",entry,
+                            out/"review/initial-history"/name/"analysis.json"))
                 for entry in result["trials"]:
-                    stage = f"trial-{entry['index']:04d}"
-                    root = plan_path.parent/"execution"/stage/"panel"
+                    name=f"trial-{entry['index']:04d}"
+                    entries.append((name,plan_path.parent/"execution"/name/"panel",entry,
+                        out/"review"/name/"analysis.json"))
+                for stage,root,entry,analysis_path in entries:
                     roots.append((stage, root, panels.inspect(root/"plan.json"),
-                        json.loads((out/"review"/stage/"analysis.json").read_text())))
+                        json.loads(analysis_path.read_text())))
                     for point in entry["feedback"]["points"]:
                         for game in point["games"]:
                             anchor_rows.append(dict(stage=stage, candidate=entry["name"],

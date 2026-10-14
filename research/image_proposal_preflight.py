@@ -9,6 +9,7 @@ import time
 
 import candidate_panel as panels
 from claim import require, save, sha, normalized
+import image_memory_budget as memory
 
 SCHEMA="native-image-proposal-preflight-v1"
 
@@ -25,8 +26,8 @@ def configuration(root, value, recipe, candidate_path, task, output):
 
 
 def run(root, value, recipe, candidate_path, output, deadline):
-    limit=recipe.getint("search","image_storage_limit_mib",fallback=4096)*2**20
-    require(0<limit<=12288*2**20,"Explicit bounded image storage floor required")
+    policy,limit_mib=memory.budget(recipe)
+    limit=limit_mib*2**20
     metadata=root/"policy-metadata"
     registry=panels.policy_layout.inspect_registry(metadata,current=True)
     require(registry.get("schema")==panels.policy_layout.IMAGE_SCHEMA
@@ -35,6 +36,7 @@ def run(root, value, recipe, candidate_path, output, deadline):
     record=dict(schema=SCHEMA,status="running",candidate_sha256=sha(candidate_path),storage_limit_bytes=limit,
                 image_contracts=value["image_contracts"],cases=[],cuda_executed=False,gpu_queried=False,
                 peak_memory_certified=False,preparation_root=str(output),metadata_root=str(metadata))
+    if policy!=memory.LEGACY: record["memory_policy"]=policy
     def remaining():
         seconds=deadline-time.monotonic(); require(seconds>0,"Campaign deadline before image preflight")
         return min(60,seconds)
@@ -64,7 +66,9 @@ def inspect(root, value, recipe, candidate_path, output):
             and record["image_contracts"]==value["image_contracts"]
             and record["cuda_executed"] is False and record["gpu_queried"] is False
             and record["peak_memory_certified"] is False,"Incomplete/wrong pre-CUDA registration")
-    require(record["storage_limit_bytes"]==recipe.getint("search","image_storage_limit_mib",fallback=4096)*2**20,
+    policy,limit_mib=memory.budget(recipe)
+    require(record.get("memory_policy",memory.LEGACY)==policy
+            and record["storage_limit_bytes"]==limit_mib*2**20,
             "Changed image admission bound")
     require([c["environment"] for c in record["cases"]]==list(panels.TASKS),"Missing/duplicate pre-CUDA game")
     metadata=root/"policy-metadata"; original=Path(record["preparation_root"])

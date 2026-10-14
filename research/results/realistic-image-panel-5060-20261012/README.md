@@ -1,5 +1,11 @@
 # Larger-image panel / RTX5060 intake
 
+October14 retention update: with explicit owner approval, the historical raw
+`build/image-panels-20261012` tree was deleted after verified compact receipt
+preservation. Sources, logs, configurations, hashes and summaries remain; local
+arrays/weights/binaries no longer support raw replay. See AGENTS.md for the
+archive path/hash. The historical outcomes below remain unchanged.
+
 G240, October12. Research sources in `/home/claude/cnn-audit-20261008`, based on
 6a0a2190 with retained subsequent experimental changes. This is not an upstream
 PR or a completed overnight5090 handoff. Hardware collections remain separate.

@@ -1,5 +1,11 @@
 # Realistic-image foundation — G240 RTX 5060
 
+October14 retention update: with explicit owner approval, the historical raw
+`build/image-portability-20261012` tree was deleted after verified compact receipt
+preservation. Sources, logs, configurations, hashes and summaries remain; local
+arrays/weights/binaries no longer support raw replay. See AGENTS.md for the
+archive path/hash. The historical outcomes below remain unchanged.
+
 This is implementation and bounded validation evidence. The new overnight
 5090 campaign is **not ready**, and no speed, learning or Pareto advantage is
 established by these smokes. The full remaining work is in

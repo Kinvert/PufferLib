@@ -18,6 +18,11 @@ def identities(recipe, reference):
     def digest(value):
         return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()).hexdigest()
     envelope={s:dict(recipe[s]) for s in recipe.sections() if s=="policy" or s.startswith("sweep.")}
+    if recipe.has_option("search","image_memory_policy"):
+        import image_memory_budget as memory
+        policy,limit=memory.budget(recipe)
+        envelope["image_memory_admission"]=dict(policy=policy,storage_limit_mib=limit,
+            headroom_mib=memory.HEADROOM_MIB if policy==memory.POLICY else None)
     return digest(reference["conditions"]), digest(envelope)
 
 
@@ -156,7 +161,7 @@ def validate(value):
 
 
 def admit(value, hardware, conditions_sha256, envelope_sha256, started_ns, now_ns,
-          budget_seconds=MAX_SECONDS, observed_panel_seconds=(), observed_optimizer_seconds=()):
+          budget_seconds=MAX_SECONDS, observed_panel_seconds=(), observed_optimizer_seconds=(),inherited_observations=0):
     """Call only between panels, before any new native proposal or GPU work."""
     validate(value)
     require(hardware == value["hardware"] and conditions_sha256 == value["conditions_sha256"]
@@ -174,7 +179,8 @@ def admit(value, hardware, conditions_sha256, envelope_sha256, started_ns, now_n
                    max(observed_panel_seconds, default=0))
     remaining = budget_seconds - (now_ns - started_ns) / 1e9
     import image_reporting_reserve as reporting
-    reporting_observations=len(observed_panel_seconds)+1
+    require(type(inherited_observations) is int and 0<=inherited_observations<=512,"Invalid inherited reporting coverage")
+    reporting_observations=inherited_observations+len(observed_panel_seconds)+1
     post_seconds=reporting.seconds(value,reporting_observations,observed_optimizer_seconds)
     needed = estimate + post_seconds
     return dict(status="admit-complete-panel" if remaining >= needed else "budget_stop",

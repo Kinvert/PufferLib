@@ -74,6 +74,21 @@ class CampaignBudgetTests(unittest.TestCase):
         self.assertEqual(slower["post_panel_seconds"],30)
         self.assertEqual(slower["status"],"budget_stop")
 
+    def test_imported_pilot_panels_increase_report_reserve_without_charging_new_training(self):
+        imported=self.admit(budget_seconds=300,inherited_observations=3)
+        self.assertEqual(imported["reporting_observations"],4)
+        self.assertEqual(imported["next_panel_seconds"],240)
+        self.assertGreater(imported["post_panel_seconds"],self.admit()["post_panel_seconds"])
+
+    def test_memory_admission_is_part_of_new_search_envelope_identity(self):
+        import cross_game_feedback as feedback
+        config,_=feedback.recipe(feedback.ROOT/"research/recipes/image_cnn_discovery_5090.ini")
+        reference=dict(conditions={"same":"conditions"})
+        before=tool.identities(config,reference)
+        config["search"]["image_storage_limit_mib"]="20480"
+        after=tool.identities(config,reference)
+        self.assertEqual(before[0],after[0]);self.assertNotEqual(before[1],after[1])
+
     def test_pilot_proof_binds_full_report_and_refuses_audit_only_measurement(self):
         import cross_game_feedback as feedback
         from claim import sha

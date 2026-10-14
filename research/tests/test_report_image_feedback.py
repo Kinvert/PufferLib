@@ -1,9 +1,12 @@
 """Scalar/artifact export checks; no GPU or neural reference."""
 import copy
+import csv
+import json
 from pathlib import Path
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 import report_image_feedback as tool
@@ -59,6 +62,37 @@ class ImageReportTests(unittest.TestCase):
                         "[metrics]\nagent_steps=64\nSPS=nan\nuptime=0.2\n"):
             metric.write_text(content)
             with self.assertRaises(ValueError): self.export()
+
+    def test_complete_export_retains_imported_pilot_and_new_jobs_once_each(self):
+        base=Path(self.temp.name);main=base/"main";parent=base/"pilot";controls=base/"controls"
+        main.mkdir();parent.mkdir();controls.mkdir()
+        source=main/"plan.json";source.write_text("{}\n")
+        parent_plan=parent/"plan.json";parent_plan.write_text("{}\n")
+        (main/"curve-bindings.json").write_text(json.dumps(dict(nature_panel=str(controls/"plan.json"))))
+        (main/"execution").mkdir();(parent/"execution").mkdir()
+        entry=dict(index=0,name="fixture-policy",feedback=dict(points=[]))
+        (main/"execution/result.json").write_text(json.dumps(dict(status="ok",trials=[entry])))
+        (parent/"execution/result.json").write_text(json.dumps(dict(status="ok",trials=[entry])))
+        for root in (controls,main/"execution/trial-0000/panel",parent/"execution/trial-0000/panel"):
+            (root/"execution").mkdir(parents=True)
+            (root/"execution/result.json").write_text(json.dumps(self.execution))
+        packet=dict(protocol=tool.feedback.CURVE_PROTOCOL,initial_history=dict(parent_plan=str(parent_plan)))
+        analysis=copy.deepcopy(self.analysis);analysis["hardware"]={"gpu_uuid":"fixture"}
+        def audit(args):
+            for relative in ("nature-reference/panel","initial-history/trial-0000","trial-0000"):
+                path=args.out/relative;path.mkdir(parents=True)
+                (path/"analysis.json").write_text(json.dumps(analysis))
+            return dict(result_sha256="fixture")
+        def html(path,display):path.write_text("fixture HTML\n")
+        with patch.object(tool.feedback,"inspect",return_value=packet),patch.object(tool.feedback,"audit",side_effect=audit), \
+             patch.object(tool.panels,"inspect",return_value=self.plan), \
+             patch.object(tool.viewer,"assemble",return_value={}),patch.object(tool.frontiers,"write_viewer",side_effect=html):
+            summary=tool.report(source,base/"report")
+        self.assertEqual(summary["training_jobs"],3)
+        self.assertEqual(summary["training_process_seconds"],6.)
+        with (base/"report/training.csv").open() as stream:rows=list(csv.DictReader(stream))
+        self.assertEqual([r["stage"] for r in rows],["calibration","pilot-trial-0000","trial-0000"])
+        self.assertTrue(all(float(r["process_sps"])==256 for r in rows))
 
 
 if __name__ == "__main__": unittest.main()

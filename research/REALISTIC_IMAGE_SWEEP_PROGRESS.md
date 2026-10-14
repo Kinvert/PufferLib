@@ -4,6 +4,33 @@ October 12, 2026. Active implementation in `/home/claude/cnn-audit-20261008`;
 the retained `/home/claude/cnn` checkout and prior campaign are untouched.
 This is temporary Kinvert research, not the eventual upstream PR.
 
+## October14 discovery delivery and local disk retirement
+
+`../NEXT_5090_IMAGE_DISCOVERY.md` supplies preparation/run/report commands for
+a three-observation measured pilot followed by an approximately12h search.
+Only actual eligible calibration and a successfully completed pilot unlock the
+search. Every pilot observation seeds native PROTEIN without retraining; reports
+include imported and new policies once. Only18 CNN coordinates vary. The explicit
+5090 storage policy permits24GiB with4GiB additional observed free headroom;
+peak memory and the entire architecture envelope are not certified.
+
+The final focused92-test suite passes, including rejection of a failed/unfinished
+pilot and preservation of native success when final reporting fails. Actual
+GPU-free native registration
+covers24 game/stride combinations; the largest registered C8/K8/GAP storage
+floor is11.9924GiB at Pong stride1. The fresh native descriptor exposes18 CNN
+coordinates and no GPU query/policy execution. These are host proofs, not new
+CUDA, useful learning or a calibrated overnight campaign. Missing calibration
+is rejected by the published wrapper before creating a pilot/build allocation.
+
+With explicit owner approval, the three historical `build/image-panels-*` /
+`build/image-portability-20261012` trees named in AGENTS.md were deleted after
+verified compact receipt preservation. Approximately186GiB was removed inside
+Linux. Summaries, sources and hashes remain; original local raw arrays, weights
+and binaries do not. Future5090 verification must produce fresh hardware-bound
+evidence, not claim those deleted raw allocations remain replayable. No CUDA or
+system change occurred; Windows disk space was not reclaimed by this deletion.
+
 ## October13 fixed calibration delivery
 
 `../NEXT_5090_IMAGE_CALIBRATION.md` now provides an isolated-checkout, no-edit
