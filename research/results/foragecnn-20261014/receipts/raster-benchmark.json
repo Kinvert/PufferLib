@@ -1,0 +1,1 @@
+{"scope":"single-process CPU world/raster only; not training SPS","steps_per_mode":5000,"dirty_seconds":0.004903699,"full_redraw_seconds":0.604314318,"dirty_env_sps":1019638.44,"full_redraw_env_sps":8273.84004,"measured_ratio":123.236422,"moves":3614,"resets":19,"final_world_pixels_equal":true,"gpu_used":false}
