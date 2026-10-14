@@ -61,10 +61,28 @@ class LearningGateTests(unittest.TestCase):
         self.assertEqual(sum(c["eligible"] for c in result["controls"]),11)
 
     def test_partial_or_confirmation_receipts_cannot_start_search(self):
-        self.analysis["observations"].pop()
+        missing=self.analysis["observations"].pop()
         with self.assertRaises(ValueError): self.qualify()
+        self.analysis["observations"].append(missing)
         self.plan["seed_roles"]["role"]="confirmation"
         with self.assertRaises(ValueError): self.qualify()
+
+    def test_spatial_control_is_retained_but_cannot_rescue_unlearned_original_controls(self):
+        spatial=dict(name="spatial-control",architecture={"encoder":4})
+        self.plan["candidates"].insert(1,spatial)
+        extra_jobs=[{**j,"candidate":"spatial-control"} for j in self.plan["jobs"] if j["candidate"]=="quality-reference"]
+        extra_rows=[{**r,"candidate":"spatial-control"} for r in self.analysis["observations"] if r["candidate"]=="quality-reference"]
+        self.plan["jobs"].extend(extra_jobs);self.analysis["observations"].extend(extra_rows)
+        self.plan["planned_evaluations"]+=len(extra_rows)
+        self.analysis["audited_jobs"]+=len(extra_jobs);self.analysis["audited_evaluations"]+=len(extra_rows)
+        self.assertEqual(self.qualify()["status"],"eligible-development-search")
+        for row in self.analysis["observations"]:
+            if row["candidate"]!="spatial-control":row["score_lower"]=row["score_upper"] = .8
+        result=self.qualify()
+        self.assertEqual(result["status"],"blocked-learning-calibration")
+        self.assertEqual(set(result["unresolved_games"]),set(tool.curves.panels.TASKS))
+        self.analysis["observations"].pop()
+        with self.assertRaises(ValueError):self.qualify()
 
 
 if __name__=="__main__": unittest.main()

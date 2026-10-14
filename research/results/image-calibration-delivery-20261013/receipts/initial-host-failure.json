@@ -1,0 +1,6 @@
+{
+  "status": "failed",
+  "error": "ValueError: Set NVCC_ARCH=sm_120",
+  "gpu_queried": false,
+  "policy_executed": false
+}

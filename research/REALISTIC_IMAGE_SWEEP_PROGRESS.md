@@ -4,6 +4,20 @@ October 12, 2026. Active implementation in `/home/claude/cnn-audit-20261008`;
 the retained `/home/claude/cnn` checkout and prior campaign are untouched.
 This is temporary Kinvert research, not the eventual upstream PR.
 
+## October13 fixed calibration delivery
+
+`../NEXT_5090_IMAGE_CALIBRATION.md` now provides an isolated-checkout, no-edit
+5090 handoff. The native fixed quality/spatial/Nature panel runs before another
+architecture search. Fresh hardware-matched math precedes an audited timing
+probe; measured slowest-model costs set matched per-game budgets only when a
+complete initial-plus-eight-checkpoint, three-seed, all-drawing panel can fit.
+The approximate12h window includes explicit numerical checks and reporting.
+Insufficient-time, unlearned-game and unexpected-failure outcomes stop and retain
+their receipts. Compact summaries exclude large arrays/weights/binaries, which
+remain on the5090 for independent raw audit. No PROTEIN or confirmation launch
+is implied. G240 builds/prepares/tests the launcher without GPU execution; actual
+5090 numerical acceptance and meaningful new-image learning are still pending.
+
 ## October12 curve/seed/stopping implementation
 
 October 13 follow-up: controller tests now cover clean stopping both before the

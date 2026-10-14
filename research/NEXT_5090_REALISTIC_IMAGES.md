@@ -1,5 +1,11 @@
 # Next 5090 iteration: realistic RGB frames
 
+The fixed three-model calibration delivery now has its own launcher and complete
+instructions: read [`NEXT_5090_IMAGE_CALIBRATION.md`](../NEXT_5090_IMAGE_CALIBRATION.md).
+Its explicit run performs hardware-matched checks, a timing probe and conditional
+all-game learning calibration. It does not launch PROTEIN. The older build-only
+notes below remain background; use the new handoff commands for this iteration.
+
 The native builds, short 5060 checkpoint/evaluator smoke and Nature/C8 encoder
 checks on all five RGB shapes atH128/B1/4/16 pass. The overnight
 launch is **not ready**: full-image learning controls, the practical search

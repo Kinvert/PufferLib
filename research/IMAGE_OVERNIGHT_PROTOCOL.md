@@ -1,6 +1,9 @@
 # Next realistic-image campaign
 
-Implementation specification; the overnight run is **not ready to launch**.
+Implementation specification; the overnight architecture search is **not ready
+to launch**. The preceding fixed three-model calibration has its separate
+executable handoff in `../NEXT_5090_IMAGE_CALIBRATION.md`; its explicit run can
+measure eligibility/costs without starting PROTEIN.
 Use fresh history. The45 tiny-image observations remain historical evidence.
 
 ## Frozen comparison

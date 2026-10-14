@@ -12,18 +12,26 @@ MEAN_FLOOR = 0.1
 SEED_FLOOR = 0.025
 GAIN_FLOOR = 0.025
 CONTROLS = ("quality-reference", "nature-cnn")
+SPATIAL_PANEL = ("quality-reference", "spatial-control", "nature-cnn")
 
 
 def qualify(plan, analysis, normalization):
     require(plan["protocol"] == curves.panels.IMAGE_CURVE_PROTOCOL
             and plan.get("seed_roles", {}).get("role") == "development"
             and len(plan["seeds"]) >= 3, "Learning calibration needs initial controls and fixed development replicas")
-    require(tuple(c["name"] for c in plan["candidates"]) == CONTROLS,
+    names=tuple(c["name"] for c in plan["candidates"])
+    require(names in (CONTROLS,SPATIAL_PANEL),
             "Use the predeclared quality/Nature calibration controls")
-    nature=plan["candidates"][1]
+    nature=next(c for c in plan["candidates"] if c["name"]=="nature-cnn")
     require(nature.get("baseline") == "nature_cnn" and nature.get("kind") == "baseline"
             and nature.get("architecture") == {"encoder":2}, "Calibration Nature identity differs")
     require(set(normalization)==set(curves.panels.TASKS), "Missing game normalization")
+    if names==SPATIAL_PANEL:
+        # Targeted architecture evidence stays visible but cannot weaken the
+        # original eligibility requirement or rescue an unlearned reference pair.
+        require(plan["candidates"][1].get("architecture",{}).get("encoder")==4,
+                "Spatial control must be a declared custom CNN")
+        curves.panel_rows(plan,analysis,"spatial-control")
     controls=[]
     for name in CONTROLS:
         _,rows,schedules,_=curves.panel_rows(plan,analysis,name)

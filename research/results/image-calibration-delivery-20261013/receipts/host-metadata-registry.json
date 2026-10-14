@@ -1,0 +1,272 @@
+{
+  "schema": "native-image-metadata-registry-v1",
+  "sources": {
+    "build.sh": "3682a835ef989391b11ab53cc02bede0551b46d9302e32e2f98758d598cb879a",
+    "ocean/connect4cnn/appearance.h": "2c19c099476d657c3a20a25cc0d2e76d074ab7bbdcda1249989ffc78162be309",
+    "ocean/connect4cnn/cnn.cu": "d55b8322d5da06c2c145dd1e4f71c71f50d7d35b73725dfdc60181360703c241",
+    "ocean/connect4cnn/connect4cnn.cu": "6e4532ad5b089e75a62df51332b85b0213ea88ae253c9a7e72fbf57e5ef04547",
+    "ocean/connect4cnn/connect4cnn.h": "1bb903c91afd1863d294361e952e1db290043377a4b2c263cc852a93af12b085",
+    "ocean/connect4cnn/dense_patch_alias.cu": "a94f5609c5ed18eced292c965c82bc8a2339a5d3692ef39968b4135f4222cfcc",
+    "ocean/connect4cnn/encoder_profile.cu": "ab0ed7a6657b342c40da2dd0fad5af590cbef18f8e11d6e939db55ea98a38e3c",
+    "ocean/connect4cnn/exact_eval.cu": "b7657b74712aa7b3f12dc2cd6124757b27fa043c22206649f1a3591ef24ff33c",
+    "ocean/connect4cnn/exact_protocol.h": "d07e87565e73266ddad3be6c28003124651a612071aa850be3d57233ea4618ef",
+    "ocean/connect4cnn/flex.cu": "05528580137535ebb0c28f6604f82ab84cb405a44c0615d44b3699d99e81ecc3",
+    "ocean/connect4cnn/flex2.cu": "253d415f109f3d8d472bd9ffe8ff97df8ee23efbc6f15c7ff347f971bd822412",
+    "ocean/connect4cnn/image.h": "4a74671c12a90d7624052ccf74abec4154f9ff461d39e69d8c14d62811ea6d0a",
+    "ocean/connect4cnn/image_v1.h": "0a8dfbe652c95001dfc8ce447438d1fdb82f69463afa145e2787a6cac77b575a",
+    "ocean/connect4cnn/impala.cu": "4dfa0a2841d1487626689e2bc4e22707bf39b2ec4c7699115fe63a0b75b298ca",
+    "ocean/connect4cnn/nature.cu": "18204a254d5cdc08d4da4c441e919eb04d4a9f2f30bd83053be771db45b4f4d1",
+    "ocean/connect4cnn/runtime_env.sh": "cbd0518c0d9cd1be389288193176a67c5c7ae6782b54f52524de4ae9f9e263ce",
+    "research/build_image_policy.sh": "bbca337e778ee68c722c1cb38a3f6f029e0ecc49c64c3dae201919f2689ac8f7",
+    "research/policy_metadata.cu": "ce868da4d621ab78f1d2762f847982ca54930320809445117fdc2c754b77b381",
+    "src/algo.cu": "96830389a720ac8eaa4923713e3212e7b010caebd61773513e6fb8603660ef3a",
+    "src/constellation.c": "deda12600fb99755994dcb0a9b84c442dac76259b15910eea83e398150c1f6c4",
+    "src/ini.h": "cd4c83ba12ba40a7bef03ad810246cc0a5880f81e8566f6ac5a089b5c598859f",
+    "src/ocean.cu": "2f0bf2bb6feb9365180d1dd4711ef2c1a89a690aad852421f3676b981e788336",
+    "src/protein.cu": "7127fe4fa3e9b0ab76ae0b8a4703357318366b1292f835f02b23bd98a6c90538",
+    "src/protein_feedback.cu": "47c0f9121cc905c156afbb15fbc9ceaa620b70aa80ff47c1219d3a58cb5b3333",
+    "src/puffercpu.c": "6bbcd2d5f37e133972f9bb6df45e3412b8b856893c23764e1ce77582550a7adf",
+    "src/pufferenv.h": "3324a670791e2b3e46cbe7d10d9233d52fbc258e0d7e37d5b0c470e580de880c",
+    "src/pufferl.cu": "28a8b19bb4804e399d75c12f7fe1ed37ab22d2f2f37233d4c88ffac8554e61c6",
+    "ocean/pongcnn/exact_episode.h": "503dcbac376f4e8a910cae80e2296e1f28d266c731aa48cbed11d4fe8a78d98d",
+    "ocean/pongcnn/exact_eval.cu": "d5d1f31d1adc436a3050fb5bd014be550471a5626acecc23fd7239c906954c52",
+    "ocean/pongcnn/image_v1.h": "fb294fad8cb95412be240a09e608092afecddf318fc114e54630da6f69b78e0d",
+    "ocean/pongcnn/pongcnn.h": "7f5e8fae6dfd290ed65ef04b3e6d74ca8ef19694e97cd6edfd4d3fcd0d17a8e1",
+    "ocean/flappycnn/exact_episode.h": "590856dae40e347cd2d8eded853bb086e16af8a40887be7ce42d770d6e3b1cd5",
+    "ocean/flappycnn/exact_eval.cu": "9984f2314edc77abfd1a4303dc3cf2286ac521a9426728bf3481245feb028ad9",
+    "ocean/flappycnn/flappycnn.h": "ce315e3fd219ecf071280bb474c88fba20aa9085c4223850f44e581998eeeeb0",
+    "ocean/flappycnn/image_v1.h": "d45262c1aca77d60e47e7720c8c9b9a77ccab463a89573cb86f7a4837f637696",
+    "ocean/breakoutcnn/breakoutcnn.h": "642a82b75f10805f34964fafd98034b8301aec1476cf177eb246dd7aef9326ad",
+    "ocean/breakoutcnn/exact_episode.h": "05c015978350ef8d22b2782e0232ea01f5aa3ac61a5c938e1a5c4f06492fbe94",
+    "ocean/breakoutcnn/exact_eval.cu": "3477f848e0978ba044efc0b83525bcdfdc3f4f75c52a338db8f1df92d9be1128",
+    "ocean/breakoutcnn/image_v1.h": "59aa9c08136341125ed73b16bbcb0dd3acc518f8c7b986bc04f2fcfd9eef0ca2",
+    "ocean/snakecnn/exact_episode.h": "dc8ebb89a11c3fae3968d382db9570c227b358228a405dbdcdd243558b5fbd7b",
+    "ocean/snakecnn/exact_eval.cu": "4c736b324dc3dfec9816fd8ffda339b2c95838c76e06d62425c2fe88d8cacf88",
+    "ocean/snakecnn/game.h": "cb3d4fc4e9cdc0509f4e0afcebb762c5c9f3182f7bf0a00f88a55cadc85998fe",
+    "ocean/snakecnn/image_v1.h": "62b7e6a78950ad350a81bee4538296f3ca4e21166da2fc53cb88c8050d6aee3b",
+    "ocean/snakecnn/snakecnn.h": "6a672e9a5200c80dd7d130a776afff46a2493f4939b977d2e01b3a31befd378c",
+    "ocean/mazecnn/exact_episode.h": "8db3bb728f44e4743f5f5d0019207865d472fc6b890a1dfeccbda8afd9118ac3",
+    "ocean/mazecnn/exact_eval.cu": "fd76ee262406d57c682e9ae801f4a74967f39e46f86f2c28f9f4f2fa2ecc3b79",
+    "ocean/mazecnn/image_v1.h": "faaa59040dfa759d256e8b99507ed5ae18c167dce375e529db51fb0ec1b154be",
+    "ocean/mazecnn/mazecnn.h": "d907236c307d226949921dc8705e1578470b876c5f0331b79f49a5bb241eaba5"
+  },
+  "binaries": {
+    "connect4cnn/default": "f4c1ed43ffcb337d65a2338f14b1abe37257bf0344074508b5d6d302f8b0217f",
+    "pongcnn/default": "6485d5af3fba66c9e82e216fe37cc29468a9270926f9a341a13e0e874d521f8d",
+    "flappycnn/default": "b4bed42e82cb590eb4d120763650e999ffb5be67a1d2f4eb78d0f06afc4dace9",
+    "breakoutcnn/default": "99e55eebdf02a94c47a5b62613837ef8341d0d0a155a421db9c8e324d2a49bcf",
+    "snakecnn/default": "b028e6f5579900f3b7df9939be2dd9350178fc53e538f9618c03753148ac08c5",
+    "mazecnn/default": "81c71c4c78fdccf303ea039fba6e903ef5b05eabe8aed232884931c65a21194d"
+  },
+  "actions": {
+    "connect4cnn": {
+      "count": 7,
+      "source": "ocean/connect4cnn/connect4cnn.h",
+      "sha256": "1bb903c91afd1863d294361e952e1db290043377a4b2c263cc852a93af12b085"
+    },
+    "pongcnn": {
+      "count": 3,
+      "source": "ocean/pongcnn/pongcnn.h",
+      "sha256": "7f5e8fae6dfd290ed65ef04b3e6d74ca8ef19694e97cd6edfd4d3fcd0d17a8e1"
+    },
+    "flappycnn": {
+      "count": 2,
+      "source": "ocean/flappycnn/flappycnn.h",
+      "sha256": "ce315e3fd219ecf071280bb474c88fba20aa9085c4223850f44e581998eeeeb0"
+    },
+    "breakoutcnn": {
+      "count": 3,
+      "source": "ocean/breakoutcnn/breakoutcnn.h",
+      "sha256": "642a82b75f10805f34964fafd98034b8301aec1476cf177eb246dd7aef9326ad"
+    },
+    "snakecnn": {
+      "count": 4,
+      "source": "ocean/snakecnn/game.h",
+      "sha256": "cb3d4fc4e9cdc0509f4e0afcebb762c5c9f3182f7bf0a00f88a55cadc85998fe"
+    },
+    "mazecnn": {
+      "count": 5,
+      "source": "ocean/mazecnn/mazecnn.h",
+      "sha256": "d907236c307d226949921dc8705e1578470b876c5f0331b79f49a5bb241eaba5"
+    }
+  },
+  "builds": {
+    "connect4cnn/default": {
+      "original": "/home/claude/cnn-audit-20261008/build/image-calibration-delivery-wrapper-20261013/games/native/connect4cnn",
+      "receipts": {
+        "source.sha256": "9b79e327e2e12ff1f4e558153ce0afefb30dc5c4ac7a32cc3dd97e01a3e31b80",
+        "source-files.txt": "18b625601cad69d4c1bac5af2003fd8d1fdd75422814fd313600f4946dfd94e4",
+        "metadata-info.json": "0edb00262347a471218bea30143b44a0ba08725ab92cd51ff60fcb179a155eaf",
+        "image-flags.txt": "b99c5c28791314c900a302e79703dcb507034ccdf90e924eafcbe5cf49465f13",
+        "metadata-command.txt": "c712cdba529b31ab41b7e8f817f6338cfb5031313c5ad9ec181e14dbadff408f",
+        "metadata-build.txt": "25b13b9b607abfa71449d92e40bc96885ef53975cb47463ffb256bce37470397",
+        "compiler.txt": "68f8b0a1301428031e307cf5260142a517bff25cc232a09eae2734be475d721f",
+        "environment.txt": "486b6bd27bef21d3e452bab46f19db6c52a4badd716a11de22a8ca6baee2c66e",
+        "revision.txt": "3c7e461872cbd49061df7fcb93ab13658cbec07c376f3c7ffe63eb1c782a989b",
+        "worktree.txt": "60774b01d6f45307dd25439e76920b166ce170a22b75299aba22f23584b912e2",
+        "source-check.txt": "0e3da84ca14f9fb6710526a40bd1dab209fc966065c826fa566b8ca872e81cc7",
+        "copied-source-check.txt": "0e3da84ca14f9fb6710526a40bd1dab209fc966065c826fa566b8ca872e81cc7",
+        "binaries.sha256": "7e376f29eb75db029f62262164bf99bec475bcea24d51ca17ed386a499154dba"
+      }
+    },
+    "pongcnn/default": {
+      "original": "/home/claude/cnn-audit-20261008/build/image-calibration-delivery-wrapper-20261013/games/native/pongcnn",
+      "receipts": {
+        "source.sha256": "d6109739abc65f6f66b73ab7d9c39370fac57b3069849c3b4f2b4a0ab1d679ba",
+        "source-files.txt": "615795fdd454bc79130c0bd6120ea9065a6b02848dac2f21cce855d36fce7941",
+        "metadata-info.json": "1ef1c9ed38d66331d5d9ea0c466bab1d4753d597595eeaef92203475939cf8a0",
+        "image-flags.txt": "4ef96c67856fb2aec7fe57a9eaaff39728d4409db83b271d419d04c274b71072",
+        "metadata-command.txt": "17a082f71a7b3b2865af2de92c41a05d1e7df6df38e018512965529407cadebb",
+        "metadata-build.txt": "25b13b9b607abfa71449d92e40bc96885ef53975cb47463ffb256bce37470397",
+        "compiler.txt": "68f8b0a1301428031e307cf5260142a517bff25cc232a09eae2734be475d721f",
+        "environment.txt": "486b6bd27bef21d3e452bab46f19db6c52a4badd716a11de22a8ca6baee2c66e",
+        "revision.txt": "3c7e461872cbd49061df7fcb93ab13658cbec07c376f3c7ffe63eb1c782a989b",
+        "worktree.txt": "60774b01d6f45307dd25439e76920b166ce170a22b75299aba22f23584b912e2",
+        "source-check.txt": "4fe57bfd86a2e31372cec59f1c2e4ef57f533a50176e34d782970ceacdf2b3d2",
+        "copied-source-check.txt": "4fe57bfd86a2e31372cec59f1c2e4ef57f533a50176e34d782970ceacdf2b3d2",
+        "binaries.sha256": "da16ec0bf439390646e754908250a129453d47be45b963e03f2ebdf2588f4752"
+      }
+    },
+    "flappycnn/default": {
+      "original": "/home/claude/cnn-audit-20261008/build/image-calibration-delivery-wrapper-20261013/games/native/flappycnn",
+      "receipts": {
+        "source.sha256": "388d43cf0559e98a740c136eebf75598d063942fcb62bf30f6469c5da5924e46",
+        "source-files.txt": "8dffedaf3fe74df0f94a83e56b449568cba0f2c2f6acf8457ea113b8dc58a3fa",
+        "metadata-info.json": "0f4f402eb469ca7677fca4a5f7af285c3b11afa5d9f94fa05849e2c2ebf5e303",
+        "image-flags.txt": "7d1ad16ab4db2bcbf50e5ad92e3099eb92a5ea34345d4e7150d68a298484381f",
+        "metadata-command.txt": "6f42b2772a4733eba993100d0ca71ad4e2d74e28586f9b4b5f6b57814693001d",
+        "metadata-build.txt": "25b13b9b607abfa71449d92e40bc96885ef53975cb47463ffb256bce37470397",
+        "compiler.txt": "68f8b0a1301428031e307cf5260142a517bff25cc232a09eae2734be475d721f",
+        "environment.txt": "486b6bd27bef21d3e452bab46f19db6c52a4badd716a11de22a8ca6baee2c66e",
+        "revision.txt": "3c7e461872cbd49061df7fcb93ab13658cbec07c376f3c7ffe63eb1c782a989b",
+        "worktree.txt": "60774b01d6f45307dd25439e76920b166ce170a22b75299aba22f23584b912e2",
+        "source-check.txt": "0848d96cb731e788f5a6eadd9ef72510bf9815839e143de615f16f8348196772",
+        "copied-source-check.txt": "0848d96cb731e788f5a6eadd9ef72510bf9815839e143de615f16f8348196772",
+        "binaries.sha256": "1744b74f329f3e22a7b524cc3c465a1e1a4a530b9d1e5424c829c5fb38d5fd63"
+      }
+    },
+    "breakoutcnn/default": {
+      "original": "/home/claude/cnn-audit-20261008/build/image-calibration-delivery-wrapper-20261013/games/native/breakoutcnn",
+      "receipts": {
+        "source.sha256": "32b79526879c53ad966f3c30b08abab18045e52ed0ea2f39ab0c8d32db658ac4",
+        "source-files.txt": "d618f2616faedf1d96e13219939d7a3112401de539a18304c546e93be4030636",
+        "metadata-info.json": "00fcf83797a7e33ca2f7a41011de71446cf1c0726e5f805d81243561cdff4815",
+        "image-flags.txt": "0af14395d4393e155e766491fca7ed0d22ed7bab04311a3a57cf7244e12652ff",
+        "metadata-command.txt": "886ba6eb6c40c4a67ac543f89536abda93efe4ec85975f68942868dd599cc5a2",
+        "metadata-build.txt": "25b13b9b607abfa71449d92e40bc96885ef53975cb47463ffb256bce37470397",
+        "compiler.txt": "68f8b0a1301428031e307cf5260142a517bff25cc232a09eae2734be475d721f",
+        "environment.txt": "486b6bd27bef21d3e452bab46f19db6c52a4badd716a11de22a8ca6baee2c66e",
+        "revision.txt": "3c7e461872cbd49061df7fcb93ab13658cbec07c376f3c7ffe63eb1c782a989b",
+        "worktree.txt": "60774b01d6f45307dd25439e76920b166ce170a22b75299aba22f23584b912e2",
+        "source-check.txt": "5aff4010f07cc0d69c7ef4f10f23810f9eb71c65eb61a498cff25dff591e7602",
+        "copied-source-check.txt": "5aff4010f07cc0d69c7ef4f10f23810f9eb71c65eb61a498cff25dff591e7602",
+        "binaries.sha256": "87a5ec93eefc9d1c9bb389b881d5d4b1e6281c9e063da4d517e9687729660dc6"
+      }
+    },
+    "snakecnn/default": {
+      "original": "/home/claude/cnn-audit-20261008/build/image-calibration-delivery-wrapper-20261013/games/native/snakecnn",
+      "receipts": {
+        "source.sha256": "44d0acdc8339f4280e8276c38d882477ecd937aa212135ad9609a9dad6541874",
+        "source-files.txt": "7aa757e599c02cc437788e8581e5cee2d947f91d278de265b850b23cce6de3df",
+        "metadata-info.json": "352da01442cba28a76881956cf9c85a3774ad947258541334b42285a9fb1ec2f",
+        "image-flags.txt": "c5d2491ba20b8b9b6aeed0f61b94fb9801a4c247c3fef992bc75a542d77c4536",
+        "metadata-command.txt": "f2581ff382dd924a457a6d498f95505a7abc78eed2410c23e66a62e50ae48877",
+        "metadata-build.txt": "dcdd03cf35307a3fa7ea8740a610d949f902ab91bb024fb592eb9ef91cd33e1f",
+        "compiler.txt": "68f8b0a1301428031e307cf5260142a517bff25cc232a09eae2734be475d721f",
+        "environment.txt": "486b6bd27bef21d3e452bab46f19db6c52a4badd716a11de22a8ca6baee2c66e",
+        "revision.txt": "3c7e461872cbd49061df7fcb93ab13658cbec07c376f3c7ffe63eb1c782a989b",
+        "worktree.txt": "60774b01d6f45307dd25439e76920b166ce170a22b75299aba22f23584b912e2",
+        "source-check.txt": "83da32a57cfcde73e88ab96e1d78befa91784555781b79a2f79942f57ffdce28",
+        "copied-source-check.txt": "83da32a57cfcde73e88ab96e1d78befa91784555781b79a2f79942f57ffdce28",
+        "binaries.sha256": "323862168af089ea97533715737219a0831fbaba9fb40d6ec1a7bdc94dc5e22d"
+      }
+    },
+    "mazecnn/default": {
+      "original": "/home/claude/cnn-audit-20261008/build/image-calibration-delivery-wrapper-20261013/games/native/mazecnn",
+      "receipts": {
+        "source.sha256": "feacbb933bb1cc3f214b4d53ae36d0cb7b9de4dc11124c25ed3908fc80d0c572",
+        "source-files.txt": "896038b3da4280fcbd2ac77b61c99a73837e32a590198976f6e8c961741ef7f4",
+        "metadata-info.json": "84236140fcf38d4da6691ff32eab3778c7a408d5f56e25944847673383d0f2db",
+        "image-flags.txt": "c5d2491ba20b8b9b6aeed0f61b94fb9801a4c247c3fef992bc75a542d77c4536",
+        "metadata-command.txt": "f222741e6c3fe2e50dbdccfbc219d8636d4e7252b9ad8334128d41b197d17c14",
+        "metadata-build.txt": "25b13b9b607abfa71449d92e40bc96885ef53975cb47463ffb256bce37470397",
+        "compiler.txt": "68f8b0a1301428031e307cf5260142a517bff25cc232a09eae2734be475d721f",
+        "environment.txt": "486b6bd27bef21d3e452bab46f19db6c52a4badd716a11de22a8ca6baee2c66e",
+        "revision.txt": "3c7e461872cbd49061df7fcb93ab13658cbec07c376f3c7ffe63eb1c782a989b",
+        "worktree.txt": "8b134d196a28692bd77c69d35cb7595335feb6bed586abf5060d43386d8c6c31",
+        "source-check.txt": "4df55780f2cafc6e05f4061e33d1105415d2b32d8278ad7227420459c5e19eaa",
+        "copied-source-check.txt": "4df55780f2cafc6e05f4061e33d1105415d2b32d8278ad7227420459c5e19eaa",
+        "binaries.sha256": "36c96bb22a230ea34c68eda879b2f324425c71773a96fed1efd50fe74c138348"
+      }
+    }
+  },
+  "image_contracts": {
+    "connect4cnn": {
+      "version": "human-geometry-v1",
+      "shape_hwc": [
+        576,
+        672,
+        3
+      ],
+      "layout": "NHWC",
+      "dtype": "float32",
+      "preprocessing": "none"
+    },
+    "pongcnn": {
+      "version": "human-geometry-v1",
+      "shape_hwc": [
+        640,
+        620,
+        3
+      ],
+      "layout": "NHWC",
+      "dtype": "float32",
+      "preprocessing": "none"
+    },
+    "flappycnn": {
+      "version": "human-geometry-v1",
+      "shape_hwc": [
+        640,
+        420,
+        3
+      ],
+      "layout": "NHWC",
+      "dtype": "float32",
+      "preprocessing": "none"
+    },
+    "breakoutcnn": {
+      "version": "human-geometry-v1",
+      "shape_hwc": [
+        330,
+        576,
+        3
+      ],
+      "layout": "NHWC",
+      "dtype": "float32",
+      "preprocessing": "none"
+    },
+    "snakecnn": {
+      "version": "human-geometry-v1",
+      "shape_hwc": [
+        616,
+        616,
+        3
+      ],
+      "layout": "NHWC",
+      "dtype": "float32",
+      "preprocessing": "none"
+    },
+    "mazecnn": {
+      "version": "human-geometry-v1",
+      "shape_hwc": [
+        616,
+        616,
+        3
+      ],
+      "layout": "NHWC",
+      "dtype": "float32",
+      "preprocessing": "none"
+    }
+  },
+  "vendor_system_link_closure_complete": false
+}
