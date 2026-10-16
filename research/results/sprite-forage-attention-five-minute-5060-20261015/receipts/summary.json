@@ -1,0 +1,34 @@
+{
+  "campaign_seconds": 690.282241909008,
+  "rows": [
+    {
+      "mode": "partial_state",
+      "steps": 201719808,
+      "train_seconds": 301.9271281410038,
+      "process_sps": 668107.5968297698,
+      "native_average_sps": 669026.2668621147,
+      "native_last_bin_sps": 658434.3547447494,
+      "target_percent_error": 0.6423760470012585,
+      "final_training_perf": 0.6697819232940674,
+      "parameters": 91008,
+      "evaluation_perf": 0.6132815,
+      "evaluation_grape_success": 0.765625
+    },
+    {
+      "mode": "partial_pixels",
+      "steps": 3109376,
+      "train_seconds": 377.1470594160055,
+      "process_sps": 8244.465712697647,
+      "native_average_sps": 8252.725358380394,
+      "native_last_bin_sps": 10517.394350193943,
+      "target_percent_error": 25.715686472001842,
+      "final_training_perf": 0.0416666679084301,
+      "parameters": 137896,
+      "evaluation_perf": 0.035156,
+      "evaluation_grape_success": 0.046875
+    }
+  ],
+  "independent_training_seeds": 1,
+  "historical_full_state_perf": 0.9765625,
+  "score_or_pareto_claim": false
+}

@@ -1,0 +1,45 @@
+{
+  "campaign_seconds": 334.96607159401174,
+  "smoke": false,
+  "primary_training_n": 1,
+  "fixed_training_seed": 7,
+  "quality_or_pareto_claim": false,
+  "rows": [
+    {
+      "name": "gentle-maple-1",
+      "gaze_mode": 0,
+      "relative": 0,
+      "partial": 1,
+      "parameters": 117120,
+      "steps": 83886080,
+      "train_seconds": 135.6491374800098,
+      "process_sps": 618404.8167085621,
+      "perf": 0.822265625,
+      "grape_success": 0.57421875
+    },
+    {
+      "name": "mystic-sparrow-2",
+      "gaze_mode": 1,
+      "relative": 0,
+      "partial": 1,
+      "parameters": 79360,
+      "steps": 83886080,
+      "train_seconds": 96.55888107899227,
+      "process_sps": 868755.7173676755,
+      "perf": 0.7548828125,
+      "grape_success": 0.5546875
+    },
+    {
+      "name": "happy-fern-3",
+      "gaze_mode": 2,
+      "relative": 0,
+      "partial": 1,
+      "parameters": 83200,
+      "steps": 83886080,
+      "train_seconds": 96.06365357300092,
+      "process_sps": 873234.3282806029,
+      "perf": 0.853515625,
+      "grape_success": 0.6171875
+    }
+  ]
+}

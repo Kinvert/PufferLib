@@ -1,0 +1,2 @@
+episode_id,slot,env_seed,policy_seed,start_rng,start_world_hash,start_observation_hash,decisions,perf,successes,deaths,episode_return,action_hash
+16,0,3777501144,9045818818592938326,2997276827,d3206a12a032b540,c47836f7ae3e9913,121,0x1p-2,0,1,0x1.61063p+0,630d21781f984cb0

@@ -13,7 +13,7 @@ forage_flags=(-std=c11 -D_POSIX_C_SOURCE=200809L -D_DEFAULT_SOURCE -O1 -g
     -fsanitize=address,undefined -fno-omit-frame-pointer
     -I. -Isrc -I"$forage_raylib/include")
 forage_link=("$forage_raylib/lib/libraylib.a" -lGL -lpthread -ldl -lrt -lm)
-for forage_test in environment modes render navigation rng; do
+for forage_test in environment modes render navigation rng attention; do
     clang "${forage_flags[@]}" "ocean/sprite_forage/tests/test_$forage_test.c" \
         "${forage_link[@]}" -o "$forage_out/test-$forage_test"
     "$forage_out/test-$forage_test" | tee "$forage_out/$forage_test.log"

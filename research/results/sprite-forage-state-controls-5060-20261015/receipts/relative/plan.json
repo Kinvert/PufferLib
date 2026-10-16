@@ -1,0 +1,79 @@
+{
+  "schema": "forage-state-controls-v1",
+  "jobs": [
+    {
+      "name": "mossy-robin-4",
+      "gaze_mode": 2,
+      "relative": 1,
+      "partial": 1,
+      "state_onehot": 1,
+      "action_sizes": [
+        5,
+        20,
+        15
+      ],
+      "parameters": 83200,
+      "binary": "/home/claude/cnn/build/sprite-forage-onehot-relative-build-20261015/puffer",
+      "binary_sha256": "4a6f327a66bc4a96e06b48e4302df4dd57dcb5a5323d69ca2a6ff1433605ee40",
+      "build_flags": "FORAGE_GAZE_MODE=2\nFORAGE_RELATIVE_GAZE=1\nSPRITE_EXACT_RESEARCH=1\nFORAGE_STATE_ONEHOT=1\n",
+      "config_sha256": "5e5035e02f4dc59602ad02a768ed53b61b6f40c6f2c962b030f67844c7b8b094",
+      "default_sha256": "7f493977f49f2537a59c18c2a283f062e5d6063d9e130c2d15f6be075cda1084",
+      "manifests": {
+        "420": {
+          "path": "/home/claude/cnn/build/sprite-forage-state-relative-5060-20261015/mossy-robin-4/manifest-420.csv",
+          "sha256": "a8779d0ca6fb94e5b08275432a382cc08a753ba5c4e0cb7cdc2fac180f19066c",
+          "command": [
+            "/home/claude/cnn/build/sprite-forage-onehot-relative-build-20261015/puffer",
+            "sprite_eval_manifest",
+            "/home/claude/cnn/build/sprite-forage-state-relative-5060-20261015/mossy-robin-4/manifest-420.ini"
+          ]
+        },
+        "1337": {
+          "path": "/home/claude/cnn/build/sprite-forage-state-relative-5060-20261015/mossy-robin-4/manifest-1337.csv",
+          "sha256": "64cc454e623ed1b1b60db1b9a8687e0a8a09355e06f6849f4e9af09545f0045a",
+          "command": [
+            "/home/claude/cnn/build/sprite-forage-onehot-relative-build-20261015/puffer",
+            "sprite_eval_manifest",
+            "/home/claude/cnn/build/sprite-forage-state-relative-5060-20261015/mossy-robin-4/manifest-1337.ini"
+          ]
+        }
+      },
+      "scalar_reference": "silver-robin-6"
+    }
+  ],
+  "fixed_train_seed": 7,
+  "seed_swept": false,
+  "training_steps": 83886080,
+  "checkpoint_steps": [
+    10485760,
+    20971520,
+    31457280,
+    41943040,
+    52428800,
+    62914560,
+    73400320,
+    83886080
+  ],
+  "evaluation_worlds": [
+    420,
+    1337
+  ],
+  "evaluation_episodes_each": 128,
+  "evaluation_slots": 16,
+  "learner": "Same historical tuned state recipe, A256/H64/MB2048/H128-L1, same decision/LR schedule",
+  "timing": "Approximately two minutes, fixed decisions for deterministic training; actual monotonic times reported",
+  "sources": {
+    "ocean/sprite_forage/sprite_forage.h": "3a5d26f7d999d1f466d2545238f364b34f9afb82e9fb587f59041ac74289085c",
+    "ocean/sprite_forage/attention.h": "374042adc132093e354893c479a8aa20d53166e06608ac63eb09c670c62f15f7",
+    "research/sprite_attention_eval.cu": "3ee9c1f967e3c78abab27b29108e5eed7dc4262c80552f10fa82de91da8e545c"
+  },
+  "tool_sha256": "0088d830d064a46cfcddd8b309e8fc4bed116c10b45536f27668935453a16dcc",
+  "primary_n": 1,
+  "quality_or_pareto_claim": false,
+  "state_encoding_followup": true,
+  "scalar_reference_plan_sha256": "cfbfd4e6f54088154ce31bea27278c540247b607d78d8eae463c98ac7741e0ea",
+  "scalar_reference_summary_sha256": "aad6170cd7f6622892b4dbab1dabd46e34c5e15485b957d27eea6a86f872a4fc",
+  "encoding_wrapper_sha256": "690e7b6c8b6d2038d98413a7299a7b9b3f1faee7989317777d991205a2ffcc5d",
+  "relative_wrapper_sha256": "75453425a90686721b5a7b6d6025f51b248be5bbfaa98027c141e2d13f563a34",
+  "onehot_absolute_reference_sha256": "1cafc1cbbd1b848fc5d6dc2eb8c6d841279778cca91fc512dd23873e278827f2"
+}

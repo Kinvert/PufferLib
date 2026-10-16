@@ -1,0 +1,74 @@
+[
+  {
+    "job": "quiet-otter-1",
+    "label": "quiet-otter-1-eval",
+    "graphs": 1,
+    "perf": 0.0,
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 115777.753435828,
+    "monotonic_finished": 115778.819895708,
+    "process_seconds": 1.0664598800067324,
+    "log_sha256": "6bd6395ed430d0f784ee1ee30b5a629197aee1d58ab2f71b6e2ca8bda4ee1ebe"
+  },
+  {
+    "job": "mossy-fern-2",
+    "label": "mossy-fern-2-eval",
+    "graphs": 1,
+    "perf": 0.21875,
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 115786.531319551,
+    "monotonic_finished": 115787.747857365,
+    "process_seconds": 1.216537814005278,
+    "log_sha256": "89f0480ff9c7b95b7c44ed42518e77d64a38fda741f5d20c36e75dc4f3fd8f06"
+  },
+  {
+    "job": "sunny-gecko-3",
+    "label": "sunny-gecko-3-eval",
+    "graphs": 1,
+    "perf": 0.0625,
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 115788.859187266,
+    "monotonic_finished": 115789.675114304,
+    "process_seconds": 0.8159270379983354,
+    "log_sha256": "7b57264f566464fcb61b6c9ed8b0f718540dc4691f884a551820b337c620cce2"
+  },
+  {
+    "job": "happy-heron-4",
+    "label": "happy-heron-4-eval",
+    "graphs": 1,
+    "perf": 0.03125,
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 115791.588831655,
+    "monotonic_finished": 115792.855577501,
+    "process_seconds": 1.2667458460055059,
+    "log_sha256": "5bd0be121e6a9877d6aa9ebdca1cadb9027cf142e02096b93269c3ecb3fa961a"
+  },
+  {
+    "job": "happy-heron-4",
+    "label": "happy-heron-4-repeat",
+    "graphs": 1,
+    "perf": 0.03125,
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 115792.902409758,
+    "monotonic_finished": 115794.21961462,
+    "process_seconds": 1.317204862003564,
+    "log_sha256": "b376c28fa342356c2a22526907310daaaeba53cc5d12d623a274ce1b898d7cef"
+  },
+  {
+    "job": "happy-heron-4",
+    "label": "happy-heron-4-eager",
+    "graphs": -1,
+    "perf": 0.03125,
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 115794.262718253,
+    "monotonic_finished": 115795.981457837,
+    "process_seconds": 1.718739584001014,
+    "log_sha256": "d6a14e92444ecdc3485d620c69a01b28092427087c647a540da19618e29e380d"
+  }
+]

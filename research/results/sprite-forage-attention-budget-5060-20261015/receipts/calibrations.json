@@ -1,0 +1,60 @@
+[
+  {
+    "mode": "partial_state",
+    "name": "mystic-tree-2-calibration",
+    "calibration": true,
+    "steps": 1048576,
+    "parameters": 91008,
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 116633.898916966,
+    "monotonic_finished": 116636.018526756,
+    "process_seconds": 2.119609789995593,
+    "log_sha256": "bba35c9f704f26a60ec5305c1a747b971084c4a572dcb6fbff3dd57b59be6a9c",
+    "process_sps": 494702.37632851285,
+    "native_last_bin_sps": 653466.7352850001,
+    "native_uptime": 1.7641870975494385,
+    "native_average_sps": 594367.7977559947,
+    "final_training_perf": 0.34979209303855896,
+    "final_training_grape_success": 0.3367983400821686,
+    "target_seconds": 11.24610780349758,
+    "target_percent_error": -81.15250336355138,
+    "checkpoints": {
+      "mystic-tree-2-calibration/checkpoints/sprite_forage/mystic-tree-2-calibration/0000000001048576.bin": "4a972b7a07ca80c2fd43ed5f787ebedb1731a8eb155c72141de3a958c7ddbfa2"
+    },
+    "final_checkpoint": "/home/claude/cnn/build/sprite-forage-attention-budget-5060-20261015/mystic-tree-2-calibration/checkpoints/sprite_forage/mystic-tree-2-calibration/0000000001048576.bin",
+    "runtime": "/home/claude/cnn/build/sprite-forage-attention-budget-5060-20261015/mystic-tree-2-calibration/runtime",
+    "estimated_overhead_seconds": 0.5149741698784056,
+    "frozen_full_steps": 7012352,
+    "budget_selected_without_evaluation": true
+  },
+  {
+    "mode": "partial_pixels",
+    "name": "sunny-heron-3-calibration",
+    "calibration": true,
+    "steps": 16384,
+    "parameters": 137896,
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 116652.928853995,
+    "monotonic_finished": 116654.947727688,
+    "process_seconds": 2.0188736929994775,
+    "log_sha256": "c931414b7d5ea5ef99d1d15fd96cbb4ac1b76b15681836a7d1febee23cd56467",
+    "process_sps": 8115.416064319503,
+    "native_last_bin_sps": 10385.423990341162,
+    "native_uptime": 1.6709394454956055,
+    "native_average_sps": 9805.26256900977,
+    "final_training_perf": 0.0625,
+    "final_training_grape_success": 0.125,
+    "target_seconds": 11.24610780349758,
+    "target_percent_error": -82.04824523937428,
+    "checkpoints": {
+      "sunny-heron-3-calibration/checkpoints/sprite_forage/sunny-heron-3-calibration/0000000000016384.bin": "45060f03c1cc4c591151153a2919b8ab2a373b8e6180811ac1a2c4b4f65090c9"
+    },
+    "final_checkpoint": "/home/claude/cnn/build/sprite-forage-attention-budget-5060-20261015/sunny-heron-3-calibration/checkpoints/sprite_forage/sunny-heron-3-calibration/0000000000016384.bin",
+    "runtime": "/home/claude/cnn/build/sprite-forage-attention-budget-5060-20261015/sunny-heron-3-calibration/runtime",
+    "estimated_overhead_seconds": 0.4412780151304043,
+    "frozen_full_steps": 112192,
+    "budget_selected_without_evaluation": true
+  }
+]

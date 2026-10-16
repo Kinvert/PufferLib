@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/home/claude/cnn/build/sprite-forage-attention-build-20261015/puffer",
+    "train"
+  ],
+  "returncode": 0,
+  "binary_sha256": "93340798ad4314887810458a29e211dbb935fe08f8c0bf71c2945e3b1683bcdc",
+  "monotonic_started": 120427.239465421,
+  "monotonic_finished": 120427.905171298,
+  "process_seconds": 0.6657058770069852,
+  "steps": 65536,
+  "legacy_checkpoint_sha256": "6df0a4228b73abf883a66f867aea0391bac56c42e527899019ff8e4c4c5b8e2e",
+  "new_checkpoint_sha256": "6df0a4228b73abf883a66f867aea0391bac56c42e527899019ff8e4c4c5b8e2e",
+  "byte_identical": true,
+  "train_log_sha256": "2ea78ee6252f65f19fb9aae8f8838189582e08a38fbf9cc70f598f01ac364692"
+}

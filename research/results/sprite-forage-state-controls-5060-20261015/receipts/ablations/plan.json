@@ -1,0 +1,288 @@
+{
+  "schema": "forage-state-controls-v1",
+  "jobs": [
+    {
+      "name": "quiet-otter-1",
+      "gaze_mode": 0,
+      "relative": 0,
+      "partial": 1,
+      "action_sizes": [
+        5,
+        300
+      ],
+      "parameters": 91008,
+      "binary": "/home/claude/cnn/build/sprite-forage-controls-build-20261015-0-0/puffer",
+      "binary_sha256": "4d10f8418ad21242ef081bee33d4ddfff8c94d136d8616ffb8a51590d21e6c48",
+      "config_sha256": "5e5035e02f4dc59602ad02a768ed53b61b6f40c6f2c962b030f67844c7b8b094",
+      "default_sha256": "7f493977f49f2537a59c18c2a283f062e5d6063d9e130c2d15f6be075cda1084",
+      "build_flags": "FORAGE_GAZE_MODE=0\nFORAGE_RELATIVE_GAZE=0\nSPRITE_EXACT_RESEARCH=1\n",
+      "manifests": {
+        "420": {
+          "path": "/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/quiet-otter-1/manifest-420.csv",
+          "sha256": "f8ba60db21cf639b06cf157d610ede1f4d247e4b0af8d9ae01b4337576a04ce4",
+          "command": [
+            "/home/claude/cnn/build/sprite-forage-controls-build-20261015-0-0/puffer",
+            "sprite_eval_manifest",
+            "/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/quiet-otter-1/manifest-420.ini"
+          ]
+        },
+        "1337": {
+          "path": "/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/quiet-otter-1/manifest-1337.csv",
+          "sha256": "b3e01fbde2cc19578f0165997bb12144e893a321ed009f1cab30b84f11f81fb8",
+          "command": [
+            "/home/claude/cnn/build/sprite-forage-controls-build-20261015-0-0/puffer",
+            "sprite_eval_manifest",
+            "/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/quiet-otter-1/manifest-1337.ini"
+          ]
+        }
+      }
+    },
+    {
+      "name": "mystic-tree-2",
+      "gaze_mode": 0,
+      "relative": 1,
+      "partial": 1,
+      "action_sizes": [
+        5,
+        300
+      ],
+      "parameters": 91008,
+      "binary": "/home/claude/cnn/build/sprite-forage-controls-build-20261015-0-1/puffer",
+      "binary_sha256": "a75cb492ad47e2e034a3aae2e13f6064fa9d05576210ea6556dbfd14ecdfb876",
+      "config_sha256": "5e5035e02f4dc59602ad02a768ed53b61b6f40c6f2c962b030f67844c7b8b094",
+      "default_sha256": "7f493977f49f2537a59c18c2a283f062e5d6063d9e130c2d15f6be075cda1084",
+      "build_flags": "FORAGE_GAZE_MODE=0\nFORAGE_RELATIVE_GAZE=1\nSPRITE_EXACT_RESEARCH=1\n",
+      "manifests": {
+        "420": {
+          "path": "/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/mystic-tree-2/manifest-420.csv",
+          "sha256": "e91791b4efe1cc361f651952c6e3fab40b969895c07d4f6b5ecbdcd1045230ff",
+          "command": [
+            "/home/claude/cnn/build/sprite-forage-controls-build-20261015-0-1/puffer",
+            "sprite_eval_manifest",
+            "/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/mystic-tree-2/manifest-420.ini"
+          ]
+        },
+        "1337": {
+          "path": "/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/mystic-tree-2/manifest-1337.csv",
+          "sha256": "7c8e79234c3dd72c5c99a39acfcf4996255c41be3a3e8ed4f07e3ec87cc49d5b",
+          "command": [
+            "/home/claude/cnn/build/sprite-forage-controls-build-20261015-0-1/puffer",
+            "sprite_eval_manifest",
+            "/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/mystic-tree-2/manifest-1337.ini"
+          ]
+        }
+      }
+    },
+    {
+      "name": "happy-heron-3",
+      "gaze_mode": 1,
+      "relative": 0,
+      "partial": 1,
+      "action_sizes": [
+        5,
+        5
+      ],
+      "parameters": 53248,
+      "binary": "/home/claude/cnn/build/sprite-forage-controls-build-20261015-1-0/puffer",
+      "binary_sha256": "0f47b0c5b2f0ef6f1bca89326d23b06dbd99bd58d7f1922c77992003ae7cb10c",
+      "config_sha256": "5e5035e02f4dc59602ad02a768ed53b61b6f40c6f2c962b030f67844c7b8b094",
+      "default_sha256": "7f493977f49f2537a59c18c2a283f062e5d6063d9e130c2d15f6be075cda1084",
+      "build_flags": "FORAGE_GAZE_MODE=1\nFORAGE_RELATIVE_GAZE=0\nSPRITE_EXACT_RESEARCH=1\n",
+      "manifests": {
+        "420": {
+          "path": "/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/happy-heron-3/manifest-420.csv",
+          "sha256": "f8ba60db21cf639b06cf157d610ede1f4d247e4b0af8d9ae01b4337576a04ce4",
+          "command": [
+            "/home/claude/cnn/build/sprite-forage-controls-build-20261015-1-0/puffer",
+            "sprite_eval_manifest",
+            "/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/happy-heron-3/manifest-420.ini"
+          ]
+        },
+        "1337": {
+          "path": "/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/happy-heron-3/manifest-1337.csv",
+          "sha256": "b3e01fbde2cc19578f0165997bb12144e893a321ed009f1cab30b84f11f81fb8",
+          "command": [
+            "/home/claude/cnn/build/sprite-forage-controls-build-20261015-1-0/puffer",
+            "sprite_eval_manifest",
+            "/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/happy-heron-3/manifest-1337.ini"
+          ]
+        }
+      }
+    },
+    {
+      "name": "sunny-gecko-4",
+      "gaze_mode": 1,
+      "relative": 1,
+      "partial": 1,
+      "action_sizes": [
+        5,
+        5
+      ],
+      "parameters": 53248,
+      "binary": "/home/claude/cnn/build/sprite-forage-controls-build-20261015-1-1/puffer",
+      "binary_sha256": "53cfb9968943ba5d70557367baaa037478ad9e3d13afa4e9341781b448b3f0f1",
+      "config_sha256": "5e5035e02f4dc59602ad02a768ed53b61b6f40c6f2c962b030f67844c7b8b094",
+      "default_sha256": "7f493977f49f2537a59c18c2a283f062e5d6063d9e130c2d15f6be075cda1084",
+      "build_flags": "FORAGE_GAZE_MODE=1\nFORAGE_RELATIVE_GAZE=1\nSPRITE_EXACT_RESEARCH=1\n",
+      "manifests": {
+        "420": {
+          "path": "/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/sunny-gecko-4/manifest-420.csv",
+          "sha256": "e91791b4efe1cc361f651952c6e3fab40b969895c07d4f6b5ecbdcd1045230ff",
+          "command": [
+            "/home/claude/cnn/build/sprite-forage-controls-build-20261015-1-1/puffer",
+            "sprite_eval_manifest",
+            "/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/sunny-gecko-4/manifest-420.ini"
+          ]
+        },
+        "1337": {
+          "path": "/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/sunny-gecko-4/manifest-1337.csv",
+          "sha256": "7c8e79234c3dd72c5c99a39acfcf4996255c41be3a3e8ed4f07e3ec87cc49d5b",
+          "command": [
+            "/home/claude/cnn/build/sprite-forage-controls-build-20261015-1-1/puffer",
+            "sprite_eval_manifest",
+            "/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/sunny-gecko-4/manifest-1337.ini"
+          ]
+        }
+      }
+    },
+    {
+      "name": "gentle-fern-5",
+      "gaze_mode": 2,
+      "relative": 0,
+      "partial": 1,
+      "action_sizes": [
+        5,
+        20,
+        15
+      ],
+      "parameters": 57088,
+      "binary": "/home/claude/cnn/build/sprite-forage-controls-build-20261015-2-0/puffer",
+      "binary_sha256": "d21dd86e83c4ec4de5a8808762c5b34f13d2b57f2b5d425fbd7bc1a5bfcc25b8",
+      "config_sha256": "5e5035e02f4dc59602ad02a768ed53b61b6f40c6f2c962b030f67844c7b8b094",
+      "default_sha256": "7f493977f49f2537a59c18c2a283f062e5d6063d9e130c2d15f6be075cda1084",
+      "build_flags": "FORAGE_GAZE_MODE=2\nFORAGE_RELATIVE_GAZE=0\nSPRITE_EXACT_RESEARCH=1\n",
+      "manifests": {
+        "420": {
+          "path": "/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/gentle-fern-5/manifest-420.csv",
+          "sha256": "f8ba60db21cf639b06cf157d610ede1f4d247e4b0af8d9ae01b4337576a04ce4",
+          "command": [
+            "/home/claude/cnn/build/sprite-forage-controls-build-20261015-2-0/puffer",
+            "sprite_eval_manifest",
+            "/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/gentle-fern-5/manifest-420.ini"
+          ]
+        },
+        "1337": {
+          "path": "/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/gentle-fern-5/manifest-1337.csv",
+          "sha256": "b3e01fbde2cc19578f0165997bb12144e893a321ed009f1cab30b84f11f81fb8",
+          "command": [
+            "/home/claude/cnn/build/sprite-forage-controls-build-20261015-2-0/puffer",
+            "sprite_eval_manifest",
+            "/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/gentle-fern-5/manifest-1337.ini"
+          ]
+        }
+      }
+    },
+    {
+      "name": "silver-robin-6",
+      "gaze_mode": 2,
+      "relative": 1,
+      "partial": 1,
+      "action_sizes": [
+        5,
+        20,
+        15
+      ],
+      "parameters": 57088,
+      "binary": "/home/claude/cnn/build/sprite-forage-controls-build-20261015-2-1/puffer",
+      "binary_sha256": "817a6d52784b6351aa92a228c5c02e5a3cb2b75c3fcf5c60774c81c3e85d1713",
+      "config_sha256": "5e5035e02f4dc59602ad02a768ed53b61b6f40c6f2c962b030f67844c7b8b094",
+      "default_sha256": "7f493977f49f2537a59c18c2a283f062e5d6063d9e130c2d15f6be075cda1084",
+      "build_flags": "FORAGE_GAZE_MODE=2\nFORAGE_RELATIVE_GAZE=1\nSPRITE_EXACT_RESEARCH=1\n",
+      "manifests": {
+        "420": {
+          "path": "/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/silver-robin-6/manifest-420.csv",
+          "sha256": "e91791b4efe1cc361f651952c6e3fab40b969895c07d4f6b5ecbdcd1045230ff",
+          "command": [
+            "/home/claude/cnn/build/sprite-forage-controls-build-20261015-2-1/puffer",
+            "sprite_eval_manifest",
+            "/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/silver-robin-6/manifest-420.ini"
+          ]
+        },
+        "1337": {
+          "path": "/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/silver-robin-6/manifest-1337.csv",
+          "sha256": "7c8e79234c3dd72c5c99a39acfcf4996255c41be3a3e8ed4f07e3ec87cc49d5b",
+          "command": [
+            "/home/claude/cnn/build/sprite-forage-controls-build-20261015-2-1/puffer",
+            "sprite_eval_manifest",
+            "/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/silver-robin-6/manifest-1337.ini"
+          ]
+        }
+      }
+    },
+    {
+      "name": "bright-maple-7",
+      "gaze_mode": 0,
+      "relative": 0,
+      "partial": 0,
+      "action_sizes": [
+        5,
+        300
+      ],
+      "parameters": 106368,
+      "binary": "/home/claude/cnn/build/sprite-forage-controls-build-20261015-0-0/puffer",
+      "binary_sha256": "4d10f8418ad21242ef081bee33d4ddfff8c94d136d8616ffb8a51590d21e6c48",
+      "config_sha256": "44bc40ac867d24f8c8cb77a8e7c6d62bb1bae54e2a215f91d4f800d7464e0d29",
+      "default_sha256": "7f493977f49f2537a59c18c2a283f062e5d6063d9e130c2d15f6be075cda1084",
+      "build_flags": "FORAGE_GAZE_MODE=0\nFORAGE_RELATIVE_GAZE=0\nSPRITE_EXACT_RESEARCH=1\n",
+      "manifests": {
+        "420": {
+          "path": "/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/bright-maple-7/manifest-420.csv",
+          "sha256": "374c61f7f1a7795cda9fc104276cb32d7be8307b695544073a95c41c1302e420",
+          "command": [
+            "/home/claude/cnn/build/sprite-forage-controls-build-20261015-0-0/puffer",
+            "sprite_eval_manifest",
+            "/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/bright-maple-7/manifest-420.ini"
+          ]
+        },
+        "1337": {
+          "path": "/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/bright-maple-7/manifest-1337.csv",
+          "sha256": "1889502f4ee8a7cb8ab359361215a605ff33b55149b9db587cfb620b4505ff1d",
+          "command": [
+            "/home/claude/cnn/build/sprite-forage-controls-build-20261015-0-0/puffer",
+            "sprite_eval_manifest",
+            "/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/bright-maple-7/manifest-1337.ini"
+          ]
+        }
+      }
+    }
+  ],
+  "fixed_train_seed": 7,
+  "seed_swept": false,
+  "training_steps": 83886080,
+  "checkpoint_steps": [
+    10485760,
+    20971520,
+    31457280,
+    41943040,
+    52428800,
+    62914560,
+    73400320,
+    83886080
+  ],
+  "evaluation_worlds": [
+    420,
+    1337
+  ],
+  "evaluation_episodes_each": 128,
+  "evaluation_slots": 16,
+  "learner": "Same historical tuned state recipe, A256/H64/MB2048/H128-L1, same decision/LR schedule",
+  "timing": "Approximately two minutes, fixed decisions for deterministic training; actual monotonic times reported",
+  "sources": {
+    "ocean/sprite_forage/sprite_forage.h": "b5966f63d08a923ad46519bbe951b751264a38eb0e4d8e2d03da7849128da668",
+    "ocean/sprite_forage/attention.h": "3c326f17c7e5566e7987c7db30628a310f26e2465332f91fab1b497e75755fd1",
+    "research/sprite_attention_eval.cu": "3ee9c1f967e3c78abab27b29108e5eed7dc4262c80552f10fa82de91da8e545c"
+  },
+  "tool_sha256": "0088d830d064a46cfcddd8b309e8fc4bed116c10b45536f27668935453a16dcc",
+  "primary_n": 1,
+  "quality_or_pareto_claim": false
+}

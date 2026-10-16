@@ -1,5 +1,144 @@
 # Working preferences
 
+- October15 matched five-minute partial state/pixel comparison COMPLETE.
+  Read research/results/sprite-forage-pixels-matched-5060-20261015/README.md.
+  Same17 cells, factored5/20/15 actions, relative geometry; state225 values,
+  pixels52228 values from17 full32x32 RGB tiles, no downsampling/pretraining.
+  Common A64/H64/MB256/H128-L1 recipe deliberately differs from the prior
+  A256/MB2048 state recipe. Fixed seed7,256 exact development worlds420/1337:
+  state55.08% collection/73.83% grape exits,308.687s/64.094M/207635 SPS;
+  our tile CNN53.71%/55.08%,295.053s/4.588M/15548 SPS. Both final weights
+  are also timestamp-only nearest300s selections. Preserve the earlier
+  state93.55% at97.307s under its different recipe; this weaker state run
+  does not replace it. Four trainings/12 evals/616 episode executions/18
+  finite checkpoints pass offline audit, including both-policy graph/repeat/
+  eager/tail canaries. New training repeat/cross-seed superiority unproven;
+  no Pareto/generalization/SOTA claim. Raw build/sprite-forage-pixels-matched-
+  5060-20261015 is complete; no automatic restart/extension. No GPU remains
+  reserved, system/CUDA/dependency change, main core edit, commit or push.
+
+- October15 state action/observation work COMPLETE, including one-hot and
+  relative interaction. Read
+  research/results/sprite-forage-state-controls-5060-20261015/README.md.
+  Candidate: FORAGE_GAZE_MODE=2, FORAGE_RELATIVE_GAZE=1,
+  FORAGE_STATE_ONEHOT=1 (opt-in; main defaults unchanged). Partial state225
+  values/83200 parameters; factor20X/15Y gaze plus movement5; same17 visible
+  cells, one-hot object identities and player/world + signed gaze offsets.
+  Fixed seed7,83.886M decisions/97.307s/862074 process SPS;256 exact assigned
+  worlds yield93.55% collection perf/90.23% grape exits. Original partial
+  control64.26%/123.824s; full-state attention-build control99.41%/149.832s.
+  Same learner/rewards/decision schedule, not exactly equal time/parameters.
+  Fresh same-seed full repeat matches all eight checkpoints and256 episode
+  rows byte-for-byte; this remains independent training n=1. All losses and
+  mixed scalar-relative results retained. Four packets under build/sprite-
+  forage-state-{ablations,onehot,relative,relative-repeat}-5060-20261015 are
+  complete; no automatic restart/extension or seed selection. All audits
+  pass97 native processes/3696 actual episode executions, including smokes
+  and repeats. No pixel training/downsampling; renderer32x32 tiles unchanged.
+  Next scientific gate is fixed-seven-seed confirmation/new worlds plus
+  fixed/random-gaze controls; no robust/Pareto/SOTA claim. No GPU remains
+  reserved by this task after completion. Existing core uses captured build
+  copies; no main src overlay, system/CUDA/dependency change, commit or push.
+
+- October15 state attention first action/observation panel COMPLETE. Raw
+  build/sprite-forage-state-ablations-5060-20261015; runner
+  research/forage_state_ablations.py. Read full/COMPLETE or failure.json before
+  reporting status; seven fresh83.886M-decision trainings, fixed seed7, same
+  learner/LR schedule, roughly two minutes each. Six partial cases are a full
+  3-action-interface x2-coordinate-encoding factorial; seventh is a full-state
+  control using the attention build's300-way unused gaze head (not original
+  one-head vanilla). No downsampling/pixel training in this allocation.
+  The follow-up one-hot panel is also COMPLETE. Do not restart.
+  Raw build/sprite-forage-state-onehot-5060-20261015;
+  research/forage_state_encoding.py reuses the frozen ablation executor.
+  It compares225-input one-hot versus21-input scalar observations for all
+  three gaze interfaces with absolute geometry. Same visible cells/info,
+  fixed seed7,83.886M decisions/learner/worlds. Main source defaults remain
+  scalar; FORAGE_STATE_ONEHOT is opt-in and does not change pixel inputs.
+  First panel's six partial scores are64.26/12.21/61.82/60.64/61.13/64.16%
+  in absolute300(abs/rel),directional5(abs/rel),factoredXY(abs/rel) order;
+  full-state control99.41%. No score superiority found for the new actions;
+  observed process SPS is higher with smaller heads. All six sanitizer
+  variants and seven normal environment suites pass. GPU canary passes7
+  short trainings/28 exact eval processes/364 episodes; all-head repeat/eager/
+  tail rows match. Legacy65536-decision frozen/new control weights match.
+  Exact evaluator binds episode IDs/world+policy RNG, supports2/3 heads,
+  validates native world manifests and avoids early-finisher selection.
+  Main env changes remain under FORAGE_ATTENTION; no main core overlay,
+  system/dependency/CUDA changes or push. Single-seed pilot, not paper proof.
+  Read research/FORAGE_STATE_ABLATIONS.md and
+  research/results/sprite-forage-state-controls-5060-20261015/README.md.
+
+- October15 five-minute partial-state/pixel request COMPLETE. Read
+  research/results/sprite-forage-attention-five-minute-5060-20261015/README.md.
+  Fixed seed7; state201.72M decisions/301.927s/668108 process SPS,
+  61.33% collection perf/76.56% grape exits. Pixels3.109M/377.147s/8244 SPS,
+  final3.52%/4.69% exits; overran300s by25.72%, unexplained middle slowdown.
+  Supplemental timestamp-only nearest300s selection gives state301.806s/
+  61.33% and pixels303.072s/2.332M/7695 elapsed SPS/5.47% perf. Preserve
+  both pixel scores/decline; selection never uses score. Offline audit passes
+  16 weights/two trainings/six actual evals/192 episodes. Full-state reference
+  remains97.65625% at~11s, not five minutes. Partial pixels remain poor.
+  Raw build/sprite-forage-attention-five-minute-5060-20261015 is complete;
+  do not restart/extend automatically. Eight checkpoints/policy; fixed
+  development eval worlds420/1337. No Pareto/generalization/gaze-use claim.
+  The preceding11-second pilot is COMPLETE and audited: read
+  research/results/sprite-forage-attention-budget-5060-20261015/README.md.
+  Fresh full state97.65625%/11.850s matches all four old checkpoints; partial
+  state44.14%/11.102s/632K SPS; partial pixels1.5625%/11.191s/10025 SPS.
+  Fifteen weights/twelve processes pass artifact audit. This is not a quality
+  or Pareto win. The five-minute allocation uses new policies and the same
+  state-tuned learner/rewards, not continuation or a seed/architecture sweep.
+
+- October15 attention prototype COMPLETE in main. Read research/FORAGE_ATTENTION.md
+  and research/results/sprite-forage-attention-5060-20261015/README.md. Opt-in
+  FORAGE_ATTENTION + SPRITE_CNN_RESEARCH build supports observation_mode0/1
+  and partial_observation0/1; original one-head build stays separate. Partial
+  inputs are17 visible tiles +4 shared geometry floats (21 state /52228 pixel
+  values). Two heads: movement5/gaze300. Cached tile pixels go through a shared
+  small CNN, no full-map CNN or hidden semantic state. Seven sanitizer suites
+  pass, including24000 matched world steps/all1500 skin-gaze centers/no leaks.
+  New encoder smooth-positive/zero-weight CUDA checks pass B1/3/8/64, all49576
+  gradients and eager/graph repeats; broad branches/full learner remain
+  unqualified. Four8192-decision5060 trainings/six eval processes complete,
+  partial-pixel4505 process SPS versus full-pixel1080, no learning/frontier
+  claim. Completed allocations under build/sprite-forage-attention-* must not
+  restart automatically. Core integration uses a copied compatible snapshot
+  and a small research patch; no main core overlay,5090,system change or push.
+
+- Kinvert's primary working checkout is `/home/claude/cnn`. Make new changes
+  here and verify the saved files here. If another worktree is needed for a
+  build/test, copy the required changes there; don't leave the user with edits
+  only in another checkout. Use `/home/claude/cnn` file links in replies.
+  This supersedes earlier worktree-only development routing. Preserve frozen
+  evidence and avoid unrelated bulk overlays. `ocean/sprite_forage` is now a
+  real local directory (October15), not a symlink. Its prior research-worktree
+  copy is preserved but will not receive new edits automatically. Other sprite
+  directories still link to that worktree. Treat this checkout as authoritative.
+
+- Never sweep seeds (Kinvert, October15). Next larger matched CNN comparisons
+  use fixed training replicas7/42/69/123/173/2027/9001 for every candidate and
+  separate fixed evaluation worlds. Keep every weak/failed/missing replica;
+  never optimize, select or replace a seed. Existing three-seed evidence keeps
+  its original scope. Active sprite sources are in cnn-audit-20261008, linked
+  under this checkout's ocean/sprite_* for browsing.
+
+- October15 requested quick Forage state cleanup comparison COMPLETE. Read
+  research/results/sprite-forage-cleanup-sps-5060-20261015/README.md. Four new
+  RTX5060 trainings,8Mi decisions each, fixed seed7/two repeats per version,
+  before-after-after-before, plus four32-episode evals. Process SPS742,328→745,912
+  (+0.48%, no speedup claim); both97.65625% perf/100% grape exits. All sixteen
+  scheduled checkpoint files match across repeats/versions. Same frozen core/
+  learner, no pixel training; current header comes from main's real local folder.
+  Raw build/sprite-forage-cleanup-sps-20261015 is complete; don't restart it.
+  Source/build/test copies stayed under ~/cnn; no system/CUDA/dependency/push.
+
+- October15: the six new native state/pixel sprite games live in the active
+  worktree `/home/claude/cnn-audit-20261008`, not this retained older checkout.
+  Read `SPRITE_SUITE.md` here, then the active worktree's AGENTS.md and
+  `research/results/sprite-suite-5060-20261015/README.md`. Use that worktree for
+  builds/training; don't overlay its changes onto this retained benchmark tree.
+
 - October 7 staged learning delivery: Kinvert asks to get the real workflow working before handing it to the 5090. Read `NEXT_5090_LEARNING_FEEDBACK.md`, `research/CNN_GRAPH_ACCEPTANCE.md` and `research/results/learning-launcher-20261007/README.md`. Implemented GPU-free preparation plus explicit 5090 CUDA-controls → full-budget quality/Nature calibration → all-game eligibility → 12 native PROTEIN suggestions with per-proposal CUDA checks → paired search-seed references → complete descriptive curves. Only 18 CNN coordinates vary; per-game learners, budgets, mixtures and evaluator assignments stay matched. Actual short local 5060 validation passes three distinct graphs/18 trainings/123 drawing evaluations/36 repeat-eager checks with aggregate feedback and final GP replay3; separate quality/Nature path passes12/82/24. Seven numerical allocations total98 process/case instances/392 native calls, including B2048 at H128; Nature current contract keeps original stricter tolerance. Independent backward uses actual float32 branches; historical unconditional H256 failure is unchanged. Final68 host/scalar/mock plus4 native host checks pass; real full-budget panels are prepared, not trained. New long local/5090 execution is not started here; the owner schedules the staged 5090 run when available. No completed allocation restart, automatic retry, encoder5, new env/dataset, CPU CNN, system/CUDA change or scientific waiver. Commit/push this authorized research delivery only to Kinvert/PufferLib cnn-research; never official upstream or call it the eventual clean PR. Earlier preparation-only/canary task routing is historical.
 
 - October 7 development feedback preparation: the real 5090 all-six-game/all-41-drawing aggregate-to-native-PROTEIN loop is COMPLETE; do not describe it as unimplemented or rerun its canary. Read `research/results/feedback-canary-5090-20261007/README.md`. New feedback-v2 / panel-v3 optionally expose `[task.ENV]` decision budgets/cadence and `[search] learner_mode=per_game` with frozen numeric learner overlays; only CNN coordinates are optimized. Swept depth now exposes all 18 legacy encoder-4 controls from a depth-one default, retaining inactive coordinates/effective-graph duplicates. Fifty-one host/scalar/mock tests and four native host checks pass; fresh optimizer/six game/three metadata builds and actual GPU-free preparation pass. A two-architecture/two-seed panel registers 24 full policies and 82 suites with 656 evaluations UNEXECUTED. Read `research/results/feedback-development-preparation-20261007/README.md` and `research/NEXT_FEEDBACK_EXPERIMENT.md`. `run_feedback_5090.sh prepare-development` performs preparation only, with uncalibrated example budgets/learners/anchors; its bounded `run` refuses that packet. No new GPU query/training is scheduled. Broad math/memory/calibration/learning/confirmation gates remain; legacy packet contracts and completed allocations stay unchanged. Temporary research delivery is only to Kinvert's fork, never the eventual upstream PR.

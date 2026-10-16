@@ -1,0 +1,50 @@
+[
+  {
+    "label": "initial-420",
+    "world": 420,
+    "perf": 0.046875,
+    "parameters": 19721472,
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 111311.371728206,
+    "monotonic_finished": 111315.198035957,
+    "process_seconds": 3.8263077510055155,
+    "log_sha256": "b3362189a6d05c2a847474236e1a2c52f2a0d2cfe41884f642990f0d4af1a497"
+  },
+  {
+    "label": "initial-1337",
+    "world": 1337,
+    "perf": 0.0,
+    "parameters": 19721472,
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 111315.267539534,
+    "monotonic_finished": 111317.714682509,
+    "process_seconds": 2.447142974997405,
+    "log_sha256": "f13fb5bd480cf341161c39e5744e81a9e42c7870d676efe2c9d474feeefb5a8b"
+  },
+  {
+    "label": "final-420",
+    "world": 420,
+    "perf": 0.03125,
+    "parameters": 19721472,
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 111409.563295619,
+    "monotonic_finished": 111412.534147435,
+    "process_seconds": 2.970851816004142,
+    "log_sha256": "c2ef0f655103583ef1f1a291d8e62f4dff94b477381cc1434a7c2f9283215e69"
+  },
+  {
+    "label": "final-1337",
+    "world": 1337,
+    "perf": 0.0625,
+    "parameters": 19721472,
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 111412.583475878,
+    "monotonic_finished": 111415.503848214,
+    "process_seconds": 2.9203723359969445,
+    "log_sha256": "a9ee54533adbb5d932bedbe143f9e43b60caa3f875b4e10b01511c62dae56f8f"
+  }
+]

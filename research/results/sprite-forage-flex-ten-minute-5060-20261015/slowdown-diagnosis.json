@@ -1,0 +1,15 @@
+{
+  "scope": "ratio of sums of retained downsampled timing buckets; indicative, not full-process totals",
+  "timing_percent": {
+    "perf/rollout": 25.598996321341456,
+    "perf/train": 74.40100367865854,
+    "perf/eval_model": 18.625227397846228,
+    "perf/eval_env": 0.14838226917694355,
+    "perf/eval_copy": 6.247022705040457
+  },
+  "projection_weights": 19660800,
+  "full_policy_parameters": 19721472,
+  "projection_parameter_percent": 99.69235562132482,
+  "optimizer_updates": 27648,
+  "projection_muon_matmul_flops_per_update": 25168445440
+}

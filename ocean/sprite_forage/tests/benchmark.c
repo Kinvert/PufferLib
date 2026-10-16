@@ -19,7 +19,7 @@ static void setup(Fixture* f) {
     puf_init(&f->env, kwargs); puf_reset(&f->env); puf_ini_free(&ini);
 }
 int main(void) {
-    const int steps = 5000; double elapsed[2]; long moved[2] = {0}, resets[2] = {0}; Fixture f[2];
+    const int steps = 50000; double elapsed[2]; long moved[2] = {0}, resets[2] = {0}; Fixture f[2];
     for (int mode = 0; mode < 2; mode++) {
         setup(&f[mode]); double start = clock_seconds(); unsigned int sequence = 1337;
         for (int i = 0; i < steps; i++) {
@@ -29,6 +29,8 @@ int main(void) {
             resets[mode] += f[mode].terminal != 0;
             moved[mode] += !f[mode].terminal && f[mode].env.player_idx != player;
             if (mode) compute_observations(&f[mode].env);
+            // Keep every observation write observable to the compiler.
+            __asm__ __volatile__("" ::: "memory");
         }
         elapsed[mode] = clock_seconds() - start;
     }

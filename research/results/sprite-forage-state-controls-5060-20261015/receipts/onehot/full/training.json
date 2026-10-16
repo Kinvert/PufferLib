@@ -1,0 +1,80 @@
+[
+  {
+    "name": "gentle-maple-1",
+    "parameters": 117120,
+    "steps": 83886080,
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 121382.752574224,
+    "monotonic_finished": 121518.401711704,
+    "process_seconds": 135.6491374800098,
+    "log_sha256": "c6d79b18a3b4180bec85a1c83bab492907c8b399fcec2c833c508156c638fb74",
+    "process_sps": 618404.8167085621,
+    "native_uptime": 135.25713181495667,
+    "native_last_bin_sps": 625234.0709307615,
+    "final_training_perf": 0.8627451062202454,
+    "checkpoints": {
+      "full/gentle-maple-1/checkpoints/sprite_forage/gentle-maple-1/0000000010485760.bin": "f58b0caec7383ddcbdb6f778f15d09a9d7c1038ee25f9f9e44effb8465bc589c",
+      "full/gentle-maple-1/checkpoints/sprite_forage/gentle-maple-1/0000000020971520.bin": "2af959b8ee02e12cb968d2dd77cb7552cfc5c2f77045df226961621afb9e475d",
+      "full/gentle-maple-1/checkpoints/sprite_forage/gentle-maple-1/0000000031457280.bin": "7b156fc45877e6c7b3a79af07029927242023aeacf6e0fcdc4d32a01e878545a",
+      "full/gentle-maple-1/checkpoints/sprite_forage/gentle-maple-1/0000000041943040.bin": "4655471c7b83cbc207b5ae4ae9c5e4e38bf255ecd96d253df8c155855ed818f3",
+      "full/gentle-maple-1/checkpoints/sprite_forage/gentle-maple-1/0000000052428800.bin": "eb99574181484a4793ef2331bd934c3024293e3e5abb57da615d02e7ce169566",
+      "full/gentle-maple-1/checkpoints/sprite_forage/gentle-maple-1/0000000062914560.bin": "e367aaecd3ae52b604b8faff2b1cdb5577dd9a2fd1189c199e72dcc3f85c1516",
+      "full/gentle-maple-1/checkpoints/sprite_forage/gentle-maple-1/0000000073400320.bin": "698c86774480d867b813e38c91667ba1bd80487fdfdfced01a3e71506d560aa9",
+      "full/gentle-maple-1/checkpoints/sprite_forage/gentle-maple-1/0000000083886080.bin": "3c3e2eaa008e25c9a242d045939b6d3988c57f10c93d2e040ec5a7f00a29f431"
+    },
+    "final_checkpoint": "/home/claude/cnn/build/sprite-forage-state-onehot-5060-20261015/full/gentle-maple-1/checkpoints/sprite_forage/gentle-maple-1/0000000083886080.bin"
+  },
+  {
+    "name": "mystic-sparrow-2",
+    "parameters": 79360,
+    "steps": 83886080,
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 121520.719619914,
+    "monotonic_finished": 121617.278500993,
+    "process_seconds": 96.55888107899227,
+    "log_sha256": "a0aae5f19df13512250765c0f5e9ed9381c817c2e282692d5708e09192c9d240",
+    "process_sps": 868755.7173676755,
+    "native_uptime": 96.2174961566925,
+    "native_last_bin_sps": 886332.9779480542,
+    "final_training_perf": 0.7947719693183899,
+    "checkpoints": {
+      "full/mystic-sparrow-2/checkpoints/sprite_forage/mystic-sparrow-2/0000000010485760.bin": "1512bb638fd4ba8caf69ea225704650b1e36d6797118968220bc9237643da023",
+      "full/mystic-sparrow-2/checkpoints/sprite_forage/mystic-sparrow-2/0000000020971520.bin": "03502c31dc528b65434c480cf267e8a4a81326c04e7d387e36458ee345d0783f",
+      "full/mystic-sparrow-2/checkpoints/sprite_forage/mystic-sparrow-2/0000000031457280.bin": "ea8434b796132da5177ed2bf82cd749f326879acc6166188e319f43ede1a6fbc",
+      "full/mystic-sparrow-2/checkpoints/sprite_forage/mystic-sparrow-2/0000000041943040.bin": "88d4b10e8b5a39ee045e6ed720fba0930313468ee2c5c990223b005fe57cc407",
+      "full/mystic-sparrow-2/checkpoints/sprite_forage/mystic-sparrow-2/0000000052428800.bin": "5a5d65449207b9c5e3c2c018c8126ecf2b50fe0fb56179356775422595dc7dff",
+      "full/mystic-sparrow-2/checkpoints/sprite_forage/mystic-sparrow-2/0000000062914560.bin": "03da24b19c3647d6004b24bdf6061138df4c85d73c3cf166c0faa265b735b2de",
+      "full/mystic-sparrow-2/checkpoints/sprite_forage/mystic-sparrow-2/0000000073400320.bin": "8ac2df13c1b5cc49ed48cf9154f8a7b904af31d9afd669e6855900aa72faf53f",
+      "full/mystic-sparrow-2/checkpoints/sprite_forage/mystic-sparrow-2/0000000083886080.bin": "0d4f44efe80be78cd41a2fad80513db82873ba5d69333102314b8ab485cd4ea5"
+    },
+    "final_checkpoint": "/home/claude/cnn/build/sprite-forage-state-onehot-5060-20261015/full/mystic-sparrow-2/checkpoints/sprite_forage/mystic-sparrow-2/0000000083886080.bin"
+  },
+  {
+    "name": "happy-fern-3",
+    "parameters": 83200,
+    "steps": 83886080,
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 121619.445488835,
+    "monotonic_finished": 121715.509142408,
+    "process_seconds": 96.06365357300092,
+    "log_sha256": "f2bf980009faecf1d5e3584fc916f0ae104818412e3710a30bd008333ddde432",
+    "process_sps": 873234.3282806029,
+    "native_uptime": 95.7123339176178,
+    "native_last_bin_sps": 869121.4399802701,
+    "final_training_perf": 0.8724194765090942,
+    "checkpoints": {
+      "full/happy-fern-3/checkpoints/sprite_forage/happy-fern-3/0000000010485760.bin": "d38247b7d2b767f2005067ce3a2fb8ec52a08635969a8e6e4b9ea6bdb997490d",
+      "full/happy-fern-3/checkpoints/sprite_forage/happy-fern-3/0000000020971520.bin": "966f324227a6e12c1de89131bd759c6c24e61c0439a0860cef2a9819695f01f7",
+      "full/happy-fern-3/checkpoints/sprite_forage/happy-fern-3/0000000031457280.bin": "d8db70f4e0ef8d2a11574a1e77f3e2500211cd9d293183ac9072856d4cf7e159",
+      "full/happy-fern-3/checkpoints/sprite_forage/happy-fern-3/0000000041943040.bin": "59b2bfa379f75038060d8a86fddc6c56426e0bb1b0471608d22e87b395f41425",
+      "full/happy-fern-3/checkpoints/sprite_forage/happy-fern-3/0000000052428800.bin": "7646319167d6a170d8fe2b73c12fa48af0961c3a311ad2f1eb558c2d28dfdcf7",
+      "full/happy-fern-3/checkpoints/sprite_forage/happy-fern-3/0000000062914560.bin": "c85181844368d006bea604642ba2df79dfedf99baf750d1d2db1c4e447cebb77",
+      "full/happy-fern-3/checkpoints/sprite_forage/happy-fern-3/0000000073400320.bin": "62e535997368fc6b9178c07b2a96d2abbe4fec6faef26fc9a62ce3a612e9786e",
+      "full/happy-fern-3/checkpoints/sprite_forage/happy-fern-3/0000000083886080.bin": "10a146e512b95d953c5135041f09edf5df1f5ee8e63fe8f58a0b1402c11d16f3"
+    },
+    "final_checkpoint": "/home/claude/cnn/build/sprite-forage-state-onehot-5060-20261015/full/happy-fern-3/checkpoints/sprite_forage/happy-fern-3/0000000083886080.bin"
+  }
+]

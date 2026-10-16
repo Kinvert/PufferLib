@@ -1,0 +1,15 @@
+[
+  "/home/claude/cnn/build/sprite-forage-onehot-relative-build-20261015/puffer",
+  "sprite_eval",
+  "--base.load_model_path=/home/claude/cnn/build/sprite-forage-state-relative-5060-20261015/full/mossy-robin-4/checkpoints/sprite_forage/mossy-robin-4/0000000083886080.bin",
+  "--base.seed=7",
+  "--env.seed=0",
+  "--env.max_steps=512",
+  "--base.cudagraphs=1",
+  "--sprite_eval.seed=1337",
+  "--sprite_eval.episode_offset=0",
+  "--sprite_eval.episodes=128",
+  "--sprite_eval.slots=16",
+  "--sprite_eval.max_steps=512",
+  "--sprite_eval.output=/home/claude/cnn/build/sprite-forage-state-relative-5060-20261015/full/mossy-robin-4-world-1337.csv"
+]

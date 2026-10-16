@@ -1,0 +1,38 @@
+{
+  "audit": "PASS",
+  "processes": 16,
+  "checkpoints": 18,
+  "exact_episode_executions": 616,
+  "fixed_train_seed": 7,
+  "independent_training_n": 1,
+  "seed_swept": false,
+  "rows": [
+    {
+      "name": "mystic-otter-1",
+      "pixels": 0,
+      "selection": "nearest300",
+      "steps": 64094208,
+      "elapsed_seconds": 308.5973804039968,
+      "elapsed_sps": 207695.2432846053,
+      "parameters": 83200,
+      "train_process_seconds": 308.6872598799964,
+      "process_sps": 207634.7693290514,
+      "collection_perf": 0.55078125,
+      "grape_exits": 0.73828125
+    },
+    {
+      "name": "happy-heron-2",
+      "pixels": 1,
+      "selection": "nearest300",
+      "steps": 4587520,
+      "elapsed_seconds": 294.89991464299965,
+      "elapsed_sps": 15556.193041132503,
+      "parameters": 103976,
+      "train_process_seconds": 295.052887576996,
+      "process_sps": 15548.127787100055,
+      "collection_perf": 0.537109375,
+      "grape_exits": 0.55078125
+    }
+  ],
+  "quality_or_pareto_claim": false
+}

@@ -1,0 +1,77 @@
+{
+  "training": {
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 111317.797007569,
+    "monotonic_finished": 111407.638921278,
+    "process_seconds": 89.84191370900953,
+    "log_sha256": "d3af5a3c81c52ff246ef6706a2cdb48276aa39da0d5fd7e2aa0e034a515784bf"
+  },
+  "process_sps": 364.7295415604438,
+  "native_last_bin_sps": 334.7765309497998,
+  "native_uptime": 89.32350850105286,
+  "native_average_sps": 366.84631571109594,
+  "native_uptime_within_process": true,
+  "parameters": 19721472,
+  "final_training_perf": 0.0625,
+  "initial_mean_perf": 0.0234375,
+  "final_mean_perf": 0.046875,
+  "evaluations": [
+    {
+      "label": "initial-420",
+      "world": 420,
+      "perf": 0.046875,
+      "parameters": 19721472,
+      "returncode": 0,
+      "timed_out": false,
+      "monotonic_started": 111311.371728206,
+      "monotonic_finished": 111315.198035957,
+      "process_seconds": 3.8263077510055155,
+      "log_sha256": "b3362189a6d05c2a847474236e1a2c52f2a0d2cfe41884f642990f0d4af1a497"
+    },
+    {
+      "label": "initial-1337",
+      "world": 1337,
+      "perf": 0.0,
+      "parameters": 19721472,
+      "returncode": 0,
+      "timed_out": false,
+      "monotonic_started": 111315.267539534,
+      "monotonic_finished": 111317.714682509,
+      "process_seconds": 2.447142974997405,
+      "log_sha256": "f13fb5bd480cf341161c39e5744e81a9e42c7870d676efe2c9d474feeefb5a8b"
+    },
+    {
+      "label": "final-420",
+      "world": 420,
+      "perf": 0.03125,
+      "parameters": 19721472,
+      "returncode": 0,
+      "timed_out": false,
+      "monotonic_started": 111409.563295619,
+      "monotonic_finished": 111412.534147435,
+      "process_seconds": 2.970851816004142,
+      "log_sha256": "c2ef0f655103583ef1f1a291d8e62f4dff94b477381cc1434a7c2f9283215e69"
+    },
+    {
+      "label": "final-1337",
+      "world": 1337,
+      "perf": 0.0625,
+      "parameters": 19721472,
+      "returncode": 0,
+      "timed_out": false,
+      "monotonic_started": 111412.583475878,
+      "monotonic_finished": 111415.503848214,
+      "process_seconds": 2.9203723359969445,
+      "log_sha256": "a9ee54533adbb5d932bedbe143f9e43b60caa3f875b4e10b01511c62dae56f8f"
+    }
+  ],
+  "checkpoints": {
+    "0000000000008192.bin": "4cc0e25b5b8c124c84ce68c10425b966cef1a7d936180a2ac559a3d6484f7d74",
+    "0000000000016384.bin": "d92f96a90ce059edc211d2db512442618391cbdcf3b59c39a707008e8fd481ca",
+    "0000000000024576.bin": "7a805d971f46391506c70db30bba9f26684cc9e7635cb71c2f0429cb4b9912c4",
+    "0000000000032768.bin": "8a2a34cd4ed9006bc10384cf74809597271fe7035878384a3c1e4968dae7e381"
+  },
+  "campaign_seconds": 104.60111723099544,
+  "learning_superiority_or_convergence_claim": false
+}

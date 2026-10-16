@@ -1,7 +1,23 @@
 // Game/observation tests only. No CPU CNN, GPU or policy.
 #include <assert.h>
 #include <math.h>
+#include <stdint.h>
+#include <string.h>
+
+static float* tracked_obs;
+static size_t pixel_bytes;
+static void* track_memcpy(void* dst, const void* src, size_t size) {
+    uintptr_t address = (uintptr_t)dst;
+    uintptr_t first = (uintptr_t)tracked_obs;
+    if (tracked_obs && address >= first && address < first + 640 * 480 * 3 * sizeof(float)) {
+        pixel_bytes += size;
+    }
+    return memcpy(dst, src, size);
+}
+
+#define memcpy track_memcpy
 #include "../sprite_forage.h"
+#undef memcpy
 #define OBS_SIZE FORAGE_PIXEL_OBS_SIZE
 
 static void forage_sprite(int kind, unsigned char pixels[256]) {
@@ -32,7 +48,12 @@ static void setup(Fixture* f, int rep, unsigned int seed) {
     dict_set(&kwargs, "observation_mode", 1);
     dict_set(&kwargs, "seed", 0);
     puf_init(&f->env, &kwargs); dict_clear(&kwargs);
-    assert(f->env.rng == seed); puf_reset(&f->env);
+    assert(f->env.rng == seed);
+    tracked_obs = f->env.agents[0].observations;
+    pixel_bytes = 0;
+    puf_reset(&f->env);
+    assert(pixel_bytes == OBS_SIZE * sizeof(float));
+    tracked_obs = NULL;
 }
 static void close_fixture(Fixture* f) { puf_close(&f->env); free(f->storage); }
 static void observation(Fixture* f) {
@@ -96,6 +117,28 @@ int main(void) {
         assert(forage_connected(&f[rep].env)); observation(&f[rep]);
         if (rep) { same_world(&f[0], &f[rep]); assert(memcmp(f[0].storage, f[rep].storage, (OBS_SIZE + 2) * sizeof(float))); }
     }
+    // Repeating a world copies nothing; a different world copies only changed tile IDs.
+    for (int rep = 0; rep < FORAGE_REPRESENTATIONS; rep++) {
+        Env* env = &f[rep].env;
+        tracked_obs = env->agents[0].observations;
+        pixel_bytes = 0;
+        env->rng = 7;
+        puf_reset(env);
+        assert(pixel_bytes == 0);
+        unsigned char previous[FORAGE_AREA];
+        memcpy(previous, env->pixel_grid, sizeof(previous));
+        pixel_bytes = 0;
+        env->rng = 42;
+        puf_reset(env);
+        int changed = 0;
+        for (int cell = 0; cell < FORAGE_AREA; cell++) {
+            changed += previous[cell] != env->pixel_grid[cell];
+        }
+        assert(changed > 0 && changed < FORAGE_AREA);
+        assert(pixel_bytes == changed * FORAGE_CELL * FORAGE_CELL * 3 * sizeof(float));
+        tracked_obs = NULL;
+        observation(&f[rep]);
+    }
     // Opposite stepping order and unrelated libc RNG draws cannot affect worlds.
     unsigned int actions = 1337;
     for (int step = 0; step < 1000; step++) {
@@ -113,7 +156,14 @@ int main(void) {
         assert(!f[0].env.grid[f[0].env.player_idx]);
     }
     for (int kind = 1; kind <= 10; kind++) {
-        controlled(&f[0], kind); puf_step(&f[0].env);
+        controlled(&f[0], kind);
+        tracked_obs = f[0].env.agents[0].observations;
+        pixel_bytes = 0;
+        puf_step(&f[0].env);
+        if (kind != FORAGE_TOADSTOOL && kind != FORAGE_GRAPE) {
+            assert(pixel_bytes == 2 * FORAGE_CELL * FORAGE_CELL * 3 * sizeof(float));
+        }
+        tracked_obs = NULL;
         const float reward[] = {0, 1, .5, 1, .5, .5, .5, .5, -.5, -.5, -1};
         assert(fabsf(f[0].reward - (reward[kind] - .001f)) < 1e-6f);
         assert((f[0].terminal != 0) == (kind == FORAGE_TOADSTOOL || kind == FORAGE_GRAPE));
@@ -147,6 +197,25 @@ int main(void) {
     assert(f[0].terminal && f[0].env.tick == 0);
     controlled(&f[0], FORAGE_TREE); int player = f[0].env.player_idx; puf_step(&f[0].env);
     assert(f[0].env.player_idx == player && f[0].reward == f[0].env.step_cost && !f[0].terminal); observation(&f[0]);
+    // Sentinel pixels must survive waits and blocked moves without any tile writes.
+    for (int blocked = 0; blocked < 2; blocked++) {
+        controlled(&f[0], FORAGE_TREE);
+        f[0].action = blocked ? 4 : 0;
+        for (int pixel = 0; pixel < OBS_SIZE; pixel++) {
+            f[0].env.agents[0].observations[pixel] = -1;
+        }
+        tracked_obs = f[0].env.agents[0].observations;
+        pixel_bytes = 0;
+        puf_step(&f[0].env);
+        assert(pixel_bytes == 0);
+        tracked_obs = NULL;
+        assert(!f[0].terminal);
+        for (int pixel = 0; pixel < OBS_SIZE; pixel++) {
+            assert(f[0].env.agents[0].observations[pixel] == -1);
+        }
+        compute_observations(&f[0].env);
+        observation(&f[0]);
+    }
     // Partial apple credit, grape credit, penalty subtraction, clamp and copies.
     for (int copies = 1; copies <= 8; copies++) {
         for (int apples = 0; apples <= copies; apples++) {

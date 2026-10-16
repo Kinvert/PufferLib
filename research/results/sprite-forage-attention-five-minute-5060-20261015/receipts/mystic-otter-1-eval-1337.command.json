@@ -1,0 +1,17 @@
+[
+  "/home/claude/cnn/build/sprite-forage-attention-build-20261015/puffer",
+  "eval",
+  "--headless",
+  "--base.result_fd=0",
+  "--base.seed=7",
+  "--base.eval_agents=1",
+  "--base.eval_episodes=32",
+  "--vec.num_threads=1",
+  "--vec.num_buffers=1",
+  "--train.horizon=1",
+  "--train.minibatch_size=1",
+  "--env.max_steps=512",
+  "--env.seed=1337",
+  "--sweep.metric=successes",
+  "--base.load_model_path=/home/claude/cnn/build/sprite-forage-attention-five-minute-5060-20261015/mystic-otter-1/checkpoints/sprite_forage/mystic-otter-1/0000000201719808.bin"
+]

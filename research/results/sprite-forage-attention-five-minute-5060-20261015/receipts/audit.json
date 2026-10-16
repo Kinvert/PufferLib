@@ -1,0 +1,29 @@
+{
+  "status": "PASS",
+  "native_processes": 6,
+  "fresh_training_jobs": 2,
+  "checkpoints": 16,
+  "evaluations": 4,
+  "assigned_episode_executions": 128,
+  "fixed_training_seed": 7,
+  "unchanged_mode_specific_learners": true,
+  "all_weights_finite": true,
+  "actual_time_target_errors_percent": [
+    0.6423760470012585,
+    25.715686472001842
+  ],
+  "scope": "Offline artifact audit, not independent neural math or per-episode evaluator certification",
+  "quality_or_pareto_claim": false,
+  "time_selected_supplement": {
+    "status": "PASS",
+    "added_native_evaluations": 2,
+    "added_episode_executions": 64,
+    "target_seconds": 300,
+    "checkpoint_elapsed_seconds": [
+      301.80623527799617,
+      303.07201287899807
+    ],
+    "selected_by_score": false,
+    "strict_300_second_cap": false
+  }
+}

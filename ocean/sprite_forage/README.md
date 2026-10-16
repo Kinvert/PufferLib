@@ -122,10 +122,41 @@ A simple initialization flag builds the shared immutable atlas once, during
 serial `puf_init` before environment workers start. State-only human rendering
 builds it lazily on the rendering thread. Each move copies the old
 cell and new cell using32 contiguous row copies per tile. Wait/blocked movement
-does not redraw. Reset redraws the entire frame. There are no per-step image
+does not redraw. The first reset draws the entire frame. Later resets compare
+the new tile IDs against a300-byte per-environment cache and copy only changed
+cells, keeping unchanged ground and borders. There are no per-step image
 loads, transforms, allocations or graphical rendering calls. The normal loop
 still sends a full observation to the trainer; reduced raster work does not
 establish a training-speed advantage.
+
+At32x32 RGB float32, an ordinary move copies24,576 bytes across the two tiles;
+waits/blocked moves copy0 pixel bytes. The first reset writes3,686,400 image
+bytes; later resets write12,288 bytes per changed tile.
+The row copy uses a tile origin and row offsets, with a constant384-byte copy
+per row. There is no dirty mask, list or new allocation. Existing
+dirty/full redraw tests cover movement/collection/reset; sentinel-image checks
+also verify waits and blocked moves do not rewrite any pixels. Test-only copy
+counters check two tiles per ordinary move, zero for unchanged resets, and
+exactly the changed tiles for new worlds across all five skins. The skin is
+fixed at initialization; explicit `compute_observations` still rebuilds the
+whole image and synchronizes the cache.
+
+October15 initial row-copy check against environment commit `49bb8f9f`: all six
+ASan/UBSan suites pass. Three paired 5,000-step raster timings measure about
+0.89M environment SPS before and 0.88M after; forced full redraw measures about
+8.6K in both. The dirty path already existed in that commit. These millisecond
+dirty-path samples establish no benefit from the row-address cleanup and are
+not GPU training measurements. Raw receipts:
+`build/sprite-forage-dirty-cells-20261015/`. This predates the reset tile cache.
+
+The reset-cache follow-up measures928,636 →1,638,668 environment SPS in two
+paired50,000-step native game/raster runs per version (about1.76x). This is
+headless pixel generation, not CNN training SPS. Each run has35,879 ordinary
+moves and278 resets; dirty and forced-full paths produce equal final worlds
+and pixels. All six ASan/UBSan suites pass, including state/pixel parity across
+five skins and fixed seeds. Copy counters also check the first reset writes
+the full image. Sources, logs and timings:
+`build/sprite-forage-reset-dirty-20261015/`.
 
 Two original pairs (apple/spotted apple, striped/spotted mushroom) retain the
 same silhouette and color counts. Their distinguishing signal is the spatial
@@ -153,7 +184,65 @@ local report is `research/results/sprite-forage-cleanup-sps-5060-20261015/`.
 Neither raw research packet is part of this environment-only commit. Keep
 these state results separate from pixel raster or CNN training measurements.
 
+## Pixel training pilot — October15, RTX5060
+
+Built-in Nature CNN, random initialization, full640x480 RGB float32, H128/L1,
+fixed training seed7, drawing0. One32,768-decision run completes in147.219s:
+222.58 process SPS,223.38 native adjusted-average SPS,224.71 final-bin SPS.
+All four scheduled checkpoints are finite and have distinct hashes;
+34,991,136 parameters each. The changed-cell reset code is included.
+
+Using16 serial episodes each at development world offsets420/1337, the same
+evaluation settings give6.25% mean perf before training and9.375% afterward.
+Final training-bin perf is0. This establishes execution and weight updates,
+not convincing learning or convergence. This is the built-in Nature encoder,
+not our Flex architecture.8 agents/H8/MB8 and starting LR.001 differ from the
+much larger-batch tuned state run; these SPS numbers do not isolate pixel cost.
+Raw evidence: `build/sprite-forage-pixel-train-5060-20261015/`; report:
+`research/results/sprite-forage-pixels-5060-20261015/README.md`.
+
+Our locked Flex quality CNN also completes the matched32,768-decision run:
+89.842s,364.73 process SPS,366.85 native adjusted-average SPS,19,721,472
+parameters. Mean eval perf is2.34375% untrained and4.6875% final. It runs
+about1.64x Nature's process SPS in this one short paired setup, but its final
+perf is lower than Nature's9.375%. Neither result establishes reliable
+learning. All four Flex checkpoints pass size/finiteness checks and differ.
+The learner, seed, environment, input size, rollout and evaluation settings
+match Nature; only CNN coordinates/output paths differ. Report:
+`research/results/sprite-forage-flex-5060-20261015/README.md`.
+
+The requested roughly ten-minute fresh Flex run completes221,184 decisions
+in612.087s (10m12s),361.36 process SPS,361.77 native adjusted-average SPS.
+Same graph/seed/recipe, with the longer total budget and LR annealing schedule.
+Mean final development eval perf is9.375% (world420:6.25%,1337:12.5%), versus
+the reused2.34375% untrained control. The earlier short Flex run scored4.6875%.
+This remains weak one-seed performance; no equal-budget Nature result exists.
+All four checkpoints pass size/finiteness checks. Report:
+`research/results/sprite-forage-flex-ten-minute-5060-20261015/README.md`.
+The speed investigation finds99.69% of this full-resolution model's parameters
+in its flatten-to64 projection, with a full Muon update every8 decisions.
+Retained timing counters put most work in GPU training/model execution and
+roughly0.15% in the environment; these are indicative downsampled buckets.
+See `research/results/sprite-forage-flex-ten-minute-5060-20261015/SLOWDOWN.md`.
+
+The depth3 spatial-head/batch64 follow-up completes the same221,184 decisions
+in165.048s,1,340.12 process SPS (about3.71x faster), with1,294,112 parameters.
+However, eval perf falls from its9.375% untrained control to3.125%. It is a
+speed gain with a learning regression. All18 encoder numerical cases/72 CUDA
+calls at B1/8/64 and the bounded native canaries pass; full learner math and
+quality claims remain unqualified. Details:
+`research/results/sprite-forage-speed-5060-20261015/README.md`.
+
 ## Build and inspect
+
+The opt-in **attention research prototype** now supports full/partial state
+and full/partial pixels through observation_mode and partial_observation.
+The latter requires the separate two-action-head attention build. It uses a
+shared tile CNN over the eight player-neighbor cells and nine agent-selected
+gaze cells, with the same visibility for state mode. The normal one-head
+baseline stays unchanged. [Interface/build instructions](../../research/FORAGE_ATTENTION.md)
+and [actual four-mode5060 results](../../research/results/sprite-forage-attention-5060-20261015/README.md).
+This is an implemented/tested prototype, not learning or publication acceptance.
 
 This environment-only checkpoint keeps native core integration separate. The
 visible checkout still needs the INI-selected observation-size/shared-Nature

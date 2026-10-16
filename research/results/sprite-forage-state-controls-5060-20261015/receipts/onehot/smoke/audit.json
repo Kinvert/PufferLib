@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "mode": "smoke",
+  "native_processes": 15,
+  "training_jobs": 3,
+  "evaluations": 12,
+  "assigned_episode_executions": 156,
+  "checkpoint_files": 3,
+  "manifest_worlds_per_policy": 256,
+  "evaluated_unique_worlds_per_policy": 17,
+  "legacy_training_bytes_match": null,
+  "primary_training_n": 1,
+  "seed_swept": false,
+  "scope": "Offline recipes, world/episode quotas, logs, times, weights and outcomes; not independent neural math or statistical superiority",
+  "quality_or_pareto_claim": false
+}

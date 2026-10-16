@@ -3,6 +3,20 @@
 October 5, 2026. Ordered priorities agreed for discussion; this document does
 not launch training or authorize new GPU campaigns.
 
+## October15 next architecture priority: agent-controlled spatial attention
+
+- [x] Implement Kinvert's first architecture prototype: convolve the eight pixel cells around
+  the player, plus a separate3x3 pixel window whose center the policy chooses
+  through actions. Actually restrict CNN work to those windows, rather than
+  computing full-map features first. Require a matching state mode that exposes
+  only those same cells, using identical gaze actions and visibility, for a fair
+  state-versus-pixels comparison. See [the recorded idea and open design
+  choices](research/AGENT_CONTROLLED_ATTENTION.md). The four-mode RTX5060 canary
+  passes; [implementation and usage](research/FORAGE_ATTENTION.md). Existing
+  original one-head baselines and game rules stay preserved.
+- [ ] Qualify/tune restricted-state learning and learned gaze, then matched
+  pixel learning. No learning/frontier claim follows from the first smoke.
+
 ## Goal and current evidence
 
 Deliver a clean native PufferLib pixel-learning system with a reproducible

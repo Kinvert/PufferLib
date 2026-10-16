@@ -1,0 +1,20 @@
+[
+  {
+    "mode": "partial_state",
+    "steps": 201719808,
+    "elapsed_seconds": 301.80623527799617,
+    "elapsed_sps": 668375.2170136387,
+    "target_percent_error": 0.6020784259987311,
+    "perf": 0.6132815,
+    "grape_success": 0.765625
+  },
+  {
+    "mode": "partial_pixels",
+    "steps": 2332032,
+    "elapsed_seconds": 303.07201287899807,
+    "elapsed_sps": 7694.646489615216,
+    "target_percent_error": 1.0240042929993587,
+    "perf": 0.054687,
+    "grape_success": 0.078125
+  }
+]

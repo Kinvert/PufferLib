@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "native_processes": 12,
+  "training_jobs": 3,
+  "calibration_jobs": 2,
+  "evaluations": 7,
+  "assigned_episode_executions": 224,
+  "checkpoint_files": 15,
+  "historical_full_state_all_four_checkpoints_byte_identical": true,
+  "audit_scope": "Artifacts, config, times and aggregate metrics only; no fresh neural/evaluator execution",
+  "pareto_or_generalization_claim": false
+}

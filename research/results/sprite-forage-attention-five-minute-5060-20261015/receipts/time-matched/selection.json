@@ -1,0 +1,124 @@
+[
+  {
+    "mode": "partial_state",
+    "steps": 201719808,
+    "bytes": 364032,
+    "monotonic_ns": 117143341445613,
+    "elapsed_seconds": 301.80623527799617,
+    "checkpoint": "/home/claude/cnn/build/sprite-forage-attention-five-minute-5060-20261015/mystic-otter-1/checkpoints/sprite_forage/mystic-otter-1/0000000201719808.bin",
+    "sha256": "7d5496c67c37fcf0ff9384fe771422be77d331e719bf81c3f667e0656680c4b1",
+    "elapsed_sps": 668375.2170136387,
+    "candidates": [
+      {
+        "steps": 25214976,
+        "bytes": 364032,
+        "monotonic_ns": 116879962520322,
+        "elapsed_seconds": 38.427309987004264
+      },
+      {
+        "steps": 50429952,
+        "bytes": 364032,
+        "monotonic_ns": 116917976335291,
+        "elapsed_seconds": 76.44112495599256
+      },
+      {
+        "steps": 75644928,
+        "bytes": 364032,
+        "monotonic_ns": 116955427771660,
+        "elapsed_seconds": 113.89256132500304
+      },
+      {
+        "steps": 100859904,
+        "bytes": 364032,
+        "monotonic_ns": 116993282712641,
+        "elapsed_seconds": 151.74750230599602
+      },
+      {
+        "steps": 126074880,
+        "bytes": 364032,
+        "monotonic_ns": 117030735514609,
+        "elapsed_seconds": 189.20030427399615
+      },
+      {
+        "steps": 151289856,
+        "bytes": 364032,
+        "monotonic_ns": 117068301999525,
+        "elapsed_seconds": 226.7667891900055
+      },
+      {
+        "steps": 176504832,
+        "bytes": 364032,
+        "monotonic_ns": 117105842908717,
+        "elapsed_seconds": 264.30769838199194
+      },
+      {
+        "steps": 201719808,
+        "bytes": 364032,
+        "monotonic_ns": 117143341445613,
+        "elapsed_seconds": 301.80623527799617
+      }
+    ],
+    "final_checkpoint_reused": true
+  },
+  {
+    "mode": "partial_pixels",
+    "steps": 2332032,
+    "bytes": 551584,
+    "monotonic_ns": 117450840675002,
+    "elapsed_seconds": 303.07201287899807,
+    "checkpoint": "/home/claude/cnn/build/sprite-forage-attention-five-minute-5060-20261015/happy-heron-2/checkpoints/sprite_forage/happy-heron-2/0000000002332032.bin",
+    "sha256": "130ccf551f3532c14adb424cc5b07de0d07db0750e723cf5483a39646f3f3419",
+    "elapsed_sps": 7694.646489615216,
+    "candidates": [
+      {
+        "steps": 388672,
+        "bytes": 551584,
+        "monotonic_ns": 117185131708771,
+        "elapsed_seconds": 37.36304664800991
+      },
+      {
+        "steps": 777344,
+        "bytes": 551584,
+        "monotonic_ns": 117222171581192,
+        "elapsed_seconds": 74.40291906900529
+      },
+      {
+        "steps": 1166016,
+        "bytes": 551584,
+        "monotonic_ns": 117259104541788,
+        "elapsed_seconds": 111.33587966499908
+      },
+      {
+        "steps": 1554688,
+        "bytes": 551584,
+        "monotonic_ns": 117319406490110,
+        "elapsed_seconds": 171.6378279870114
+      },
+      {
+        "steps": 1943360,
+        "bytes": 551584,
+        "monotonic_ns": 117392561890815,
+        "elapsed_seconds": 244.79322869201133
+      },
+      {
+        "steps": 2332032,
+        "bytes": 551584,
+        "monotonic_ns": 117450840675002,
+        "elapsed_seconds": 303.07201287899807
+      },
+      {
+        "steps": 2720704,
+        "bytes": 551584,
+        "monotonic_ns": 117487822155024,
+        "elapsed_seconds": 340.05349290100276
+      },
+      {
+        "steps": 3109376,
+        "bytes": 551584,
+        "monotonic_ns": 117524793173288,
+        "elapsed_seconds": 377.02451116500015
+      }
+    ],
+    "final_checkpoint_reused": false
+  }
+]

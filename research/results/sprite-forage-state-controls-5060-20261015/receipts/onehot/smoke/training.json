@@ -1,0 +1,59 @@
+[
+  {
+    "name": "gentle-maple-1",
+    "parameters": 117120,
+    "steps": 65536,
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 121311.014517651,
+    "monotonic_finished": 121311.682926855,
+    "process_seconds": 0.6684092040086398,
+    "log_sha256": "e8b1590f5dd2bfb4c1cf8e84ab3fea668b8004d45b790a382215d773385b5b84",
+    "process_sps": 98047.72227396331,
+    "native_uptime": 0.2676100730895996,
+    "native_last_bin_sps": 580693.621526614,
+    "final_training_perf": 0.05889423191547394,
+    "checkpoints": {
+      "smoke/gentle-maple-1/checkpoints/sprite_forage/gentle-maple-1/0000000000065536.bin": "ff6ecb5e2f69cc8ea5059fff715fb60902263907469ae6c14898832cabac8009"
+    },
+    "final_checkpoint": "/home/claude/cnn/build/sprite-forage-state-onehot-5060-20261015/smoke/gentle-maple-1/checkpoints/sprite_forage/gentle-maple-1/0000000000065536.bin"
+  },
+  {
+    "name": "mystic-sparrow-2",
+    "parameters": 79360,
+    "steps": 65536,
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 121314.177895337,
+    "monotonic_finished": 121314.743213209,
+    "process_seconds": 0.5653178720094729,
+    "log_sha256": "cd1583b296f96475424026aa32d91ab0dd38af0c11e10cd28f66a3de3f26a91b",
+    "process_sps": 115927.69881314105,
+    "native_uptime": 0.2096116542816162,
+    "native_last_bin_sps": 746683.0021405366,
+    "final_training_perf": 0.05111110955476761,
+    "checkpoints": {
+      "smoke/mystic-sparrow-2/checkpoints/sprite_forage/mystic-sparrow-2/0000000000065536.bin": "e243cafab53d684616912133044ee5d6165aca8d45c0e8e09f26c2dd4881fa6c"
+    },
+    "final_checkpoint": "/home/claude/cnn/build/sprite-forage-state-onehot-5060-20261015/smoke/mystic-sparrow-2/checkpoints/sprite_forage/mystic-sparrow-2/0000000000065536.bin"
+  },
+  {
+    "name": "happy-fern-3",
+    "parameters": 83200,
+    "steps": 65536,
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 121316.869754672,
+    "monotonic_finished": 121317.48521766,
+    "process_seconds": 0.6154629879893037,
+    "log_sha256": "dbc006578909b226fbeae8dd142a28ef5638e990d803ec2da71bb30e444047c9",
+    "process_sps": 106482.43887760636,
+    "native_uptime": 0.2390296459197998,
+    "native_last_bin_sps": 694538.3528777609,
+    "final_training_perf": 0.049145299941301346,
+    "checkpoints": {
+      "smoke/happy-fern-3/checkpoints/sprite_forage/happy-fern-3/0000000000065536.bin": "035fdc0f30eb1bc10254fd5e6830fa8897afbd4dcf0a65d15dea777c1380bceb"
+    },
+    "final_checkpoint": "/home/claude/cnn/build/sprite-forage-state-onehot-5060-20261015/smoke/happy-fern-3/checkpoints/sprite_forage/happy-fern-3/0000000000065536.bin"
+  }
+]

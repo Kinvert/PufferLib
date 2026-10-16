@@ -1,0 +1,21 @@
+{
+  "campaign_seconds": 99.45235812799365,
+  "smoke": false,
+  "primary_training_n": 1,
+  "fixed_training_seed": 7,
+  "quality_or_pareto_claim": false,
+  "rows": [
+    {
+      "name": "mossy-robin-4",
+      "gaze_mode": 2,
+      "relative": 1,
+      "partial": 1,
+      "parameters": 83200,
+      "steps": 83886080,
+      "train_seconds": 97.30729210999561,
+      "process_sps": 862073.9328063476,
+      "perf": 0.935546875,
+      "grape_success": 0.90234375
+    }
+  ]
+}

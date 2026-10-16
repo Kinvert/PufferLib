@@ -5,6 +5,56 @@ CNNs. A useful baseline does not require solving every episode or reaching
 100% perf. Prioritize deterministic rules, paired evaluation worlds, stable
 metrics and clear learning/time curves.
 
+## Attention architecture — October15 prototype complete
+
+- [x] Revised controls requested by Kinvert: exactly five directional ROI
+  actions (noop/right/left/up/down), or separate absolute cell-X/cell-Y
+  categorical actions (20 and15 choices). Add explicit signed ROI-to-player
+  offsets while retaining player world coordinates. Compare controls and
+  geometry separately in120-second fixed-seed state ablations. No diagonal
+  or recenter action. See the revised design in
+  [agent-controlled spatial attention](../../research/AGENT_CONTROLLED_ATTENTION.md).
+- [x] Implement/test the requested controls and initial matched state ablations.
+  Six scalar action/geometry cases plus full-state control, three one-hot
+  cases and factored one-hot/relative interaction are complete on5060.
+  The selected partial policy reaches93.55% collection/90.23% grape exits
+  versus original64.26%/64.84%, same83.886M decisions and256 assigned worlds.
+  It uses factored X/Y actions,13-way categories per visible cell and signed
+  ROI-to-player offsets; no hidden-target helper or new reward. All eight
+  checkpoints and256 episode rows reproduce exactly in a fresh same-seed
+  training. Training n=1, not paper proof. See
+  [the complete state ablations](../../research/results/sprite-forage-state-controls-5060-20261015/README.md).
+- [ ] Confirm the selected partial-state candidate across the fixed seven
+  training replicas and new evaluation worlds before claiming robust gains.
+  Keep losses/failures and separately test whether learned gaze beats fixed
+  or random gaze. No automatic follow-up allocation is implied.
+- [ ] Shrink pixel observations at their source: precompute8x8/4x4 RGB
+  sprite caches and directly copy the17 selected small tiles. Keep the
+  human viewer/full-board game unchanged. Adapt the CNN to the actual input
+  dimensions; verify lookalike marks survive. **Do this after the initial
+  action/observation ablations work.** Compare max versus average/mean
+  reduction ahead of stepping; no per-frame runtime downsampling. This is
+  not implemented yet.
+- [x] Implement the first CNN that processes the eight neighboring pixel cells around
+  the player and nine cells around a separate center selected by the agent's
+  actions. The policy learns where to look. Avoid full-map convolution and
+  full-map pixel work when producing these observations. Add a matching state
+  mode that exposes state only in those same cells, with identical gaze actions
+  and timing; no hidden-cell coordinate lists, grids or target helpers. Compare
+  state versus pixels with the same restricted visibility. Preserve game rules,
+  world RNG and original state/full-pixel modes. Full idea, action timing and
+  comparison requirements: [agent-controlled spatial attention](../../research/AGENT_CONTROLLED_ATTENTION.md).
+  The opt-in two-head build, both partial modes and both full controls now pass
+  the bounded native canary. [Build/use and test scope](../../research/FORAGE_ATTENTION.md).
+- [ ] Qualify/tune restricted-state learning, inspect gaze behavior, then compare
+  pixel learning at matched budgets/seeds. Smokes are not learning evidence.
+  First seed7 five-minute pilots are complete: partial state61.33% collection
+  perf at301.8s; partial pixels5.47% at303.1s, falling to3.52% at377.1s.
+  Full state remains97.66% at~11s. Pixel learning is poor and useful learned
+  gaze is unproven. Preserve the decline; timestamps alone select the
+  near-five-minute checkpoints, never scores. See
+  [the full report](../../research/results/sprite-forage-attention-five-minute-5060-20261015/README.md).
+
 ## Current state results and cleanup candidates — October15
 
 Current observation version is v6, with v5 game rules: neutral objects give zero

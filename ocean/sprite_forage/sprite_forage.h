@@ -7,8 +7,35 @@ typedef float obs_t;
 #include "sprites.h"
 #include "imported_sprites.h"
 
+#ifdef FORAGE_ATTENTION
+#ifndef FORAGE_GAZE_MODE
+#define FORAGE_GAZE_MODE 0
+#endif
+#ifndef FORAGE_RELATIVE_GAZE
+#define FORAGE_RELATIVE_GAZE 0
+#endif
+#ifndef FORAGE_STATE_ONEHOT
+#define FORAGE_STATE_ONEHOT 0
+#endif
+#if FORAGE_GAZE_MODE == 1
+#define ACT_SIZES {5, 5}
+#define NUM_ATNS 2
+#elif FORAGE_GAZE_MODE == 2
+#define ACT_SIZES {5, FORAGE_WIDTH, FORAGE_HEIGHT}
+#define NUM_ATNS 3
+#else
+#define ACT_SIZES {5, FORAGE_AREA}
+#define NUM_ATNS 2
+#endif
+#define FORAGE_VIEW_TILES 17
+#define FORAGE_STATE_VALUES (FORAGE_VIEW_TILES * (FORAGE_STATE_ONEHOT ? FORAGE_TILE_TYPES : 1))
+#define FORAGE_TILE_PIXELS (FORAGE_CELL * FORAGE_CELL * OBS_CHANNELS)
+#define FORAGE_VIEW_PIXELS (FORAGE_VIEW_TILES * FORAGE_TILE_PIXELS)
+#define FORAGE_VIEW_OBS (FORAGE_VIEW_PIXELS + 4)
+#else
 #define ACT_SIZES {5}
 #define NUM_ATNS 1
+#endif
 #define PUF_STEPS_PER_SEC 8
 #define FORAGE_WIDTH 20
 #define FORAGE_HEIGHT 15
@@ -48,9 +75,14 @@ struct Env {
     int boundary_reached;
     unsigned int rng;
     unsigned char grid[FORAGE_AREA];
+    unsigned char pixel_grid[FORAGE_AREA]; // Last drawn tile IDs, including the player.
     int player_idx;
     int tick;
     int observation_mode;
+#ifdef FORAGE_ATTENTION
+    int partial_observation;
+    int gaze_idx;
+#endif
     int state_layout;
     int representation;
     int copies;
@@ -82,6 +114,11 @@ float clampf(float value, float low, float high) {
 
 int puf_observation_size(Dict* kwargs) {
     int mode = dict_get(kwargs, "observation_mode");
+#ifdef FORAGE_ATTENTION
+    if (dict_get(kwargs, "partial_observation")) {
+        return (mode ? FORAGE_VIEW_PIXELS : FORAGE_STATE_VALUES) + 4;
+    }
+#endif
     if (mode) {
         return FORAGE_PIXEL_OBS_SIZE;
     }
@@ -168,24 +205,35 @@ void forage_make_tiles(int rep) {
     ready[rep] = 1;
 }
 
-// todo can we find a way to only draw grids that changed during a step? Could keep all other cells the same. could get us a speedup.
+// Copy one cached tile into the observation.
 void write_pixel_cell(Env* env, int cell) {
     int kind = cell == env->player_idx ? FORAGE_PLAYER : env->grid[cell]; // todo is there a faster way to write this? 99% of the time it's NOT the player
     obs_t* obs = env->agents[0].observations;
     int left = (cell % FORAGE_WIDTH) * FORAGE_CELL;
     int top = (cell / FORAGE_WIDTH) * FORAGE_CELL;
     const float* tile = forage_tiles[env->representation][kind]; // todo does const ACTUALLY make us faster?
-    //todo can FORAGE_CELL * 3 * sizeof(obs_t) be computed before the for loop so it only happens once?
-    // todo can FORACE_CELL * 3 also be pre computed? Seems to be used at least twice in each iteration of the for loop.
+    obs += (top * OBS_WIDTH + left) * 3;
     for (int y = 0; y < FORAGE_CELL; y++) {
-        memcpy(obs + ((top + y) * OBS_WIDTH + left) * 3,
-            tile + y * FORAGE_CELL * 3, FORAGE_CELL * 3 * sizeof(obs_t));
+        memcpy(obs + y * OBS_WIDTH * 3, tile + y * FORAGE_CELL * 3,
+            FORAGE_CELL * 3 * sizeof(obs_t));
     }
+    env->pixel_grid[cell] = kind;
 }
 
+#ifdef FORAGE_ATTENTION
+#include "attention.h"
+#endif
+
 void compute_observations(Env* env) {
+#ifdef FORAGE_ATTENTION
+    if (env->partial_observation) {
+        forage_attention_observations(env);
+        return;
+    }
+#endif
     if (env->observation_mode) {
-        for (int cell = 0; cell < FORAGE_AREA; cell++) { // todo already covered but maybe we should only write pixels to cells that changed since last step.
+        // Explicit full rebuild; normal steps and resets update changed cells.
+        for (int cell = 0; cell < FORAGE_AREA; cell++) {
             write_pixel_cell(env, cell);
         }
         return;
@@ -267,6 +315,9 @@ bool forage_connected(Env* env) {
 void puf_init(Env* env, Dict* kwargs) {
     env->rng += (unsigned int)dict_get(kwargs, "seed");
     env->observation_mode = dict_get(kwargs, "observation_mode");
+#ifdef FORAGE_ATTENTION
+    env->partial_observation = dict_get(kwargs, "partial_observation");
+#endif
     env->state_layout = dict_get(kwargs, "state_layout");
     env->representation = dict_get(kwargs, "representation");
     env->copies = dict_get(kwargs, "copies_per_type");
@@ -282,6 +333,8 @@ void puf_init(Env* env, Dict* kwargs) {
     env->agents[0].policy = 0;
     if (env->observation_mode) {
         forage_make_tiles(env->representation);
+        // Force every tile to be drawn on the first reset.
+        memset(env->pixel_grid, 255, sizeof(env->pixel_grid));
     }
 }
 
@@ -315,7 +368,23 @@ void puf_reset(Env* env) {
     env->tick = env->negatives = env->apples = 0;
     env->episode_return = 0;
     env->agents[0].rewards[0] = env->agents[0].terminals[0] = 0;
-    compute_observations(env);
+#ifdef FORAGE_ATTENTION
+    env->gaze_idx = env->player_idx;
+    if (env->partial_observation) {
+        compute_observations(env);
+        return;
+    }
+#endif
+    if (env->observation_mode) {
+        for (int cell = 0; cell < FORAGE_AREA; cell++) {
+            int kind = cell == env->player_idx ? FORAGE_PLAYER : env->grid[cell];
+            if (env->pixel_grid[cell] != kind) {
+                write_pixel_cell(env, cell);
+            }
+        }
+    } else {
+        compute_observations(env);
+    }
 }
 
 void puf_step(Env* env) {
@@ -332,6 +401,9 @@ void puf_step(Env* env) {
         }
     }
     int action = env->agents[0].actions[0];
+#ifdef FORAGE_ATTENTION
+    forage_attention_action(env);
+#endif
     env->agents[0].rewards[0] = env->step_cost;
     env->agents[0].terminals[0] = 0;
     env->tick++;
@@ -378,7 +450,13 @@ void puf_step(Env* env) {
         puf_reset(env);
         env->agents[0].rewards[0] = reward;
         env->agents[0].terminals[0] = 1;
-    } else if (env->player_idx != prev_idx) {
+    }
+#ifdef FORAGE_ATTENTION
+    else if (env->partial_observation) {
+        compute_observations(env);
+    }
+#endif
+    else if (env->player_idx != prev_idx) {
         if (env->observation_mode == 0) {
             compute_observations(env);
         } else {

@@ -1,0 +1,10 @@
+{
+  "schema": "native-cnn-image-graph-check-v2",
+  "bundle": "/home/claude/cnn/build/sprite-forage-speed-5060-20261015/math-bundle",
+  "bundle_sha256": "b948a7bf02aef4683e3d1b3f5df5ca150038649db6b3a0665d243f2d5701765c",
+  "config_sha256": "376f68a34a1517989bebf8c8450a464ea2667005d26586269759ae85ca4c4325",
+  "parent": 569046,
+  "token": "e6bc257a93cc8902f9e8105ccc55a1a7",
+  "hardware": "5060",
+  "timeout": 90
+}

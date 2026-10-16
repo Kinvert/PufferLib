@@ -1,0 +1,12 @@
+{
+  "status": "pass",
+  "native_training_processes": 4,
+  "native_eval_processes": 4,
+  "finite_checkpoints_verified_during_native_runner": 16,
+  "checkpoint_hashes_rechecked": 16,
+  "all_scheduled_checkpoint_hashes_identical": true,
+  "seed_swept": false,
+  "independent_training_seeds": 1,
+  "gpu_query": false,
+  "policy_execution": false
+}

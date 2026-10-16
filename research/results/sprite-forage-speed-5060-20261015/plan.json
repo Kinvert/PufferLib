@@ -1,0 +1,45 @@
+{
+  "jobs": [
+    {
+      "label": "quiet-otter-1",
+      "spatial": false,
+      "batch": 8,
+      "steps": 8192,
+      "parameters": 19721472,
+      "config_sha256": "6828bf02cbd355894d6d61152d1ab5cc5022e9327447c390a4af6ded704985b5"
+    },
+    {
+      "label": "mossy-fern-2",
+      "spatial": true,
+      "batch": 8,
+      "steps": 8192,
+      "parameters": 1294112,
+      "config_sha256": "c19a726de2ed0a8985816969ee306898af955a7488a56b7e017c18a1982ceac4"
+    },
+    {
+      "label": "sunny-gecko-3",
+      "spatial": true,
+      "batch": 64,
+      "steps": 8192,
+      "parameters": 1294112,
+      "config_sha256": "e34a13b51b58c4f4a1f0fdbcff75acb692a40bfad85086ec77bec0da769908bf"
+    },
+    {
+      "label": "happy-heron-4",
+      "spatial": true,
+      "batch": 64,
+      "steps": 221184,
+      "parameters": 1294112,
+      "config_sha256": "065bf165f7122214b7cdfdedb167130515870601c11938c7eb8961aad93cab51"
+    }
+  ],
+  "hardware": "RTX5060",
+  "fixed_seed": 7,
+  "seed_swept": false,
+  "binary_sha256": "b2484c2498450130bbda14718c35bc0ad513fb200b79343ee63ea054962df5e4",
+  "math_report_sha256": "b3ad45176e2742f198223ab696ff60cec08e7a7b01156b08f47285d2f9f0152f",
+  "learning_condition": "projected training from batch64 canary <=300 seconds; otherwise no learning allocation",
+  "max_training_seconds": 300,
+  "campaign_seconds": 600,
+  "note": "Same 640x480 input and native optimizer; batch changes alter learning dynamics"
+}

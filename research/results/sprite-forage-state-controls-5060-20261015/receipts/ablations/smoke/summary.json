@@ -1,0 +1,93 @@
+{
+  "campaign_seconds": 19.55409372500435,
+  "smoke": true,
+  "primary_training_n": 1,
+  "fixed_training_seed": 7,
+  "quality_or_pareto_claim": false,
+  "rows": [
+    {
+      "name": "quiet-otter-1",
+      "gaze_mode": 0,
+      "relative": 0,
+      "partial": 1,
+      "parameters": 91008,
+      "steps": 65536,
+      "train_seconds": 0.6654349339951295,
+      "process_sps": 98485.96256667173,
+      "perf": 0.14705882352941177,
+      "grape_success": 0.29411764705882354
+    },
+    {
+      "name": "mystic-tree-2",
+      "gaze_mode": 0,
+      "relative": 1,
+      "partial": 1,
+      "parameters": 91008,
+      "steps": 65536,
+      "train_seconds": 0.6153295699914452,
+      "process_sps": 106505.52678771985,
+      "perf": 0.04411764705882353,
+      "grape_success": 0.17647058823529413
+    },
+    {
+      "name": "happy-heron-3",
+      "gaze_mode": 1,
+      "relative": 0,
+      "partial": 1,
+      "parameters": 53248,
+      "steps": 65536,
+      "train_seconds": 0.5653198410000186,
+      "process_sps": 115927.2950407517,
+      "perf": 0.029411764705882353,
+      "grape_success": 0.11764705882352941
+    },
+    {
+      "name": "sunny-gecko-4",
+      "gaze_mode": 1,
+      "relative": 1,
+      "partial": 1,
+      "parameters": 53248,
+      "steps": 65536,
+      "train_seconds": 0.5655273629963631,
+      "process_sps": 115884.75516510324,
+      "perf": 0.07352941176470588,
+      "grape_success": 0.058823529411764705
+    },
+    {
+      "name": "gentle-fern-5",
+      "gaze_mode": 2,
+      "relative": 0,
+      "partial": 1,
+      "parameters": 57088,
+      "steps": 65536,
+      "train_seconds": 0.5654061889945297,
+      "process_sps": 115909.5907962091,
+      "perf": 0.029411764705882353,
+      "grape_success": 0.17647058823529413
+    },
+    {
+      "name": "silver-robin-6",
+      "gaze_mode": 2,
+      "relative": 1,
+      "partial": 1,
+      "parameters": 57088,
+      "steps": 65536,
+      "train_seconds": 0.5650260129914386,
+      "process_sps": 115987.58020543208,
+      "perf": 0.014705882352941176,
+      "grape_success": 0.11764705882352941
+    },
+    {
+      "name": "bright-maple-7",
+      "gaze_mode": 0,
+      "relative": 0,
+      "partial": 0,
+      "parameters": 106368,
+      "steps": 65536,
+      "train_seconds": 0.6155565030057915,
+      "process_sps": 106466.26212213602,
+      "perf": 0.04411764705882353,
+      "grape_success": 0.11764705882352941
+    }
+  ]
+}

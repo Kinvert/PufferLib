@@ -1,0 +1,54 @@
+[
+  {
+    "family": "before",
+    "world": 420,
+    "grape_success": 1.0,
+    "perf": 0.953125,
+    "episodes": 32,
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 108952.438310949,
+    "monotonic_finished": 108953.203871867,
+    "process_seconds": 0.7655609179928433,
+    "log_sha256": "12febb324e8d8b7eadfca658335c6db54a8b1e5857c61218bcb836742d732844"
+  },
+  {
+    "family": "before",
+    "world": 1337,
+    "grape_success": 1.0,
+    "perf": 1.0,
+    "episodes": 32,
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 108953.249313009,
+    "monotonic_finished": 108954.115467794,
+    "process_seconds": 0.8661547850060742,
+    "log_sha256": "17657f0f4f9949572127f974dd55597285773a5048aedb2cc748cb6cce58473d"
+  },
+  {
+    "family": "after",
+    "world": 420,
+    "grape_success": 1.0,
+    "perf": 0.953125,
+    "episodes": 32,
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 108954.163341861,
+    "monotonic_finished": 108954.929039327,
+    "process_seconds": 0.765697466005804,
+    "log_sha256": "09f090655dede5ce5520a84f0a502b1a8ba067d4b54ba18fbdbc4184f85f34f3"
+  },
+  {
+    "family": "after",
+    "world": 1337,
+    "grape_success": 1.0,
+    "perf": 1.0,
+    "episodes": 32,
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 108954.978024284,
+    "monotonic_finished": 108955.843912163,
+    "process_seconds": 0.8658878790010931,
+    "log_sha256": "1c7c899352989ec924e2efc4d39150a543fbcffcd46ac4003a75033f2b75fdd2"
+  }
+]

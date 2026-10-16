@@ -1,0 +1,34 @@
+[
+  {
+    "name": "mossy-robin-4",
+    "label": "world-420",
+    "world": 420,
+    "episodes": 128,
+    "perf": 0.919921875,
+    "grape_success": 0.90625,
+    "csv_path": "/home/claude/cnn/build/sprite-forage-state-relative-repeat-5060-20261015/full/mossy-robin-4-world-420.csv",
+    "csv_sha256": "597e3444280f47a91459f96d95cf390c2adeff16eddbfc815912c95a8e9d6599",
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 122152.539798528,
+    "monotonic_finished": 122153.506015864,
+    "process_seconds": 0.9662173359974986,
+    "log_sha256": "02523fa95c8353017494df568482eb5c74ff3f56dd06fea7dcdc0be3f57a463d"
+  },
+  {
+    "name": "mossy-robin-4",
+    "label": "world-1337",
+    "world": 1337,
+    "episodes": 128,
+    "perf": 0.951171875,
+    "grape_success": 0.8984375,
+    "csv_path": "/home/claude/cnn/build/sprite-forage-state-relative-repeat-5060-20261015/full/mossy-robin-4-world-1337.csv",
+    "csv_sha256": "46a5f462a7f722cdb59471f364e16beae2d2d3463fe82a0520f4ca58348a372f",
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 122153.556176762,
+    "monotonic_finished": 122154.522170466,
+    "process_seconds": 0.9659937040123623,
+    "log_sha256": "02523fa95c8353017494df568482eb5c74ff3f56dd06fea7dcdc0be3f57a463d"
+  }
+]

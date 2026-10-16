@@ -1,0 +1,39 @@
+{
+  "jobs": [
+    {
+      "name": "quiet-otter-1",
+      "partial": 0,
+      "pixels": 0,
+      "parameters": 106368,
+      "config_sha256": "fde8b8e6368b3983b68a3efec5376cb877bc4326c0af70a13826cb0579072a97"
+    },
+    {
+      "name": "mossy-fern-2",
+      "partial": 0,
+      "pixels": 1,
+      "parameters": 1332512,
+      "config_sha256": "17ac5cf916267a34663434e4c3342715689c84bc333109bd79113fd232b00406"
+    },
+    {
+      "name": "sunny-gecko-3",
+      "partial": 1,
+      "pixels": 0,
+      "parameters": 91008,
+      "config_sha256": "23d941fd3a4844a1d63e1ef2d3a2554cbfc36a581ef3d84473c115221f5965f6"
+    },
+    {
+      "name": "happy-heron-4",
+      "partial": 1,
+      "pixels": 1,
+      "parameters": 137896,
+      "config_sha256": "44dc607ac9e8a03f9ef7476322ecac6f1f5f501e6653d8858f32d12f63395dd4"
+    }
+  ],
+  "steps": 8192,
+  "fixed_seed": 7,
+  "seed_swept": false,
+  "binary_sha256": "93340798ad4314887810458a29e211dbb935fe08f8c0bf71c2945e3b1683bcdc",
+  "encoder_math_log_sha256": "d69952a33d291a41110cd9204094b9d518785e50c8b6755b9cffa4147bcf59e0",
+  "cases": "four modes, one fresh training each, six8-episode evaluations",
+  "scope": "canary; no learning/frontier/generalization/full-learner-math claim"
+}

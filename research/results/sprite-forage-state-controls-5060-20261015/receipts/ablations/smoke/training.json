@@ -1,0 +1,135 @@
+[
+  {
+    "name": "quiet-otter-1",
+    "parameters": 91008,
+    "steps": 65536,
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 120377.142706461,
+    "monotonic_finished": 120377.808141395,
+    "process_seconds": 0.6654349339951295,
+    "log_sha256": "8dbf10434edea24e172125c322f39c18626c96b3cee2432ffa9eed9666694d00",
+    "process_sps": 98485.96256667173,
+    "native_uptime": 0.27174806594848633,
+    "native_last_bin_sps": 596483.5390237339,
+    "final_training_perf": 0.06064356490969658,
+    "checkpoints": {
+      "smoke/quiet-otter-1/checkpoints/sprite_forage/quiet-otter-1/0000000000065536.bin": "6df0a4228b73abf883a66f867aea0391bac56c42e527899019ff8e4c4c5b8e2e"
+    },
+    "final_checkpoint": "/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/smoke/quiet-otter-1/checkpoints/sprite_forage/quiet-otter-1/0000000000065536.bin"
+  },
+  {
+    "name": "mystic-tree-2",
+    "parameters": 91008,
+    "steps": 65536,
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 120380.033859488,
+    "monotonic_finished": 120380.649189058,
+    "process_seconds": 0.6153295699914452,
+    "log_sha256": "073e94f3743b254395ccf52b723c720a366767387d5326de14063bfd11030fa9",
+    "process_sps": 106505.52678771985,
+    "native_uptime": 0.24728131294250488,
+    "native_last_bin_sps": 568786.6570507073,
+    "final_training_perf": 0.06218905374407768,
+    "checkpoints": {
+      "smoke/mystic-tree-2/checkpoints/sprite_forage/mystic-tree-2/0000000000065536.bin": "7a4234b0cbd8ee95a91a26d6a10ef2881c2fd6ee37791a793fd70399ceeb6e9d"
+    },
+    "final_checkpoint": "/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/smoke/mystic-tree-2/checkpoints/sprite_forage/mystic-tree-2/0000000000065536.bin"
+  },
+  {
+    "name": "happy-heron-3",
+    "parameters": 53248,
+    "steps": 65536,
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 120382.867328069,
+    "monotonic_finished": 120383.43264791,
+    "process_seconds": 0.5653198410000186,
+    "log_sha256": "a014e6e6c4e40ab1045f656e568c98c5d984d7cfd950fd272b39b8803724aab5",
+    "process_sps": 115927.2950407517,
+    "native_uptime": 0.21834993362426758,
+    "native_last_bin_sps": 808711.8028573446,
+    "final_training_perf": 0.053493451327085495,
+    "checkpoints": {
+      "smoke/happy-heron-3/checkpoints/sprite_forage/happy-heron-3/0000000000065536.bin": "febfbc8ff35eae718fa27ff8eabd9efc409b5f7ee31701fdfa3060e07a98e5b1"
+    },
+    "final_checkpoint": "/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/smoke/happy-heron-3/checkpoints/sprite_forage/happy-heron-3/0000000000065536.bin"
+  },
+  {
+    "name": "sunny-gecko-4",
+    "parameters": 53248,
+    "steps": 65536,
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 120385.546067467,
+    "monotonic_finished": 120386.11159483,
+    "process_seconds": 0.5655273629963631,
+    "log_sha256": "315575c91f18fd2bf32a7e0610f7f9af6c4896f0d805fe26eaa7eaef76063983",
+    "process_sps": 115884.75516510324,
+    "native_uptime": 0.21962738037109375,
+    "native_last_bin_sps": 814260.0478227383,
+    "final_training_perf": 0.055776894092559814,
+    "checkpoints": {
+      "smoke/sunny-gecko-4/checkpoints/sprite_forage/sunny-gecko-4/0000000000065536.bin": "5c4fdd5f5a95c8750663a4483740dbc9326f4898a893a1974b9fd49938cf554f"
+    },
+    "final_checkpoint": "/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/smoke/sunny-gecko-4/checkpoints/sprite_forage/sunny-gecko-4/0000000000065536.bin"
+  },
+  {
+    "name": "gentle-fern-5",
+    "parameters": 57088,
+    "steps": 65536,
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 120388.273359836,
+    "monotonic_finished": 120388.838766025,
+    "process_seconds": 0.5654061889945297,
+    "log_sha256": "35eb8097a06f882d5ceea61c881ab7ddba5c200dec883b1bba7d5ecb5b9de162",
+    "process_sps": 115909.5907962091,
+    "native_uptime": 0.21287775039672852,
+    "native_last_bin_sps": 751215.88951766,
+    "final_training_perf": 0.05232558026909828,
+    "checkpoints": {
+      "smoke/gentle-fern-5/checkpoints/sprite_forage/gentle-fern-5/0000000000065536.bin": "07dbd132c008506d7799db4d207c0307649369f18c807fb8507ed7c77080af4a"
+    },
+    "final_checkpoint": "/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/smoke/gentle-fern-5/checkpoints/sprite_forage/gentle-fern-5/0000000000065536.bin"
+  },
+  {
+    "name": "silver-robin-6",
+    "parameters": 57088,
+    "steps": 65536,
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 120391.086540848,
+    "monotonic_finished": 120391.651566861,
+    "process_seconds": 0.5650260129914386,
+    "log_sha256": "7a56582d78aeec9eceaa77e950782dad5bf307421f1eb8a31b60d94333e8e17b",
+    "process_sps": 115987.58020543208,
+    "native_uptime": 0.20781350135803223,
+    "native_last_bin_sps": 732632.643936971,
+    "final_training_perf": 0.04411764815449715,
+    "checkpoints": {
+      "smoke/silver-robin-6/checkpoints/sprite_forage/silver-robin-6/0000000000065536.bin": "b131380654204b6f42433b824ba591c3178b2d3a24052217d4b976d29b59b2ef"
+    },
+    "final_checkpoint": "/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/smoke/silver-robin-6/checkpoints/sprite_forage/silver-robin-6/0000000000065536.bin"
+  },
+  {
+    "name": "bright-maple-7",
+    "parameters": 106368,
+    "steps": 65536,
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 120393.766492415,
+    "monotonic_finished": 120394.382048918,
+    "process_seconds": 0.6155565030057915,
+    "log_sha256": "9848c13e3da053935dabd26e2d419f4a3a945959fbf2e20f3e770862ea4bacfd",
+    "process_sps": 106466.26212213602,
+    "native_uptime": 0.2698628902435303,
+    "native_last_bin_sps": 464360.531324753,
+    "final_training_perf": 0.05298912897706032,
+    "checkpoints": {
+      "smoke/bright-maple-7/checkpoints/sprite_forage/bright-maple-7/0000000000065536.bin": "0ea477e8b1073cc23179f9e3c4186de87c1d47e2a0c1d9b88db20a66558c6487"
+    },
+    "final_checkpoint": "/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/smoke/bright-maple-7/checkpoints/sprite_forage/bright-maple-7/0000000000065536.bin"
+  }
+]

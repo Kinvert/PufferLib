@@ -1,0 +1,81 @@
+{
+  "training": {
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 111800.085010567,
+    "monotonic_finished": 112412.171530936,
+    "process_seconds": 612.0865203690046,
+    "log_sha256": "390760581b9b75fcffcdb5ee93d19245100e15fd8c74ad2b07599d180c3a805d"
+  },
+  "process_sps": 361.360678007835,
+  "native_last_bin_sps": 261.34694286857564,
+  "native_uptime": 611.3931965827942,
+  "native_average_sps": 361.7704633225298,
+  "native_uptime_within_process": true,
+  "parameters": 19721472,
+  "final_training_perf": 0.0,
+  "initial_mean_perf": 0.0234375,
+  "final_mean_perf": 0.09375,
+  "evaluations": [
+    {
+      "label": "initial-420",
+      "world": 420,
+      "perf": 0.046875,
+      "parameters": 19721472,
+      "returncode": 0,
+      "timed_out": false,
+      "monotonic_started": 111311.371728206,
+      "monotonic_finished": 111315.198035957,
+      "process_seconds": 3.8263077510055155,
+      "log_sha256": "b3362189a6d05c2a847474236e1a2c52f2a0d2cfe41884f642990f0d4af1a497",
+      "inherited_from": "/home/claude/cnn/build/sprite-forage-flex-train-5060-20261015",
+      "executed_in_this_allocation": false
+    },
+    {
+      "label": "initial-1337",
+      "world": 1337,
+      "perf": 0.0,
+      "parameters": 19721472,
+      "returncode": 0,
+      "timed_out": false,
+      "monotonic_started": 111315.267539534,
+      "monotonic_finished": 111317.714682509,
+      "process_seconds": 2.447142974997405,
+      "log_sha256": "f13fb5bd480cf341161c39e5744e81a9e42c7870d676efe2c9d474feeefb5a8b",
+      "inherited_from": "/home/claude/cnn/build/sprite-forage-flex-train-5060-20261015",
+      "executed_in_this_allocation": false
+    },
+    {
+      "label": "final-420",
+      "world": 420,
+      "perf": 0.0625,
+      "parameters": 19721472,
+      "returncode": 0,
+      "timed_out": false,
+      "monotonic_started": 112414.180430099,
+      "monotonic_finished": 112418.404645683,
+      "process_seconds": 4.224215583992191,
+      "log_sha256": "8a79963fa4c004ac9b3a52bb1cb7aa123acf060d0d53d969b7b1598c01500a5d"
+    },
+    {
+      "label": "final-1337",
+      "world": 1337,
+      "perf": 0.125,
+      "parameters": 19721472,
+      "returncode": 0,
+      "timed_out": false,
+      "monotonic_started": 112418.463514083,
+      "monotonic_finished": 112422.185927566,
+      "process_seconds": 3.722413482988486,
+      "log_sha256": "239863af23f37edf89bb8554a014fe42cc060c2a727cce83b6f3ebd3664e90a6"
+    }
+  ],
+  "checkpoints": {
+    "0000000000055296.bin": "8f879d9f042f70f8c7890ccb4c3059c8abef0a4a1aab1887c6daee6a57baaaab",
+    "0000000000110592.bin": "bd6a003c271b78e34637d068ce79b6cb2e1412f9839a8fa6712e557610974309",
+    "0000000000165888.bin": "e6b9cc8dd02f11c02394ea3a3002098a23b6f8e2df7a031d4f2d90c6bc924b1d",
+    "0000000000221184.bin": "f4294310aaa2059fc0866963114e819ede76fbfacbb02219520ef4592108fe48"
+  },
+  "campaign_seconds": 622.5619771829952,
+  "learning_superiority_or_convergence_claim": false
+}

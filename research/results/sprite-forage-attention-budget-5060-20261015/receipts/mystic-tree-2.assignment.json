@@ -1,0 +1,8 @@
+{
+  "steps": 7012352,
+  "batch": 16384,
+  "checkpoint_epoch_cadence": 107,
+  "requested_sha256": "c5bb8c31990ac06d5ce2942a0e6552be955175805fff460f9605ea7a5cfd5614",
+  "parameters": 91008,
+  "calibration": false
+}

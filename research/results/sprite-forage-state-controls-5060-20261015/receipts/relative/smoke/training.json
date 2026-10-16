@@ -1,0 +1,21 @@
+[
+  {
+    "name": "mossy-robin-4",
+    "parameters": 83200,
+    "steps": 65536,
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 121861.091503728,
+    "monotonic_finished": 121861.706981819,
+    "process_seconds": 0.6154780910001136,
+    "log_sha256": "53f033f771a1f49f603069904aec4cc02e9a3603af421ce127e063c3f4e16d94",
+    "process_sps": 106479.82594068958,
+    "native_uptime": 0.23948264122009277,
+    "native_last_bin_sps": 539063.6657654312,
+    "final_training_perf": 0.05811403691768646,
+    "checkpoints": {
+      "smoke/mossy-robin-4/checkpoints/sprite_forage/mossy-robin-4/0000000000065536.bin": "fac2e000c018c153abb8f400876120b54e1951346c3f2e36c224cf382570e9fa"
+    },
+    "final_checkpoint": "/home/claude/cnn/build/sprite-forage-state-relative-5060-20261015/smoke/mossy-robin-4/checkpoints/sprite_forage/mossy-robin-4/0000000000065536.bin"
+  }
+]

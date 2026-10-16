@@ -1,0 +1,7 @@
+{
+  "target_seconds": 300,
+  "selection": "Minimize absolute distance of native post-rename checkpoint time from monotonic training process start to300 seconds; earlier time breaks ties",
+  "score_used": false,
+  "prepared_monotonic": 117530.221557173,
+  "tool_sha256": "4afff5f09fffecebad9d3905e5bed706652d88f5230ec4aab1a2af7c61c43ec2"
+}

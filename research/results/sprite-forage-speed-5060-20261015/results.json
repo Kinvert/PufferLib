@@ -1,0 +1,184 @@
+{
+  "training": [
+    {
+      "label": "quiet-otter-1",
+      "spatial": false,
+      "batch": 8,
+      "steps": 8192,
+      "parameters": 19721472,
+      "config_sha256": "6828bf02cbd355894d6d61152d1ab5cc5022e9327447c390a4af6ded704985b5",
+      "returncode": 0,
+      "timed_out": false,
+      "monotonic_started": 113217.759602228,
+      "monotonic_finished": 113241.280084952,
+      "process_seconds": 23.520482723994064,
+      "log_sha256": "c9299a33bd4125ace5475b1c20938b14d0698649b27168f1f266f19777248951",
+      "process_sps": 348.2921713865615,
+      "native_last_bin_sps": 321.9837078251858,
+      "native_uptime": 22.400434017181396,
+      "native_average_sps": 365.7071998567813,
+      "final_training_perf": 0.25,
+      "checkpoints": {
+        "0000000000008192.bin": "c3ea8428090b7a9bfe0e1f1f9f69a977e929afa764838b0baccff79651cb0560"
+      }
+    },
+    {
+      "label": "mossy-fern-2",
+      "spatial": true,
+      "batch": 8,
+      "steps": 8192,
+      "parameters": 1294112,
+      "config_sha256": "c19a726de2ed0a8985816969ee306898af955a7488a56b7e017c18a1982ceac4",
+      "returncode": 0,
+      "timed_out": false,
+      "monotonic_started": 113243.894473287,
+      "monotonic_finished": 113251.325129545,
+      "process_seconds": 7.430656258002273,
+      "log_sha256": "1b08306f5feef1c0dd7e1cee5c330eb1d5ef814c149254607cd28de51dbfde60",
+      "process_sps": 1102.4598252917185,
+      "native_last_bin_sps": 1174.7773775815213,
+      "native_uptime": 7.052186012268066,
+      "native_average_sps": 1161.6256272521882,
+      "final_training_perf": 0.0,
+      "checkpoints": {
+        "0000000000008192.bin": "bf902ce601231138c6cbe7543ceeb39e92ce93f667be973b70fe8c9a68ee0286"
+      }
+    },
+    {
+      "label": "sunny-gecko-3",
+      "spatial": true,
+      "batch": 64,
+      "steps": 8192,
+      "parameters": 1294112,
+      "config_sha256": "e34a13b51b58c4f4a1f0fdbcff75acb692a40bfad85086ec77bec0da769908bf",
+      "returncode": 0,
+      "timed_out": false,
+      "monotonic_started": 113253.68554203,
+      "monotonic_finished": 113260.214962449,
+      "process_seconds": 6.529420418999507,
+      "log_sha256": "c9036086b3418d82b5840429d55837cbf559ccd168bab71dcec84d83256f2022",
+      "process_sps": 1254.628967704801,
+      "native_last_bin_sps": 1334.696970827,
+      "native_uptime": 6.1569740772247314,
+      "native_average_sps": 1330.5237113638393,
+      "final_training_perf": 0.0,
+      "checkpoints": {
+        "0000000000008192.bin": "796b68a39ebc5976ce66d043a8e4b298ab0789ffe64f8386d4b5a5985093cd2f"
+      }
+    },
+    {
+      "label": "happy-heron-4",
+      "spatial": true,
+      "batch": 64,
+      "steps": 221184,
+      "parameters": 1294112,
+      "config_sha256": "065bf165f7122214b7cdfdedb167130515870601c11938c7eb8961aad93cab51",
+      "returncode": 0,
+      "timed_out": false,
+      "monotonic_started": 113265.969599017,
+      "monotonic_finished": 113431.017413742,
+      "process_seconds": 165.047814724996,
+      "log_sha256": "f4cf47d351919a444c66ad887ff511b190891dd2459bdd9b6855361107a8fa43",
+      "process_sps": 1340.1207423953997,
+      "native_last_bin_sps": 1335.7257247494601,
+      "native_uptime": 164.54906940460205,
+      "native_average_sps": 1344.1826246743515,
+      "final_training_perf": 0.05000000074505806,
+      "checkpoints": {
+        "0000000000055296.bin": "f760d0de36b0c436e60d66f65786bf02dfdec77977bc77e4e477623c1a1cbe9e",
+        "0000000000110592.bin": "59096268cfb074ecec7c3beb72cf0ffb57fdc42d18a26bacef44cce8e368d796",
+        "0000000000165888.bin": "37903bd017f27b7d4719fb2c489f45405954479f52a7ced3d44ba6a9f8048303",
+        "0000000000221184.bin": "c5886b23ea68f649ef667a9f2967f32fcef7374f74d508b429e3492d9273bce0"
+      }
+    }
+  ],
+  "evaluations": [
+    {
+      "label": "quiet-otter-1-final-420",
+      "job": "quiet-otter-1",
+      "world": 420,
+      "perf": 0.125,
+      "returncode": 0,
+      "timed_out": false,
+      "monotonic_started": 113241.848906985,
+      "monotonic_finished": 113243.867337456,
+      "process_seconds": 2.0184304709982825,
+      "log_sha256": "8566fcfd8b5c98e89910a4bf038c62e56a5333acd3af6c096ccbce3d94023a7f"
+    },
+    {
+      "label": "mossy-fern-2-final-420",
+      "job": "mossy-fern-2",
+      "world": 420,
+      "perf": 0.078125,
+      "returncode": 0,
+      "timed_out": false,
+      "monotonic_started": 113251.38643731,
+      "monotonic_finished": 113253.655372888,
+      "process_seconds": 2.2689355780021288,
+      "log_sha256": "0c1feee2cf6af21662f9e87a40f05710266b9488fa6d54b0a61c7233e8db64dd"
+    },
+    {
+      "label": "sunny-gecko-3-final-420",
+      "job": "sunny-gecko-3",
+      "world": 420,
+      "perf": 0.03125,
+      "returncode": 0,
+      "timed_out": false,
+      "monotonic_started": 113260.276818742,
+      "monotonic_finished": 113261.844149336,
+      "process_seconds": 1.567330593999941,
+      "log_sha256": "a096eabd6a0c0181e214397fce4002a28d935c80d1d0b38b58b8a12de468c2ea"
+    },
+    {
+      "label": "initial-420",
+      "job": "happy-heron-4",
+      "world": 420,
+      "perf": 0.078125,
+      "returncode": 0,
+      "timed_out": false,
+      "monotonic_started": 113261.873038866,
+      "monotonic_finished": 113264.092128663,
+      "process_seconds": 2.2190897969994694,
+      "log_sha256": "ea27db472ef43354f839c73d54bab3a53263ff508d254272854a4986bca84bff"
+    },
+    {
+      "label": "initial-1337",
+      "job": "happy-heron-4",
+      "world": 1337,
+      "perf": 0.109375,
+      "returncode": 0,
+      "timed_out": false,
+      "monotonic_started": 113264.120656555,
+      "monotonic_finished": 113265.938981694,
+      "process_seconds": 1.8183251390000805,
+      "log_sha256": "5b39c945641234ee229c609192a87670da629d780e6a823c03e3d9c5e9615e34"
+    },
+    {
+      "label": "happy-heron-4-final-420",
+      "job": "happy-heron-4",
+      "world": 420,
+      "perf": 0.046875,
+      "returncode": 0,
+      "timed_out": false,
+      "monotonic_started": 113431.175561468,
+      "monotonic_finished": 113433.394741059,
+      "process_seconds": 2.219179591003922,
+      "log_sha256": "d01c4943d00614d2059207dd40479dfc66d37390662ea367ae4638d54006865c"
+    },
+    {
+      "label": "happy-heron-4-final-1337",
+      "job": "happy-heron-4",
+      "world": 1337,
+      "perf": 0.015625,
+      "returncode": 0,
+      "timed_out": false,
+      "monotonic_started": 113433.426305057,
+      "monotonic_finished": 113435.344659273,
+      "process_seconds": 1.9183542160026263,
+      "log_sha256": "6218c179274a2fc071c260dc286006ce62e41d226ed8e9cf5a35dcf1d7f623ec"
+    }
+  ],
+  "campaign_seconds": 217.66675836700597,
+  "full_policy_math_qualified": false,
+  "generalization_or_pareto_claim": false
+}

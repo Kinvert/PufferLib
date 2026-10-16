@@ -1,0 +1,28 @@
+[
+  {
+    "name": "mossy-robin-4",
+    "parameters": 83200,
+    "steps": 83886080,
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 121864.147332523,
+    "monotonic_finished": 121961.454624633,
+    "process_seconds": 97.30729210999561,
+    "log_sha256": "2cca74b33764f294e1a769c6a1c51d0413f59a618ed47d97e478641e50d6b234",
+    "process_sps": 862073.9328063476,
+    "native_uptime": 96.92990255355835,
+    "native_last_bin_sps": 848376.6316383543,
+    "final_training_perf": 0.9264928102493286,
+    "checkpoints": {
+      "full/mossy-robin-4/checkpoints/sprite_forage/mossy-robin-4/0000000010485760.bin": "ed06ee3fc7233f8038b0aa28865b5b990bd7eedb6196ea233f868b89caf9f193",
+      "full/mossy-robin-4/checkpoints/sprite_forage/mossy-robin-4/0000000020971520.bin": "91571fe06f475a95d3db87377a892a1b7e9492dd5d3d2ed27d7096d4424dff99",
+      "full/mossy-robin-4/checkpoints/sprite_forage/mossy-robin-4/0000000031457280.bin": "a8d2ca09a4ba3fb0663469468fefa2508ad216f61eaa7c221db12ab5e5d68209",
+      "full/mossy-robin-4/checkpoints/sprite_forage/mossy-robin-4/0000000041943040.bin": "652dd79356e9f6693d16fccc334924219222b89a75df1c615214317c9268536f",
+      "full/mossy-robin-4/checkpoints/sprite_forage/mossy-robin-4/0000000052428800.bin": "7f672e1a2b32c84a8c4e0481a12d03df0be4c354eca05b901913b3ae2bbcb701",
+      "full/mossy-robin-4/checkpoints/sprite_forage/mossy-robin-4/0000000062914560.bin": "80e7e808f51bd25f1284c3d862c0f05f793d71597f9a97f343f31bb2be7d1ee5",
+      "full/mossy-robin-4/checkpoints/sprite_forage/mossy-robin-4/0000000073400320.bin": "b75d2c1f74edd7493ce457f620cdb9434e7f0752751fffb734359005c3726529",
+      "full/mossy-robin-4/checkpoints/sprite_forage/mossy-robin-4/0000000083886080.bin": "e37cbd17c2a1e5100e4213ffc1f8806a6eeacf4838ac065c4c7f7e4b7111162f"
+    },
+    "final_checkpoint": "/home/claude/cnn/build/sprite-forage-state-relative-5060-20261015/full/mossy-robin-4/checkpoints/sprite_forage/mossy-robin-4/0000000083886080.bin"
+  }
+]

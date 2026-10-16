@@ -1,0 +1,64 @@
+{
+  "comparisons": [
+    {
+      "reference": "quiet-otter-1",
+      "candidate": "gentle-maple-1",
+      "episodes": 256,
+      "collection_difference_points": 17.96875,
+      "candidate_higher": 142,
+      "tied": 85,
+      "candidate_lower": 29,
+      "scope": "Paired evaluation worlds for one trained seed; not independent training evidence"
+    },
+    {
+      "reference": "happy-heron-3",
+      "candidate": "mystic-sparrow-2",
+      "episodes": 256,
+      "collection_difference_points": 13.671875,
+      "candidate_higher": 131,
+      "tied": 74,
+      "candidate_lower": 51,
+      "scope": "Paired evaluation worlds for one trained seed; not independent training evidence"
+    },
+    {
+      "reference": "gentle-fern-5",
+      "candidate": "happy-fern-3",
+      "episodes": 256,
+      "collection_difference_points": 24.21875,
+      "candidate_higher": 167,
+      "tied": 71,
+      "candidate_lower": 18,
+      "scope": "Paired evaluation worlds for one trained seed; not independent training evidence"
+    },
+    {
+      "reference": "happy-fern-3",
+      "candidate": "mossy-robin-4",
+      "episodes": 256,
+      "collection_difference_points": 8.203125,
+      "candidate_higher": 111,
+      "tied": 113,
+      "candidate_lower": 32,
+      "scope": "Paired evaluation worlds for one trained seed; not independent training evidence"
+    },
+    {
+      "reference": "quiet-otter-1",
+      "candidate": "mossy-robin-4",
+      "episodes": 256,
+      "collection_difference_points": 29.296875,
+      "candidate_higher": 191,
+      "tied": 52,
+      "candidate_lower": 13,
+      "scope": "Paired evaluation worlds for one trained seed; not independent training evidence"
+    }
+  ],
+  "fixed_training_seed": 7,
+  "independent_training_n": 1,
+  "selected_on_development_data": true,
+  "statistical_or_pareto_claim": false,
+  "repeat": {
+    "all_eight_checkpoint_hashes_identical": true,
+    "all_256_episode_rows_identical": true,
+    "training_seed": 7,
+    "independent_training_n": 1
+  }
+}

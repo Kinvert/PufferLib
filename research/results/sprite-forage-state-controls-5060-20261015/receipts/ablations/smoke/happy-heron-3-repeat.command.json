@@ -1,0 +1,15 @@
+[
+  "/home/claude/cnn/build/sprite-forage-controls-build-20261015-1-0/puffer",
+  "sprite_eval",
+  "--base.load_model_path=/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/smoke/happy-heron-3/checkpoints/sprite_forage/happy-heron-3/0000000000065536.bin",
+  "--base.seed=7",
+  "--env.seed=0",
+  "--env.max_steps=512",
+  "--base.cudagraphs=1",
+  "--sprite_eval.seed=420",
+  "--sprite_eval.episode_offset=0",
+  "--sprite_eval.episodes=17",
+  "--sprite_eval.slots=16",
+  "--sprite_eval.max_steps=512",
+  "--sprite_eval.output=/home/claude/cnn/build/sprite-forage-state-ablations-5060-20261015/smoke/happy-heron-3-repeat.csv"
+]

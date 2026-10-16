@@ -1,0 +1,70 @@
+{
+  "target_process_seconds": 11.24610780349758,
+  "fixed_train_seed": 7,
+  "eval_worlds": [
+    420,
+    1337
+  ],
+  "eval_episodes_per_world": 32,
+  "eval_max_steps": 512,
+  "definitions": [
+    {
+      "mode": "full_state",
+      "name": "happy-otter-1",
+      "binary": "/home/claude/cnn/build/sprite-forage-cleanup-sps-20261015/after-puffer",
+      "partial": 0,
+      "pixels": 0,
+      "parameters": 67968,
+      "agents": 256,
+      "horizon": 64,
+      "minibatch": 2048,
+      "calibration_steps": 0
+    },
+    {
+      "mode": "partial_state",
+      "name": "mystic-tree-2",
+      "binary": "/home/claude/cnn/build/sprite-forage-attention-build-20261015/puffer",
+      "partial": 1,
+      "pixels": 0,
+      "parameters": 91008,
+      "agents": 256,
+      "horizon": 64,
+      "minibatch": 2048,
+      "calibration_steps": 1048576
+    },
+    {
+      "mode": "partial_pixels",
+      "name": "sunny-heron-3",
+      "binary": "/home/claude/cnn/build/sprite-forage-attention-build-20261015/puffer",
+      "partial": 1,
+      "pixels": 1,
+      "parameters": 137896,
+      "agents": 8,
+      "horizon": 8,
+      "minibatch": 64,
+      "calibration_steps": 16384
+    }
+  ],
+  "baseline_summary_sha256": "5dcd1d7db211dbec602c402584e04c03c95e16c995bb8e9ce869202aac5bef41",
+  "binaries": {
+    "/home/claude/cnn/build/sprite-forage-cleanup-sps-20261015/after-puffer": "1f2cace6fccf54d0445c49e50a904baa0d05addb0e709db79bd4f410caea9a06",
+    "/home/claude/cnn/build/sprite-forage-attention-build-20261015/puffer": "93340798ad4314887810458a29e211dbb935fe08f8c0bf71c2945e3b1683bcdc"
+  },
+  "main_sources": {
+    "ocean/sprite_forage/sprite_forage.h": "59d2f93302ab63cb46793a0e0c0a27cc7a7380220725dd9c895f09f07f255d12",
+    "ocean/sprite_forage/attention.h": "a675a0f66875a2311f1b15b4cd1a39435f4ed5fa122e10cc58e5abb208b609ae",
+    "research/forage_attention_encoder.cu": "ffe496591cde24e4e7293229c0440e08258370f5d7f6cf905dfc79854ddde067",
+    "research/forage_attention_dispatch.cu": "a23e1c4130ebec7792df18bcc30e8fe8244b70259b255b083d91d0bf92589544"
+  },
+  "tool_sha256": "e5eb2e7896d546c1cf3cbbdb1bd54cce2e8617c497548c76bb7909b7d36ed948",
+  "default_sha256": "7f493977f49f2537a59c18c2a283f062e5d6063d9e130c2d15f6be075cda1084",
+  "learner": "Historical tuned state learner for all modes; pixels change agents/horizon/minibatch only",
+  "budget_rule": "Subtract estimated startup from target; steady rate from last native SPS bin; round down to rollout batch",
+  "calibration_score_used": false,
+  "independent_training_seeds": 1,
+  "seed_swept": false,
+  "evaluation_scope": "Fixed single-slot sequential world streams, aggregate metrics; no per-episode/action trace qualification",
+  "train_process_timeout": 45,
+  "campaign_timeout": 240,
+  "score_or_pareto_claim": false
+}

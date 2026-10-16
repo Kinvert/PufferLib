@@ -1,0 +1,8 @@
+{
+  "returncode": 0,
+  "timed_out": false,
+  "monotonic_started": 120387.809435585,
+  "monotonic_finished": 120388.224324538,
+  "process_seconds": 0.4148889529897133,
+  "log_sha256": "888356b332918d9b24c8538a03a5009c7b585decf77244be5757cd8414f0ab8d"
+}
