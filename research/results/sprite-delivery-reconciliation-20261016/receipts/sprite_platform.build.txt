@@ -1,0 +1,9 @@
+Compiling ocean/sprite_platform/sprite_platform.h -> /home/claude/cnn/build/sprite-delivery-merged-20261016/build/sprite_platform...
+nvcc warning : incompatible redefinition for option 'threads', the last value of this option was used
+src/pufferl.cu(2755): warning #177-D: variable "attempts" was declared but never referenced
+              int attempts = 0;
+                  ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+Built: .//home/claude/cnn/build/sprite-delivery-merged-20261016/build/sprite_platform

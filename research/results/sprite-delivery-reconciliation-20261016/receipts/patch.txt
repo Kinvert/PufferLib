@@ -1,0 +1,4 @@
+patching file src/ocean.cu
+Hunk #1 succeeded at 92 (offset 1 line).
+patching file src/pufferl.cu
+Hunk #1 succeeded at 3635 with fuzz 1 (offset 13 lines).

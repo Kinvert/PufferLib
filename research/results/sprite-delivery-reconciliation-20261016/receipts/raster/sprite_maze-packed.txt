@@ -1,0 +1,1 @@
+PASS: 3072 paired game steps, full-frame crop parity, all skins, one-hot cells, gaze/reset timing, hidden-cell isolation
