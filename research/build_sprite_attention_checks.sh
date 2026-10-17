@@ -2,7 +2,7 @@
 # Independent float64 CUDA oracle against the captured 18-tile encoder.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-sprite_out=$(realpath "${1:?Usage: build_sprite_attention_checks.sh ATTENTION_BUILD [ENV]}")
+sprite_out=$(realpath "${1:?Usage: build_sprite_attention_checks.sh ATTENTION_BUILD [ENV] [packed]}")
 sprite_game="${2:-sprite_catch}"
 case "$sprite_game" in
     sprite_catch)
@@ -13,6 +13,10 @@ case "$sprite_game" in
         sprite_flags=(-DLD_TILE_CNN -DSPRITE_CNN_RESEARCH) ;;
     *) echo 'Use sprite_catch or sprite_lanedodge for the shared encoder checks.' >&2; exit 1 ;;
 esac
+if [[ "${3:-tiles}" == packed ]]; then
+    test "$sprite_game" == sprite_catch
+    sprite_flags+=(-DSPRITE_PACKED_VIEW)
+fi
 test ! -e "$sprite_out/checks"
 source ocean/connect4cnn/runtime_env.sh
 cp "research/$sprite_test" research/native_encoder_reference.cu "$sprite_out/source/research/"

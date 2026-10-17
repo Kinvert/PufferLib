@@ -1,5 +1,23 @@
 # Working preferences
 
+- October16 matched packed sprite benchmark preparation: read
+  `research/SPRITE_PIXEL_BENCHMARKS.md` and `NEXT_5090_SPRITE_BENCHMARKS.md`.
+  Completed cleanup/pilot sources were committed at837ba6f6 before these edits.
+  Opt-in SPRITE_PACKED_VIEW stacks player/gaze into96x192 RGB plus four geometry
+  values; movement/gaze actions remain learned independently by every policy.
+  Six shared-helper games, numeric families6tile/2Nature/0IMPALA/7Impoola/4Flex.
+  Builder captures committed core plus current named inputs under ignored build;
+  no external worktree source routing. Twelve old/packed raster sanitizer checks,
+  six native builds, host-only30-job/all-three-skin preparation, independent
+  scalar parameter counts and legacy metadata regressions pass; consult result
+  receipts for exact scope. GPU numerical/checkpoint/runtime gates for NEW packed
+  baselines remain UNEXECUTED; no long-run supervisor/5090 launch is ready yet.
+  Native Flex sweep INIs expose only18CNN axes after stripping inherited axes.
+  Seven fixed training replicas, separate eval worlds; no seed sweep. Current
+  allocations are preparation only, with no GPU query/training, system change
+  or push. Old completion audits bind their old source snapshots; optional new
+  branches change current file hashes without rewriting those prior receipts.
+
 - October16 sprite cleanup goal COMPLETE: Catch, Platform, Maze, Runner, Key,
   Push and sprite_common are now REAL LOCAL directories under ~/cnn, replacing
   the old links. Their INIs are local too. Edit here; earlier worktree copies

@@ -1,0 +1,14 @@
+--- a/src/pufferl.cu
++++ b/src/pufferl.cu
+@@ -3622,6 +3622,12 @@
+     const char* mode = argv[1];
+ #ifdef SPRITE_EXACT_RESEARCH
++#ifdef SPRITE_PACKED_VIEW
++    if (strcmp(mode, "sprite_benchmark_describe") == 0) {
++        sprite_benchmark_describe(argc, argv);
++        return 0;
++    }
++#endif
+     if (strcmp(mode, "sprite_eval_manifest") == 0) {
+         sprite_eval_manifest(argc, argv);
+         return 0;

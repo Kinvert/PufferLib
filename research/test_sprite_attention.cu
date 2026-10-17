@@ -14,7 +14,14 @@ __global__ void ref_tiles(const double* input, double* tiles, int B) {
     int b = blockIdx.x;
     for (int tile = 0; tile < REF_TILES; tile++) {
         for (int pixel = threadIdx.x; pixel < 3072; pixel += blockDim.x) {
-            tiles[(b * REF_TILES + tile) * 3072 + pixel] = input[b * REF_INPUT + tile * 3072 + pixel];
+#ifdef SPRITE_PACKED_VIEW
+            int row = tile / 3 * 32 + pixel / (32 * 3);
+            int column = tile % 3 * 32 + pixel / 3 % 32;
+            int at = (row * 96 + column) * 3 + pixel % 3;
+#else
+            int at = tile * 3072 + pixel;
+#endif
+            tiles[(b * REF_TILES + tile) * 3072 + pixel] = input[b * REF_INPUT + at];
         }
     }
 }

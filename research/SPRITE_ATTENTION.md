@@ -1,5 +1,11 @@
 # Matched player/gaze sprite research
 
+October16 follow-up: the optional packed96x192 benchmark input is described in
+[SPRITE_PIXEL_BENCHMARKS.md](SPRITE_PIXEL_BENCHMARKS.md). The completed pilots
+below used tile-contiguous inputs and their captured sources remain unchanged.
+Do not use their weights with the new packed format without an explicitly
+verified conversion. New preparation is not new training or baseline acceptance.
+
 October16, primary checkout `/home/claude/cnn`. Catch, Platform, Maze,
 Runner, Key and Push have an opt-in attention build. Their normal builds
 retain full observations and original movement-only action heads.

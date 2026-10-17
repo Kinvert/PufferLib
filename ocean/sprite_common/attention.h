@@ -31,7 +31,16 @@ void sprite_attention_observations(Env* env) {
             value ^= value >> 16;
             value *= 0x85ebca6bu;
             const float* tile = sprite_tiles[env->representation][kind][value >> 30];
+#ifdef SPRITE_PACKED_VIEW
+            int left = slot % 3 * SPRITE_CELL;
+            int top = slot / 3 * SPRITE_CELL;
+            for (int y = 0; y < SPRITE_CELL; y++) {
+                memcpy(obs + ((top + y) * SPRITE_PACKED_WIDTH + left) * 3,
+                    tile + y * SPRITE_CELL * 3, SPRITE_CELL * 3 * sizeof(float));
+            }
+#else
             memcpy(obs + slot * SPRITE_TILE_PIXELS, tile, SPRITE_TILE_PIXELS * sizeof(float));
+#endif
         } else {
             obs[slot * SPRITE_TILE_TYPES + kind] = 1;
         }

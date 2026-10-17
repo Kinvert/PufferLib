@@ -172,15 +172,26 @@ static void nature_reg_train(void* weights, void* activations, Allocator* acts, 
 
 static void* nature_create_weights(void* self) {
     Encoder* enc = (Encoder*)self;
-    static_assert(OBS_CHANNELS == 1 && OBS_HEIGHT == 36 && OBS_WIDTH == 44, "Nature Connect4 input contract");
+#ifndef SPRITE_PACKED_VIEW
+    static_assert(OBS_CHANNELS == 1 && OBS_HEIGHT == 36 && OBS_WIDTH == 44,
+        "Nature Connect4 input contract");
+#endif
     assert(enc->in_dim == OBS_SIZE && enc->out_dim > 0);
     NatureWeights* w = (NatureWeights*)calloc(1, sizeof(*w));
     w->count = 4;
-    w->layer[0] = {36, 44, 1, 32, 8, 4, 8, 10};
-    w->layer[1] = {8, 10, 32, 64, 4, 2, 3, 4};
-    w->layer[2] = {3, 4, 64, 64, 3, 1, 1, 2};
+    int H = OBS_HEIGHT, W = OBS_WIDTH, ci = OBS_CHANNELS;
+    const int channels[] = {32, 64, 64}, kernels[] = {8, 4, 3}, strides[] = {4, 2, 1};
+    for (int i = 0; i < 3; i++) {
+        int k = kernels[i], s = strides[i], co = channels[i];
+        assert(H >= k && W >= k);
+        int oh = (H - k) / s + 1, ow = (W - k) / s + 1;
+        w->layer[i] = {H, W, ci, co, k, s, oh, ow};
+        H = oh;
+        W = ow;
+        ci = co;
+    }
     // Flatten the last spatial map before the fully connected projection.
-    w->layer[3] = {1, 1, 128, enc->out_dim, 1, 1, 1, 1};
+    w->layer[3] = {1, 1, H * W * ci, enc->out_dim, 1, 1, 1, 1};
     return w;
 }
 

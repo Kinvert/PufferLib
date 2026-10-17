@@ -60,7 +60,13 @@ void observations(Fixture* state, Fixture* pixels, float* full) {
             const float* expected = cell < 0 ? sprite_tiles[pixels->env.representation][kind][0]
                 + y * SPRITE_CELL * 3 : full + ((cell / GRID_WIDTH * SPRITE_CELL + y)
                     * OBS_WIDTH + cell % GRID_WIDTH * SPRITE_CELL) * 3;
-            assert(!memcmp(p + slot * SPRITE_TILE_PIXELS + y * SPRITE_CELL * 3,
+#ifdef SPRITE_PACKED_VIEW
+            int at = ((slot / 3 * SPRITE_CELL + y) * SPRITE_PACKED_WIDTH
+                + slot % 3 * SPRITE_CELL) * 3;
+#else
+            int at = slot * SPRITE_TILE_PIXELS + y * SPRITE_CELL * 3;
+#endif
+            assert(!memcmp(p + at,
                 expected, SPRITE_CELL * 3 * sizeof(float)));
         }
     }

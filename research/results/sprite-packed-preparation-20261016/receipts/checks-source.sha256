@@ -1,0 +1,8 @@
+d6a2786779fcd9efd4dcb5dd9179cbc05ceaacf9441d7f105708d31b8ff9ccd7  /home/claude/cnn/build/sprite-packed-all-20261016/checks
+68d705b9f2834e36840e88ee5763e930f4b456e1431929e19f8718df6930847a  /home/claude/cnn/build/sprite-packed-all-20261016/source/research/forage_attention_encoder.cu
+df02e7c013aa8f6bbf36a71599bf7ee82926d113a77b5c008df891f1a711b062  /home/claude/cnn/build/sprite-packed-all-20261016/source/research/native_encoder_reference.cu
+512b11e5297d990e61ff7ca82daa4fef70065e6aa2271a5374b891594dee4acd  /home/claude/cnn/build/sprite-packed-all-20261016/source/research/sprite_attention_encoder.cu
+c8a92d3203151b1f3ba033e2dfa3caf43fdd8722ae33434f2535565d3d855108  /home/claude/cnn/build/sprite-packed-all-20261016/source/research/sprite_benchmark_metadata.cu
+d7d74f93fa013cf7a7b566c29a8e89ea5dee70c638db0db1936aa067289fe8a0  /home/claude/cnn/build/sprite-packed-all-20261016/source/research/sprite_encoders.cu
+5ed7b32c016ca32eb2d29cd459b97d6a964b07deca377bd2bc7d645aed979056  /home/claude/cnn/build/sprite-packed-all-20261016/source/research/sprite_exact_eval.cu
+ee569f49166db87ad4aca101202df4fbeb1c7e488ddefcabfcc96222fb19d0ab  /home/claude/cnn/build/sprite-packed-all-20261016/source/research/test_sprite_attention.cu

@@ -222,7 +222,7 @@ static void* flex_create_weights(void* self) {
     int depth = flex_option(enc->config, "cnn_depth", 1, 3);
     int projection = flex_option(enc->config, "cnn_projection", 16, 128);
     assert((projection & (projection - 1)) == 0);
-    int H = 36, W = 44, ci = 1;
+    int H = OBS_HEIGHT, W = OBS_WIDTH, ci = OBS_CHANNELS;
     for (int s = 1; s <= depth; s++) {
         char key[64];
         snprintf(key, sizeof(key), "cnn_channels_%d", s);

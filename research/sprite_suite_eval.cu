@@ -1,5 +1,8 @@
 // Sprite-suite research evaluator: fixed episodes, every movement/gaze head.
 #include "../ocean/connect4cnn/exact_protocol.h"
+#ifdef SPRITE_PACKED_VIEW
+#include "sprite_benchmark_metadata.cu"
+#endif
 
 static uint32_t sprite_eval_option(Ini* ini, const char* key, uint32_t low, uint32_t high) {
     double value = puf_ini_get(ini, "sprite_eval", key);

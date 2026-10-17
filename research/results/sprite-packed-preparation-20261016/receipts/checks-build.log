@@ -1,0 +1,272 @@
+research/../src/pufferl.cu(1806): warning #2361-D: invalid narrowing conversion from "double" to "int"
+          .horizon = puf_ini_get(ini, "train", "horizon"),
+                     ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+research/../src/pufferl.cu(1807): warning #2361-D: invalid narrowing conversion from "double" to "int"
+          .total_agents = puf_ini_get(ini, "vec", "total_agents"),
+                          ^
+
+research/../src/pufferl.cu(1808): warning #2361-D: invalid narrowing conversion from "double" to "int"
+          .num_buffers = puf_ini_get(ini, "vec", "num_buffers"),
+                         ^
+
+research/../src/pufferl.cu(1809): warning #2361-D: invalid narrowing conversion from "double" to "int"
+          .hidden_size = puf_ini_get(ini, "policy", "hidden_size"),
+                         ^
+
+research/../src/pufferl.cu(1810): warning #2361-D: invalid narrowing conversion from "double" to "int"
+          .num_layers = puf_ini_get(ini, "policy", "num_layers"),
+                        ^
+
+research/../src/pufferl.cu(1811): warning #2361-D: invalid narrowing conversion from "double" to "float"
+          .lr = puf_ini_get(ini, "train", "learning_rate"),
+                ^
+
+research/../src/pufferl.cu(1812): warning #2361-D: invalid narrowing conversion from "double" to "float"
+          .min_lr_ratio = puf_ini_get(ini, "train", "min_lr_ratio"),
+                          ^
+
+research/../src/pufferl.cu(1814): warning #2361-D: invalid narrowing conversion from "double" to "float"
+          .momentum = puf_ini_get(ini, "train", "momentum"),
+                      ^
+
+research/../src/pufferl.cu(1815): warning #2361-D: invalid narrowing conversion from "double" to "int"
+          .minibatch_size = puf_ini_get(ini, "train", "minibatch_size"),
+                            ^
+
+research/../src/pufferl.cu(1816): warning #2361-D: invalid narrowing conversion from "double" to "float"
+          .replay_ratio = puf_ini_get(ini, "train", "replay_ratio"),
+                          ^
+
+research/../src/pufferl.cu(1817): warning #2361-D: invalid narrowing conversion from "double" to "long"
+          .total_timesteps = puf_ini_get(ini, "train", "total_timesteps"),
+                             ^
+
+research/../src/pufferl.cu(1818): warning #2361-D: invalid narrowing conversion from "double" to "float"
+          .max_grad_norm = puf_ini_get(ini, "train", "max_grad_norm"),
+                           ^
+
+research/../src/pufferl.cu(1819): warning #2361-D: invalid narrowing conversion from "double" to "float"
+          .clip_coef = puf_ini_get(ini, "train", "clip_coef"),
+                       ^
+
+research/../src/pufferl.cu(1820): warning #2361-D: invalid narrowing conversion from "double" to "float"
+          .vf_clip_coef = puf_ini_get(ini, "train", "vf_clip_coef"),
+                          ^
+
+research/../src/pufferl.cu(1821): warning #2361-D: invalid narrowing conversion from "double" to "float"
+          .vf_coef = puf_ini_get(ini, "train", "vf_coef"),
+                     ^
+
+research/../src/pufferl.cu(1822): warning #2361-D: invalid narrowing conversion from "double" to "float"
+          .ent_coef = puf_ini_get(ini, "train", "ent_coef"),
+                      ^
+
+research/../src/pufferl.cu(1823): warning #2361-D: invalid narrowing conversion from "double" to "float"
+          .min_ent_coef_ratio = puf_ini_get(ini, "train", "min_ent_coef_ratio"),
+                                ^
+
+research/../src/pufferl.cu(1825): warning #2361-D: invalid narrowing conversion from "double" to "float"
+          .gamma = puf_ini_get(ini, "train", "gamma"),
+                   ^
+
+research/../src/pufferl.cu(1826): warning #2361-D: invalid narrowing conversion from "double" to "float"
+          .gae_lambda = puf_ini_get(ini, "train", "gae_lambda"),
+                        ^
+
+research/../src/pufferl.cu(1828): warning #2361-D: invalid narrowing conversion from "double" to "float"
+          .vtrace_rho_clip = puf_ini_get(ini, "train", "vtrace_rho_clip"),
+                             ^
+
+research/../src/pufferl.cu(1829): warning #2361-D: invalid narrowing conversion from "double" to "float"
+          .vtrace_c_clip = puf_ini_get(ini, "train", "vtrace_c_clip"),
+                           ^
+
+research/../src/pufferl.cu(1837): warning #2361-D: invalid narrowing conversion from "double" to "int"
+          .num_threads = puf_ini_get(ini, "vec", "num_threads"),
+                         ^
+
+research/../src/pufferl.cu(1838): warning #2361-D: invalid narrowing conversion from "double" to "int"
+          .seed = puf_ini_get(ini, "base", "seed"),
+                  ^
+
+research/../src/pufferl.cu(1806): warning #2361-D: invalid narrowing conversion from "double" to "int"
+          .horizon = puf_ini_get(ini, "train", "horizon"),
+                     ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+research/../src/pufferl.cu(1807): warning #2361-D: invalid narrowing conversion from "double" to "int"
+          .total_agents = puf_ini_get(ini, "vec", "total_agents"),
+                          ^
+
+research/../src/pufferl.cu(1808): warning #2361-D: invalid narrowing conversion from "double" to "int"
+          .num_buffers = puf_ini_get(ini, "vec", "num_buffers"),
+                         ^
+
+research/../src/pufferl.cu(1809): warning #2361-D: invalid narrowing conversion from "double" to "int"
+          .hidden_size = puf_ini_get(ini, "policy", "hidden_size"),
+                         ^
+
+research/../src/pufferl.cu(1810): warning #2361-D: invalid narrowing conversion from "double" to "int"
+          .num_layers = puf_ini_get(ini, "policy", "num_layers"),
+                        ^
+
+research/../src/pufferl.cu(1811): warning #2361-D: invalid narrowing conversion from "double" to "float"
+          .lr = puf_ini_get(ini, "train", "learning_rate"),
+                ^
+
+research/../src/pufferl.cu(1812): warning #2361-D: invalid narrowing conversion from "double" to "float"
+          .min_lr_ratio = puf_ini_get(ini, "train", "min_lr_ratio"),
+                          ^
+
+research/../src/pufferl.cu(1814): warning #2361-D: invalid narrowing conversion from "double" to "float"
+          .momentum = puf_ini_get(ini, "train", "momentum"),
+                      ^
+
+research/../src/pufferl.cu(1815): warning #2361-D: invalid narrowing conversion from "double" to "int"
+          .minibatch_size = puf_ini_get(ini, "train", "minibatch_size"),
+                            ^
+
+research/../src/pufferl.cu(1816): warning #2361-D: invalid narrowing conversion from "double" to "float"
+          .replay_ratio = puf_ini_get(ini, "train", "replay_ratio"),
+                          ^
+
+research/../src/pufferl.cu(1817): warning #2361-D: invalid narrowing conversion from "double" to "long"
+          .total_timesteps = puf_ini_get(ini, "train", "total_timesteps"),
+                             ^
+
+research/../src/pufferl.cu(1818): warning #2361-D: invalid narrowing conversion from "double" to "float"
+          .max_grad_norm = puf_ini_get(ini, "train", "max_grad_norm"),
+                           ^
+
+research/../src/pufferl.cu(1819): warning #2361-D: invalid narrowing conversion from "double" to "float"
+          .clip_coef = puf_ini_get(ini, "train", "clip_coef"),
+                       ^
+
+research/../src/pufferl.cu(1820): warning #2361-D: invalid narrowing conversion from "double" to "float"
+          .vf_clip_coef = puf_ini_get(ini, "train", "vf_clip_coef"),
+                          ^
+
+research/../src/pufferl.cu(1821): warning #2361-D: invalid narrowing conversion from "double" to "float"
+          .vf_coef = puf_ini_get(ini, "train", "vf_coef"),
+                     ^
+
+research/../src/pufferl.cu(1822): warning #2361-D: invalid narrowing conversion from "double" to "float"
+          .ent_coef = puf_ini_get(ini, "train", "ent_coef"),
+                      ^
+
+research/../src/pufferl.cu(1823): warning #2361-D: invalid narrowing conversion from "double" to "float"
+          .min_ent_coef_ratio = puf_ini_get(ini, "train", "min_ent_coef_ratio"),
+                                ^
+
+research/../src/pufferl.cu(1825): warning #2361-D: invalid narrowing conversion from "double" to "float"
+          .gamma = puf_ini_get(ini, "train", "gamma"),
+                   ^
+
+research/../src/pufferl.cu(1826): warning #2361-D: invalid narrowing conversion from "double" to "float"
+          .gae_lambda = puf_ini_get(ini, "train", "gae_lambda"),
+                        ^
+
+research/../src/pufferl.cu(1828): warning #2361-D: invalid narrowing conversion from "double" to "float"
+          .vtrace_rho_clip = puf_ini_get(ini, "train", "vtrace_rho_clip"),
+                             ^
+
+research/../src/pufferl.cu(1829): warning #2361-D: invalid narrowing conversion from "double" to "float"
+          .vtrace_c_clip = puf_ini_get(ini, "train", "vtrace_c_clip"),
+                           ^
+
+research/../src/pufferl.cu(1837): warning #2361-D: invalid narrowing conversion from "double" to "int"
+          .num_threads = puf_ini_get(ini, "vec", "num_threads"),
+                         ^
+
+research/../src/pufferl.cu(1838): warning #2361-D: invalid narrowing conversion from "double" to "int"
+          .seed = puf_ini_get(ini, "base", "seed"),
+                  ^
+
+research/../src/pufferl.cu(2755): warning #177-D: variable "attempts" was declared but never referenced
+              int attempts = 0;
+                  ^
+
+./ocean/sprite_catch/../sprite_common/sprite.h: In function ‘void sprite_render(SpriteClient**, const unsigned char*, int, int, unsigned int, const char*, int)’:
+./ocean/sprite_catch/../sprite_common/sprite.h:111:59: warning: narrowing conversion of ‘(((*(c->SpriteClient::frame + ((sizetype)(((long unsigned int)(3 * i)) * 4)))) * (float)255) + 5.0e-1f)’ from ‘float’ to ‘unsigned char’ [-Wnarrowing]
+  111 |         c->pixels[i] = (Color){c->frame[3 * i] * 255 + .5f,
+      |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^       
+./ocean/sprite_catch/../sprite_common/sprite.h:111:105: warning: narrowing conversion of ‘(((*(c->SpriteClient::frame + ((((sizetype)(3 * i)) + 1) * 4))) * (float)255) + 5.0e-1f)’ from ‘float’ to ‘unsigned char’ [-Wnarrowing]
+  111 |         c->pixels[i] = (Color){c->frame[3 * i] * 255 + .5f,
+      |                                                                                                         ^       
+./ocean/sprite_catch/../sprite_common/sprite.h:111:151: warning: narrowing conversion of ‘(((*(c->SpriteClient::frame + ((((sizetype)(3 * i)) + 2) * 4))) * (float)255) + 5.0e-1f)’ from ‘float’ to ‘unsigned char’ [-Wnarrowing]
+  111 |         c->pixels[i] = (Color){c->frame[3 * i] * 255 + .5f,
+      |                                                                                                                                                       ^       
+research/../src/pufferl.cu: In function ‘PuffeRL* create_pufferl(Ini*, TrainContext*)’:
+research/../src/pufferl.cu:1805:40: warning: narrowing conversion of ‘puf_ini_get(ini, ((const char*)"train"), ((const char*)"horizon"))’ from ‘double’ to ‘int’ [-Wnarrowing]
+ 1805 |     Hypers hypers = {
+      |                                        ^                        
+research/../src/pufferl.cu:1805:94: warning: narrowing conversion of ‘puf_ini_get(ini, ((const char*)"vec"), ((const char*)"total_agents"))’ from ‘double’ to ‘int’ [-Wnarrowing]
+ 1805 |     Hypers hypers = {
+      |                                                                                              ^                           
+research/../src/pufferl.cu:1805:150: warning: narrowing conversion of ‘puf_ini_get(ini, ((const char*)"vec"), ((const char*)"num_buffers"))’ from ‘double’ to ‘int’ [-Wnarrowing]
+ 1805 |     Hypers hypers = {
+      |                                                                                                                                                      ^                          
+research/../src/pufferl.cu:1805:205: warning: narrowing conversion of ‘puf_ini_get(ini, ((const char*)"policy"), ((const char*)"hidden_size"))’ from ‘double’ to ‘int’ [-Wnarrowing]
+ 1805 |     Hypers hypers = {
+      |                                                                                                                                                                                                             ^                             
+research/../src/pufferl.cu:1805:262: warning: narrowing conversion of ‘puf_ini_get(ini, ((const char*)"policy"), ((const char*)"num_layers"))’ from ‘double’ to ‘int’ [-Wnarrowing]
+ 1805 |     Hypers hypers = {
+      |                                                                                                                                                                                                                                                                      ^                            
+research/../src/pufferl.cu:1805:310: warning: narrowing conversion of ‘puf_ini_get(ini, ((const char*)"train"), ((const char*)"learning_rate"))’ from ‘double’ to ‘float’ [-Wnarrowing]
+ 1805 |     Hypers hypers = {
+      |                                                                                                                                                                                                                                                                                                                      ^                              
+research/../src/pufferl.cu:1805:370: warning: narrowing conversion of ‘puf_ini_get(ini, ((const char*)"train"), ((const char*)"min_lr_ratio"))’ from ‘double’ to ‘float’ [-Wnarrowing]
+ 1805 |     Hypers hypers = {
+      |                                                                                                                                                                                                                                                                                                                                                                                  ^                             
+research/../src/pufferl.cu:1805:485: warning: narrowing conversion of ‘puf_ini_get(ini, ((const char*)"train"), ((const char*)"momentum"))’ from ‘double’ to ‘float’ [-Wnarrowing]
+ 1805 |     Hypers hypers = {
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     ^                         
+research/../src/pufferl.cu:1805:542: warning: narrowing conversion of ‘puf_ini_get(ini, ((const char*)"train"), ((const char*)"minibatch_size"))’ from ‘double’ to ‘int’ [-Wnarrowing]
+ 1805 |     Hypers hypers = {
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              ^                               
+research/../src/pufferl.cu:1805:603: warning: narrowing conversion of ‘puf_ini_get(ini, ((const char*)"train"), ((const char*)"replay_ratio"))’ from ‘double’ to ‘float’ [-Wnarrowing]
+ 1805 |     Hypers hypers = {
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           ^                             
+research/../src/pufferl.cu:1805:665: warning: narrowing conversion of ‘puf_ini_get(ini, ((const char*)"train"), ((const char*)"total_timesteps"))’ from ‘double’ to ‘long int’ [-Wnarrowing]
+ 1805 |     Hypers hypers = {
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         ^                                
+research/../src/pufferl.cu:1805:728: warning: narrowing conversion of ‘puf_ini_get(ini, ((const char*)"train"), ((const char*)"max_grad_norm"))’ from ‘double’ to ‘float’ [-Wnarrowing]
+ 1805 |     Hypers hypers = {
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ^                              
+research/../src/pufferl.cu:1805:785: warning: narrowing conversion of ‘puf_ini_get(ini, ((const char*)"train"), ((const char*)"clip_coef"))’ from ‘double’ to ‘float’ [-Wnarrowing]
+ 1805 |     Hypers hypers = {
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ^                          
+research/../src/pufferl.cu:1805:841: warning: narrowing conversion of ‘puf_ini_get(ini, ((const char*)"train"), ((const char*)"vf_clip_coef"))’ from ‘double’ to ‘float’ [-Wnarrowing]
+ 1805 |     Hypers hypers = {
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         ^                             
+research/../src/pufferl.cu:1805:895: warning: narrowing conversion of ‘puf_ini_get(ini, ((const char*)"train"), ((const char*)"vf_coef"))’ from ‘double’ to ‘float’ [-Wnarrowing]
+ 1805 |     Hypers hypers = {
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ^                        
+research/../src/pufferl.cu:1805:945: warning: narrowing conversion of ‘puf_ini_get(ini, ((const char*)"train"), ((const char*)"ent_coef"))’ from ‘double’ to ‘float’ [-Wnarrowing]
+ 1805 |     Hypers hypers = {
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ^                         
+research/../src/pufferl.cu:1805:1006: warning: narrowing conversion of ‘puf_ini_get(ini, ((const char*)"train"), ((const char*)"min_ent_coef_ratio"))’ from ‘double’ to ‘float’ [-Wnarrowing]
+ 1805 |     Hypers hypers = {
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              ^                                   
+research/../src/pufferl.cu:1805:1136: warning: narrowing conversion of ‘puf_ini_get(ini, ((const char*)"train"), ((const char*)"gamma"))’ from ‘double’ to ‘float’ [-Wnarrowing]
+ 1805 |     Hypers hypers = {
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ^                      
+research/../src/pufferl.cu:1805:1186: warning: narrowing conversion of ‘puf_ini_get(ini, ((const char*)"train"), ((const char*)"gae_lambda"))’ from ‘double’ to ‘float’ [-Wnarrowing]
+ 1805 |     Hypers hypers = {
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ^                           
+research/../src/pufferl.cu:1805:1300: warning: narrowing conversion of ‘puf_ini_get(ini, ((const char*)"train"), ((const char*)"vtrace_rho_clip"))’ from ‘double’ to ‘float’ [-Wnarrowing]
+ 1805 |     Hypers hypers = {
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ^                                
+research/../src/pufferl.cu:1805:1363: warning: narrowing conversion of ‘puf_ini_get(ini, ((const char*)"train"), ((const char*)"vtrace_c_clip"))’ from ‘double’ to ‘float’ [-Wnarrowing]
+ 1805 |     Hypers hypers = {
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   ^                              
+research/../src/pufferl.cu:1805:1741: warning: narrowing conversion of ‘puf_ini_get(ini, ((const char*)"vec"), ((const char*)"num_threads"))’ from ‘double’ to ‘int’ [-Wnarrowing]
+ 1805 |     Hypers hypers = {
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             ^                          
+research/../src/pufferl.cu:1805:1789: warning: narrowing conversion of ‘puf_ini_get(ini, ((const char*)"base"), ((const char*)"seed"))’ from ‘double’ to ‘int’ [-Wnarrowing]
+ 1805 |     Hypers hypers = {
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             ^                    

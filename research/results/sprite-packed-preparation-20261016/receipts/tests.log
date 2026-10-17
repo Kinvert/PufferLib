@@ -1,0 +1,12 @@
+test_actual_packet (research.tests.test_sprite_pixel_benchmarks.SpritePixelPreparationTests.test_actual_packet) ... ok
+test_independent_counts (research.tests.test_sprite_pixel_benchmarks.SpritePixelPreparationTests.test_independent_counts) ... ok
+test_missing_job_rejected (research.tests.test_sprite_pixel_benchmarks.SpritePixelPreparationTests.test_missing_job_rejected) ... ok
+test_seed_search_rejected (research.tests.test_sprite_pixel_benchmarks.SpritePixelPreparationTests.test_seed_search_rejected) ... ok
+test_sweep_axes_and_seeds (research.tests.test_sprite_pixel_benchmarks.SpritePixelPreparationTests.test_sweep_axes_and_seeds) ... ok
+test_wrong_metadata_rejected (research.tests.test_sprite_pixel_benchmarks.SpritePixelPreparationTests.test_wrong_metadata_rejected) ... ok
+test_wrong_schedule_rejected (research.tests.test_sprite_pixel_benchmarks.SpritePixelPreparationTests.test_wrong_schedule_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.300s
+
+OK

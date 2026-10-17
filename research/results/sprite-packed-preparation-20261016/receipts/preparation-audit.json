@@ -1,0 +1,11 @@
+{
+  "status": "prepared-not-executed",
+  "jobs": 30,
+  "assigned_world_pixel_manifests": 36,
+  "fixed_training_seeds": [
+    7
+  ],
+  "planned_checkpoints_per_job": 8,
+  "gpu_execution": false,
+  "scientific_claim": false
+}

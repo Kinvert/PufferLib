@@ -18,7 +18,15 @@ __global__ void forage_pack_tiles(const precision_t* input, precision_t* pixels,
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i < n) {
         int b = i / FORAGE_VIEW_PIXELS;
+#ifdef SPRITE_PACKED_VIEW
+        int tile = i % FORAGE_VIEW_PIXELS / FORAGE_TILE_PIXELS;
+        int at = i % FORAGE_TILE_PIXELS;
+        int y = tile / 3 * 32 + at / 96;
+        int x = tile % 3 * 32 + at / 3 % 32;
+        pixels[i] = input[b * FORAGE_VIEW_OBS + (y * 96 + x) * 3 + at % 3];
+#else
         pixels[i] = input[b * FORAGE_VIEW_OBS + i % FORAGE_VIEW_PIXELS];
+#endif
     }
 }
 

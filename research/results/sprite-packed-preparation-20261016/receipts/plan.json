@@ -1,0 +1,2627 @@
+{
+  "schema": "sprite-packed-benchmark-v1",
+  "status": "prepared-not-executed",
+  "mode": "canary",
+  "games": [
+    "catch",
+    "platform",
+    "maze",
+    "runner",
+    "key",
+    "push"
+  ],
+  "families": [
+    "tile",
+    "nature",
+    "impala",
+    "impoola",
+    "flex"
+  ],
+  "build": "/home/claude/cnn/build/sprite-packed-all-20261016",
+  "source_manifest_sha256": "2b7a9e2388b89dd7f9a853019f712d5ef9a82e071abb0450dc225a511e525151",
+  "tool_sha256": "b1d0a57ca1be9a299b6a2e9d94f466541c9ac8f5c054aa2ab8e0473d1c1d124f",
+  "recipe_sha256": "dfc819237713751f158575a844fd77afae74be02591f00c227e167502fdd8c07",
+  "observation": {
+    "layout": "player3x3-above-gaze3x3",
+    "width": 96,
+    "height": 192,
+    "channels": 3,
+    "geometry": 4,
+    "input_size": 55300,
+    "shared_pixel_bytes": true
+  },
+  "decisions": 8192,
+  "checkpoints": [
+    1024,
+    2048,
+    3072,
+    4096,
+    5120,
+    6144,
+    7168,
+    8192
+  ],
+  "training_seeds": [
+    7
+  ],
+  "seeds_swept": false,
+  "evaluation_seeds": [
+    2026101601,
+    2026101602
+  ],
+  "jobs": [
+    {
+      "id": "catch-tile-s7",
+      "game": "catch",
+      "family": "tile",
+      "seed": 7,
+      "binary": "/home/claude/cnn/build/sprite-packed-all-20261016/sprite_catch",
+      "binary_sha256": "4c9c94804e97f4e5cb253f399af1f3e65b269e663fe465852a74b3e032ab02fd",
+      "config": "jobs/catch-tile-s7/config/sprite_catch.ini",
+      "config_sha256": "2555b24ee6201b38155341c162bd4afe4473200cffe4ae3974e4525582dcd22d",
+      "default_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "metadata": {
+        "schema": "sprite-packed-metadata-v1",
+        "encoder": 6,
+        "width": 96,
+        "height": 192,
+        "channels": 3,
+        "geometry": 4,
+        "input_size": 55300,
+        "action_sizes": [
+          3,
+          20,
+          15
+        ],
+        "hidden": 128,
+        "layers": 4,
+        "parameters": 253224,
+        "encoder_parameters": 51624,
+        "checkpoint_bytes": 1012896,
+        "encoder_rollout_bytes_per_item": 1498128,
+        "encoder_train_bytes_per_item": 1998624,
+        "encoder_gradient_bytes": 206496,
+        "gpu_execution": false
+      },
+      "metadata_receipt_sha256": "bcaec8653226ee85f33ee4bd0a02e00c13e2c6ade52aeb41351e6b358fd67e52",
+      "evaluations": [
+        {
+          "config": "jobs/catch-tile-s7/eval-skin0-world2026101601.ini",
+          "config_sha256": "2555b24ee6201b38155341c162bd4afe4473200cffe4ae3974e4525582dcd22d",
+          "skin": 0,
+          "world": 2026101601,
+          "manifest_sha256": "e6e0e466ce642ee00948adb4de17762d3430877053b4cba991cc0a8be6a7f6b9",
+          "manifest": "jobs/catch-tile-s7/eval-skin0-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/catch-tile-s7/eval-skin0-world2026101602.ini",
+          "config_sha256": "c0955080ed6cada56a4bfb9cbc9de1c6477f0b97e283dcea2b7915380b6e82a4",
+          "skin": 0,
+          "world": 2026101602,
+          "manifest_sha256": "ee265d805754edfafb51688caf19e72e04061de317a7b7046dc5c21f895aaf2a",
+          "manifest": "jobs/catch-tile-s7/eval-skin0-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/catch-tile-s7/eval-skin1-world2026101601.ini",
+          "config_sha256": "1c1c26a9c38d0d57deabb3f849dbe7107e7b075f13abb30b135897d6ffb0a1ce",
+          "skin": 1,
+          "world": 2026101601,
+          "manifest_sha256": "c30ff4b676fb97da196429c1bb0dbf84a8363df1df691786d9d856b2f24d342d",
+          "manifest": "jobs/catch-tile-s7/eval-skin1-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/catch-tile-s7/eval-skin1-world2026101602.ini",
+          "config_sha256": "b60325d4d038d5181836ae040f3f528f0c910f1fbd700d54f738c142fca21891",
+          "skin": 1,
+          "world": 2026101602,
+          "manifest_sha256": "0cafc91734af09017ad67a03391fcbe0fe0f3782661e2701b8f4c7bb8b3c3f66",
+          "manifest": "jobs/catch-tile-s7/eval-skin1-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/catch-tile-s7/eval-skin2-world2026101601.ini",
+          "config_sha256": "10e293b9f1a711e7c5d023c38f0ae931a248fa50897060ace24270bde14cbd85",
+          "skin": 2,
+          "world": 2026101601,
+          "manifest_sha256": "65e0c1c8b272fbe2e7147d2ea6149c455c2abd34a4b2c8e55a921192a3758835",
+          "manifest": "jobs/catch-tile-s7/eval-skin2-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/catch-tile-s7/eval-skin2-world2026101602.ini",
+          "config_sha256": "4c054e4804d2f41eb2d64191804bce575477b0a166ff82d24889700712348f86",
+          "skin": 2,
+          "world": 2026101602,
+          "manifest_sha256": "31962c66f1ff3d56610898f0e8c64b5fb7f3ef3aa6069c601433d54020319de1",
+          "manifest": "jobs/catch-tile-s7/eval-skin2-world2026101602.manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "catch-nature-s7",
+      "game": "catch",
+      "family": "nature",
+      "seed": 7,
+      "binary": "/home/claude/cnn/build/sprite-packed-all-20261016/sprite_catch",
+      "binary_sha256": "4c9c94804e97f4e5cb253f399af1f3e65b269e663fe465852a74b3e032ab02fd",
+      "config": "jobs/catch-nature-s7/config/sprite_catch.ini",
+      "config_sha256": "b3f6428eaf42a66ad5e7d821f4bbe50f65fc6571b7b2b0fcbc80f3dd48abb9e4",
+      "default_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "metadata": {
+        "schema": "sprite-packed-metadata-v1",
+        "encoder": 2,
+        "width": 96,
+        "height": 192,
+        "channels": 3,
+        "geometry": 4,
+        "input_size": 55300,
+        "action_sizes": [
+          3,
+          20,
+          15
+        ],
+        "hidden": 128,
+        "layers": 4,
+        "parameters": 1605408,
+        "encoder_parameters": 1403808,
+        "checkpoint_bytes": 6421632,
+        "encoder_rollout_bytes_per_item": 2148752,
+        "encoder_train_bytes_per_item": 3246624,
+        "encoder_gradient_bytes": 5615232,
+        "gpu_execution": false
+      },
+      "metadata_receipt_sha256": "0139c93c5eb0964d2faecb2b905d7269163c8c0b365f0ff2eb745cddd11d4c7e",
+      "evaluations": [
+        {
+          "config": "jobs/catch-nature-s7/eval-skin0-world2026101601.ini",
+          "config_sha256": "b3f6428eaf42a66ad5e7d821f4bbe50f65fc6571b7b2b0fcbc80f3dd48abb9e4",
+          "skin": 0,
+          "world": 2026101601,
+          "manifest_sha256": "6a08cc1c3f85f8550993dfa770bfa7090d055d8714d41c270c2e12c8912ba133",
+          "manifest": "jobs/catch-nature-s7/eval-skin0-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/catch-nature-s7/eval-skin0-world2026101602.ini",
+          "config_sha256": "a6af64fef5f71fd7ccfcc1323df6351d57b55f2614f2cec2c80a261b17b68de4",
+          "skin": 0,
+          "world": 2026101602,
+          "manifest_sha256": "93d8c930387afae176b5d7d06dbba18f01fe7693c4d2bf2e6d00f3f520449436",
+          "manifest": "jobs/catch-nature-s7/eval-skin0-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/catch-nature-s7/eval-skin1-world2026101601.ini",
+          "config_sha256": "ebc07cd39cf747b4d939efd1976cccdc380a00f7a33def6508032e42ae80d877",
+          "skin": 1,
+          "world": 2026101601,
+          "manifest_sha256": "47f8e2a263365803b06fcbb1252bd7c3bf6017e5c90d592cbb609e2b7d1b1578",
+          "manifest": "jobs/catch-nature-s7/eval-skin1-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/catch-nature-s7/eval-skin1-world2026101602.ini",
+          "config_sha256": "c5b6bb0d7a13ef31c284fd5db42b227ed23a097a60f55e542e5ee5d9a5282cbc",
+          "skin": 1,
+          "world": 2026101602,
+          "manifest_sha256": "8cecde21a51a2d3472c9d1013dda8392194752c28aca8354989f48fddffad2ce",
+          "manifest": "jobs/catch-nature-s7/eval-skin1-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/catch-nature-s7/eval-skin2-world2026101601.ini",
+          "config_sha256": "8cbd468af8bde87770566758c0c491e0894a1cbc4ee3db712a68da9d53334a90",
+          "skin": 2,
+          "world": 2026101601,
+          "manifest_sha256": "47b8485dccff440e5b52985873b688a7cdb9e4cd8c9cc98b82f6f84c0ddcb729",
+          "manifest": "jobs/catch-nature-s7/eval-skin2-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/catch-nature-s7/eval-skin2-world2026101602.ini",
+          "config_sha256": "52eb864224df429ea34f3132b25e8fb07c69800c03a73ed06d9949a27592f0fa",
+          "skin": 2,
+          "world": 2026101602,
+          "manifest_sha256": "01e200fe1ae33b873c730cd3f59d06dca0730f42740c5b3d54113d3c9a1cbd67",
+          "manifest": "jobs/catch-nature-s7/eval-skin2-world2026101602.manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "catch-impala-s7",
+      "game": "catch",
+      "family": "impala",
+      "seed": 7,
+      "binary": "/home/claude/cnn/build/sprite-packed-all-20261016/sprite_catch",
+      "binary_sha256": "4c9c94804e97f4e5cb253f399af1f3e65b269e663fe465852a74b3e032ab02fd",
+      "config": "jobs/catch-impala-s7/config/sprite_catch.ini",
+      "config_sha256": "44a0a701c9e3980a13141281d3741b314927ee2448a740703ee2d65b8a6bdd89",
+      "default_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "metadata": {
+        "schema": "sprite-packed-metadata-v1",
+        "encoder": 0,
+        "width": 96,
+        "height": 192,
+        "channels": 3,
+        "geometry": 4,
+        "input_size": 55300,
+        "action_sizes": [
+          3,
+          20,
+          15
+        ],
+        "hidden": 128,
+        "layers": 4,
+        "parameters": 1496000,
+        "encoder_parameters": 1294400,
+        "checkpoint_bytes": 5984000,
+        "encoder_rollout_bytes_per_item": 7226896,
+        "encoder_train_bytes_per_item": 13237280,
+        "encoder_gradient_bytes": 5177600,
+        "gpu_execution": false
+      },
+      "metadata_receipt_sha256": "95b9f121b127d8556dcad28719e708c499bbbef19c8461f680a4d9246333ea23",
+      "evaluations": [
+        {
+          "config": "jobs/catch-impala-s7/eval-skin0-world2026101601.ini",
+          "config_sha256": "44a0a701c9e3980a13141281d3741b314927ee2448a740703ee2d65b8a6bdd89",
+          "skin": 0,
+          "world": 2026101601,
+          "manifest_sha256": "764db0f5f91060007be53c09f152fc4c4a803f7ab35cc5a5a98cb53ac06be517",
+          "manifest": "jobs/catch-impala-s7/eval-skin0-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/catch-impala-s7/eval-skin0-world2026101602.ini",
+          "config_sha256": "5004d37f0b192312b3d1258ab34d62c686641cd289235b2c4a5e08e8b94d3aa4",
+          "skin": 0,
+          "world": 2026101602,
+          "manifest_sha256": "d8fe98660d856994aecfae5ce224e738d45f4c2527d2d546116bc6cc717b87a1",
+          "manifest": "jobs/catch-impala-s7/eval-skin0-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/catch-impala-s7/eval-skin1-world2026101601.ini",
+          "config_sha256": "42ff89c107b6b6f7a20914c62b7b6b6c52b9666f76790dfdde5a066b79b22c2b",
+          "skin": 1,
+          "world": 2026101601,
+          "manifest_sha256": "e865f7b80738051f6a24a5609d879d7504fc3371df8a6149968dcfb0a2a20121",
+          "manifest": "jobs/catch-impala-s7/eval-skin1-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/catch-impala-s7/eval-skin1-world2026101602.ini",
+          "config_sha256": "18dbdf37e1f34c6e08edfa4c5c6e7ad39070a1c3d7b671dc6a57ac87069d4302",
+          "skin": 1,
+          "world": 2026101602,
+          "manifest_sha256": "8b65c2caecd33a9091a78a28e92007fcf40a6854dceb7371b248649d8f6898bd",
+          "manifest": "jobs/catch-impala-s7/eval-skin1-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/catch-impala-s7/eval-skin2-world2026101601.ini",
+          "config_sha256": "952ec1f52f633de76fedc8fa20b203427b728381f676cc388b6ed173f54dbf7f",
+          "skin": 2,
+          "world": 2026101601,
+          "manifest_sha256": "6fcb1c5828193bb7b3efd1c3b30e4d61e13c376ceaa8357dc546bc70a16ac6eb",
+          "manifest": "jobs/catch-impala-s7/eval-skin2-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/catch-impala-s7/eval-skin2-world2026101602.ini",
+          "config_sha256": "ae15a04c1a908757183301c1c614be6524850795f19d1a83ad3519b9b65f9c8e",
+          "skin": 2,
+          "world": 2026101602,
+          "manifest_sha256": "a344cf54c677990b2d85a2349b1145e44b232ed99ecf3ad1df665568b670a592",
+          "manifest": "jobs/catch-impala-s7/eval-skin2-world2026101602.manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "catch-impoola-s7",
+      "game": "catch",
+      "family": "impoola",
+      "seed": 7,
+      "binary": "/home/claude/cnn/build/sprite-packed-all-20261016/sprite_catch",
+      "binary_sha256": "4c9c94804e97f4e5cb253f399af1f3e65b269e663fe465852a74b3e032ab02fd",
+      "config": "jobs/catch-impoola-s7/config/sprite_catch.ini",
+      "config_sha256": "e318031da37a04775e61b4790fdc08803f7daf3801d3d853444ad1801d5c7abc",
+      "default_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "metadata": {
+        "schema": "sprite-packed-metadata-v1",
+        "encoder": 7,
+        "width": 96,
+        "height": 192,
+        "channels": 3,
+        "geometry": 4,
+        "input_size": 55300,
+        "action_sizes": [
+          3,
+          20,
+          15
+        ],
+        "hidden": 128,
+        "layers": 4,
+        "parameters": 320448,
+        "encoder_parameters": 118848,
+        "checkpoint_bytes": 1281792,
+        "encoder_rollout_bytes_per_item": 7190160,
+        "encoder_train_bytes_per_item": 13200544,
+        "encoder_gradient_bytes": 475392,
+        "gpu_execution": false
+      },
+      "metadata_receipt_sha256": "e788393ca56a619e6f502bd69ae3da36ed9424c4d12e6ae71cf92d1a6ab529a0",
+      "evaluations": [
+        {
+          "config": "jobs/catch-impoola-s7/eval-skin0-world2026101601.ini",
+          "config_sha256": "e318031da37a04775e61b4790fdc08803f7daf3801d3d853444ad1801d5c7abc",
+          "skin": 0,
+          "world": 2026101601,
+          "manifest_sha256": "b4550710e14225ca901e5e59e3d6cc7e2db6c5a5d8f099405484cc58fe68d8fa",
+          "manifest": "jobs/catch-impoola-s7/eval-skin0-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/catch-impoola-s7/eval-skin0-world2026101602.ini",
+          "config_sha256": "bd304f1bdb3d75c9422bde2731e8fe9d5d31a3ac1bd45abcba9f9af94911fde8",
+          "skin": 0,
+          "world": 2026101602,
+          "manifest_sha256": "0c644f143988b10c6314f087c5a2b479a214802cfbda84c50e5cbecac57f36ac",
+          "manifest": "jobs/catch-impoola-s7/eval-skin0-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/catch-impoola-s7/eval-skin1-world2026101601.ini",
+          "config_sha256": "2995ee075b3e332212896644abb13da694be548fce6c90aec566fe14d3a58b2d",
+          "skin": 1,
+          "world": 2026101601,
+          "manifest_sha256": "d6a827d2f932ba59d743bc312a35de236c38dc6c1d9291ae2683353b9d6b58b7",
+          "manifest": "jobs/catch-impoola-s7/eval-skin1-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/catch-impoola-s7/eval-skin1-world2026101602.ini",
+          "config_sha256": "782cc5eb66c99414ea25d56e8865c1a4e7980c2d704e63f3db5636615bda97ee",
+          "skin": 1,
+          "world": 2026101602,
+          "manifest_sha256": "785aff1c6b815054a3d06c3230d5d74629ab3ef1cb99efc86199a2fb74c639e7",
+          "manifest": "jobs/catch-impoola-s7/eval-skin1-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/catch-impoola-s7/eval-skin2-world2026101601.ini",
+          "config_sha256": "949a309771b73abaf0932d31db2728e839737c185bc2eb70465fe23579ed1c79",
+          "skin": 2,
+          "world": 2026101601,
+          "manifest_sha256": "2f3c6598b413bdb4f2b8bc7d880bd242ec27b6fc61c1c1b5ba8ade749acfa631",
+          "manifest": "jobs/catch-impoola-s7/eval-skin2-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/catch-impoola-s7/eval-skin2-world2026101602.ini",
+          "config_sha256": "04212ddff5fd56cf1bcc3de169c8e0ef589e45b3ff8404b5c1fdd865f10716f0",
+          "skin": 2,
+          "world": 2026101602,
+          "manifest_sha256": "589885616f3373086e82589c950f3f9a9a8a3417057eefffddb40eda6674c6b6",
+          "manifest": "jobs/catch-impoola-s7/eval-skin2-world2026101602.manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "catch-flex-s7",
+      "game": "catch",
+      "family": "flex",
+      "seed": 7,
+      "binary": "/home/claude/cnn/build/sprite-packed-all-20261016/sprite_catch",
+      "binary_sha256": "4c9c94804e97f4e5cb253f399af1f3e65b269e663fe465852a74b3e032ab02fd",
+      "config": "jobs/catch-flex-s7/config/sprite_catch.ini",
+      "config_sha256": "8e196050e678463bedcc92f4b7e64927e5b44e0fc8f68b9e51ea43d6e533bdb3",
+      "default_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "metadata": {
+        "schema": "sprite-packed-metadata-v1",
+        "encoder": 4,
+        "width": 96,
+        "height": 192,
+        "channels": 3,
+        "geometry": 4,
+        "input_size": 55300,
+        "action_sizes": [
+          3,
+          20,
+          15
+        ],
+        "hidden": 128,
+        "layers": 4,
+        "parameters": 519336,
+        "encoder_parameters": 317736,
+        "checkpoint_bytes": 2077344,
+        "encoder_rollout_bytes_per_item": 1181456,
+        "encoder_train_bytes_per_item": 1257504,
+        "encoder_gradient_bytes": 1270944,
+        "gpu_execution": false
+      },
+      "metadata_receipt_sha256": "e54148b0259b8a275cb784e45bd8e33e3e503d937e48215b79a3639a8f90f07a",
+      "evaluations": [
+        {
+          "config": "jobs/catch-flex-s7/eval-skin0-world2026101601.ini",
+          "config_sha256": "8e196050e678463bedcc92f4b7e64927e5b44e0fc8f68b9e51ea43d6e533bdb3",
+          "skin": 0,
+          "world": 2026101601,
+          "manifest_sha256": "b1e19be16db3b55bcf69b060001bdaf6f4001e9c5583f336ea48b1585c082e5c",
+          "manifest": "jobs/catch-flex-s7/eval-skin0-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/catch-flex-s7/eval-skin0-world2026101602.ini",
+          "config_sha256": "bdc9a9e883e3f3c2a655e088b477bf87abfe1cfbd8b45eedd80349548da68f71",
+          "skin": 0,
+          "world": 2026101602,
+          "manifest_sha256": "1c964e58af0fcb4128209dabecc834470f37526c54e93f0d3fe5d4f2b53f4671",
+          "manifest": "jobs/catch-flex-s7/eval-skin0-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/catch-flex-s7/eval-skin1-world2026101601.ini",
+          "config_sha256": "02bffb34e6ff3281ab8f6188e5b7e410b65b36eef39449f0febea4106a1f041a",
+          "skin": 1,
+          "world": 2026101601,
+          "manifest_sha256": "1ec776dddfd7dc9f307f0f66d1dbe7c32945cc971741c55ea6bc54b7113772ca",
+          "manifest": "jobs/catch-flex-s7/eval-skin1-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/catch-flex-s7/eval-skin1-world2026101602.ini",
+          "config_sha256": "3095c93199199b7969bdef7974a7c21bc3a508499614d7ee1db07fcbb17f69ba",
+          "skin": 1,
+          "world": 2026101602,
+          "manifest_sha256": "d5b4faf014e0f1b1f48f347020caa667261f915650f75e2cfbca89d297a7faf1",
+          "manifest": "jobs/catch-flex-s7/eval-skin1-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/catch-flex-s7/eval-skin2-world2026101601.ini",
+          "config_sha256": "06fb4403cd301f085474130879b3f232032a4e1b3549c071b8250a164dde1fde",
+          "skin": 2,
+          "world": 2026101601,
+          "manifest_sha256": "1211ba96ac37c34a6c92d63cb9eac82d8c312d74367310b3817dafb3121c1a51",
+          "manifest": "jobs/catch-flex-s7/eval-skin2-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/catch-flex-s7/eval-skin2-world2026101602.ini",
+          "config_sha256": "ac55e89a6814129fcffb0fc2fa30945ebfbed4b0574e304324f232d22eb1c97e",
+          "skin": 2,
+          "world": 2026101602,
+          "manifest_sha256": "aa42f0e0d48710a81e7b0ccdc741bb7f5087a239faae7a8d45eca3bc440cb0b2",
+          "manifest": "jobs/catch-flex-s7/eval-skin2-world2026101602.manifest.json"
+        }
+      ],
+      "sweep_config": "jobs/catch-flex-s7/sweep/config/sprite_catch.ini",
+      "sweep_config_sha256": "192b9de5d351ed270c58c3eb879f6aa9fed91ff46f1ced672b184f4071238a54"
+    },
+    {
+      "id": "platform-tile-s7",
+      "game": "platform",
+      "family": "tile",
+      "seed": 7,
+      "binary": "/home/claude/cnn/build/sprite-packed-all-20261016/sprite_platform",
+      "binary_sha256": "0c65f2a922e3755cb7cd7f15e837b56fd1f65d39341dc3bf471c5f5c85f47d13",
+      "config": "jobs/platform-tile-s7/config/sprite_platform.ini",
+      "config_sha256": "1b70d92ad02b8a39ff7c548b5688cba18119c035abd62c095712bfd2b749daa9",
+      "default_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "metadata": {
+        "schema": "sprite-packed-metadata-v1",
+        "encoder": 6,
+        "width": 96,
+        "height": 192,
+        "channels": 3,
+        "geometry": 4,
+        "input_size": 55300,
+        "action_sizes": [
+          5,
+          20,
+          15
+        ],
+        "hidden": 128,
+        "layers": 1,
+        "parameters": 106024,
+        "encoder_parameters": 51624,
+        "checkpoint_bytes": 424096,
+        "encoder_rollout_bytes_per_item": 1498128,
+        "encoder_train_bytes_per_item": 1998624,
+        "encoder_gradient_bytes": 206496,
+        "gpu_execution": false
+      },
+      "metadata_receipt_sha256": "c03e744665826696741c55290994f4d1a51611e9596b9a405b975961e65200fb",
+      "evaluations": [
+        {
+          "config": "jobs/platform-tile-s7/eval-skin0-world2026101601.ini",
+          "config_sha256": "1b70d92ad02b8a39ff7c548b5688cba18119c035abd62c095712bfd2b749daa9",
+          "skin": 0,
+          "world": 2026101601,
+          "manifest_sha256": "4d677d6af90ad526ad32fd6186530f54b06a1cea1a775fc7531699afdec09204",
+          "manifest": "jobs/platform-tile-s7/eval-skin0-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/platform-tile-s7/eval-skin0-world2026101602.ini",
+          "config_sha256": "de34c30ac67f9ce860fd0440c72ccb20e50f45f3e1a0718abfaf4cf7e0f28534",
+          "skin": 0,
+          "world": 2026101602,
+          "manifest_sha256": "009c3515380da2146ed01af65fc11308d7dfe7fcbf0e3a1658595d0a8d89da34",
+          "manifest": "jobs/platform-tile-s7/eval-skin0-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/platform-tile-s7/eval-skin1-world2026101601.ini",
+          "config_sha256": "c6e0f12c4528bc4ac81fa4650f6afa70edd45489f83070490f6048e3fb5ef146",
+          "skin": 1,
+          "world": 2026101601,
+          "manifest_sha256": "7774cfd57a80ab7175c00e4220d058b7dff3974f39bb3c23d01092291a745feb",
+          "manifest": "jobs/platform-tile-s7/eval-skin1-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/platform-tile-s7/eval-skin1-world2026101602.ini",
+          "config_sha256": "8648ace123cac8c727839f142ce5ad3509166ca0490041daf4b173832d755645",
+          "skin": 1,
+          "world": 2026101602,
+          "manifest_sha256": "21f7860289b9d6af55d00571d1460fa4150cf67a6ecb80b5c9d796e421223a9c",
+          "manifest": "jobs/platform-tile-s7/eval-skin1-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/platform-tile-s7/eval-skin2-world2026101601.ini",
+          "config_sha256": "03d550386c4dc98aadfcf5245fd8641022d79213ed55db30ff7494c9cadd2838",
+          "skin": 2,
+          "world": 2026101601,
+          "manifest_sha256": "1a406a018ed7c3b4ccbc39ce8821f590d30c4f0075572ebab00626e4e8b73d4c",
+          "manifest": "jobs/platform-tile-s7/eval-skin2-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/platform-tile-s7/eval-skin2-world2026101602.ini",
+          "config_sha256": "2854399ee67adc1bdad336181b6a1fead041f6438c2f77c93715c4fa674c5492",
+          "skin": 2,
+          "world": 2026101602,
+          "manifest_sha256": "4c0044dbc81762223dd082873baad986edd5633e02d8b12f39fb2212987fde2e",
+          "manifest": "jobs/platform-tile-s7/eval-skin2-world2026101602.manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "platform-nature-s7",
+      "game": "platform",
+      "family": "nature",
+      "seed": 7,
+      "binary": "/home/claude/cnn/build/sprite-packed-all-20261016/sprite_platform",
+      "binary_sha256": "0c65f2a922e3755cb7cd7f15e837b56fd1f65d39341dc3bf471c5f5c85f47d13",
+      "config": "jobs/platform-nature-s7/config/sprite_platform.ini",
+      "config_sha256": "d5baebf8bd64340a2cedf078162b6f863dd19fe206bed281e66b0b18a8dfeaea",
+      "default_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "metadata": {
+        "schema": "sprite-packed-metadata-v1",
+        "encoder": 2,
+        "width": 96,
+        "height": 192,
+        "channels": 3,
+        "geometry": 4,
+        "input_size": 55300,
+        "action_sizes": [
+          5,
+          20,
+          15
+        ],
+        "hidden": 128,
+        "layers": 1,
+        "parameters": 1458208,
+        "encoder_parameters": 1403808,
+        "checkpoint_bytes": 5832832,
+        "encoder_rollout_bytes_per_item": 2148752,
+        "encoder_train_bytes_per_item": 3246624,
+        "encoder_gradient_bytes": 5615232,
+        "gpu_execution": false
+      },
+      "metadata_receipt_sha256": "c5720fc33d285c97a80f1097426a31d4edbf8da393c6f85e4b0cf161ff35d036",
+      "evaluations": [
+        {
+          "config": "jobs/platform-nature-s7/eval-skin0-world2026101601.ini",
+          "config_sha256": "d5baebf8bd64340a2cedf078162b6f863dd19fe206bed281e66b0b18a8dfeaea",
+          "skin": 0,
+          "world": 2026101601,
+          "manifest_sha256": "00fac27e07fb374a390b9b071a643fdbd9d496d2f9e30334c9da56e4e878d2e9",
+          "manifest": "jobs/platform-nature-s7/eval-skin0-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/platform-nature-s7/eval-skin0-world2026101602.ini",
+          "config_sha256": "690ddf49217dbe1b402c95b5af1f9b392535ea24780d05322e33adbeab85238c",
+          "skin": 0,
+          "world": 2026101602,
+          "manifest_sha256": "595089286d1774a7b1f6e4e2a534e170adc5fb3b493d1b5744c4a26ea13248d9",
+          "manifest": "jobs/platform-nature-s7/eval-skin0-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/platform-nature-s7/eval-skin1-world2026101601.ini",
+          "config_sha256": "5742b738707314dbd489c53d911b921a674dc2a0c1e65b22a990b3764c159c6b",
+          "skin": 1,
+          "world": 2026101601,
+          "manifest_sha256": "0aa69672eb64747dcbe5a8de49b881187cb597d1b3060c0dbd2d1d9355f207f5",
+          "manifest": "jobs/platform-nature-s7/eval-skin1-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/platform-nature-s7/eval-skin1-world2026101602.ini",
+          "config_sha256": "366cf9cede6685f75a48853c58a01bae9c5204406f55e82c6f5d84038560394c",
+          "skin": 1,
+          "world": 2026101602,
+          "manifest_sha256": "5515d9da965ad125691fcbc5df7822b0d51531f90f19f8c7674be93d3e5fe9c9",
+          "manifest": "jobs/platform-nature-s7/eval-skin1-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/platform-nature-s7/eval-skin2-world2026101601.ini",
+          "config_sha256": "0bade031f987245d7f7b82dc75fb20d81c584ad164fba74b4b0e38fd256c5ea2",
+          "skin": 2,
+          "world": 2026101601,
+          "manifest_sha256": "2fc4fdefeee204f14eb27f2abb507407d511df17abab2d10efe81990e8333d7a",
+          "manifest": "jobs/platform-nature-s7/eval-skin2-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/platform-nature-s7/eval-skin2-world2026101602.ini",
+          "config_sha256": "6da2b9904b3fa40de3cbf9f602658e7d17717b4c22c27db4f8b3a8c369841326",
+          "skin": 2,
+          "world": 2026101602,
+          "manifest_sha256": "b262b8a0114264fd72065e985ba41e5e4d5b4114bc621fed430b1a8668b5e543",
+          "manifest": "jobs/platform-nature-s7/eval-skin2-world2026101602.manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "platform-impala-s7",
+      "game": "platform",
+      "family": "impala",
+      "seed": 7,
+      "binary": "/home/claude/cnn/build/sprite-packed-all-20261016/sprite_platform",
+      "binary_sha256": "0c65f2a922e3755cb7cd7f15e837b56fd1f65d39341dc3bf471c5f5c85f47d13",
+      "config": "jobs/platform-impala-s7/config/sprite_platform.ini",
+      "config_sha256": "15f77448a04323dd9ebcaf456a176ccc06a557133aa304799860cd9d171051ee",
+      "default_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "metadata": {
+        "schema": "sprite-packed-metadata-v1",
+        "encoder": 0,
+        "width": 96,
+        "height": 192,
+        "channels": 3,
+        "geometry": 4,
+        "input_size": 55300,
+        "action_sizes": [
+          5,
+          20,
+          15
+        ],
+        "hidden": 128,
+        "layers": 1,
+        "parameters": 1348800,
+        "encoder_parameters": 1294400,
+        "checkpoint_bytes": 5395200,
+        "encoder_rollout_bytes_per_item": 7226896,
+        "encoder_train_bytes_per_item": 13237280,
+        "encoder_gradient_bytes": 5177600,
+        "gpu_execution": false
+      },
+      "metadata_receipt_sha256": "f8292295a29bbc572193fa4e4ba2c53579938f440147b034bc0db64026c6c394",
+      "evaluations": [
+        {
+          "config": "jobs/platform-impala-s7/eval-skin0-world2026101601.ini",
+          "config_sha256": "15f77448a04323dd9ebcaf456a176ccc06a557133aa304799860cd9d171051ee",
+          "skin": 0,
+          "world": 2026101601,
+          "manifest_sha256": "6d21fb8aaaf4e411af2656cb79fb0ced7f470bf090b95fb83a7edbf6549f64bc",
+          "manifest": "jobs/platform-impala-s7/eval-skin0-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/platform-impala-s7/eval-skin0-world2026101602.ini",
+          "config_sha256": "232066c919f922aef9090a6dba5ee1aa9bf3b07aff74dfcd533a048a11896cf3",
+          "skin": 0,
+          "world": 2026101602,
+          "manifest_sha256": "e7fd364730959da2ffbd019ab93ed80f726f1294603a906f10949b9e9679832a",
+          "manifest": "jobs/platform-impala-s7/eval-skin0-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/platform-impala-s7/eval-skin1-world2026101601.ini",
+          "config_sha256": "b756c64b99b416555530095bffa86e16a07cd67c75049beb67f63b4f6e3eb4d7",
+          "skin": 1,
+          "world": 2026101601,
+          "manifest_sha256": "8683b6f1453f9ef2655c09bfaf14b4054025f0001f0f9f6fca9c5ac69f81af36",
+          "manifest": "jobs/platform-impala-s7/eval-skin1-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/platform-impala-s7/eval-skin1-world2026101602.ini",
+          "config_sha256": "e411a0f0cabd1c3224a4bfea139524e948d801b6dd39c931814e2a358ada5cd3",
+          "skin": 1,
+          "world": 2026101602,
+          "manifest_sha256": "d842e79adede98a3a9ed5b7649b8936fd8f0dd902bc136da57ca508217680342",
+          "manifest": "jobs/platform-impala-s7/eval-skin1-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/platform-impala-s7/eval-skin2-world2026101601.ini",
+          "config_sha256": "7bf90d67fe5c3cb5bc063572463ae17162e5dc5fe89e7d46eaadb60859c1dda4",
+          "skin": 2,
+          "world": 2026101601,
+          "manifest_sha256": "7e974ea1e2c76b50c774b5d561adda3ba17e54c822d5feb0be3bc4b8d6a54a8b",
+          "manifest": "jobs/platform-impala-s7/eval-skin2-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/platform-impala-s7/eval-skin2-world2026101602.ini",
+          "config_sha256": "1388c84b59b2bb2cd8ff26bf16d2e436103d362ae6070f56bbd4114c00b69b9b",
+          "skin": 2,
+          "world": 2026101602,
+          "manifest_sha256": "70391cb34da68601599f324a682ab15fbf67cc9b60cdacb82ea739922e6cf814",
+          "manifest": "jobs/platform-impala-s7/eval-skin2-world2026101602.manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "platform-impoola-s7",
+      "game": "platform",
+      "family": "impoola",
+      "seed": 7,
+      "binary": "/home/claude/cnn/build/sprite-packed-all-20261016/sprite_platform",
+      "binary_sha256": "0c65f2a922e3755cb7cd7f15e837b56fd1f65d39341dc3bf471c5f5c85f47d13",
+      "config": "jobs/platform-impoola-s7/config/sprite_platform.ini",
+      "config_sha256": "5ecf04ac31ef0fff546ae18b7e727652995b6180d30756c0acf254a2e576cfc2",
+      "default_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "metadata": {
+        "schema": "sprite-packed-metadata-v1",
+        "encoder": 7,
+        "width": 96,
+        "height": 192,
+        "channels": 3,
+        "geometry": 4,
+        "input_size": 55300,
+        "action_sizes": [
+          5,
+          20,
+          15
+        ],
+        "hidden": 128,
+        "layers": 1,
+        "parameters": 173248,
+        "encoder_parameters": 118848,
+        "checkpoint_bytes": 692992,
+        "encoder_rollout_bytes_per_item": 7190160,
+        "encoder_train_bytes_per_item": 13200544,
+        "encoder_gradient_bytes": 475392,
+        "gpu_execution": false
+      },
+      "metadata_receipt_sha256": "432b74b38cdbca24bc43b950dba1a9e337fd8dafd0036d5ca2b5989ceba27976",
+      "evaluations": [
+        {
+          "config": "jobs/platform-impoola-s7/eval-skin0-world2026101601.ini",
+          "config_sha256": "5ecf04ac31ef0fff546ae18b7e727652995b6180d30756c0acf254a2e576cfc2",
+          "skin": 0,
+          "world": 2026101601,
+          "manifest_sha256": "0eb8f838723f7e6ed8bf583e90ad97ebca9efd46d32b5790baa03ea4288187d5",
+          "manifest": "jobs/platform-impoola-s7/eval-skin0-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/platform-impoola-s7/eval-skin0-world2026101602.ini",
+          "config_sha256": "9fff1f9d83f46378ae35b941cf856eb2c0862b02396cc35b16813c11701923d0",
+          "skin": 0,
+          "world": 2026101602,
+          "manifest_sha256": "5da17c6c28d6ad4c829a8f60834d03ddd6719a6b16221f6f827f892cb36da0fe",
+          "manifest": "jobs/platform-impoola-s7/eval-skin0-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/platform-impoola-s7/eval-skin1-world2026101601.ini",
+          "config_sha256": "8cd04980dfe4b8f59dcc3996fdbb2928b8f3e7ebf170375de1afd4952a915551",
+          "skin": 1,
+          "world": 2026101601,
+          "manifest_sha256": "1f27e7d367ddffa1eb3742b8f2eca80a77fb5c1051839515ce5840c60f8a8ef8",
+          "manifest": "jobs/platform-impoola-s7/eval-skin1-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/platform-impoola-s7/eval-skin1-world2026101602.ini",
+          "config_sha256": "1a44a7a1459d01caa65148b4e85b6d2f9d64656b162b925e15ff24431a6d9ef7",
+          "skin": 1,
+          "world": 2026101602,
+          "manifest_sha256": "be0901140dea62098541fcba1f7f1b22a139da98643d29998eb5a17537ebb868",
+          "manifest": "jobs/platform-impoola-s7/eval-skin1-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/platform-impoola-s7/eval-skin2-world2026101601.ini",
+          "config_sha256": "d37e44834cf308c676a3c8bf88cee5b8820027d66e6641c8903aabd2dad156f8",
+          "skin": 2,
+          "world": 2026101601,
+          "manifest_sha256": "3d09dcd014842d5dc8c9b7fdd54e795486a94ad0c04f6c5781c1d81e22e7827a",
+          "manifest": "jobs/platform-impoola-s7/eval-skin2-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/platform-impoola-s7/eval-skin2-world2026101602.ini",
+          "config_sha256": "5709c9c6331f766afac9f7a47f7a3d6e8777554b0f827f8abd634239cef43704",
+          "skin": 2,
+          "world": 2026101602,
+          "manifest_sha256": "85cabdd23f4819d938a07dc848db438828b2d8a2ce18d933ea2b8262d1d894ac",
+          "manifest": "jobs/platform-impoola-s7/eval-skin2-world2026101602.manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "platform-flex-s7",
+      "game": "platform",
+      "family": "flex",
+      "seed": 7,
+      "binary": "/home/claude/cnn/build/sprite-packed-all-20261016/sprite_platform",
+      "binary_sha256": "0c65f2a922e3755cb7cd7f15e837b56fd1f65d39341dc3bf471c5f5c85f47d13",
+      "config": "jobs/platform-flex-s7/config/sprite_platform.ini",
+      "config_sha256": "b4f8c53abaeefcf24cffef9bafdd6ba3b0bb8aa582293025236e16e70c025482",
+      "default_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "metadata": {
+        "schema": "sprite-packed-metadata-v1",
+        "encoder": 4,
+        "width": 96,
+        "height": 192,
+        "channels": 3,
+        "geometry": 4,
+        "input_size": 55300,
+        "action_sizes": [
+          5,
+          20,
+          15
+        ],
+        "hidden": 128,
+        "layers": 1,
+        "parameters": 372136,
+        "encoder_parameters": 317736,
+        "checkpoint_bytes": 1488544,
+        "encoder_rollout_bytes_per_item": 1181456,
+        "encoder_train_bytes_per_item": 1257504,
+        "encoder_gradient_bytes": 1270944,
+        "gpu_execution": false
+      },
+      "metadata_receipt_sha256": "e7b5fee786522c5700356fb680b2be4554819cf88dab7cd942d764df552b514c",
+      "evaluations": [
+        {
+          "config": "jobs/platform-flex-s7/eval-skin0-world2026101601.ini",
+          "config_sha256": "b4f8c53abaeefcf24cffef9bafdd6ba3b0bb8aa582293025236e16e70c025482",
+          "skin": 0,
+          "world": 2026101601,
+          "manifest_sha256": "74be17580f85405a697454d18ddf29970745dd797dbe33b26881c6938fe4666e",
+          "manifest": "jobs/platform-flex-s7/eval-skin0-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/platform-flex-s7/eval-skin0-world2026101602.ini",
+          "config_sha256": "1447744b79f26d2146e0afd7ec9b2d0f427b78778c7f544fc81c7e759438dacd",
+          "skin": 0,
+          "world": 2026101602,
+          "manifest_sha256": "63c6f20965a7e31e425675142dbd4828e40e8d223eadb9a383bae0433359caa0",
+          "manifest": "jobs/platform-flex-s7/eval-skin0-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/platform-flex-s7/eval-skin1-world2026101601.ini",
+          "config_sha256": "85290863c6ade06fc5568e4c22f5a05c9107bb600182bdb5e700173bad9c8a42",
+          "skin": 1,
+          "world": 2026101601,
+          "manifest_sha256": "03750a9dfbc6ffc1ef7fe2430d350a5084c7df6c67215eacf58d766b833ba6e7",
+          "manifest": "jobs/platform-flex-s7/eval-skin1-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/platform-flex-s7/eval-skin1-world2026101602.ini",
+          "config_sha256": "388883334bcd520d21278cc4d313235f993b31e6e9d2b43a22b4e014236cf930",
+          "skin": 1,
+          "world": 2026101602,
+          "manifest_sha256": "e3670a0ae4da955c2f42a1efde378cfeb6a81dbe19d3077f26297d2eaf7a1a9a",
+          "manifest": "jobs/platform-flex-s7/eval-skin1-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/platform-flex-s7/eval-skin2-world2026101601.ini",
+          "config_sha256": "3b70f4098fdb43086d403669efdf56961082b0f340c55e0a87aed2ad5c95a583",
+          "skin": 2,
+          "world": 2026101601,
+          "manifest_sha256": "9f6645ce3f7a4dfbf1bea051e428c04f52a9ad89c6616532a1e44d31e8d1f50b",
+          "manifest": "jobs/platform-flex-s7/eval-skin2-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/platform-flex-s7/eval-skin2-world2026101602.ini",
+          "config_sha256": "99f48722cbbe4d0849e0e089373ac3926eddd0770494df67e6a2455d42d04277",
+          "skin": 2,
+          "world": 2026101602,
+          "manifest_sha256": "49ac8013df347a9b96b3b6a5d9e572b7e4c3269736d4a0804595a6221fe5c6ac",
+          "manifest": "jobs/platform-flex-s7/eval-skin2-world2026101602.manifest.json"
+        }
+      ],
+      "sweep_config": "jobs/platform-flex-s7/sweep/config/sprite_platform.ini",
+      "sweep_config_sha256": "899cc594857090a2c0fa2cfc7cd3992b557b0708bba074c898dfd746a641bc62"
+    },
+    {
+      "id": "maze-tile-s7",
+      "game": "maze",
+      "family": "tile",
+      "seed": 7,
+      "binary": "/home/claude/cnn/build/sprite-packed-all-20261016/sprite_maze",
+      "binary_sha256": "9398b31e22116a66c5c415b5abb0dfd874d5a0c98594901ad5a01d73c7695e64",
+      "config": "jobs/maze-tile-s7/config/sprite_maze.ini",
+      "config_sha256": "e6220ae389f93a0ff8505197732286d96d4ccdb3155ba7828bb1ed60668e83b1",
+      "default_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "metadata": {
+        "schema": "sprite-packed-metadata-v1",
+        "encoder": 6,
+        "width": 96,
+        "height": 192,
+        "channels": 3,
+        "geometry": 4,
+        "input_size": 55300,
+        "action_sizes": [
+          5,
+          20,
+          15
+        ],
+        "hidden": 128,
+        "layers": 1,
+        "parameters": 106024,
+        "encoder_parameters": 51624,
+        "checkpoint_bytes": 424096,
+        "encoder_rollout_bytes_per_item": 1498128,
+        "encoder_train_bytes_per_item": 1998624,
+        "encoder_gradient_bytes": 206496,
+        "gpu_execution": false
+      },
+      "metadata_receipt_sha256": "dd6fdbcd076a32e69fb2afc7a94b45a24a2fe9871567f62234fbe374c84f7d19",
+      "evaluations": [
+        {
+          "config": "jobs/maze-tile-s7/eval-skin0-world2026101601.ini",
+          "config_sha256": "e6220ae389f93a0ff8505197732286d96d4ccdb3155ba7828bb1ed60668e83b1",
+          "skin": 0,
+          "world": 2026101601,
+          "manifest_sha256": "1198a465e9c8ca25537b06a9cc76d049f5cba142ee3c8e63e3b6c08c3e7c7272",
+          "manifest": "jobs/maze-tile-s7/eval-skin0-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/maze-tile-s7/eval-skin0-world2026101602.ini",
+          "config_sha256": "e940fdecea1a1e737d35fc63cb269f2bfbc82e0ea47623e9bd34b3ff1b60b3e1",
+          "skin": 0,
+          "world": 2026101602,
+          "manifest_sha256": "37b391ab91eb68586ed310f31a168aa02845d288f51eaaf01781701b8e4703d8",
+          "manifest": "jobs/maze-tile-s7/eval-skin0-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/maze-tile-s7/eval-skin1-world2026101601.ini",
+          "config_sha256": "2460eae2f6bed1e89adcb24a8cd1d1ce35a12f8a372963359382a639a51f599b",
+          "skin": 1,
+          "world": 2026101601,
+          "manifest_sha256": "673e58760e939ff42ce3d0f6f68003e780ba416da70a2254d0a82ff95d2e9986",
+          "manifest": "jobs/maze-tile-s7/eval-skin1-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/maze-tile-s7/eval-skin1-world2026101602.ini",
+          "config_sha256": "32af909b7cfbe49044f95e56e5a73954a2c99887b35abc1bb44a4934826d6066",
+          "skin": 1,
+          "world": 2026101602,
+          "manifest_sha256": "a63f92d2431df99338b38a8680848543b8abf4b379252cb9cd9747657d13a3f9",
+          "manifest": "jobs/maze-tile-s7/eval-skin1-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/maze-tile-s7/eval-skin2-world2026101601.ini",
+          "config_sha256": "85aceff0900cfa8558b3288fb24e08af9a522c0f986806186ed1f27d18045470",
+          "skin": 2,
+          "world": 2026101601,
+          "manifest_sha256": "067c3c34c6e000157f7c11e2910bfee242211edbbf9090bd5b396f668bb60ede",
+          "manifest": "jobs/maze-tile-s7/eval-skin2-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/maze-tile-s7/eval-skin2-world2026101602.ini",
+          "config_sha256": "9eb1948c9af6c60e2bb37eadb78c28dbd1bf33003bf4ee45aa7780c539fdeb8b",
+          "skin": 2,
+          "world": 2026101602,
+          "manifest_sha256": "22bf84d363668ff9ba75d7b481a9c09b8f4505ebaad6a03843c79945aa79385b",
+          "manifest": "jobs/maze-tile-s7/eval-skin2-world2026101602.manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "maze-nature-s7",
+      "game": "maze",
+      "family": "nature",
+      "seed": 7,
+      "binary": "/home/claude/cnn/build/sprite-packed-all-20261016/sprite_maze",
+      "binary_sha256": "9398b31e22116a66c5c415b5abb0dfd874d5a0c98594901ad5a01d73c7695e64",
+      "config": "jobs/maze-nature-s7/config/sprite_maze.ini",
+      "config_sha256": "3698399c3ccab14828031805af7c80e321819ac0dfd2150ccbe27b296191eb73",
+      "default_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "metadata": {
+        "schema": "sprite-packed-metadata-v1",
+        "encoder": 2,
+        "width": 96,
+        "height": 192,
+        "channels": 3,
+        "geometry": 4,
+        "input_size": 55300,
+        "action_sizes": [
+          5,
+          20,
+          15
+        ],
+        "hidden": 128,
+        "layers": 1,
+        "parameters": 1458208,
+        "encoder_parameters": 1403808,
+        "checkpoint_bytes": 5832832,
+        "encoder_rollout_bytes_per_item": 2148752,
+        "encoder_train_bytes_per_item": 3246624,
+        "encoder_gradient_bytes": 5615232,
+        "gpu_execution": false
+      },
+      "metadata_receipt_sha256": "66adad006814c12fb661a79953acf82e4cce852a46c8cfd5524d5136e0b63c73",
+      "evaluations": [
+        {
+          "config": "jobs/maze-nature-s7/eval-skin0-world2026101601.ini",
+          "config_sha256": "3698399c3ccab14828031805af7c80e321819ac0dfd2150ccbe27b296191eb73",
+          "skin": 0,
+          "world": 2026101601,
+          "manifest_sha256": "c108c5c58ab8dec16ccc4f5f1811d2688f25204cca3f3bfc34fb423952f59e5c",
+          "manifest": "jobs/maze-nature-s7/eval-skin0-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/maze-nature-s7/eval-skin0-world2026101602.ini",
+          "config_sha256": "cb3c0ebe7447195af8a8d385b17fc5d782c7099aad6b84778faa4478942c7df0",
+          "skin": 0,
+          "world": 2026101602,
+          "manifest_sha256": "091e6486fa0d22369f01e3faf39e8ff6f9f2c5f438e0447a251afc073fb83603",
+          "manifest": "jobs/maze-nature-s7/eval-skin0-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/maze-nature-s7/eval-skin1-world2026101601.ini",
+          "config_sha256": "688f6725425ac222282c0b607283312fda8ccc9aa9c585a2f2e2f376b583d4ad",
+          "skin": 1,
+          "world": 2026101601,
+          "manifest_sha256": "50665cdc5fb09d906c3e74a2e141c18a1abf7f967289f409e8ed523f9365acfc",
+          "manifest": "jobs/maze-nature-s7/eval-skin1-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/maze-nature-s7/eval-skin1-world2026101602.ini",
+          "config_sha256": "b55a9d07668ca63449e5f2d1135afa67bd5c53509432c656adcc8a401d53b2c9",
+          "skin": 1,
+          "world": 2026101602,
+          "manifest_sha256": "70dbbabcc4a6e64e8658c34efbc8c31c1864fc5b094f24065a58adc0c1a469c5",
+          "manifest": "jobs/maze-nature-s7/eval-skin1-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/maze-nature-s7/eval-skin2-world2026101601.ini",
+          "config_sha256": "c16f0747a1f5892ede2afa1c74445b432c2e6d2f1865c44e1116aa9fb0ad3086",
+          "skin": 2,
+          "world": 2026101601,
+          "manifest_sha256": "93c0ce1216d691b96794c52264df9ba5ebf9993b329eb1b6d14159085abb7945",
+          "manifest": "jobs/maze-nature-s7/eval-skin2-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/maze-nature-s7/eval-skin2-world2026101602.ini",
+          "config_sha256": "71797efb6863504351e3d35eb893bbea5e3bb0e2bc121468d057d01a0dc4cd25",
+          "skin": 2,
+          "world": 2026101602,
+          "manifest_sha256": "b20e2157d6d5303bc023b068afb722bcebb78cacd9ca404898a5a2e7c489a4cc",
+          "manifest": "jobs/maze-nature-s7/eval-skin2-world2026101602.manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "maze-impala-s7",
+      "game": "maze",
+      "family": "impala",
+      "seed": 7,
+      "binary": "/home/claude/cnn/build/sprite-packed-all-20261016/sprite_maze",
+      "binary_sha256": "9398b31e22116a66c5c415b5abb0dfd874d5a0c98594901ad5a01d73c7695e64",
+      "config": "jobs/maze-impala-s7/config/sprite_maze.ini",
+      "config_sha256": "a367e128be6e39948e1a94655d52ac5bc5cc8fef91f1ddd7c8e8440c0c87821f",
+      "default_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "metadata": {
+        "schema": "sprite-packed-metadata-v1",
+        "encoder": 0,
+        "width": 96,
+        "height": 192,
+        "channels": 3,
+        "geometry": 4,
+        "input_size": 55300,
+        "action_sizes": [
+          5,
+          20,
+          15
+        ],
+        "hidden": 128,
+        "layers": 1,
+        "parameters": 1348800,
+        "encoder_parameters": 1294400,
+        "checkpoint_bytes": 5395200,
+        "encoder_rollout_bytes_per_item": 7226896,
+        "encoder_train_bytes_per_item": 13237280,
+        "encoder_gradient_bytes": 5177600,
+        "gpu_execution": false
+      },
+      "metadata_receipt_sha256": "2bd58c874d967f8d41ce305895ab0f9464a8fb6f50e18bc7b41043ceb79d65ae",
+      "evaluations": [
+        {
+          "config": "jobs/maze-impala-s7/eval-skin0-world2026101601.ini",
+          "config_sha256": "a367e128be6e39948e1a94655d52ac5bc5cc8fef91f1ddd7c8e8440c0c87821f",
+          "skin": 0,
+          "world": 2026101601,
+          "manifest_sha256": "4a55d7a15411ec8020fb1ad5b8f3e5c1a8e3a743aab4509b9909ebcb1b6eb2c1",
+          "manifest": "jobs/maze-impala-s7/eval-skin0-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/maze-impala-s7/eval-skin0-world2026101602.ini",
+          "config_sha256": "47ea15d674fafb4913fc5fa032957cc7f4fd2a272cf93b0221623e4dfa4b3eb5",
+          "skin": 0,
+          "world": 2026101602,
+          "manifest_sha256": "ac794a7e8c47ddae9e6726cd702f38b096f15f928ce096e9ff15170cd2910a13",
+          "manifest": "jobs/maze-impala-s7/eval-skin0-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/maze-impala-s7/eval-skin1-world2026101601.ini",
+          "config_sha256": "14faafbd62ef66ba9c5e72632fe73071625b847ff66d424f6ceed93db63f5160",
+          "skin": 1,
+          "world": 2026101601,
+          "manifest_sha256": "c366a7ef5114d468d2c3bfc1fca86f9f37348b25f962d0b4b9ee3a23b599bd2a",
+          "manifest": "jobs/maze-impala-s7/eval-skin1-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/maze-impala-s7/eval-skin1-world2026101602.ini",
+          "config_sha256": "5709e54a398b8e5e85182c275c49e7c49f9710369ea956a345da7c92af63b344",
+          "skin": 1,
+          "world": 2026101602,
+          "manifest_sha256": "5f51d659284b330f5eacf9bdec80d1eb36f08bffead0c3cf9baf2d7f2ee25eff",
+          "manifest": "jobs/maze-impala-s7/eval-skin1-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/maze-impala-s7/eval-skin2-world2026101601.ini",
+          "config_sha256": "53aae2890d802f04548295cf84e8a7e091b4daf6ac91940297721030fad5b59e",
+          "skin": 2,
+          "world": 2026101601,
+          "manifest_sha256": "39894647514f3d356fd398ba71e1861f093911cac8a17761dae38d5f49efc1de",
+          "manifest": "jobs/maze-impala-s7/eval-skin2-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/maze-impala-s7/eval-skin2-world2026101602.ini",
+          "config_sha256": "1064a8deda02504032b9c833ee7f58d328aeb9f70d15f1816b36f930d59fb59f",
+          "skin": 2,
+          "world": 2026101602,
+          "manifest_sha256": "f22bbcad8e0cb1cc6fb7f0412bce980f2c23526af21dfc2895c2565fb54e8df1",
+          "manifest": "jobs/maze-impala-s7/eval-skin2-world2026101602.manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "maze-impoola-s7",
+      "game": "maze",
+      "family": "impoola",
+      "seed": 7,
+      "binary": "/home/claude/cnn/build/sprite-packed-all-20261016/sprite_maze",
+      "binary_sha256": "9398b31e22116a66c5c415b5abb0dfd874d5a0c98594901ad5a01d73c7695e64",
+      "config": "jobs/maze-impoola-s7/config/sprite_maze.ini",
+      "config_sha256": "6d5ab75d58d817edc52bcd3b1e9bda61282f398b6c2ddbd20b217a32a26c37ce",
+      "default_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "metadata": {
+        "schema": "sprite-packed-metadata-v1",
+        "encoder": 7,
+        "width": 96,
+        "height": 192,
+        "channels": 3,
+        "geometry": 4,
+        "input_size": 55300,
+        "action_sizes": [
+          5,
+          20,
+          15
+        ],
+        "hidden": 128,
+        "layers": 1,
+        "parameters": 173248,
+        "encoder_parameters": 118848,
+        "checkpoint_bytes": 692992,
+        "encoder_rollout_bytes_per_item": 7190160,
+        "encoder_train_bytes_per_item": 13200544,
+        "encoder_gradient_bytes": 475392,
+        "gpu_execution": false
+      },
+      "metadata_receipt_sha256": "84b261a5fbeda9ed6232efc3131b9bcb4c25e8e044fcf9651c9cf7303e63f2e7",
+      "evaluations": [
+        {
+          "config": "jobs/maze-impoola-s7/eval-skin0-world2026101601.ini",
+          "config_sha256": "6d5ab75d58d817edc52bcd3b1e9bda61282f398b6c2ddbd20b217a32a26c37ce",
+          "skin": 0,
+          "world": 2026101601,
+          "manifest_sha256": "9a7300c537c7f9843f8a4abb315ba2e49c9ed8484e149b07ea3c77865bdc17b5",
+          "manifest": "jobs/maze-impoola-s7/eval-skin0-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/maze-impoola-s7/eval-skin0-world2026101602.ini",
+          "config_sha256": "b63e98e8990a657e953a5e367ac7d9b9042f008516b0cba1fbe4dff9bc382a58",
+          "skin": 0,
+          "world": 2026101602,
+          "manifest_sha256": "42eb1d8be710db4979954c15cc2809e2e8604374c1d7464168a034ff7e6f885f",
+          "manifest": "jobs/maze-impoola-s7/eval-skin0-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/maze-impoola-s7/eval-skin1-world2026101601.ini",
+          "config_sha256": "3a95612f2752059f649ef1da8697b6b58112d3ec7343d6f0199a5945bd4df667",
+          "skin": 1,
+          "world": 2026101601,
+          "manifest_sha256": "644e03cbad225fec7bb36c8831f5e84d16d9a7ca5349e1fe5b37a0c8cb244253",
+          "manifest": "jobs/maze-impoola-s7/eval-skin1-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/maze-impoola-s7/eval-skin1-world2026101602.ini",
+          "config_sha256": "2175b0224d185cc6c2c3979e3a3737c1005535fa75f5ab4741c0da03a3dba0bb",
+          "skin": 1,
+          "world": 2026101602,
+          "manifest_sha256": "7de35fd3b0fdbb439e20e77217578a5744cf2f819be131d17722197683908ce1",
+          "manifest": "jobs/maze-impoola-s7/eval-skin1-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/maze-impoola-s7/eval-skin2-world2026101601.ini",
+          "config_sha256": "cce1f4254913bb05374524f476702c53d9c47ce74ddef81a3bdbaa924614ef35",
+          "skin": 2,
+          "world": 2026101601,
+          "manifest_sha256": "296049911a7a28abef1e4d2f5b56534dcec92ba4ea4ca2680011bf2f83852ff4",
+          "manifest": "jobs/maze-impoola-s7/eval-skin2-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/maze-impoola-s7/eval-skin2-world2026101602.ini",
+          "config_sha256": "fcf7b5924d82f09ec9388a5d69a4e7c924f3bd403719d00ff6bfe311b10ad142",
+          "skin": 2,
+          "world": 2026101602,
+          "manifest_sha256": "bcaaae9ac6b0eb34cc5638be9995cd639c8b4fe7c2d135fac1fb73c3d31cf352",
+          "manifest": "jobs/maze-impoola-s7/eval-skin2-world2026101602.manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "maze-flex-s7",
+      "game": "maze",
+      "family": "flex",
+      "seed": 7,
+      "binary": "/home/claude/cnn/build/sprite-packed-all-20261016/sprite_maze",
+      "binary_sha256": "9398b31e22116a66c5c415b5abb0dfd874d5a0c98594901ad5a01d73c7695e64",
+      "config": "jobs/maze-flex-s7/config/sprite_maze.ini",
+      "config_sha256": "154a92add555bff6ee065b0b9df48dbc0015b0562ee56183105938fa00be80e3",
+      "default_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "metadata": {
+        "schema": "sprite-packed-metadata-v1",
+        "encoder": 4,
+        "width": 96,
+        "height": 192,
+        "channels": 3,
+        "geometry": 4,
+        "input_size": 55300,
+        "action_sizes": [
+          5,
+          20,
+          15
+        ],
+        "hidden": 128,
+        "layers": 1,
+        "parameters": 372136,
+        "encoder_parameters": 317736,
+        "checkpoint_bytes": 1488544,
+        "encoder_rollout_bytes_per_item": 1181456,
+        "encoder_train_bytes_per_item": 1257504,
+        "encoder_gradient_bytes": 1270944,
+        "gpu_execution": false
+      },
+      "metadata_receipt_sha256": "06f19c48c6ee1e769122a1663187463902ae78e72f713123d2affdbff4ac8fb1",
+      "evaluations": [
+        {
+          "config": "jobs/maze-flex-s7/eval-skin0-world2026101601.ini",
+          "config_sha256": "154a92add555bff6ee065b0b9df48dbc0015b0562ee56183105938fa00be80e3",
+          "skin": 0,
+          "world": 2026101601,
+          "manifest_sha256": "5dfcafa7b1a51c85eed7e7c2b862f7968ec310c07e3b879b82bb8c11db44cc31",
+          "manifest": "jobs/maze-flex-s7/eval-skin0-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/maze-flex-s7/eval-skin0-world2026101602.ini",
+          "config_sha256": "6dbd26fe355133127b466445702a1a8935bb7e0a197d96c1227da603c2509e61",
+          "skin": 0,
+          "world": 2026101602,
+          "manifest_sha256": "7fa0b0f763053a93d79dbe71a38f75dd4d2da051f09b3886b00704cc54663210",
+          "manifest": "jobs/maze-flex-s7/eval-skin0-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/maze-flex-s7/eval-skin1-world2026101601.ini",
+          "config_sha256": "61b39c5058d23989fae295d3bb795f0e1b4ec0c37e273e01289d9d9356538651",
+          "skin": 1,
+          "world": 2026101601,
+          "manifest_sha256": "fe19d7263815e9137271ad89a558115ed6665d09a4482113c29fd7123f1a01c0",
+          "manifest": "jobs/maze-flex-s7/eval-skin1-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/maze-flex-s7/eval-skin1-world2026101602.ini",
+          "config_sha256": "7648c379555d5d9323c6b65734502e1065b54d05dfc1feca5eb0ce11b1483435",
+          "skin": 1,
+          "world": 2026101602,
+          "manifest_sha256": "ece9a3ae8f90fc91aa7fdae5f356c5030e21f8c1920735e4c5a5fe4b7bac1e4c",
+          "manifest": "jobs/maze-flex-s7/eval-skin1-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/maze-flex-s7/eval-skin2-world2026101601.ini",
+          "config_sha256": "23e50df37f17b64d30e805b52bc323566f396d9199bfe597ef3311b32cfb1204",
+          "skin": 2,
+          "world": 2026101601,
+          "manifest_sha256": "100e500faf6d0af8c9002555f78a07f9bd862813f0b322f75347537299b287c4",
+          "manifest": "jobs/maze-flex-s7/eval-skin2-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/maze-flex-s7/eval-skin2-world2026101602.ini",
+          "config_sha256": "629efb0d12a8e05dcc14fa9eabe00285f2de6eebd90104245396a0c5cdce2531",
+          "skin": 2,
+          "world": 2026101602,
+          "manifest_sha256": "9afba5ad02e92f25b343d34486cfbeb054ec522a80175fe7f4ab5e38bec7791e",
+          "manifest": "jobs/maze-flex-s7/eval-skin2-world2026101602.manifest.json"
+        }
+      ],
+      "sweep_config": "jobs/maze-flex-s7/sweep/config/sprite_maze.ini",
+      "sweep_config_sha256": "d45a5125ceb7531564d22d3c70adca0ae7fc9479da284106106463577c9689ce"
+    },
+    {
+      "id": "runner-tile-s7",
+      "game": "runner",
+      "family": "tile",
+      "seed": 7,
+      "binary": "/home/claude/cnn/build/sprite-packed-all-20261016/sprite_runner",
+      "binary_sha256": "4d27371a2514c7fa0e0a39591da26ed801c57e0a7e0c210391796f9295a64553",
+      "config": "jobs/runner-tile-s7/config/sprite_runner.ini",
+      "config_sha256": "5e56aae3ca00e7c6779453c43b4ffb23911a742c2cd3546b2ea533748001bc97",
+      "default_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "metadata": {
+        "schema": "sprite-packed-metadata-v1",
+        "encoder": 6,
+        "width": 96,
+        "height": 192,
+        "channels": 3,
+        "geometry": 4,
+        "input_size": 55300,
+        "action_sizes": [
+          2,
+          20,
+          15
+        ],
+        "hidden": 128,
+        "layers": 1,
+        "parameters": 105640,
+        "encoder_parameters": 51624,
+        "checkpoint_bytes": 422560,
+        "encoder_rollout_bytes_per_item": 1498128,
+        "encoder_train_bytes_per_item": 1998624,
+        "encoder_gradient_bytes": 206496,
+        "gpu_execution": false
+      },
+      "metadata_receipt_sha256": "aee91eabc17fc340d462d15630540fc75a0ef3f7dfa0f7e85afa3091db1a6511",
+      "evaluations": [
+        {
+          "config": "jobs/runner-tile-s7/eval-skin0-world2026101601.ini",
+          "config_sha256": "5e56aae3ca00e7c6779453c43b4ffb23911a742c2cd3546b2ea533748001bc97",
+          "skin": 0,
+          "world": 2026101601,
+          "manifest_sha256": "b0d3f42f9ad84d5ba192e4117122df7659180aab24544b250b21fc339dab5206",
+          "manifest": "jobs/runner-tile-s7/eval-skin0-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/runner-tile-s7/eval-skin0-world2026101602.ini",
+          "config_sha256": "563a1908cc60e585b615362e24cbc2d29b009087ed9fd94a7cc387e292b0e5dc",
+          "skin": 0,
+          "world": 2026101602,
+          "manifest_sha256": "afeeb1ed8da3fc90fe9f9cd8f9242894f6b1c90f2ed841d401b35ad78acf8b9b",
+          "manifest": "jobs/runner-tile-s7/eval-skin0-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/runner-tile-s7/eval-skin1-world2026101601.ini",
+          "config_sha256": "b3756153bdbd628dcdb815487cff2a10034f2b00a56aa406db7d2739b52b4c2a",
+          "skin": 1,
+          "world": 2026101601,
+          "manifest_sha256": "ac1e170f019f3a016f014dc3abf4e0529be2e2ff6cd17046b79245a390b0f240",
+          "manifest": "jobs/runner-tile-s7/eval-skin1-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/runner-tile-s7/eval-skin1-world2026101602.ini",
+          "config_sha256": "fc73623d7a4905151004f11aa4288f05ade582076b5fd3bd28bce86b7b693d22",
+          "skin": 1,
+          "world": 2026101602,
+          "manifest_sha256": "c0f16acc40f01c5e96c54f93a3bb588ccd526a61b1b62e468eac59766be6ce68",
+          "manifest": "jobs/runner-tile-s7/eval-skin1-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/runner-tile-s7/eval-skin2-world2026101601.ini",
+          "config_sha256": "8d0b48333a9b02f67a675d45d182464ecb33740e8af087a63b5f06a8b168b371",
+          "skin": 2,
+          "world": 2026101601,
+          "manifest_sha256": "74264190aeedc655990796681a3bee972f8d953e263f1e14c0df7d6668645f18",
+          "manifest": "jobs/runner-tile-s7/eval-skin2-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/runner-tile-s7/eval-skin2-world2026101602.ini",
+          "config_sha256": "f443c268cd178adb879e78f1332f40b2ebbe06671e4507ff64fb5b7a3102a15a",
+          "skin": 2,
+          "world": 2026101602,
+          "manifest_sha256": "112bbd23297b82de8eb11b6541cc765d78b7e64b43aaaeb659d75c4faa1a5fff",
+          "manifest": "jobs/runner-tile-s7/eval-skin2-world2026101602.manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "runner-nature-s7",
+      "game": "runner",
+      "family": "nature",
+      "seed": 7,
+      "binary": "/home/claude/cnn/build/sprite-packed-all-20261016/sprite_runner",
+      "binary_sha256": "4d27371a2514c7fa0e0a39591da26ed801c57e0a7e0c210391796f9295a64553",
+      "config": "jobs/runner-nature-s7/config/sprite_runner.ini",
+      "config_sha256": "4d1c62423fce1f67b35ed8bed9c5461e5867aa6b1eca1a31ca662f6917be40c5",
+      "default_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "metadata": {
+        "schema": "sprite-packed-metadata-v1",
+        "encoder": 2,
+        "width": 96,
+        "height": 192,
+        "channels": 3,
+        "geometry": 4,
+        "input_size": 55300,
+        "action_sizes": [
+          2,
+          20,
+          15
+        ],
+        "hidden": 128,
+        "layers": 1,
+        "parameters": 1457824,
+        "encoder_parameters": 1403808,
+        "checkpoint_bytes": 5831296,
+        "encoder_rollout_bytes_per_item": 2148752,
+        "encoder_train_bytes_per_item": 3246624,
+        "encoder_gradient_bytes": 5615232,
+        "gpu_execution": false
+      },
+      "metadata_receipt_sha256": "6a614c2539b07f9bd1f03034ebe07d6c3cfbd9819ef10298398eb9bd62ee91a5",
+      "evaluations": [
+        {
+          "config": "jobs/runner-nature-s7/eval-skin0-world2026101601.ini",
+          "config_sha256": "4d1c62423fce1f67b35ed8bed9c5461e5867aa6b1eca1a31ca662f6917be40c5",
+          "skin": 0,
+          "world": 2026101601,
+          "manifest_sha256": "67c712228a7047429a619f7c4cb000b8414ad93e76922c1b6843783fe174725e",
+          "manifest": "jobs/runner-nature-s7/eval-skin0-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/runner-nature-s7/eval-skin0-world2026101602.ini",
+          "config_sha256": "9c1557d2ce559b7513d620d9d92d014aa2b125f9cdf6fece76637fa3ad021733",
+          "skin": 0,
+          "world": 2026101602,
+          "manifest_sha256": "f29a46d17a6144bd03cd24b7380e745acef6c00444e81e0b4476aa2e1062238b",
+          "manifest": "jobs/runner-nature-s7/eval-skin0-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/runner-nature-s7/eval-skin1-world2026101601.ini",
+          "config_sha256": "197841a302ede79092246172e9d2eaa604e7593a990621004591396d420e8180",
+          "skin": 1,
+          "world": 2026101601,
+          "manifest_sha256": "418d850e17e335d6e25989c649441019679d32e5114c98003fe298c8cbae583c",
+          "manifest": "jobs/runner-nature-s7/eval-skin1-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/runner-nature-s7/eval-skin1-world2026101602.ini",
+          "config_sha256": "82dde080460982174ec4e4e9118edf9da85ebdf8f98e0be186a3985545b1e456",
+          "skin": 1,
+          "world": 2026101602,
+          "manifest_sha256": "4ba9eaae43cdabdd90105b6faf9bee0d5005b5f0e0c3af664590369d2ee28007",
+          "manifest": "jobs/runner-nature-s7/eval-skin1-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/runner-nature-s7/eval-skin2-world2026101601.ini",
+          "config_sha256": "86dc0aa6a718569b855085fb0234cd298de7b394ad46a0690464264ebfb0f915",
+          "skin": 2,
+          "world": 2026101601,
+          "manifest_sha256": "b54a62ddeea03a73f365881ac6bd14ee1b77285a6e8758e5fbce3e28a9a2641f",
+          "manifest": "jobs/runner-nature-s7/eval-skin2-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/runner-nature-s7/eval-skin2-world2026101602.ini",
+          "config_sha256": "9334f90d8f478a11888d9b2a8ee16607dd3c89bb48f521362694db6e7a579f81",
+          "skin": 2,
+          "world": 2026101602,
+          "manifest_sha256": "e92b73a50c686b9b895745288b4e7381313a63c6f0071a1f5f726d90497d234b",
+          "manifest": "jobs/runner-nature-s7/eval-skin2-world2026101602.manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "runner-impala-s7",
+      "game": "runner",
+      "family": "impala",
+      "seed": 7,
+      "binary": "/home/claude/cnn/build/sprite-packed-all-20261016/sprite_runner",
+      "binary_sha256": "4d27371a2514c7fa0e0a39591da26ed801c57e0a7e0c210391796f9295a64553",
+      "config": "jobs/runner-impala-s7/config/sprite_runner.ini",
+      "config_sha256": "60be140f1d3bad8c3949f67ed5f382cce202ed3112fc9357580486aab964798d",
+      "default_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "metadata": {
+        "schema": "sprite-packed-metadata-v1",
+        "encoder": 0,
+        "width": 96,
+        "height": 192,
+        "channels": 3,
+        "geometry": 4,
+        "input_size": 55300,
+        "action_sizes": [
+          2,
+          20,
+          15
+        ],
+        "hidden": 128,
+        "layers": 1,
+        "parameters": 1348416,
+        "encoder_parameters": 1294400,
+        "checkpoint_bytes": 5393664,
+        "encoder_rollout_bytes_per_item": 7226896,
+        "encoder_train_bytes_per_item": 13237280,
+        "encoder_gradient_bytes": 5177600,
+        "gpu_execution": false
+      },
+      "metadata_receipt_sha256": "8cd0f2392858661a713c68fe5b8033f403ce90677b1735b08705f366063027d7",
+      "evaluations": [
+        {
+          "config": "jobs/runner-impala-s7/eval-skin0-world2026101601.ini",
+          "config_sha256": "60be140f1d3bad8c3949f67ed5f382cce202ed3112fc9357580486aab964798d",
+          "skin": 0,
+          "world": 2026101601,
+          "manifest_sha256": "da14b20384eb1744ef25f247077efbc9314df3603ed50a7bbd7251e534a31b9f",
+          "manifest": "jobs/runner-impala-s7/eval-skin0-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/runner-impala-s7/eval-skin0-world2026101602.ini",
+          "config_sha256": "eb26722f545123a55a1c5dec769e96e649e05f27ad6e3e14011784805f7fa7b4",
+          "skin": 0,
+          "world": 2026101602,
+          "manifest_sha256": "15766339c7cae96df5b59384180698bfe81a3e76fe1517992410ad7906397196",
+          "manifest": "jobs/runner-impala-s7/eval-skin0-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/runner-impala-s7/eval-skin1-world2026101601.ini",
+          "config_sha256": "b7f60418130b94bd32d8f3d17a46097ff960129784c73290fff3a58fd204f0b1",
+          "skin": 1,
+          "world": 2026101601,
+          "manifest_sha256": "5576f25817c44660691cf57ab0615f742ca5c431b26d7c344a37b4a2bb812c34",
+          "manifest": "jobs/runner-impala-s7/eval-skin1-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/runner-impala-s7/eval-skin1-world2026101602.ini",
+          "config_sha256": "99a2db3f77921e107ec6aaeb4f8bbd8c7282b52e08f5c5566246a98195853fd4",
+          "skin": 1,
+          "world": 2026101602,
+          "manifest_sha256": "237f37608318d117466c2c314357b74275b74771b6d39d823deef880cf8a470a",
+          "manifest": "jobs/runner-impala-s7/eval-skin1-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/runner-impala-s7/eval-skin2-world2026101601.ini",
+          "config_sha256": "8686bcceb78848e9259a316fdf5e6d2d62381c8ad78578b66201702517433910",
+          "skin": 2,
+          "world": 2026101601,
+          "manifest_sha256": "979d1cf5a82a257365bdc61d7aa9db106659daec5bceeab3b639395276ec8dd5",
+          "manifest": "jobs/runner-impala-s7/eval-skin2-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/runner-impala-s7/eval-skin2-world2026101602.ini",
+          "config_sha256": "6e4bfbae7dcf6a72eff0ba1a2a62637593d103eab7909475466614999789e43e",
+          "skin": 2,
+          "world": 2026101602,
+          "manifest_sha256": "27a4987f01e15beb40df82fe4823f968a6605f254566145251e831b29c9a6f56",
+          "manifest": "jobs/runner-impala-s7/eval-skin2-world2026101602.manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "runner-impoola-s7",
+      "game": "runner",
+      "family": "impoola",
+      "seed": 7,
+      "binary": "/home/claude/cnn/build/sprite-packed-all-20261016/sprite_runner",
+      "binary_sha256": "4d27371a2514c7fa0e0a39591da26ed801c57e0a7e0c210391796f9295a64553",
+      "config": "jobs/runner-impoola-s7/config/sprite_runner.ini",
+      "config_sha256": "d52f571cc45423ce52efc24dedf4b8bf5da8e49497c3635c758335fd8643205b",
+      "default_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "metadata": {
+        "schema": "sprite-packed-metadata-v1",
+        "encoder": 7,
+        "width": 96,
+        "height": 192,
+        "channels": 3,
+        "geometry": 4,
+        "input_size": 55300,
+        "action_sizes": [
+          2,
+          20,
+          15
+        ],
+        "hidden": 128,
+        "layers": 1,
+        "parameters": 172864,
+        "encoder_parameters": 118848,
+        "checkpoint_bytes": 691456,
+        "encoder_rollout_bytes_per_item": 7190160,
+        "encoder_train_bytes_per_item": 13200544,
+        "encoder_gradient_bytes": 475392,
+        "gpu_execution": false
+      },
+      "metadata_receipt_sha256": "9e88ea46420515e57fd6e34f60cc9ee2ff8e07a02ad30ab874be06b363880517",
+      "evaluations": [
+        {
+          "config": "jobs/runner-impoola-s7/eval-skin0-world2026101601.ini",
+          "config_sha256": "d52f571cc45423ce52efc24dedf4b8bf5da8e49497c3635c758335fd8643205b",
+          "skin": 0,
+          "world": 2026101601,
+          "manifest_sha256": "133a4b93ac74a7d9bdcd7c3e9191ace7941647e1eb5066b32cbfd73b074e29b8",
+          "manifest": "jobs/runner-impoola-s7/eval-skin0-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/runner-impoola-s7/eval-skin0-world2026101602.ini",
+          "config_sha256": "e82272dc255d60e9a962188900df3f777c2896075bd8a940a44b3944be60d989",
+          "skin": 0,
+          "world": 2026101602,
+          "manifest_sha256": "ecb8ba56ff2ac50cca29fb886d29cd2883fd76ca5d0c35b4f82c9fb1a3324f22",
+          "manifest": "jobs/runner-impoola-s7/eval-skin0-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/runner-impoola-s7/eval-skin1-world2026101601.ini",
+          "config_sha256": "6afdad6d9311fef5495aeb66ce852d2da477d7a898ff876d733c304787b129eb",
+          "skin": 1,
+          "world": 2026101601,
+          "manifest_sha256": "111933126a30121d80e6ce741effb04f07854c0f7504c71069a8a0ee87f8ecd6",
+          "manifest": "jobs/runner-impoola-s7/eval-skin1-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/runner-impoola-s7/eval-skin1-world2026101602.ini",
+          "config_sha256": "5e4e5facdb9e32c07fdf2003a70c7d4a620eda2337acf470c8ebbf185a9c8f19",
+          "skin": 1,
+          "world": 2026101602,
+          "manifest_sha256": "d760caf81f09e4f8187c733eba23ae9d4fce831a95a807e701d6916e0ff83f65",
+          "manifest": "jobs/runner-impoola-s7/eval-skin1-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/runner-impoola-s7/eval-skin2-world2026101601.ini",
+          "config_sha256": "0acddc6dee125a30e74752d5ac8a05211825a335eb5e0293381e67d67e84c77d",
+          "skin": 2,
+          "world": 2026101601,
+          "manifest_sha256": "6a39097d337a95241052a5010da0317063e011bdf57d4141b227a3fe27c2deb4",
+          "manifest": "jobs/runner-impoola-s7/eval-skin2-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/runner-impoola-s7/eval-skin2-world2026101602.ini",
+          "config_sha256": "df5dd153d790491fa76836ec86969e5ef3ef43a1b8cd1bdacb2d3bc4ad9baea0",
+          "skin": 2,
+          "world": 2026101602,
+          "manifest_sha256": "5f561c1719105787ba840e06b3526269168862899e0cb4d2cf5da04929b23868",
+          "manifest": "jobs/runner-impoola-s7/eval-skin2-world2026101602.manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "runner-flex-s7",
+      "game": "runner",
+      "family": "flex",
+      "seed": 7,
+      "binary": "/home/claude/cnn/build/sprite-packed-all-20261016/sprite_runner",
+      "binary_sha256": "4d27371a2514c7fa0e0a39591da26ed801c57e0a7e0c210391796f9295a64553",
+      "config": "jobs/runner-flex-s7/config/sprite_runner.ini",
+      "config_sha256": "0622a85b92bc1ce4a596132dd0f6cfdc82985705b9af24f5d2c909df4594e9a1",
+      "default_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "metadata": {
+        "schema": "sprite-packed-metadata-v1",
+        "encoder": 4,
+        "width": 96,
+        "height": 192,
+        "channels": 3,
+        "geometry": 4,
+        "input_size": 55300,
+        "action_sizes": [
+          2,
+          20,
+          15
+        ],
+        "hidden": 128,
+        "layers": 1,
+        "parameters": 371752,
+        "encoder_parameters": 317736,
+        "checkpoint_bytes": 1487008,
+        "encoder_rollout_bytes_per_item": 1181456,
+        "encoder_train_bytes_per_item": 1257504,
+        "encoder_gradient_bytes": 1270944,
+        "gpu_execution": false
+      },
+      "metadata_receipt_sha256": "1b0d346e4f223dfcc9e2dfbdca05d4b1de049b7070d396a1bf82e4096fb0c503",
+      "evaluations": [
+        {
+          "config": "jobs/runner-flex-s7/eval-skin0-world2026101601.ini",
+          "config_sha256": "0622a85b92bc1ce4a596132dd0f6cfdc82985705b9af24f5d2c909df4594e9a1",
+          "skin": 0,
+          "world": 2026101601,
+          "manifest_sha256": "d5ebfdf459617818451e114698072b6fa06492393d38c970df997ee8dedddb73",
+          "manifest": "jobs/runner-flex-s7/eval-skin0-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/runner-flex-s7/eval-skin0-world2026101602.ini",
+          "config_sha256": "f8593a1d5dff5fdf5bef0b3168a4e4de8997bd5c2ddc064d5275a5d828c8d67e",
+          "skin": 0,
+          "world": 2026101602,
+          "manifest_sha256": "89a1cb794789846726cad8e1afde555930b1f6b43c5b98bf629301fe299b7dcd",
+          "manifest": "jobs/runner-flex-s7/eval-skin0-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/runner-flex-s7/eval-skin1-world2026101601.ini",
+          "config_sha256": "34346617385b89117cf67892e16e5903967332af9521525f471c7cf4a348e079",
+          "skin": 1,
+          "world": 2026101601,
+          "manifest_sha256": "75bb7e80d78425ff41a7c79ad2df7f828c15931169b3732d8b6de775d609d61b",
+          "manifest": "jobs/runner-flex-s7/eval-skin1-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/runner-flex-s7/eval-skin1-world2026101602.ini",
+          "config_sha256": "e763d4e267ada82d02e7b3456a0820da857123b961678fa74fa67b3fd2b0c925",
+          "skin": 1,
+          "world": 2026101602,
+          "manifest_sha256": "2701e53ce848279fb5bc979a1cf6bfaeb95b9afcd1accaa1a92e24d6583dc096",
+          "manifest": "jobs/runner-flex-s7/eval-skin1-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/runner-flex-s7/eval-skin2-world2026101601.ini",
+          "config_sha256": "1946c70b932b8bbd7956e1b58c793b6f4bf89884568a748463da64b5cf98b566",
+          "skin": 2,
+          "world": 2026101601,
+          "manifest_sha256": "76f8bb6877e88f3d10ca4d61dacf604e4dd731be6762f11cf93be6af341d8d4b",
+          "manifest": "jobs/runner-flex-s7/eval-skin2-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/runner-flex-s7/eval-skin2-world2026101602.ini",
+          "config_sha256": "6fe7364376b3c81c3161dc3950973dc2acbc6aa2383729dbd1f08b1772678f39",
+          "skin": 2,
+          "world": 2026101602,
+          "manifest_sha256": "3125d5c593f597210d752abd9ec8b8b261f1ed17bb600da182f0271a491a8597",
+          "manifest": "jobs/runner-flex-s7/eval-skin2-world2026101602.manifest.json"
+        }
+      ],
+      "sweep_config": "jobs/runner-flex-s7/sweep/config/sprite_runner.ini",
+      "sweep_config_sha256": "6708847f63a9cf06d99772076678a8cac8c3ffba8cab927a9b8e4f2f815aa15f"
+    },
+    {
+      "id": "key-tile-s7",
+      "game": "key",
+      "family": "tile",
+      "seed": 7,
+      "binary": "/home/claude/cnn/build/sprite-packed-all-20261016/sprite_key",
+      "binary_sha256": "aea0211345632622a592a75d5beb2c081f6baeca44a4dca3cdd88ca67dfdcfb0",
+      "config": "jobs/key-tile-s7/config/sprite_key.ini",
+      "config_sha256": "852b56c481e68dd93a1986fef23c5f2aeb32636a7166f7ce8f644fd3138a9b0e",
+      "default_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "metadata": {
+        "schema": "sprite-packed-metadata-v1",
+        "encoder": 6,
+        "width": 96,
+        "height": 192,
+        "channels": 3,
+        "geometry": 4,
+        "input_size": 55300,
+        "action_sizes": [
+          5,
+          20,
+          15
+        ],
+        "hidden": 128,
+        "layers": 1,
+        "parameters": 106024,
+        "encoder_parameters": 51624,
+        "checkpoint_bytes": 424096,
+        "encoder_rollout_bytes_per_item": 1498128,
+        "encoder_train_bytes_per_item": 1998624,
+        "encoder_gradient_bytes": 206496,
+        "gpu_execution": false
+      },
+      "metadata_receipt_sha256": "2933d62029c9b09a7b588d230370d65b2646f0de059766fc66b2f8e142ed4e85",
+      "evaluations": [
+        {
+          "config": "jobs/key-tile-s7/eval-skin0-world2026101601.ini",
+          "config_sha256": "852b56c481e68dd93a1986fef23c5f2aeb32636a7166f7ce8f644fd3138a9b0e",
+          "skin": 0,
+          "world": 2026101601,
+          "manifest_sha256": "1b67ca5dd9ec2d823b42d776ed12c4ab54bbc1c628944bcaa09dfb5a9fa320cc",
+          "manifest": "jobs/key-tile-s7/eval-skin0-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/key-tile-s7/eval-skin0-world2026101602.ini",
+          "config_sha256": "83a6d4971001d498a100b23d839f8c994defb3ce27349b43ee66f1288d173472",
+          "skin": 0,
+          "world": 2026101602,
+          "manifest_sha256": "9f5ae54387d97ea6214b41c79a179e3c329993da7b771136a3dcabc63d7e7f10",
+          "manifest": "jobs/key-tile-s7/eval-skin0-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/key-tile-s7/eval-skin1-world2026101601.ini",
+          "config_sha256": "bddc886596b7a6ed46e8bf74f491a5deb58ed70db47af8275974968b59b2a73e",
+          "skin": 1,
+          "world": 2026101601,
+          "manifest_sha256": "bb9e6934dd3dc17e6e8a3acb2955be3bfaafc3b0e83b9dfda72651d0789ef75e",
+          "manifest": "jobs/key-tile-s7/eval-skin1-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/key-tile-s7/eval-skin1-world2026101602.ini",
+          "config_sha256": "d5269c53c931ff28f14cb319ac8b18c8e91c04440ba22e559965e698d2b93c2a",
+          "skin": 1,
+          "world": 2026101602,
+          "manifest_sha256": "501b6ea1a8d74702cd15b114784e42cbfcd6456951f1bdec6f484049bdf0134a",
+          "manifest": "jobs/key-tile-s7/eval-skin1-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/key-tile-s7/eval-skin2-world2026101601.ini",
+          "config_sha256": "86019c881e13dcf7b2fb7d408030427812e5867b32437182d1141ba8b679e7f2",
+          "skin": 2,
+          "world": 2026101601,
+          "manifest_sha256": "161dfa318722e6124b16c190097b3c402666c9fb31513279880a371fe4446184",
+          "manifest": "jobs/key-tile-s7/eval-skin2-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/key-tile-s7/eval-skin2-world2026101602.ini",
+          "config_sha256": "065b2f6d034d67c1825a04629cfae51416804dc2214c78be8f630dce3fff38e2",
+          "skin": 2,
+          "world": 2026101602,
+          "manifest_sha256": "30b3e28d44910dfae1c0c4629297bce33a6f25224b508f86d26485441b7b1157",
+          "manifest": "jobs/key-tile-s7/eval-skin2-world2026101602.manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "key-nature-s7",
+      "game": "key",
+      "family": "nature",
+      "seed": 7,
+      "binary": "/home/claude/cnn/build/sprite-packed-all-20261016/sprite_key",
+      "binary_sha256": "aea0211345632622a592a75d5beb2c081f6baeca44a4dca3cdd88ca67dfdcfb0",
+      "config": "jobs/key-nature-s7/config/sprite_key.ini",
+      "config_sha256": "a962890c2ff009b87e4138f537cfba18c7e630c50dd55ec977f9f6fec6c9ea7a",
+      "default_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "metadata": {
+        "schema": "sprite-packed-metadata-v1",
+        "encoder": 2,
+        "width": 96,
+        "height": 192,
+        "channels": 3,
+        "geometry": 4,
+        "input_size": 55300,
+        "action_sizes": [
+          5,
+          20,
+          15
+        ],
+        "hidden": 128,
+        "layers": 1,
+        "parameters": 1458208,
+        "encoder_parameters": 1403808,
+        "checkpoint_bytes": 5832832,
+        "encoder_rollout_bytes_per_item": 2148752,
+        "encoder_train_bytes_per_item": 3246624,
+        "encoder_gradient_bytes": 5615232,
+        "gpu_execution": false
+      },
+      "metadata_receipt_sha256": "f3088458f1d8ed45e8c1c114f59cdb70dd099a673fd8a88f56b2ad765adb3034",
+      "evaluations": [
+        {
+          "config": "jobs/key-nature-s7/eval-skin0-world2026101601.ini",
+          "config_sha256": "a962890c2ff009b87e4138f537cfba18c7e630c50dd55ec977f9f6fec6c9ea7a",
+          "skin": 0,
+          "world": 2026101601,
+          "manifest_sha256": "7462fbbf4870df725968cb21d9f8b776c96f3117a011c4757d9234a44fd1cfc8",
+          "manifest": "jobs/key-nature-s7/eval-skin0-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/key-nature-s7/eval-skin0-world2026101602.ini",
+          "config_sha256": "ce6c9a5490873c9cc7cf2a8be0a7a3bc868c788f54ca1c1b69d34f79317f2819",
+          "skin": 0,
+          "world": 2026101602,
+          "manifest_sha256": "bdc215567e893a77f78c3ea6d1d134fbbdecf33e6f2936cb0c04068e3b20fdf4",
+          "manifest": "jobs/key-nature-s7/eval-skin0-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/key-nature-s7/eval-skin1-world2026101601.ini",
+          "config_sha256": "9e5ce6437ae90b5ecedd605aca9b0cd1a792025474e063e8a8d9e78dbd8bbf67",
+          "skin": 1,
+          "world": 2026101601,
+          "manifest_sha256": "4b1adcddcb417d531c0b12a0f1eea0a7a68908db623e112eec9926566dde52c8",
+          "manifest": "jobs/key-nature-s7/eval-skin1-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/key-nature-s7/eval-skin1-world2026101602.ini",
+          "config_sha256": "e466ccf9131ec0d7213b061cbded7b7c4fc7fd804257e7bd0ae11f61cc552996",
+          "skin": 1,
+          "world": 2026101602,
+          "manifest_sha256": "53807d690d64314a5b95c730a0d48c66b6ec47c93c0acf2a348e73488a5c8745",
+          "manifest": "jobs/key-nature-s7/eval-skin1-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/key-nature-s7/eval-skin2-world2026101601.ini",
+          "config_sha256": "0c5dc93d83063e343f950c50d28e64246e5de8455c006dea45b66817aa070ee4",
+          "skin": 2,
+          "world": 2026101601,
+          "manifest_sha256": "50ea2ad465dfe1cb91e198bb324641632f05ab116feb130be1841d0fe4a65f22",
+          "manifest": "jobs/key-nature-s7/eval-skin2-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/key-nature-s7/eval-skin2-world2026101602.ini",
+          "config_sha256": "1dd9d04e7de857c99f95b58caa2df5a1a9c27c24e3e5bebdef944ee19d573216",
+          "skin": 2,
+          "world": 2026101602,
+          "manifest_sha256": "db684fcf80aeb80ee6d95a87ae770de924c2e92ca80ac8c5e0304dfc4eff662b",
+          "manifest": "jobs/key-nature-s7/eval-skin2-world2026101602.manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "key-impala-s7",
+      "game": "key",
+      "family": "impala",
+      "seed": 7,
+      "binary": "/home/claude/cnn/build/sprite-packed-all-20261016/sprite_key",
+      "binary_sha256": "aea0211345632622a592a75d5beb2c081f6baeca44a4dca3cdd88ca67dfdcfb0",
+      "config": "jobs/key-impala-s7/config/sprite_key.ini",
+      "config_sha256": "265944bf882e94e20c66ebde26625d91b3fbb0571b39dd93a2017b6c42cc4d8e",
+      "default_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "metadata": {
+        "schema": "sprite-packed-metadata-v1",
+        "encoder": 0,
+        "width": 96,
+        "height": 192,
+        "channels": 3,
+        "geometry": 4,
+        "input_size": 55300,
+        "action_sizes": [
+          5,
+          20,
+          15
+        ],
+        "hidden": 128,
+        "layers": 1,
+        "parameters": 1348800,
+        "encoder_parameters": 1294400,
+        "checkpoint_bytes": 5395200,
+        "encoder_rollout_bytes_per_item": 7226896,
+        "encoder_train_bytes_per_item": 13237280,
+        "encoder_gradient_bytes": 5177600,
+        "gpu_execution": false
+      },
+      "metadata_receipt_sha256": "0f8c2d156b66c705a423990981c24db1a11455d0f5145d0074aabcf50b2a4478",
+      "evaluations": [
+        {
+          "config": "jobs/key-impala-s7/eval-skin0-world2026101601.ini",
+          "config_sha256": "265944bf882e94e20c66ebde26625d91b3fbb0571b39dd93a2017b6c42cc4d8e",
+          "skin": 0,
+          "world": 2026101601,
+          "manifest_sha256": "e6c18445cd4141142cfc3092118ed2ba4f90e702feea15e810d90494968a7032",
+          "manifest": "jobs/key-impala-s7/eval-skin0-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/key-impala-s7/eval-skin0-world2026101602.ini",
+          "config_sha256": "caa4a683d15c088509dd793f0a1848c01788645b2d6b63f7870d1e02c15d391e",
+          "skin": 0,
+          "world": 2026101602,
+          "manifest_sha256": "81be30da8bbbabf04352824799710431885e141775e9b679701b2529cba0211e",
+          "manifest": "jobs/key-impala-s7/eval-skin0-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/key-impala-s7/eval-skin1-world2026101601.ini",
+          "config_sha256": "3011aef0111858f027c29a094fad64867ffad9c6feab62cd3e983681e454b385",
+          "skin": 1,
+          "world": 2026101601,
+          "manifest_sha256": "647a995a0c95fb37b13239afc35a55ec8cf87ba295ddeb98d3f408d03ac7b947",
+          "manifest": "jobs/key-impala-s7/eval-skin1-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/key-impala-s7/eval-skin1-world2026101602.ini",
+          "config_sha256": "cf6fe2e20e091e6b32d0566021ec6ee60584c782384dc542b3ea54513bf060f3",
+          "skin": 1,
+          "world": 2026101602,
+          "manifest_sha256": "943bf380bd0b6ee0f873bb31914f71a9df4cc23e8ca156d57f784e4f1d7eef8e",
+          "manifest": "jobs/key-impala-s7/eval-skin1-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/key-impala-s7/eval-skin2-world2026101601.ini",
+          "config_sha256": "23f576f9ce784ae3d7b2ed79f27a1c2b2d63454d1439e6ed2b0ce7e3fed737e7",
+          "skin": 2,
+          "world": 2026101601,
+          "manifest_sha256": "56aa79e1431ddc657b3e407e86cede81c65e9727397d0e3ac776de77f3b96b91",
+          "manifest": "jobs/key-impala-s7/eval-skin2-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/key-impala-s7/eval-skin2-world2026101602.ini",
+          "config_sha256": "23e8f12804927153564844d706875f9c035d307467274198bedec8891c4ae768",
+          "skin": 2,
+          "world": 2026101602,
+          "manifest_sha256": "3d60410139326af6546a8e7890b1456151ad65878d0ee9a1930fb6ebc592ae2e",
+          "manifest": "jobs/key-impala-s7/eval-skin2-world2026101602.manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "key-impoola-s7",
+      "game": "key",
+      "family": "impoola",
+      "seed": 7,
+      "binary": "/home/claude/cnn/build/sprite-packed-all-20261016/sprite_key",
+      "binary_sha256": "aea0211345632622a592a75d5beb2c081f6baeca44a4dca3cdd88ca67dfdcfb0",
+      "config": "jobs/key-impoola-s7/config/sprite_key.ini",
+      "config_sha256": "d7cdce82362676bf1348b33054eead48294a2522bac1995b7ce7b9aea8dafe42",
+      "default_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "metadata": {
+        "schema": "sprite-packed-metadata-v1",
+        "encoder": 7,
+        "width": 96,
+        "height": 192,
+        "channels": 3,
+        "geometry": 4,
+        "input_size": 55300,
+        "action_sizes": [
+          5,
+          20,
+          15
+        ],
+        "hidden": 128,
+        "layers": 1,
+        "parameters": 173248,
+        "encoder_parameters": 118848,
+        "checkpoint_bytes": 692992,
+        "encoder_rollout_bytes_per_item": 7190160,
+        "encoder_train_bytes_per_item": 13200544,
+        "encoder_gradient_bytes": 475392,
+        "gpu_execution": false
+      },
+      "metadata_receipt_sha256": "c51d0426fa266f6b9fba4f2cc7e93a7e4fecbd5384c08731f9487c838ad2e776",
+      "evaluations": [
+        {
+          "config": "jobs/key-impoola-s7/eval-skin0-world2026101601.ini",
+          "config_sha256": "d7cdce82362676bf1348b33054eead48294a2522bac1995b7ce7b9aea8dafe42",
+          "skin": 0,
+          "world": 2026101601,
+          "manifest_sha256": "3c3cf2cbc69cda702f0ed4c287ff9b03a8c30541d5d8a2218d4594a56afea308",
+          "manifest": "jobs/key-impoola-s7/eval-skin0-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/key-impoola-s7/eval-skin0-world2026101602.ini",
+          "config_sha256": "02437f60071e3c8dc5fad735960a9d0d3527a289cfd4a8bc0a221dffaebc020f",
+          "skin": 0,
+          "world": 2026101602,
+          "manifest_sha256": "b3e1f673fa58b1ab898bf09ab864ee1ab085aec13b2ea107f488651f26b23bfb",
+          "manifest": "jobs/key-impoola-s7/eval-skin0-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/key-impoola-s7/eval-skin1-world2026101601.ini",
+          "config_sha256": "2941ef6b3b96162f7bcecda4df2d80c032c8ef19ecf26d541c7a3dd442465a95",
+          "skin": 1,
+          "world": 2026101601,
+          "manifest_sha256": "5b805e9321005e9413a76c8c9d8752d6e54fd566441a261decce56dda5df9eab",
+          "manifest": "jobs/key-impoola-s7/eval-skin1-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/key-impoola-s7/eval-skin1-world2026101602.ini",
+          "config_sha256": "f8f13a1f59d59d5c0901420ff8fdaf1123421f1bd8f5dc7f5285c5c5dd702270",
+          "skin": 1,
+          "world": 2026101602,
+          "manifest_sha256": "1269a0577d002657bf41ae3899509d7a4c6721bc6c913373521b6947326c0b80",
+          "manifest": "jobs/key-impoola-s7/eval-skin1-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/key-impoola-s7/eval-skin2-world2026101601.ini",
+          "config_sha256": "d378ff2922347daa1ed2139a1b5c97b25e55a73528137b30c0c8a0790545b764",
+          "skin": 2,
+          "world": 2026101601,
+          "manifest_sha256": "0139c539e9b5495a61798386d90b0700681a49e14112e754070a20b28ee912b5",
+          "manifest": "jobs/key-impoola-s7/eval-skin2-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/key-impoola-s7/eval-skin2-world2026101602.ini",
+          "config_sha256": "287d7ca0fbbf65ef9b8bf276b69d7ca3984d75210e61c97cd074ce5103a824c5",
+          "skin": 2,
+          "world": 2026101602,
+          "manifest_sha256": "da0e45a3241172555b85f55bef564ffb88632e2d51b12a5b3dbef381f6252738",
+          "manifest": "jobs/key-impoola-s7/eval-skin2-world2026101602.manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "key-flex-s7",
+      "game": "key",
+      "family": "flex",
+      "seed": 7,
+      "binary": "/home/claude/cnn/build/sprite-packed-all-20261016/sprite_key",
+      "binary_sha256": "aea0211345632622a592a75d5beb2c081f6baeca44a4dca3cdd88ca67dfdcfb0",
+      "config": "jobs/key-flex-s7/config/sprite_key.ini",
+      "config_sha256": "877b237a2226eb397cfb587a3a62e7d8cb352d27c2faf7b06228fc4cc17b5c51",
+      "default_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "metadata": {
+        "schema": "sprite-packed-metadata-v1",
+        "encoder": 4,
+        "width": 96,
+        "height": 192,
+        "channels": 3,
+        "geometry": 4,
+        "input_size": 55300,
+        "action_sizes": [
+          5,
+          20,
+          15
+        ],
+        "hidden": 128,
+        "layers": 1,
+        "parameters": 372136,
+        "encoder_parameters": 317736,
+        "checkpoint_bytes": 1488544,
+        "encoder_rollout_bytes_per_item": 1181456,
+        "encoder_train_bytes_per_item": 1257504,
+        "encoder_gradient_bytes": 1270944,
+        "gpu_execution": false
+      },
+      "metadata_receipt_sha256": "0dae461ec12e6fcd6d5519b1ef4cac7e34c10a07d0bcd0c5b0735e6599d945f0",
+      "evaluations": [
+        {
+          "config": "jobs/key-flex-s7/eval-skin0-world2026101601.ini",
+          "config_sha256": "877b237a2226eb397cfb587a3a62e7d8cb352d27c2faf7b06228fc4cc17b5c51",
+          "skin": 0,
+          "world": 2026101601,
+          "manifest_sha256": "e6bf6eff6221a463cdd7d47fb1bdf83b1808d00ce56c1b88647ca7037b5d7c23",
+          "manifest": "jobs/key-flex-s7/eval-skin0-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/key-flex-s7/eval-skin0-world2026101602.ini",
+          "config_sha256": "a8da31ec62cb4d8e597a37d16d4ed6b20194c70755d9823c7a612f7a43a77e82",
+          "skin": 0,
+          "world": 2026101602,
+          "manifest_sha256": "84923e5f76ee1b08bdb499d43a17cde268fc3ff31a9afaf9464d0bca561ae05f",
+          "manifest": "jobs/key-flex-s7/eval-skin0-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/key-flex-s7/eval-skin1-world2026101601.ini",
+          "config_sha256": "a2d997f4ed0aebea54d1630756da157044f11bf5b87c19bdee129e202899d5f3",
+          "skin": 1,
+          "world": 2026101601,
+          "manifest_sha256": "62acd948b8f8d5126cab803fcd28966472ccc82270d9da90f8cbed931e6d4de2",
+          "manifest": "jobs/key-flex-s7/eval-skin1-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/key-flex-s7/eval-skin1-world2026101602.ini",
+          "config_sha256": "d9080a2f38d8b2ea5080655e4d9e09011a71bc073aa95146d4c77ddc7599bdec",
+          "skin": 1,
+          "world": 2026101602,
+          "manifest_sha256": "87430d5390eec0901c722fe35ec776c1b9e0e085659f405f7adc2b122f3ffa0b",
+          "manifest": "jobs/key-flex-s7/eval-skin1-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/key-flex-s7/eval-skin2-world2026101601.ini",
+          "config_sha256": "a1e7c45286b7d12cde94169556bb3807399645f4eb20dc66289747ea2694a553",
+          "skin": 2,
+          "world": 2026101601,
+          "manifest_sha256": "dcedf9386cb96c34df5365331a932f98cb4e9c7e83a93144f5c5ebf38ce5fd25",
+          "manifest": "jobs/key-flex-s7/eval-skin2-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/key-flex-s7/eval-skin2-world2026101602.ini",
+          "config_sha256": "c41832a75941a55a557a0209c530db4c30d91995890d50c4ecb40a3a45bb019a",
+          "skin": 2,
+          "world": 2026101602,
+          "manifest_sha256": "97d9131ac8bceee9d40ba78a18d1338576aeb69a2fa3bd24e9a1c84f3229ca05",
+          "manifest": "jobs/key-flex-s7/eval-skin2-world2026101602.manifest.json"
+        }
+      ],
+      "sweep_config": "jobs/key-flex-s7/sweep/config/sprite_key.ini",
+      "sweep_config_sha256": "b2c292471d8a238d2d659f25d1cb874e2ccbba330c38fd7577c1d838613bee6e"
+    },
+    {
+      "id": "push-tile-s7",
+      "game": "push",
+      "family": "tile",
+      "seed": 7,
+      "binary": "/home/claude/cnn/build/sprite-packed-all-20261016/sprite_push",
+      "binary_sha256": "59d429a6f7119927305ebf0bbb4c31adb2c38102f61a1111ae222a698f554684",
+      "config": "jobs/push-tile-s7/config/sprite_push.ini",
+      "config_sha256": "52bc782471ec2659047d9d25ac24f7d193b2ecc5e196a5b2067754b8cfdfa139",
+      "default_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "metadata": {
+        "schema": "sprite-packed-metadata-v1",
+        "encoder": 6,
+        "width": 96,
+        "height": 192,
+        "channels": 3,
+        "geometry": 4,
+        "input_size": 55300,
+        "action_sizes": [
+          5,
+          20,
+          15
+        ],
+        "hidden": 128,
+        "layers": 1,
+        "parameters": 106024,
+        "encoder_parameters": 51624,
+        "checkpoint_bytes": 424096,
+        "encoder_rollout_bytes_per_item": 1498128,
+        "encoder_train_bytes_per_item": 1998624,
+        "encoder_gradient_bytes": 206496,
+        "gpu_execution": false
+      },
+      "metadata_receipt_sha256": "f32b04439da8d5f421ed135792966d6e81c28ff2c81612205ab6cd3cc4cadff5",
+      "evaluations": [
+        {
+          "config": "jobs/push-tile-s7/eval-skin0-world2026101601.ini",
+          "config_sha256": "52bc782471ec2659047d9d25ac24f7d193b2ecc5e196a5b2067754b8cfdfa139",
+          "skin": 0,
+          "world": 2026101601,
+          "manifest_sha256": "bf2b200de84125d8e73e10161bf3ab6257a3e02e617a894d5c427ef283cbf67d",
+          "manifest": "jobs/push-tile-s7/eval-skin0-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/push-tile-s7/eval-skin0-world2026101602.ini",
+          "config_sha256": "fae67daec122a97cc1c74f8e11560d25104262a3ecc8201af39813f78a4734ea",
+          "skin": 0,
+          "world": 2026101602,
+          "manifest_sha256": "0c1f403c186c26111688956d129655e63c66fabc0fef141be7cda70bc7ca47ca",
+          "manifest": "jobs/push-tile-s7/eval-skin0-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/push-tile-s7/eval-skin1-world2026101601.ini",
+          "config_sha256": "15b649d58fd4adabb62f0af21af3c466290dde5eda4c11d6dd38b3aea6e07385",
+          "skin": 1,
+          "world": 2026101601,
+          "manifest_sha256": "82e3d84b4f71ec9d23fe67887957ac60722c8804db18e9c8c5794a41a721a84e",
+          "manifest": "jobs/push-tile-s7/eval-skin1-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/push-tile-s7/eval-skin1-world2026101602.ini",
+          "config_sha256": "3911c4b7e22ff72b1c6cf52bd4b8141408d3393d01a71aca47e77b417f224ee9",
+          "skin": 1,
+          "world": 2026101602,
+          "manifest_sha256": "4c97d189918e4e7b181632d7c182a9357f67b7b2ee8b0f97539504c17b91979b",
+          "manifest": "jobs/push-tile-s7/eval-skin1-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/push-tile-s7/eval-skin2-world2026101601.ini",
+          "config_sha256": "2490b40ea8dead3d710f62131a602a0f2ea6185099f7ed722cedd7b0eaf96948",
+          "skin": 2,
+          "world": 2026101601,
+          "manifest_sha256": "21351b2e060680072105ab29274c1ecb68cc3bb99b0f40f1afb318e5877fadd1",
+          "manifest": "jobs/push-tile-s7/eval-skin2-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/push-tile-s7/eval-skin2-world2026101602.ini",
+          "config_sha256": "2722ea6c2ba47c7255fa81e9f183f030e3087f2c80751d06f2ccc9b4c9958154",
+          "skin": 2,
+          "world": 2026101602,
+          "manifest_sha256": "b9d101ee8aea16fe443b61fb6f2dd8ae6ec4e42fb2bb96f98e82de44911e046c",
+          "manifest": "jobs/push-tile-s7/eval-skin2-world2026101602.manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "push-nature-s7",
+      "game": "push",
+      "family": "nature",
+      "seed": 7,
+      "binary": "/home/claude/cnn/build/sprite-packed-all-20261016/sprite_push",
+      "binary_sha256": "59d429a6f7119927305ebf0bbb4c31adb2c38102f61a1111ae222a698f554684",
+      "config": "jobs/push-nature-s7/config/sprite_push.ini",
+      "config_sha256": "6e89f08335ec0d08aa3b5d747fecc0a36e6129e394f92d266c7540f816972963",
+      "default_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "metadata": {
+        "schema": "sprite-packed-metadata-v1",
+        "encoder": 2,
+        "width": 96,
+        "height": 192,
+        "channels": 3,
+        "geometry": 4,
+        "input_size": 55300,
+        "action_sizes": [
+          5,
+          20,
+          15
+        ],
+        "hidden": 128,
+        "layers": 1,
+        "parameters": 1458208,
+        "encoder_parameters": 1403808,
+        "checkpoint_bytes": 5832832,
+        "encoder_rollout_bytes_per_item": 2148752,
+        "encoder_train_bytes_per_item": 3246624,
+        "encoder_gradient_bytes": 5615232,
+        "gpu_execution": false
+      },
+      "metadata_receipt_sha256": "b88bb8e4536cebf2d70fb6189bccde197d767b6656a48c46010b2efbd1419b6c",
+      "evaluations": [
+        {
+          "config": "jobs/push-nature-s7/eval-skin0-world2026101601.ini",
+          "config_sha256": "6e89f08335ec0d08aa3b5d747fecc0a36e6129e394f92d266c7540f816972963",
+          "skin": 0,
+          "world": 2026101601,
+          "manifest_sha256": "b74c74eb9f933349ccd91ea3b6ce6571dcb6a0018d7fb901734fd82ac8a3b991",
+          "manifest": "jobs/push-nature-s7/eval-skin0-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/push-nature-s7/eval-skin0-world2026101602.ini",
+          "config_sha256": "54c61d2c202a31a5d20e58ee3799e7b09cb050234606361148f6fb84c04fe0d1",
+          "skin": 0,
+          "world": 2026101602,
+          "manifest_sha256": "6510e73da0c6a88d1759ac08fd46d3e04055e50981fa3e33bdac25cbb877d65c",
+          "manifest": "jobs/push-nature-s7/eval-skin0-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/push-nature-s7/eval-skin1-world2026101601.ini",
+          "config_sha256": "ca32629385017e730ff9a14a5089f12305b7dc5bc00e3e44cb57d7bb84633ee4",
+          "skin": 1,
+          "world": 2026101601,
+          "manifest_sha256": "a33121a5985da006010fc43d1f51062df238bd9f1acb5c9e6473285e4979b2c6",
+          "manifest": "jobs/push-nature-s7/eval-skin1-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/push-nature-s7/eval-skin1-world2026101602.ini",
+          "config_sha256": "92a6f0046784d83f7900ecf5fd1641fe4d217416315b2c16abb1b1faf9e6129a",
+          "skin": 1,
+          "world": 2026101602,
+          "manifest_sha256": "235946277f5078967e189a1a3c43d865adf29ca0d39d8724fa9a21eaa292780e",
+          "manifest": "jobs/push-nature-s7/eval-skin1-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/push-nature-s7/eval-skin2-world2026101601.ini",
+          "config_sha256": "823e34ee6e7289aa1544f8f173030806b98c8e32c63033c7717c9c422d14e871",
+          "skin": 2,
+          "world": 2026101601,
+          "manifest_sha256": "d27d609311185bc37cf0323e3dd9c7b49035f4931b8b51e17fb952c0695f2df4",
+          "manifest": "jobs/push-nature-s7/eval-skin2-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/push-nature-s7/eval-skin2-world2026101602.ini",
+          "config_sha256": "b9e5f0447dfc4aca8b1ef8a024e30ccfe7065f402ba7f1f4b643c5b9712d898c",
+          "skin": 2,
+          "world": 2026101602,
+          "manifest_sha256": "c43e7671beddb0b7747b0d78c69972c7798bd4c0ee5ec78dc3e64aaccdca9a9f",
+          "manifest": "jobs/push-nature-s7/eval-skin2-world2026101602.manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "push-impala-s7",
+      "game": "push",
+      "family": "impala",
+      "seed": 7,
+      "binary": "/home/claude/cnn/build/sprite-packed-all-20261016/sprite_push",
+      "binary_sha256": "59d429a6f7119927305ebf0bbb4c31adb2c38102f61a1111ae222a698f554684",
+      "config": "jobs/push-impala-s7/config/sprite_push.ini",
+      "config_sha256": "3c8fd673c8ccd1dbbe18f04722605eda1f05ac7807a12d5a0ba3174f71658297",
+      "default_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "metadata": {
+        "schema": "sprite-packed-metadata-v1",
+        "encoder": 0,
+        "width": 96,
+        "height": 192,
+        "channels": 3,
+        "geometry": 4,
+        "input_size": 55300,
+        "action_sizes": [
+          5,
+          20,
+          15
+        ],
+        "hidden": 128,
+        "layers": 1,
+        "parameters": 1348800,
+        "encoder_parameters": 1294400,
+        "checkpoint_bytes": 5395200,
+        "encoder_rollout_bytes_per_item": 7226896,
+        "encoder_train_bytes_per_item": 13237280,
+        "encoder_gradient_bytes": 5177600,
+        "gpu_execution": false
+      },
+      "metadata_receipt_sha256": "90180cf520ed2251dd148f9ff111edbad8f3dc2cccbcdceac49828e277f564f3",
+      "evaluations": [
+        {
+          "config": "jobs/push-impala-s7/eval-skin0-world2026101601.ini",
+          "config_sha256": "3c8fd673c8ccd1dbbe18f04722605eda1f05ac7807a12d5a0ba3174f71658297",
+          "skin": 0,
+          "world": 2026101601,
+          "manifest_sha256": "dc2c7902120cfcc89706e464e3b79c1298780aa1c7d3e76f41606cdcc493c424",
+          "manifest": "jobs/push-impala-s7/eval-skin0-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/push-impala-s7/eval-skin0-world2026101602.ini",
+          "config_sha256": "1738c87789133805637c1eef4af11fd86dffa622e7eb52bbad0726e3ae897608",
+          "skin": 0,
+          "world": 2026101602,
+          "manifest_sha256": "1adb86f37a78ee2b9b4d8529b5844e42a3af9414837092f553fe53f274339657",
+          "manifest": "jobs/push-impala-s7/eval-skin0-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/push-impala-s7/eval-skin1-world2026101601.ini",
+          "config_sha256": "b0177603662194935de2fb27a4c94d65b4ccbeb0e6278b05bc61d1a4be6e686d",
+          "skin": 1,
+          "world": 2026101601,
+          "manifest_sha256": "04c4f980be8aa474311d5bd6f2aa9128d744b0b52bbd42a139165ebfeb789408",
+          "manifest": "jobs/push-impala-s7/eval-skin1-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/push-impala-s7/eval-skin1-world2026101602.ini",
+          "config_sha256": "5cbd523b49124ad02f012337bc3a3c2db6b047fd93d084245017d8a9d658b4be",
+          "skin": 1,
+          "world": 2026101602,
+          "manifest_sha256": "9a82e922e776e978cfb1ee210c77e50219ba20a18e73a9713da93831fce2c550",
+          "manifest": "jobs/push-impala-s7/eval-skin1-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/push-impala-s7/eval-skin2-world2026101601.ini",
+          "config_sha256": "5011c63ab896d9b49a79297aadf102ce432c047f8ee801fc3b5767671fdfe9a1",
+          "skin": 2,
+          "world": 2026101601,
+          "manifest_sha256": "161e328bd32d191cd412bf5c11d7e5795090da283ec68f9baec0bd2ba52c23a7",
+          "manifest": "jobs/push-impala-s7/eval-skin2-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/push-impala-s7/eval-skin2-world2026101602.ini",
+          "config_sha256": "2171ea39c75e7797ee39084296953ae825cc4d6017963eb405503462cf5510ad",
+          "skin": 2,
+          "world": 2026101602,
+          "manifest_sha256": "aad069d87f1927ee3f84e7ba5e5bbe583d401bac8e4302bc5414a9561922b4c8",
+          "manifest": "jobs/push-impala-s7/eval-skin2-world2026101602.manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "push-impoola-s7",
+      "game": "push",
+      "family": "impoola",
+      "seed": 7,
+      "binary": "/home/claude/cnn/build/sprite-packed-all-20261016/sprite_push",
+      "binary_sha256": "59d429a6f7119927305ebf0bbb4c31adb2c38102f61a1111ae222a698f554684",
+      "config": "jobs/push-impoola-s7/config/sprite_push.ini",
+      "config_sha256": "af371619b923b4d0d53f000cdaa3d4a0b363423c2bc696a12ba1b5faf250211b",
+      "default_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "metadata": {
+        "schema": "sprite-packed-metadata-v1",
+        "encoder": 7,
+        "width": 96,
+        "height": 192,
+        "channels": 3,
+        "geometry": 4,
+        "input_size": 55300,
+        "action_sizes": [
+          5,
+          20,
+          15
+        ],
+        "hidden": 128,
+        "layers": 1,
+        "parameters": 173248,
+        "encoder_parameters": 118848,
+        "checkpoint_bytes": 692992,
+        "encoder_rollout_bytes_per_item": 7190160,
+        "encoder_train_bytes_per_item": 13200544,
+        "encoder_gradient_bytes": 475392,
+        "gpu_execution": false
+      },
+      "metadata_receipt_sha256": "a22ac64635bd771580993850fc8dc582f72fa20873f1f006602d35b7a666fc83",
+      "evaluations": [
+        {
+          "config": "jobs/push-impoola-s7/eval-skin0-world2026101601.ini",
+          "config_sha256": "af371619b923b4d0d53f000cdaa3d4a0b363423c2bc696a12ba1b5faf250211b",
+          "skin": 0,
+          "world": 2026101601,
+          "manifest_sha256": "f9cc5994748178b131b7425a6b8febcc763e20be37a2d77eb1ae029dc32d7dc4",
+          "manifest": "jobs/push-impoola-s7/eval-skin0-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/push-impoola-s7/eval-skin0-world2026101602.ini",
+          "config_sha256": "27e9a6f868b8b59fb4a6a1744f68f89c70f19acb46f003cc86818aa7c8aa9275",
+          "skin": 0,
+          "world": 2026101602,
+          "manifest_sha256": "aa3bf5fb727db7d26673dee98733401917ee502f4b18e9e7771c4e7013aad207",
+          "manifest": "jobs/push-impoola-s7/eval-skin0-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/push-impoola-s7/eval-skin1-world2026101601.ini",
+          "config_sha256": "97e2a5afb1eba18274bc1d481c702c0b02ef5cb6898d7d759e3faee1adf1208e",
+          "skin": 1,
+          "world": 2026101601,
+          "manifest_sha256": "a8ad972d3165572a500698e83b084bf3cc16b235845bb9d528d524295a4e879f",
+          "manifest": "jobs/push-impoola-s7/eval-skin1-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/push-impoola-s7/eval-skin1-world2026101602.ini",
+          "config_sha256": "3ee4047e9c81ee8b34ca25f0d8e3d126c0c55e0f45a3e7d2bde7cdace7d9ea49",
+          "skin": 1,
+          "world": 2026101602,
+          "manifest_sha256": "cf245f9f2f3bf8c4afcf0145a28866cc050fb4f475b665db64f73acc43b2aae4",
+          "manifest": "jobs/push-impoola-s7/eval-skin1-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/push-impoola-s7/eval-skin2-world2026101601.ini",
+          "config_sha256": "94f0fd815428a316f1508af45d9dc5e4469aab5641f6793778a637b993ceae0e",
+          "skin": 2,
+          "world": 2026101601,
+          "manifest_sha256": "1acd3f3754315445ccbc1796ff1799941ac565c6239fc58ecc9f5969ea4f7cd6",
+          "manifest": "jobs/push-impoola-s7/eval-skin2-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/push-impoola-s7/eval-skin2-world2026101602.ini",
+          "config_sha256": "b4587bc101abcc9885a167bb3c47871b025465ffc18d0e0d77e82fa70144295e",
+          "skin": 2,
+          "world": 2026101602,
+          "manifest_sha256": "4e0c5e54bb53b07a984a1df4922f959c8d0e6afa4d77681ce598f77f9f172970",
+          "manifest": "jobs/push-impoola-s7/eval-skin2-world2026101602.manifest.json"
+        }
+      ]
+    },
+    {
+      "id": "push-flex-s7",
+      "game": "push",
+      "family": "flex",
+      "seed": 7,
+      "binary": "/home/claude/cnn/build/sprite-packed-all-20261016/sprite_push",
+      "binary_sha256": "59d429a6f7119927305ebf0bbb4c31adb2c38102f61a1111ae222a698f554684",
+      "config": "jobs/push-flex-s7/config/sprite_push.ini",
+      "config_sha256": "7b560470ba3122e677489389faccbe3f1603f59571a3377a978d1ba7e8add115",
+      "default_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "metadata": {
+        "schema": "sprite-packed-metadata-v1",
+        "encoder": 4,
+        "width": 96,
+        "height": 192,
+        "channels": 3,
+        "geometry": 4,
+        "input_size": 55300,
+        "action_sizes": [
+          5,
+          20,
+          15
+        ],
+        "hidden": 128,
+        "layers": 1,
+        "parameters": 372136,
+        "encoder_parameters": 317736,
+        "checkpoint_bytes": 1488544,
+        "encoder_rollout_bytes_per_item": 1181456,
+        "encoder_train_bytes_per_item": 1257504,
+        "encoder_gradient_bytes": 1270944,
+        "gpu_execution": false
+      },
+      "metadata_receipt_sha256": "a95bb34114334cb2d2bd4909cfe99262c0653b24955c9617b9032c92478d5a38",
+      "evaluations": [
+        {
+          "config": "jobs/push-flex-s7/eval-skin0-world2026101601.ini",
+          "config_sha256": "7b560470ba3122e677489389faccbe3f1603f59571a3377a978d1ba7e8add115",
+          "skin": 0,
+          "world": 2026101601,
+          "manifest_sha256": "b7ca79ca1773cec44be6ab0f9a5266e5c0817c68d6e51796b61d04a34ac13ff9",
+          "manifest": "jobs/push-flex-s7/eval-skin0-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/push-flex-s7/eval-skin0-world2026101602.ini",
+          "config_sha256": "e3e7938eef0ae52174888ccd48436a4b90164bfbe131597eee04d2ae5c1a96ce",
+          "skin": 0,
+          "world": 2026101602,
+          "manifest_sha256": "fa6514a2c945132711b6af371c32326d3c8d1bd9018265d06632cb7daeed0133",
+          "manifest": "jobs/push-flex-s7/eval-skin0-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/push-flex-s7/eval-skin1-world2026101601.ini",
+          "config_sha256": "ae2d7cb0180fec6de5b9bad1a8ad4734ccd1e3352423065e17d3a595d9e1e2c1",
+          "skin": 1,
+          "world": 2026101601,
+          "manifest_sha256": "52054be1738be6bce5b10b90133ca33d35386d1154faec8432977527348546ac",
+          "manifest": "jobs/push-flex-s7/eval-skin1-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/push-flex-s7/eval-skin1-world2026101602.ini",
+          "config_sha256": "a4ea310db00c3db1dc16121b1706a74ca7e0e4755baa48632d5c84474afc425a",
+          "skin": 1,
+          "world": 2026101602,
+          "manifest_sha256": "47374cc1e424fb77c67319d24c2bba3a7b461c052caee5e985bd4a38a7e922b0",
+          "manifest": "jobs/push-flex-s7/eval-skin1-world2026101602.manifest.json"
+        },
+        {
+          "config": "jobs/push-flex-s7/eval-skin2-world2026101601.ini",
+          "config_sha256": "53437218226ae831dd875d9efe759b8e6544346724dbc7257c8cfb11eaeb6aae",
+          "skin": 2,
+          "world": 2026101601,
+          "manifest_sha256": "42a668145734fb56eda20a27a1ec323575944062766e38742aae9f5c4b26b553",
+          "manifest": "jobs/push-flex-s7/eval-skin2-world2026101601.manifest.json"
+        },
+        {
+          "config": "jobs/push-flex-s7/eval-skin2-world2026101602.ini",
+          "config_sha256": "99e274895116662e1702a3b6917da12bd23fdbe1cfb8cb4ad689922b36717b9e",
+          "skin": 2,
+          "world": 2026101602,
+          "manifest_sha256": "a1aef1b3b48ed4b2ce0bf6715440f83336059ff9f85653d6d845cf7fc85eb67e",
+          "manifest": "jobs/push-flex-s7/eval-skin2-world2026101602.manifest.json"
+        }
+      ],
+      "sweep_config": "jobs/push-flex-s7/sweep/config/sprite_push.ini",
+      "sweep_config_sha256": "5cdc857c1568ab36e5b63dbae7eb2612f8086c0c5205149d97debb67fa8a9619"
+    }
+  ],
+  "gpu_execution": false,
+  "completed_observations": 0,
+  "remaining_gates": [
+    "GPU numerical baseline/geometry-adapter checks",
+    "actual learner-batch memory and runtime calibration",
+    "same-seed training and graph/eager/reload canaries",
+    "fixed/random gaze controls",
+    "calibrated per-game budgets",
+    "seven-replica confirmation and held-out evaluation",
+    "sprite-suite cross-game aggregate-to-PROTEIN integration"
+  ]
+}
