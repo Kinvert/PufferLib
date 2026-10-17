@@ -1,0 +1,7 @@
+{
+  "processes": 20,
+  "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+  "status": "complete",
+  "scope": "all five families, B3/B32, positive/zero fixtures",
+  "scientific_claim": false
+}

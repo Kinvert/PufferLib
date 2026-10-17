@@ -2,6 +2,10 @@
 
 October16. Primary checkout `/home/claude/cnn`. This is temporary research
 infrastructure; the eventual PufferLib PR remains a separate minimal change.
+The executable overnight development supervisor is documented in
+[NEXT_5090_SPRITE_BENCHMARKS.md](../NEXT_5090_SPRITE_BENCHMARKS.md). Its own
+captured recipes/receipts supersede preparation-only status for that new
+allocation only; prior packets stay unchanged.
 Completed sprite cleanup/pilots are committed at `837ba6f6`. Their reports
 describe their original tile-contiguous observation format, not this new one.
 
@@ -111,10 +115,10 @@ Each Flex job additionally contains `sweep/config/default.ini` (empty) and a
 complete `sweep/config/sprite_GAME.ini`. Running its native binary in that
 `sweep` directory with mode`sweep` uses those CNN-only axes. These are separate
 single-game discovery inputs, not part of the fixed benchmark allocation.
-No sweep has launched, and a single-game discovery winner is not a shared
-architecture winner. The earlier all-game aggregate-to-native-PROTEIN loop
-exists for the original six CNN environments; it still needs explicit sprite
-packet/evaluator integration. Do not point its old game bindings at these INIs.
+Those individual-game sweep files remain preparation only. The new
+`sprite_overnight.py` supplies actual all-six-sprite aggregate feedback to
+the native PROTEIN bridge, using its own sprite/evaluator bindings. A single-
+game discovery winner is not a shared architecture winner.
 
 ## Next execution gates
 
@@ -134,6 +138,7 @@ packet/evaluator integration. Do not point its old game bindings at these INIs.
    seven fixed training replicas and complete held-out skin/world quotas.
    Report measured quality/time curves and uncertainty separately per hardware.
 
-No new GPU run, overnight campaign or paper/Pareto claim is implied by the
-current preparation. There is intentionally no long-run execution command yet:
-the new baseline math/runtime gates and execution supervisor must come first.
+The new supervisor has separate local short-smoke/numerical receipts; read
+the current result report for actual scope. No overnight campaign or paper/
+Pareto claim follows from the older preparation. The5090 launcher reruns
+its own numerical and learner/reload gates before the new bounded campaign.

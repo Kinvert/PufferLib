@@ -9,6 +9,7 @@ mkdir -p "$sprite_out/source/research" "$sprite_out/runtime/config"
 sprite_out=$(realpath "$sprite_out")
 git rev-parse HEAD > "$sprite_out/core-revision.txt"
 git archive HEAD src build.sh ocean/connect4cnn | tar -x -C "$sprite_out/source"
+cp src/protein_feedback.cu "$sprite_out/source/src/"
 cp ocean/connect4cnn/{impala,nature,flex}.cu "$sprite_out/source/ocean/connect4cnn/"
 cp -a ocean/sprite_common "$sprite_out/source/ocean/"
 cp config/default.ini "$sprite_out/runtime/config/"
@@ -28,7 +29,7 @@ cd "$sprite_out/source"
 patch -p1 < "$sprite_out/sprite_attention_core.patch" > "$sprite_out/patch.log"
 patch -p1 < "$sprite_out/sprite_benchmark_core.patch" >> "$sprite_out/patch.log"
 for sprite_game in $sprite_games; do
-    NVCC_EXTRA='-DSPRITE_ATTENTION -DSPRITE_PACKED_VIEW -DSPRITE_CNN_RESEARCH -DSPRITE_EXACT_RESEARCH' \
+    NVCC_EXTRA='-DSPRITE_ATTENTION -DSPRITE_PACKED_VIEW -DSPRITE_CNN_RESEARCH -DSPRITE_EXACT_RESEARCH -DPUFFER_RESEARCH_PROTEIN_FEEDBACK' \
         NVCC_ARCH="${NVCC_ARCH:-sm_120}" bash build.sh "$sprite_game" "$sprite_out/$sprite_game" --float \
         > "$sprite_out/$sprite_game.build.log" 2>&1
     sha256sum "$sprite_out/$sprite_game" > "$sprite_out/$sprite_game.sha256"

@@ -1,0 +1,2580 @@
+{
+  "status": "complete",
+  "baselines": [
+    {
+      "name": "tile",
+      "family": "tile",
+      "policy": {
+        "encoder": "4",
+        "cnn_depth": "1",
+        "cnn_projection": "32",
+        "cnn_global_pool": "0",
+        "cnn_channels_1": "8",
+        "cnn_kernel_1": "8",
+        "cnn_stride_1": "4",
+        "cnn_pool_1": "0",
+        "cnn_residual_1": "0",
+        "cnn_channels_2": "16",
+        "cnn_kernel_2": "3",
+        "cnn_stride_2": "2",
+        "cnn_pool_2": "0",
+        "cnn_residual_2": "0",
+        "cnn_channels_3": "16",
+        "cnn_kernel_3": "3",
+        "cnn_stride_3": "1",
+        "cnn_pool_3": "0",
+        "cnn_residual_3": "0"
+      },
+      "jobs": [
+        {
+          "game": "catch",
+          "seed": 7,
+          "training": {
+            "game": "catch",
+            "name": "catch-s7",
+            "metadata": {
+              "schema": "sprite-packed-metadata-v1",
+              "encoder": 6,
+              "width": 96,
+              "height": 192,
+              "channels": 3,
+              "geometry": 4,
+              "input_size": 55300,
+              "action_sizes": [
+                3,
+                20,
+                15
+              ],
+              "hidden": 128,
+              "layers": 4,
+              "parameters": 253224,
+              "encoder_parameters": 51624,
+              "checkpoint_bytes": 1012896,
+              "encoder_rollout_bytes_per_item": 1498128,
+              "encoder_train_bytes_per_item": 1998624,
+              "encoder_gradient_bytes": 206496,
+              "gpu_execution": false
+            },
+            "config_sha256": "0b167f59f4c1ccade19ad45d42a64fd5433d905b86d05b527c3c73b6f01df159",
+            "process": {
+              "label": "candidates-tile-catch-s7-train",
+              "argv": [
+                "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_catch",
+                "train",
+                "--headless",
+                "--base.result_fd=0"
+              ],
+              "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/catch-s7",
+              "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+              "monotonic_started_ns": 222659838845691,
+              "log": "processes/candidates-tile-catch-s7-train.log",
+              "monotonic_finished_ns": 222661306701229,
+              "returncode": 0,
+              "timed_out": false,
+              "interrupted": null,
+              "interference": [],
+              "gpu_samples": [],
+              "log_sha256": "0b5dc0c67cd442bad5e612f3778807934ce6ce9dc779ab60b0f8d2d874db9287",
+              "seconds": 1.467855538
+            },
+            "process_sps": 5580.930676026785,
+            "native_metrics": {
+              "SPS": "7137.2000760278097,9519.9583645495768,9519.9583645495768,9519.9583645495768,9519.9583645495768,9519.9583645495768,9519.9583645495768,9519.9583645495768",
+              "uptime": "0.53808462619781494,0.96828937530517578,0.96828937530517578,0.96828937530517578,0.96828937530517578,0.96828937530517578,0.96828937530517578,0.96828937530517578",
+              "agent_steps": "4096,8192,8192,8192,8192,8192,8192,8192",
+              "env/perf": "0.14166666567325592,0.51600003242492676,0.51600003242492676,0.51600003242492676,0.51600003242492676,0.51600003242492676,0.51600003242492676,0.51600003242492676"
+            },
+            "checkpoints": [
+              {
+                "decisions": 8192,
+                "path": "candidates/tile/catch-s7/checkpoints/sprite_catch/catch-s7/0000000000008192.bin",
+                "sha256": "cb00d6bc07e6a054af2c2876a2b2ae27b55af738eb75128c0487385011e97177",
+                "bytes": 1012896,
+                "seconds": 1.352992514
+              }
+            ],
+            "metrics_sha256": "b1ac7896a5f8db29aa6e42b9b127c459d8ee2986b26b07e5d204990762d56a28"
+          },
+          "evaluations": [
+            {
+              "game": "catch",
+              "decisions": 8192,
+              "skin": 0,
+              "episodes": 3,
+              "perf": 0.3666666696468989,
+              "csv": "candidates/tile/catch-s7/d8192-skin0.csv",
+              "csv_sha256": "68975e44d8b900945596aaf0811371985df609dca1f93a9742851e03a36ef97a",
+              "manifest": "candidates/tile/catch-s7/d8192-skin0.manifest.json",
+              "manifest_sha256": "6e2bb02515b6e2f7dc640ca6039bb0ad7249623ac6f8139ab031882b3a070a1f",
+              "process": {
+                "label": "candidates-tile-catch-s7-d8192-skin0",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_catch",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/catch-s7/checkpoints/sprite_catch/catch-s7/0000000000008192.bin",
+                  "--env.representation=0",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/catch-s7/d8192-skin0.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/catch-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222661480599836,
+                "log": "processes/candidates-tile-catch-s7-d8192-skin0.log",
+                "monotonic_finished_ns": 222662046311528,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "28fd7dcdd4fe5dc4b41a0517eb03134d9ab6d8e2ee1bee7af1c146b0ede40e13",
+                "seconds": 0.565711692
+              }
+            },
+            {
+              "game": "catch",
+              "decisions": 8192,
+              "skin": 1,
+              "episodes": 3,
+              "perf": 0.3666666696468989,
+              "csv": "candidates/tile/catch-s7/d8192-skin1.csv",
+              "csv_sha256": "565e4a034486e0d68a7ebdb579fee26651dfe15846e26c4534ef4b822cc110e8",
+              "manifest": "candidates/tile/catch-s7/d8192-skin1.manifest.json",
+              "manifest_sha256": "366e76956cb536ab5b351f21d55a81fc48e75540868de2d92a15cdf9e2a0ad83",
+              "process": {
+                "label": "candidates-tile-catch-s7-d8192-skin1",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_catch",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/catch-s7/checkpoints/sprite_catch/catch-s7/0000000000008192.bin",
+                  "--env.representation=1",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/catch-s7/d8192-skin1.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/catch-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222662224714866,
+                "log": "processes/candidates-tile-catch-s7-d8192-skin1.log",
+                "monotonic_finished_ns": 222662790311482,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "28fd7dcdd4fe5dc4b41a0517eb03134d9ab6d8e2ee1bee7af1c146b0ede40e13",
+                "seconds": 0.565596616
+              }
+            },
+            {
+              "game": "catch",
+              "decisions": 8192,
+              "skin": 2,
+              "episodes": 3,
+              "perf": 0.3666666696468989,
+              "csv": "candidates/tile/catch-s7/d8192-skin2.csv",
+              "csv_sha256": "6df5f60cb9f0bcaa8dcf610df5e85465297321af27219c01c0d76090c46e70e7",
+              "manifest": "candidates/tile/catch-s7/d8192-skin2.manifest.json",
+              "manifest_sha256": "ab47e5eb0854629eea1f1ca23b05a073d45b74657bfaa8b396d56330fd04dd4d",
+              "process": {
+                "label": "candidates-tile-catch-s7-d8192-skin2",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_catch",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/catch-s7/checkpoints/sprite_catch/catch-s7/0000000000008192.bin",
+                  "--env.representation=2",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/catch-s7/d8192-skin2.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/catch-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222662972295186,
+                "log": "processes/candidates-tile-catch-s7-d8192-skin2.log",
+                "monotonic_finished_ns": 222663487721242,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "28fd7dcdd4fe5dc4b41a0517eb03134d9ab6d8e2ee1bee7af1c146b0ede40e13",
+                "seconds": 0.515426056
+              }
+            }
+          ]
+        },
+        {
+          "game": "platform",
+          "seed": 7,
+          "training": {
+            "game": "platform",
+            "name": "platform-s7",
+            "metadata": {
+              "schema": "sprite-packed-metadata-v1",
+              "encoder": 6,
+              "width": 96,
+              "height": 192,
+              "channels": 3,
+              "geometry": 4,
+              "input_size": 55300,
+              "action_sizes": [
+                5,
+                20,
+                15
+              ],
+              "hidden": 128,
+              "layers": 1,
+              "parameters": 106024,
+              "encoder_parameters": 51624,
+              "checkpoint_bytes": 424096,
+              "encoder_rollout_bytes_per_item": 1498128,
+              "encoder_train_bytes_per_item": 1998624,
+              "encoder_gradient_bytes": 206496,
+              "gpu_execution": false
+            },
+            "config_sha256": "a88d478613ab8c96a844b7d046a476cd5aeca3da046bb24f5a72f88b12332f96",
+            "process": {
+              "label": "candidates-tile-platform-s7-train",
+              "argv": [
+                "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_platform",
+                "train",
+                "--headless",
+                "--base.result_fd=0"
+              ],
+              "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/platform-s7",
+              "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+              "monotonic_started_ns": 222663666140850,
+              "log": "processes/candidates-tile-platform-s7-train.log",
+              "monotonic_finished_ns": 222664933137468,
+              "returncode": 0,
+              "timed_out": false,
+              "interrupted": null,
+              "interference": [],
+              "gpu_samples": [],
+              "log_sha256": "ccb43e3b03a4d711b9ef7ff3697db9b7f9d2aa3b3bb2cb6fb3ad5c7fbf545a94",
+              "seconds": 1.266996618
+            },
+            "process_sps": 6465.684188590312,
+            "native_metrics": {
+              "SPS": "8264.0815052486087,11360.458227656776,11360.458227656776,11360.458227656776,11360.458227656776,11360.458227656776,11360.458227656776,11360.458227656776",
+              "uptime": "0.51363396644592285,0.82911419868469238,0.82911419868469238,0.82911419868469238,0.82911419868469238,0.82911419868469238,0.82911419868469238,0.82911419868469238",
+              "agent_steps": "4608,8192,8192,8192,8192,8192,8192,8192",
+              "env/perf": "0,0,0,0,0,0,0,0"
+            },
+            "checkpoints": [
+              {
+                "decisions": 8192,
+                "path": "candidates/tile/platform-s7/checkpoints/sprite_platform/platform-s7/0000000000008192.bin",
+                "sha256": "ffdbcd76500e82a71dc91cf394be9bf03842a529a9c29017c6ee1af459c0cd76",
+                "bytes": 424096,
+                "seconds": 1.18767657
+              }
+            ],
+            "metrics_sha256": "de4001446cb488791a9cbfd1b2da5431d78026aba55a6c35df027be69a2d5288"
+          },
+          "evaluations": [
+            {
+              "game": "platform",
+              "decisions": 8192,
+              "skin": 0,
+              "episodes": 3,
+              "perf": 0.0,
+              "csv": "candidates/tile/platform-s7/d8192-skin0.csv",
+              "csv_sha256": "068a145426ea97f4a2653803de7831160a0e1569fabdb5cc94cb53fd7e56f237",
+              "manifest": "candidates/tile/platform-s7/d8192-skin0.manifest.json",
+              "manifest_sha256": "5194b43309fe3430f84a076c96395f8c01c91e7b969c2fc4bd2a81f67a24602f",
+              "process": {
+                "label": "candidates-tile-platform-s7-d8192-skin0",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_platform",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/platform-s7/checkpoints/sprite_platform/platform-s7/0000000000008192.bin",
+                  "--env.representation=0",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/platform-s7/d8192-skin0.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/platform-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222665102744411,
+                "log": "processes/candidates-tile-platform-s7-d8192-skin0.log",
+                "monotonic_finished_ns": 222665568268258,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "08ab03ea8eafa72253ff2b9fb483e5d767dbdb4bd0778052b48e795ab2d2679f",
+                "seconds": 0.465523847
+              }
+            },
+            {
+              "game": "platform",
+              "decisions": 8192,
+              "skin": 1,
+              "episodes": 3,
+              "perf": 0.0,
+              "csv": "candidates/tile/platform-s7/d8192-skin1.csv",
+              "csv_sha256": "39274ed2695ee8e9c9077c862b4b1a3ce1965733bb38e48f82a19336cf194c1d",
+              "manifest": "candidates/tile/platform-s7/d8192-skin1.manifest.json",
+              "manifest_sha256": "59608bef3bd1291305627beeef306436c10411d4deaccd8ab00b71bff5abda56",
+              "process": {
+                "label": "candidates-tile-platform-s7-d8192-skin1",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_platform",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/platform-s7/checkpoints/sprite_platform/platform-s7/0000000000008192.bin",
+                  "--env.representation=1",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/platform-s7/d8192-skin1.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/platform-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222665718915894,
+                "log": "processes/candidates-tile-platform-s7-d8192-skin1.log",
+                "monotonic_finished_ns": 222666184335223,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "08ab03ea8eafa72253ff2b9fb483e5d767dbdb4bd0778052b48e795ab2d2679f",
+                "seconds": 0.465419329
+              }
+            },
+            {
+              "game": "platform",
+              "decisions": 8192,
+              "skin": 2,
+              "episodes": 3,
+              "perf": 0.0,
+              "csv": "candidates/tile/platform-s7/d8192-skin2.csv",
+              "csv_sha256": "238378c8cf2889a29e244532b011a48f45c36861cd72d60dea456f41fb60a0ed",
+              "manifest": "candidates/tile/platform-s7/d8192-skin2.manifest.json",
+              "manifest_sha256": "86e3971941e973622433ab9ec64eebadfb908af559dde5dc8977315b6109cef7",
+              "process": {
+                "label": "candidates-tile-platform-s7-d8192-skin2",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_platform",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/platform-s7/checkpoints/sprite_platform/platform-s7/0000000000008192.bin",
+                  "--env.representation=2",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/platform-s7/d8192-skin2.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/platform-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222666331189271,
+                "log": "processes/candidates-tile-platform-s7-d8192-skin2.log",
+                "monotonic_finished_ns": 222666796687862,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "08ab03ea8eafa72253ff2b9fb483e5d767dbdb4bd0778052b48e795ab2d2679f",
+                "seconds": 0.465498591
+              }
+            }
+          ]
+        },
+        {
+          "game": "maze",
+          "seed": 7,
+          "training": {
+            "game": "maze",
+            "name": "maze-s7",
+            "metadata": {
+              "schema": "sprite-packed-metadata-v1",
+              "encoder": 6,
+              "width": 96,
+              "height": 192,
+              "channels": 3,
+              "geometry": 4,
+              "input_size": 55300,
+              "action_sizes": [
+                5,
+                20,
+                15
+              ],
+              "hidden": 128,
+              "layers": 1,
+              "parameters": 106024,
+              "encoder_parameters": 51624,
+              "checkpoint_bytes": 424096,
+              "encoder_rollout_bytes_per_item": 1498128,
+              "encoder_train_bytes_per_item": 1998624,
+              "encoder_gradient_bytes": 206496,
+              "gpu_execution": false
+            },
+            "config_sha256": "a775c829538310d07fee75585b5a168f29476a1a44bb4484dc1f2a85b7e1cb63",
+            "process": {
+              "label": "candidates-tile-maze-s7-train",
+              "argv": [
+                "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_maze",
+                "train",
+                "--headless",
+                "--base.result_fd=0"
+              ],
+              "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/maze-s7",
+              "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+              "monotonic_started_ns": 222666966097206,
+              "log": "processes/candidates-tile-maze-s7-train.log",
+              "monotonic_finished_ns": 222668233558174,
+              "returncode": 0,
+              "timed_out": false,
+              "interrupted": null,
+              "interference": [],
+              "gpu_samples": [],
+              "log_sha256": "9a20e34170a3d9302990d2a6b8c845d2b8aad8c6ecb4088c883057a81763dfae",
+              "seconds": 1.267460968
+            },
+            "process_sps": 6463.315405228321,
+            "native_metrics": {
+              "SPS": "11402.882306490874,11402.882306490874,11402.882306490874,11402.882306490874,11402.882306490874,11402.882306490874,11402.882306490874,11402.882306490874",
+              "uptime": "0.82243680953979492,0.82243680953979492,0.82243680953979492,0.82243680953979492,0.82243680953979492,0.82243680953979492,0.82243680953979492,0.82243680953979492",
+              "agent_steps": "8192,8192,8192,8192,8192,8192,8192,8192",
+              "env/perf": "0.3333333432674408,0.3333333432674408,0.3333333432674408,0.3333333432674408,0.3333333432674408,0.3333333432674408,0.3333333432674408,0.3333333432674408"
+            },
+            "checkpoints": [
+              {
+                "decisions": 8192,
+                "path": "candidates/tile/maze-s7/checkpoints/sprite_maze/maze-s7/0000000000008192.bin",
+                "sha256": "c00c7a3032a81571b6a9a11e1ec3e9d10c0fb0ec2b260027e196a6348dd269a8",
+                "bytes": 424096,
+                "seconds": 1.159197736
+              }
+            ],
+            "metrics_sha256": "c9c4581a7dbd2738f8ebc94e249d312eadd7bfe6d97b3772d206b5e4206c9877"
+          },
+          "evaluations": [
+            {
+              "game": "maze",
+              "decisions": 8192,
+              "skin": 0,
+              "episodes": 3,
+              "perf": 0.3333333333333333,
+              "csv": "candidates/tile/maze-s7/d8192-skin0.csv",
+              "csv_sha256": "78eac5dc190a33d011704a1f92508d301fc0e017c9f9951725bedaa3e194e59a",
+              "manifest": "candidates/tile/maze-s7/d8192-skin0.manifest.json",
+              "manifest_sha256": "a752924e12a7a607ee0b95aad93471021a073011d59214effbc2ab2c275012f4",
+              "process": {
+                "label": "candidates-tile-maze-s7-d8192-skin0",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_maze",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/maze-s7/checkpoints/sprite_maze/maze-s7/0000000000008192.bin",
+                  "--env.representation=0",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/maze-s7/d8192-skin0.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/maze-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222668395860980,
+                "log": "processes/candidates-tile-maze-s7-d8192-skin0.log",
+                "monotonic_finished_ns": 222669061687695,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "08ab03ea8eafa72253ff2b9fb483e5d767dbdb4bd0778052b48e795ab2d2679f",
+                "seconds": 0.665826715
+              }
+            },
+            {
+              "game": "maze",
+              "decisions": 8192,
+              "skin": 1,
+              "episodes": 3,
+              "perf": 0.0,
+              "csv": "candidates/tile/maze-s7/d8192-skin1.csv",
+              "csv_sha256": "3eaf843097545339a735862a685ab0ac0013eb0278e30c9b556dbedfc4ce2864",
+              "manifest": "candidates/tile/maze-s7/d8192-skin1.manifest.json",
+              "manifest_sha256": "6cc0add59430364a1cba81fc45c6d780f64ec3c3d8c02ae866c6cf1ce70b123a",
+              "process": {
+                "label": "candidates-tile-maze-s7-d8192-skin1",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_maze",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/maze-s7/checkpoints/sprite_maze/maze-s7/0000000000008192.bin",
+                  "--env.representation=1",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/maze-s7/d8192-skin1.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/maze-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222669235894758,
+                "log": "processes/candidates-tile-maze-s7-d8192-skin1.log",
+                "monotonic_finished_ns": 222669902195087,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "08ab03ea8eafa72253ff2b9fb483e5d767dbdb4bd0778052b48e795ab2d2679f",
+                "seconds": 0.666300329
+              }
+            },
+            {
+              "game": "maze",
+              "decisions": 8192,
+              "skin": 2,
+              "episodes": 3,
+              "perf": 0.3333333333333333,
+              "csv": "candidates/tile/maze-s7/d8192-skin2.csv",
+              "csv_sha256": "eb6a64ed2cacfa83b1f6ba6945ab9fa87f352218fad097c1ee565994d4835cdb",
+              "manifest": "candidates/tile/maze-s7/d8192-skin2.manifest.json",
+              "manifest_sha256": "c1a949d2d02d4501f353ea30a4a018dc83c4519c350870100106fa3ebf1f7252",
+              "process": {
+                "label": "candidates-tile-maze-s7-d8192-skin2",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_maze",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/maze-s7/checkpoints/sprite_maze/maze-s7/0000000000008192.bin",
+                  "--env.representation=2",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/maze-s7/d8192-skin2.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/maze-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222670060182846,
+                "log": "processes/candidates-tile-maze-s7-d8192-skin2.log",
+                "monotonic_finished_ns": 222670726013854,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "08ab03ea8eafa72253ff2b9fb483e5d767dbdb4bd0778052b48e795ab2d2679f",
+                "seconds": 0.665831008
+              }
+            }
+          ]
+        },
+        {
+          "game": "runner",
+          "seed": 7,
+          "training": {
+            "game": "runner",
+            "name": "runner-s7",
+            "metadata": {
+              "schema": "sprite-packed-metadata-v1",
+              "encoder": 6,
+              "width": 96,
+              "height": 192,
+              "channels": 3,
+              "geometry": 4,
+              "input_size": 55300,
+              "action_sizes": [
+                2,
+                20,
+                15
+              ],
+              "hidden": 128,
+              "layers": 1,
+              "parameters": 105640,
+              "encoder_parameters": 51624,
+              "checkpoint_bytes": 422560,
+              "encoder_rollout_bytes_per_item": 1498128,
+              "encoder_train_bytes_per_item": 1998624,
+              "encoder_gradient_bytes": 206496,
+              "gpu_execution": false
+            },
+            "config_sha256": "9f60b3ca9a03ea14b4982b948e04a044b804fd58453dfdcb249e2098b143249d",
+            "process": {
+              "label": "candidates-tile-runner-s7-train",
+              "argv": [
+                "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_runner",
+                "train",
+                "--headless",
+                "--base.result_fd=0"
+              ],
+              "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/runner-s7",
+              "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+              "monotonic_started_ns": 222670891553534,
+              "log": "processes/candidates-tile-runner-s7-train.log",
+              "monotonic_finished_ns": 222672158738442,
+              "returncode": 0,
+              "timed_out": false,
+              "interrupted": null,
+              "interference": [],
+              "gpu_samples": [],
+              "log_sha256": "f5f897a8321a2d9d5da1d8f84e4af9f41474dedc6290f1319aea9715482a00be",
+              "seconds": 1.267184908
+            },
+            "process_sps": 6464.723457707089,
+            "native_metrics": {
+              "SPS": "8265.7834346395721,11367.683195211055,11367.683195211055,11367.683195211055,11367.683195211055,11367.683195211055,11367.683195211055,11367.683195211055",
+              "uptime": "0.5135800838470459,0.82885980606079102,0.82885980606079102,0.82885980606079102,0.82885980606079102,0.82885980606079102,0.82885980606079102,0.82885980606079102",
+              "agent_steps": "4608,8192,8192,8192,8192,8192,8192,8192",
+              "env/perf": "0.12050654576160014,0.23406864702701569,0.23406864702701569,0.23406864702701569,0.23406864702701569,0.23406864702701569,0.23406864702701569,0.23406864702701569"
+            },
+            "checkpoints": [
+              {
+                "decisions": 8192,
+                "path": "candidates/tile/runner-s7/checkpoints/sprite_runner/runner-s7/0000000000008192.bin",
+                "sha256": "1fea06ede457cec56844e98e7a0cf961de7232f903331c7310fa99c3b676e198",
+                "bytes": 422560,
+                "seconds": 1.180544075
+              }
+            ],
+            "metrics_sha256": "173e51b468152e2d93945fdd6d7074cbbb1c45d2bf252b8d65774c36c1ffcd03"
+          },
+          "evaluations": [
+            {
+              "game": "runner",
+              "decisions": 8192,
+              "skin": 0,
+              "episodes": 3,
+              "perf": 0.3055555522441864,
+              "csv": "candidates/tile/runner-s7/d8192-skin0.csv",
+              "csv_sha256": "3f83ed5f9d4b318bde213aaf8c6a512c5840217f8e5c8c2110bc4dcb62dbd7c7",
+              "manifest": "candidates/tile/runner-s7/d8192-skin0.manifest.json",
+              "manifest_sha256": "09fda9f98613ad4ed1fa66cb8a370bc9ed013de7311f7fb40fbb0425a3136e28",
+              "process": {
+                "label": "candidates-tile-runner-s7-d8192-skin0",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_runner",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/runner-s7/checkpoints/sprite_runner/runner-s7/0000000000008192.bin",
+                  "--env.representation=0",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/runner-s7/d8192-skin0.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/runner-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222672318476453,
+                "log": "processes/candidates-tile-runner-s7-d8192-skin0.log",
+                "monotonic_finished_ns": 222672834237377,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "6f78de51862e8a58dea1142d08aa4d5ead2189c836fb942c186e12c728583331",
+                "seconds": 0.515760924
+              }
+            },
+            {
+              "game": "runner",
+              "decisions": 8192,
+              "skin": 1,
+              "episodes": 3,
+              "perf": 0.3055555522441864,
+              "csv": "candidates/tile/runner-s7/d8192-skin1.csv",
+              "csv_sha256": "7a7b2c8ac5a6e64639fd68b032284d53aeb9ae6722db99f9390f4daa8b3313ce",
+              "manifest": "candidates/tile/runner-s7/d8192-skin1.manifest.json",
+              "manifest_sha256": "844c7c40ce695ca7131a2d93c370988cbbd558bf297726e31ff6585cda5f84ae",
+              "process": {
+                "label": "candidates-tile-runner-s7-d8192-skin1",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_runner",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/runner-s7/checkpoints/sprite_runner/runner-s7/0000000000008192.bin",
+                  "--env.representation=1",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/runner-s7/d8192-skin1.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/runner-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222672992964750,
+                "log": "processes/candidates-tile-runner-s7-d8192-skin1.log",
+                "monotonic_finished_ns": 222673458276200,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "6f78de51862e8a58dea1142d08aa4d5ead2189c836fb942c186e12c728583331",
+                "seconds": 0.46531145
+              }
+            },
+            {
+              "game": "runner",
+              "decisions": 8192,
+              "skin": 2,
+              "episodes": 3,
+              "perf": 0.3055555522441864,
+              "csv": "candidates/tile/runner-s7/d8192-skin2.csv",
+              "csv_sha256": "cbe5812efa2039218629c57efa978eb96df7a60ee355dcebd59dc9fbbd0a6e97",
+              "manifest": "candidates/tile/runner-s7/d8192-skin2.manifest.json",
+              "manifest_sha256": "6df9a22f1a27036fb46cf12081565e18ba288488c13915ecee940a50d9a6c53e",
+              "process": {
+                "label": "candidates-tile-runner-s7-d8192-skin2",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_runner",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/runner-s7/checkpoints/sprite_runner/runner-s7/0000000000008192.bin",
+                  "--env.representation=2",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/runner-s7/d8192-skin2.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/runner-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222673621398764,
+                "log": "processes/candidates-tile-runner-s7-d8192-skin2.log",
+                "monotonic_finished_ns": 222674086652315,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "6f78de51862e8a58dea1142d08aa4d5ead2189c836fb942c186e12c728583331",
+                "seconds": 0.465253551
+              }
+            }
+          ]
+        },
+        {
+          "game": "key",
+          "seed": 7,
+          "training": {
+            "game": "key",
+            "name": "key-s7",
+            "metadata": {
+              "schema": "sprite-packed-metadata-v1",
+              "encoder": 6,
+              "width": 96,
+              "height": 192,
+              "channels": 3,
+              "geometry": 4,
+              "input_size": 55300,
+              "action_sizes": [
+                5,
+                20,
+                15
+              ],
+              "hidden": 128,
+              "layers": 1,
+              "parameters": 106024,
+              "encoder_parameters": 51624,
+              "checkpoint_bytes": 424096,
+              "encoder_rollout_bytes_per_item": 1498128,
+              "encoder_train_bytes_per_item": 1998624,
+              "encoder_gradient_bytes": 206496,
+              "gpu_execution": false
+            },
+            "config_sha256": "8058956bfac1ec469cd61b4804e9e3e1b92ba6313bc56a7b3129ac687d5a0432",
+            "process": {
+              "label": "candidates-tile-key-s7-train",
+              "argv": [
+                "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_key",
+                "train",
+                "--headless",
+                "--base.result_fd=0"
+              ],
+              "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/key-s7",
+              "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+              "monotonic_started_ns": 222674252682229,
+              "log": "processes/candidates-tile-key-s7-train.log",
+              "monotonic_finished_ns": 222675520427009,
+              "returncode": 0,
+              "timed_out": false,
+              "interrupted": null,
+              "interference": [],
+              "gpu_samples": [],
+              "log_sha256": "cda16cfd828771dd4ffdc33670078e50b2c45caff1954f6cc0946dc3105b94d6",
+              "seconds": 1.26774478
+            },
+            "process_sps": 6461.868452733838,
+            "native_metrics": {
+              "SPS": "8309.2806472681768,11401.89200109374,11401.89200109374,11401.89200109374,11401.89200109374,11401.89200109374,11401.89200109374,11401.89200109374",
+              "uptime": "0.5106276273727417,0.82496142387390137,0.82496142387390137,0.82496142387390137,0.82496142387390137,0.82496142387390137,0.82496142387390137,0.82496142387390137",
+              "agent_steps": "4608,8192,8192,8192,8192,8192,8192,8192",
+              "env/perf": "0,0,0,0,0,0,0,0"
+            },
+            "checkpoints": [
+              {
+                "decisions": 8192,
+                "path": "candidates/tile/key-s7/checkpoints/sprite_key/key-s7/0000000000008192.bin",
+                "sha256": "b9e2e49d0bc91f5a5bcd20952b170450e38da35006b95882e0fc1cf8346cdfc6",
+                "bytes": 424096,
+                "seconds": 1.158005653
+              }
+            ],
+            "metrics_sha256": "9b550965bb15e37e6eb5f4eff3c6bc22c2644082adce98fe677741a139c18879"
+          },
+          "evaluations": [
+            {
+              "game": "key",
+              "decisions": 8192,
+              "skin": 0,
+              "episodes": 3,
+              "perf": 0.0,
+              "csv": "candidates/tile/key-s7/d8192-skin0.csv",
+              "csv_sha256": "39c6cfa5abf2cf3784f3769cffab1c33468f3302da1fb704c2dbfda6ff59ad47",
+              "manifest": "candidates/tile/key-s7/d8192-skin0.manifest.json",
+              "manifest_sha256": "a03024241387d1371d72f0bb1b2b6b3814baa0444247303dd22e71b9922d8a3e",
+              "process": {
+                "label": "candidates-tile-key-s7-d8192-skin0",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_key",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/key-s7/checkpoints/sprite_key/key-s7/0000000000008192.bin",
+                  "--env.representation=0",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/key-s7/d8192-skin0.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/key-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222675684173317,
+                "log": "processes/candidates-tile-key-s7-d8192-skin0.log",
+                "monotonic_finished_ns": 222676199525539,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "08ab03ea8eafa72253ff2b9fb483e5d767dbdb4bd0778052b48e795ab2d2679f",
+                "seconds": 0.515352222
+              }
+            },
+            {
+              "game": "key",
+              "decisions": 8192,
+              "skin": 1,
+              "episodes": 3,
+              "perf": 0.0,
+              "csv": "candidates/tile/key-s7/d8192-skin1.csv",
+              "csv_sha256": "5a82e5909de5b5f8426eba6738e37641c82769126d6c0c75d1f4b1968388fe89",
+              "manifest": "candidates/tile/key-s7/d8192-skin1.manifest.json",
+              "manifest_sha256": "ee0e8ee51af0a3de832c201b513ea971e4824a33713b6b4fa94997058867abf5",
+              "process": {
+                "label": "candidates-tile-key-s7-d8192-skin1",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_key",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/key-s7/checkpoints/sprite_key/key-s7/0000000000008192.bin",
+                  "--env.representation=1",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/key-s7/d8192-skin1.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/key-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222676353863529,
+                "log": "processes/candidates-tile-key-s7-d8192-skin1.log",
+                "monotonic_finished_ns": 222676869200986,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "08ab03ea8eafa72253ff2b9fb483e5d767dbdb4bd0778052b48e795ab2d2679f",
+                "seconds": 0.515337457
+              }
+            },
+            {
+              "game": "key",
+              "decisions": 8192,
+              "skin": 2,
+              "episodes": 3,
+              "perf": 0.0,
+              "csv": "candidates/tile/key-s7/d8192-skin2.csv",
+              "csv_sha256": "610f166d85680dedf70b476f9901cf921b71eff286413f0184637eef17b5bb39",
+              "manifest": "candidates/tile/key-s7/d8192-skin2.manifest.json",
+              "manifest_sha256": "6dbe19140f4cff8a4cafe458400876d4809cedf373a4f10c5f420594838a2011",
+              "process": {
+                "label": "candidates-tile-key-s7-d8192-skin2",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_key",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/key-s7/checkpoints/sprite_key/key-s7/0000000000008192.bin",
+                  "--env.representation=2",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/key-s7/d8192-skin2.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/key-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222677031642566,
+                "log": "processes/candidates-tile-key-s7-d8192-skin2.log",
+                "monotonic_finished_ns": 222677547574470,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "08ab03ea8eafa72253ff2b9fb483e5d767dbdb4bd0778052b48e795ab2d2679f",
+                "seconds": 0.515931904
+              }
+            }
+          ]
+        },
+        {
+          "game": "push",
+          "seed": 7,
+          "training": {
+            "game": "push",
+            "name": "push-s7",
+            "metadata": {
+              "schema": "sprite-packed-metadata-v1",
+              "encoder": 6,
+              "width": 96,
+              "height": 192,
+              "channels": 3,
+              "geometry": 4,
+              "input_size": 55300,
+              "action_sizes": [
+                5,
+                20,
+                15
+              ],
+              "hidden": 128,
+              "layers": 1,
+              "parameters": 106024,
+              "encoder_parameters": 51624,
+              "checkpoint_bytes": 424096,
+              "encoder_rollout_bytes_per_item": 1498128,
+              "encoder_train_bytes_per_item": 1998624,
+              "encoder_gradient_bytes": 206496,
+              "gpu_execution": false
+            },
+            "config_sha256": "b5a11ee7b9e1623c6f04247c9624676a4a1d563b9de0a964edf5aeb9cc6d8c1d",
+            "process": {
+              "label": "candidates-tile-push-s7-train",
+              "argv": [
+                "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_push",
+                "train",
+                "--headless",
+                "--base.result_fd=0"
+              ],
+              "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/push-s7",
+              "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+              "monotonic_started_ns": 222677714862580,
+              "log": "processes/candidates-tile-push-s7-train.log",
+              "monotonic_finished_ns": 222678982176658,
+              "returncode": 0,
+              "timed_out": false,
+              "interrupted": null,
+              "interference": [],
+              "gpu_samples": [],
+              "log_sha256": "ade23bf7185ce1a088cf3ae4d02e646c69e83aee2a6343eaefde3bc4342fa644",
+              "seconds": 1.267314078
+            },
+            "process_sps": 6464.0645458055105,
+            "native_metrics": {
+              "SPS": "8239.1102103847643,11326.804465051653,11326.804465051653,11326.804465051653,11326.804465051653,11326.804465051653,11326.804465051653,11326.804465051653",
+              "uptime": "0.51519787311553955,0.83161544799804688,0.83161544799804688,0.83161544799804688,0.83161544799804688,0.83161544799804688,0.83161544799804688,0.83161544799804688",
+              "agent_steps": "4608,8192,8192,8192,8192,8192,8192,8192",
+              "env/perf": "0.13833333365619183,0.026666667312383652,0.026666667312383652,0.026666667312383652,0.026666667312383652,0.026666667312383652,0.026666667312383652,0.026666667312383652"
+            },
+            "checkpoints": [
+              {
+                "decisions": 8192,
+                "path": "candidates/tile/push-s7/checkpoints/sprite_push/push-s7/0000000000008192.bin",
+                "sha256": "a09e220065efeadc0d6988b553c4072538d7e42965f3ba4a53ec90de3400488f",
+                "bytes": 424096,
+                "seconds": 1.172541147
+              }
+            ],
+            "metrics_sha256": "02a134d77fc5ce9da6b51e1eb38674e4fb70ce162ac4067405161c0c8d05de9f"
+          },
+          "evaluations": [
+            {
+              "game": "push",
+              "decisions": 8192,
+              "skin": 0,
+              "episodes": 3,
+              "perf": 0.0,
+              "csv": "candidates/tile/push-s7/d8192-skin0.csv",
+              "csv_sha256": "7af186814bc0b1b38c46d0b10a4d454b2932d796d82e8efa545f62d0c8902747",
+              "manifest": "candidates/tile/push-s7/d8192-skin0.manifest.json",
+              "manifest_sha256": "fe725aaae2ae21f0563cc2db32bde94742bd7f61d80e62bb9eb2db48cde8ac55",
+              "process": {
+                "label": "candidates-tile-push-s7-d8192-skin0",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_push",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/push-s7/checkpoints/sprite_push/push-s7/0000000000008192.bin",
+                  "--env.representation=0",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/push-s7/d8192-skin0.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/push-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222679148545181,
+                "log": "processes/candidates-tile-push-s7-d8192-skin0.log",
+                "monotonic_finished_ns": 222679613836798,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "08ab03ea8eafa72253ff2b9fb483e5d767dbdb4bd0778052b48e795ab2d2679f",
+                "seconds": 0.465291617
+              }
+            },
+            {
+              "game": "push",
+              "decisions": 8192,
+              "skin": 1,
+              "episodes": 3,
+              "perf": 0.0,
+              "csv": "candidates/tile/push-s7/d8192-skin1.csv",
+              "csv_sha256": "e48a497932ff30347465261395919e43866016b8f814456569b09cc59fe83eff",
+              "manifest": "candidates/tile/push-s7/d8192-skin1.manifest.json",
+              "manifest_sha256": "656d17e0ebbe1c0e8d8dea4c8461b2db711ed1793f620e51f962ad61f28b0de2",
+              "process": {
+                "label": "candidates-tile-push-s7-d8192-skin1",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_push",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/push-s7/checkpoints/sprite_push/push-s7/0000000000008192.bin",
+                  "--env.representation=1",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/push-s7/d8192-skin1.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/push-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222679772659201,
+                "log": "processes/candidates-tile-push-s7-d8192-skin1.log",
+                "monotonic_finished_ns": 222680187726840,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "08ab03ea8eafa72253ff2b9fb483e5d767dbdb4bd0778052b48e795ab2d2679f",
+                "seconds": 0.415067639
+              }
+            },
+            {
+              "game": "push",
+              "decisions": 8192,
+              "skin": 2,
+              "episodes": 3,
+              "perf": 0.0,
+              "csv": "candidates/tile/push-s7/d8192-skin2.csv",
+              "csv_sha256": "07f7032b182043da19bfc0a9ff14e65f87571df05060907b844a67e392c1abe3",
+              "manifest": "candidates/tile/push-s7/d8192-skin2.manifest.json",
+              "manifest_sha256": "cd8a4327889ea29b07d6e0683cc3aaefbc344a7467279083eade43f94bc3b6a5",
+              "process": {
+                "label": "candidates-tile-push-s7-d8192-skin2",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_push",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/push-s7/checkpoints/sprite_push/push-s7/0000000000008192.bin",
+                  "--env.representation=2",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/push-s7/d8192-skin2.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/tile/push-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222680351537866,
+                "log": "processes/candidates-tile-push-s7-d8192-skin2.log",
+                "monotonic_finished_ns": 222680816707235,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "08ab03ea8eafa72253ff2b9fb483e5d767dbdb4bd0778052b48e795ab2d2679f",
+                "seconds": 0.465169369
+              }
+            }
+          ]
+        }
+      ],
+      "feedback": {
+        "score": 0.1490740740188846,
+        "worst_game_utility": 0,
+        "games": [
+          {
+            "game": "catch",
+            "score": 0.3666666696468989,
+            "utility": 0.3666666696468989
+          },
+          {
+            "game": "platform",
+            "score": 0.0,
+            "utility": 0
+          },
+          {
+            "game": "maze",
+            "score": 0.2222222222222222,
+            "utility": 0.2222222222222222
+          },
+          {
+            "game": "runner",
+            "score": 0.3055555522441864,
+            "utility": 0.3055555522441864
+          },
+          {
+            "game": "key",
+            "score": 0.0,
+            "utility": 0
+          },
+          {
+            "game": "push",
+            "score": 0.0,
+            "utility": 0
+          }
+        ],
+        "cost": 7.80455689,
+        "training_jobs_charged": 6,
+        "scientific_claim": false
+      },
+      "status": "complete"
+    },
+    {
+      "name": "nature",
+      "family": "nature",
+      "policy": {
+        "encoder": "4",
+        "cnn_depth": "1",
+        "cnn_projection": "32",
+        "cnn_global_pool": "0",
+        "cnn_channels_1": "8",
+        "cnn_kernel_1": "8",
+        "cnn_stride_1": "4",
+        "cnn_pool_1": "0",
+        "cnn_residual_1": "0",
+        "cnn_channels_2": "16",
+        "cnn_kernel_2": "3",
+        "cnn_stride_2": "2",
+        "cnn_pool_2": "0",
+        "cnn_residual_2": "0",
+        "cnn_channels_3": "16",
+        "cnn_kernel_3": "3",
+        "cnn_stride_3": "1",
+        "cnn_pool_3": "0",
+        "cnn_residual_3": "0"
+      },
+      "jobs": [
+        {
+          "game": "catch",
+          "seed": 7,
+          "training": {
+            "game": "catch",
+            "name": "catch-s7",
+            "metadata": {
+              "schema": "sprite-packed-metadata-v1",
+              "encoder": 2,
+              "width": 96,
+              "height": 192,
+              "channels": 3,
+              "geometry": 4,
+              "input_size": 55300,
+              "action_sizes": [
+                3,
+                20,
+                15
+              ],
+              "hidden": 128,
+              "layers": 4,
+              "parameters": 1605408,
+              "encoder_parameters": 1403808,
+              "checkpoint_bytes": 6421632,
+              "encoder_rollout_bytes_per_item": 2148752,
+              "encoder_train_bytes_per_item": 3246624,
+              "encoder_gradient_bytes": 5615232,
+              "gpu_execution": false
+            },
+            "config_sha256": "c2edd72c814c90f99e7878fd2eb62d29f660cf53ccb577d352e37e76382fc5e1",
+            "process": {
+              "label": "candidates-nature-catch-s7-train",
+              "argv": [
+                "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_catch",
+                "train",
+                "--headless",
+                "--base.result_fd=0"
+              ],
+              "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/catch-s7",
+              "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+              "monotonic_started_ns": 222681003729371,
+              "log": "processes/candidates-nature-catch-s7-train.log",
+              "monotonic_finished_ns": 222682874117449,
+              "returncode": 0,
+              "timed_out": false,
+              "interrupted": null,
+              "interference": [],
+              "gpu_samples": [],
+              "log_sha256": "d028795d0972809cc145bab7656e01cc322856329efbacc04c8804d541353dd4",
+              "seconds": 1.870388078
+            },
+            "process_sps": 4379.839722224748,
+            "native_metrics": {
+              "SPS": "7019.7717110362109,6875.099219082027,6875.099219082027,6875.099219082027,6875.099219082027,6875.099219082027,6875.099219082027,6875.099219082027",
+              "uptime": "0.99621367454528809,1.294100284576416,1.294100284576416,1.294100284576416,1.294100284576416,1.294100284576416,1.294100284576416,1.294100284576416",
+              "agent_steps": "6144,8192,8192,8192,8192,8192,8192,8192",
+              "env/perf": "0.079999998211860657,0.52500003576278687,0.52500003576278687,0.52500003576278687,0.52500003576278687,0.52500003576278687,0.52500003576278687,0.52500003576278687"
+            },
+            "checkpoints": [
+              {
+                "decisions": 8192,
+                "path": "candidates/nature/catch-s7/checkpoints/sprite_catch/catch-s7/0000000000008192.bin",
+                "sha256": "cde3ef0b3920c934e9b2fd49fdb24865ea39aa18392e41b4f11b55a889c172e1",
+                "bytes": 6421632,
+                "seconds": 1.731978986
+              }
+            ],
+            "metrics_sha256": "3ea726ff0635169889c70dd046a145f19408e617e8d28b11e66cbe724e49b97f"
+          },
+          "evaluations": [
+            {
+              "game": "catch",
+              "decisions": 8192,
+              "skin": 0,
+              "episodes": 3,
+              "perf": 0.3666666696468989,
+              "csv": "candidates/nature/catch-s7/d8192-skin0.csv",
+              "csv_sha256": "ee2c151d6691a590c84d32f13eb26e214e06c299b4034e75a573af5140370f76",
+              "manifest": "candidates/nature/catch-s7/d8192-skin0.manifest.json",
+              "manifest_sha256": "44b1f332e962d56b8fd3a56a5f20567279d636d4a94079970da01eefeaf6e129",
+              "process": {
+                "label": "candidates-nature-catch-s7-d8192-skin0",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_catch",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/catch-s7/checkpoints/sprite_catch/catch-s7/0000000000008192.bin",
+                  "--env.representation=0",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/catch-s7/d8192-skin0.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/catch-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222683082841454,
+                "log": "processes/candidates-nature-catch-s7-d8192-skin0.log",
+                "monotonic_finished_ns": 222683698694658,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "85fddfad5f920ff302a908415bf9b61bb391cb1aba3dc23e3e1df0c24d75f495",
+                "seconds": 0.615853204
+              }
+            },
+            {
+              "game": "catch",
+              "decisions": 8192,
+              "skin": 1,
+              "episodes": 3,
+              "perf": 0.3666666696468989,
+              "csv": "candidates/nature/catch-s7/d8192-skin1.csv",
+              "csv_sha256": "1be10e7fc4b6f3f8461871ab0ef3ea4a3b3c8bd205090e2a978aa30b9f10c62e",
+              "manifest": "candidates/nature/catch-s7/d8192-skin1.manifest.json",
+              "manifest_sha256": "b2ef904358a8211cd5662a27319ed685a269404a315f0c786729d77b82b0e8c0",
+              "process": {
+                "label": "candidates-nature-catch-s7-d8192-skin1",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_catch",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/catch-s7/checkpoints/sprite_catch/catch-s7/0000000000008192.bin",
+                  "--env.representation=1",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/catch-s7/d8192-skin1.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/catch-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222683872629160,
+                "log": "processes/candidates-nature-catch-s7-d8192-skin1.log",
+                "monotonic_finished_ns": 222684438171454,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "85fddfad5f920ff302a908415bf9b61bb391cb1aba3dc23e3e1df0c24d75f495",
+                "seconds": 0.565542294
+              }
+            },
+            {
+              "game": "catch",
+              "decisions": 8192,
+              "skin": 2,
+              "episodes": 3,
+              "perf": 0.3666666696468989,
+              "csv": "candidates/nature/catch-s7/d8192-skin2.csv",
+              "csv_sha256": "725001157ac22d7ecd5f0d23620ed652ecedbb6d32417b9c86e3c2a0bcd9a3ce",
+              "manifest": "candidates/nature/catch-s7/d8192-skin2.manifest.json",
+              "manifest_sha256": "a4338b2872168757ec23ea7df1a19ec675dbc2967216a4cc8a30d1b7622257ee",
+              "process": {
+                "label": "candidates-nature-catch-s7-d8192-skin2",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_catch",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/catch-s7/checkpoints/sprite_catch/catch-s7/0000000000008192.bin",
+                  "--env.representation=2",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/catch-s7/d8192-skin2.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/catch-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222684601182073,
+                "log": "processes/candidates-nature-catch-s7-d8192-skin2.log",
+                "monotonic_finished_ns": 222685216904121,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "85fddfad5f920ff302a908415bf9b61bb391cb1aba3dc23e3e1df0c24d75f495",
+                "seconds": 0.615722048
+              }
+            }
+          ]
+        },
+        {
+          "game": "platform",
+          "seed": 7,
+          "training": {
+            "game": "platform",
+            "name": "platform-s7",
+            "metadata": {
+              "schema": "sprite-packed-metadata-v1",
+              "encoder": 2,
+              "width": 96,
+              "height": 192,
+              "channels": 3,
+              "geometry": 4,
+              "input_size": 55300,
+              "action_sizes": [
+                5,
+                20,
+                15
+              ],
+              "hidden": 128,
+              "layers": 1,
+              "parameters": 1458208,
+              "encoder_parameters": 1403808,
+              "checkpoint_bytes": 5832832,
+              "encoder_rollout_bytes_per_item": 2148752,
+              "encoder_train_bytes_per_item": 3246624,
+              "encoder_gradient_bytes": 5615232,
+              "gpu_execution": false
+            },
+            "config_sha256": "e7552e691c5c1630c89aa9d20b761d63fb34ee150e05e0301efc35cfd4c26274",
+            "process": {
+              "label": "candidates-nature-platform-s7-train",
+              "argv": [
+                "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_platform",
+                "train",
+                "--headless",
+                "--base.result_fd=0"
+              ],
+              "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/platform-s7",
+              "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+              "monotonic_started_ns": 222685380333295,
+              "log": "processes/candidates-nature-platform-s7-train.log",
+              "monotonic_finished_ns": 222687048957077,
+              "returncode": 0,
+              "timed_out": false,
+              "interrupted": null,
+              "interference": [],
+              "gpu_samples": [],
+              "log_sha256": "a5b7c220ed829395419f7301e671b95971299f48c79889e7a6983eedf2beffd2",
+              "seconds": 1.668623782
+            },
+            "process_sps": 4909.435001688115,
+            "native_metrics": {
+              "SPS": "6021.3749334013037,7656.1793074803845,7656.1793074803845,7656.1793074803845,7656.1793074803845,7656.1793074803845,7656.1793074803845,7656.1793074803845",
+              "uptime": "0.56943166255950928,1.1654965877532959,1.1654965877532959,1.1654965877532959,1.1654965877532959,1.1654965877532959,1.1654965877532959,1.1654965877532959",
+              "agent_steps": "3584,8192,8192,8192,8192,8192,8192,8192",
+              "env/perf": "0,0.023255813866853714,0.023255813866853714,0.023255813866853714,0.023255813866853714,0.023255813866853714,0.023255813866853714,0.023255813866853714"
+            },
+            "checkpoints": [
+              {
+                "decisions": 8192,
+                "path": "candidates/nature/platform-s7/checkpoints/sprite_platform/platform-s7/0000000000008192.bin",
+                "sha256": "2e7f5cabd2db8db05b45ef0861383a8c2169e7a45c4d8027b0b76cda784d60b4",
+                "bytes": 5832832,
+                "seconds": 1.537904775
+              }
+            ],
+            "metrics_sha256": "4cf8e524cbf3c3f699d21986bf8876fe1d5ecd8660610ef1090cfbd2068eb4f5"
+          },
+          "evaluations": [
+            {
+              "game": "platform",
+              "decisions": 8192,
+              "skin": 0,
+              "episodes": 3,
+              "perf": 0.0,
+              "csv": "candidates/nature/platform-s7/d8192-skin0.csv",
+              "csv_sha256": "554eb7cdaed06e6053c756f96df949d3fee02323c0525e838b2a9a5115c145d5",
+              "manifest": "candidates/nature/platform-s7/d8192-skin0.manifest.json",
+              "manifest_sha256": "bed9d68b986cc37d2bb91fcba55951545504a42c4982ae56fba704469a85a508",
+              "process": {
+                "label": "candidates-nature-platform-s7-d8192-skin0",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_platform",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/platform-s7/checkpoints/sprite_platform/platform-s7/0000000000008192.bin",
+                  "--env.representation=0",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/platform-s7/d8192-skin0.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/platform-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222687249986039,
+                "log": "processes/candidates-nature-platform-s7-d8192-skin0.log",
+                "monotonic_finished_ns": 222687765604079,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "2b143d411d68c573a6e36cc8d3ae310776f53c010af0086ddcbcb61f5709ae15",
+                "seconds": 0.51561804
+              }
+            },
+            {
+              "game": "platform",
+              "decisions": 8192,
+              "skin": 1,
+              "episodes": 3,
+              "perf": 0.0,
+              "csv": "candidates/nature/platform-s7/d8192-skin1.csv",
+              "csv_sha256": "563e6a90295c5d79be2144565fb7335112096ba02d9b497976804417a54e51b0",
+              "manifest": "candidates/nature/platform-s7/d8192-skin1.manifest.json",
+              "manifest_sha256": "83eea56320bc37788c05ea3017238fced836ef2043d6331d98a4166d0b766260",
+              "process": {
+                "label": "candidates-nature-platform-s7-d8192-skin1",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_platform",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/platform-s7/checkpoints/sprite_platform/platform-s7/0000000000008192.bin",
+                  "--env.representation=1",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/platform-s7/d8192-skin1.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/platform-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222687947537198,
+                "log": "processes/candidates-nature-platform-s7-d8192-skin1.log",
+                "monotonic_finished_ns": 222688462984997,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "2b143d411d68c573a6e36cc8d3ae310776f53c010af0086ddcbcb61f5709ae15",
+                "seconds": 0.515447799
+              }
+            },
+            {
+              "game": "platform",
+              "decisions": 8192,
+              "skin": 2,
+              "episodes": 3,
+              "perf": 0.0,
+              "csv": "candidates/nature/platform-s7/d8192-skin2.csv",
+              "csv_sha256": "b3d8997ed282835ebd4566a43d03e6f1827f043c9f4b2e9d80b708b78ebd34a1",
+              "manifest": "candidates/nature/platform-s7/d8192-skin2.manifest.json",
+              "manifest_sha256": "b2d68cfaac10aeb34c032cff88d26a5135a4ff0a5fb82be5ef67c4d9e68707dd",
+              "process": {
+                "label": "candidates-nature-platform-s7-d8192-skin2",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_platform",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/platform-s7/checkpoints/sprite_platform/platform-s7/0000000000008192.bin",
+                  "--env.representation=2",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/platform-s7/d8192-skin2.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/platform-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222688622294321,
+                "log": "processes/candidates-nature-platform-s7-d8192-skin2.log",
+                "monotonic_finished_ns": 222689087775723,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "2b143d411d68c573a6e36cc8d3ae310776f53c010af0086ddcbcb61f5709ae15",
+                "seconds": 0.465481402
+              }
+            }
+          ]
+        },
+        {
+          "game": "maze",
+          "seed": 7,
+          "training": {
+            "game": "maze",
+            "name": "maze-s7",
+            "metadata": {
+              "schema": "sprite-packed-metadata-v1",
+              "encoder": 2,
+              "width": 96,
+              "height": 192,
+              "channels": 3,
+              "geometry": 4,
+              "input_size": 55300,
+              "action_sizes": [
+                5,
+                20,
+                15
+              ],
+              "hidden": 128,
+              "layers": 1,
+              "parameters": 1458208,
+              "encoder_parameters": 1403808,
+              "checkpoint_bytes": 5832832,
+              "encoder_rollout_bytes_per_item": 2148752,
+              "encoder_train_bytes_per_item": 3246624,
+              "encoder_gradient_bytes": 5615232,
+              "gpu_execution": false
+            },
+            "config_sha256": "6567dacb70dd479fa5fcbbae137b1f69f5f734001e3ee2e4202db9bf550c0898",
+            "process": {
+              "label": "candidates-nature-maze-s7-train",
+              "argv": [
+                "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_maze",
+                "train",
+                "--headless",
+                "--base.result_fd=0"
+              ],
+              "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/maze-s7",
+              "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+              "monotonic_started_ns": 222689266818469,
+              "log": "processes/candidates-nature-maze-s7-train.log",
+              "monotonic_finished_ns": 222690936238802,
+              "returncode": 0,
+              "timed_out": false,
+              "interrupted": null,
+              "interference": [],
+              "gpu_samples": [],
+              "log_sha256": "0fd5568f34a5c967c8caad43ae118e47a3bd2cbeffea40a18e675c97fd44b902",
+              "seconds": 1.669420333
+            },
+            "process_sps": 4907.092502748378,
+            "native_metrics": {
+              "SPS": "7754.9862431454967,7647.2367732510265,7647.2367732510265,7647.2367732510265,7647.2367732510265,7647.2367732510265,7647.2367732510265,7647.2367732510265",
+              "uptime": "0.89881181716918945,1.1666209697723389,1.1666209697723389,1.1666209697723389,1.1666209697723389,1.1666209697723389,1.1666209697723389,1.1666209697723389",
+              "agent_steps": "6144,8192,8192,8192,8192,8192,8192,8192",
+              "env/perf": "0,0,0,0,0,0,0,0"
+            },
+            "checkpoints": [
+              {
+                "decisions": 8192,
+                "path": "candidates/nature/maze-s7/checkpoints/sprite_maze/maze-s7/0000000000008192.bin",
+                "sha256": "f93558ac9d4bf97959a108b1a1a0a1a0dca53df30d462cade1fe294bcaa3416e",
+                "bytes": 5832832,
+                "seconds": 1.547229693
+              }
+            ],
+            "metrics_sha256": "7caed711162e7411bbf993194bdc2c1d86ba36f77a806878f7f8df332d2953eb"
+          },
+          "evaluations": [
+            {
+              "game": "maze",
+              "decisions": 8192,
+              "skin": 0,
+              "episodes": 3,
+              "perf": 0.3333333333333333,
+              "csv": "candidates/nature/maze-s7/d8192-skin0.csv",
+              "csv_sha256": "d18664da5dbfba84f92a4df80078a406f67d81a03b5515a5eb3c7277631360d3",
+              "manifest": "candidates/nature/maze-s7/d8192-skin0.manifest.json",
+              "manifest_sha256": "546a87b2255c28776d80b0c1c18c203ece28ff4e7a8e148f8a2c6c2b57aeecf9",
+              "process": {
+                "label": "candidates-nature-maze-s7-d8192-skin0",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_maze",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/maze-s7/checkpoints/sprite_maze/maze-s7/0000000000008192.bin",
+                  "--env.representation=0",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/maze-s7/d8192-skin0.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/maze-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222691135104404,
+                "log": "processes/candidates-nature-maze-s7-d8192-skin0.log",
+                "monotonic_finished_ns": 222691901265292,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "2b143d411d68c573a6e36cc8d3ae310776f53c010af0086ddcbcb61f5709ae15",
+                "seconds": 0.766160888
+              }
+            },
+            {
+              "game": "maze",
+              "decisions": 8192,
+              "skin": 1,
+              "episodes": 3,
+              "perf": 0.3333333333333333,
+              "csv": "candidates/nature/maze-s7/d8192-skin1.csv",
+              "csv_sha256": "e39c8864c9d0b9382b2093ae16190a879b2752af1fc14eeb130e42fb61a3a29a",
+              "manifest": "candidates/nature/maze-s7/d8192-skin1.manifest.json",
+              "manifest_sha256": "d6e534ec5ff5036eb93705ac2d370c5bdc7c639b02f916ebc0558f719fc198c3",
+              "process": {
+                "label": "candidates-nature-maze-s7-d8192-skin1",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_maze",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/maze-s7/checkpoints/sprite_maze/maze-s7/0000000000008192.bin",
+                  "--env.representation=1",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/maze-s7/d8192-skin1.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/maze-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222692059558922,
+                "log": "processes/candidates-nature-maze-s7-d8192-skin1.log",
+                "monotonic_finished_ns": 222692775490232,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "2b143d411d68c573a6e36cc8d3ae310776f53c010af0086ddcbcb61f5709ae15",
+                "seconds": 0.71593131
+              }
+            },
+            {
+              "game": "maze",
+              "decisions": 8192,
+              "skin": 2,
+              "episodes": 3,
+              "perf": 0.3333333333333333,
+              "csv": "candidates/nature/maze-s7/d8192-skin2.csv",
+              "csv_sha256": "c81f7d6e515f77b869a36556c0f24f3734ce0252156a901bf00ce6a3a08886b6",
+              "manifest": "candidates/nature/maze-s7/d8192-skin2.manifest.json",
+              "manifest_sha256": "d1ed953cda20aa9757af78d4b0a63c5052ba5f92670dcaaec7d1cb53931f79b8",
+              "process": {
+                "label": "candidates-nature-maze-s7-d8192-skin2",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_maze",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/maze-s7/checkpoints/sprite_maze/maze-s7/0000000000008192.bin",
+                  "--env.representation=2",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/maze-s7/d8192-skin2.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/maze-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222692950670009,
+                "log": "processes/candidates-nature-maze-s7-d8192-skin2.log",
+                "monotonic_finished_ns": 222693666770032,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "2b143d411d68c573a6e36cc8d3ae310776f53c010af0086ddcbcb61f5709ae15",
+                "seconds": 0.716100023
+              }
+            }
+          ]
+        },
+        {
+          "game": "runner",
+          "seed": 7,
+          "training": {
+            "game": "runner",
+            "name": "runner-s7",
+            "metadata": {
+              "schema": "sprite-packed-metadata-v1",
+              "encoder": 2,
+              "width": 96,
+              "height": 192,
+              "channels": 3,
+              "geometry": 4,
+              "input_size": 55300,
+              "action_sizes": [
+                2,
+                20,
+                15
+              ],
+              "hidden": 128,
+              "layers": 1,
+              "parameters": 1457824,
+              "encoder_parameters": 1403808,
+              "checkpoint_bytes": 5831296,
+              "encoder_rollout_bytes_per_item": 2148752,
+              "encoder_train_bytes_per_item": 3246624,
+              "encoder_gradient_bytes": 5615232,
+              "gpu_execution": false
+            },
+            "config_sha256": "225096f2f26ba86e489bfc24e65612857cb6cb459e187fbbe5610c434011116c",
+            "process": {
+              "label": "candidates-nature-runner-s7-train",
+              "argv": [
+                "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_runner",
+                "train",
+                "--headless",
+                "--base.result_fd=0"
+              ],
+              "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/runner-s7",
+              "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+              "monotonic_started_ns": 222693834387041,
+              "log": "processes/candidates-nature-runner-s7-train.log",
+              "monotonic_finished_ns": 222695453028835,
+              "returncode": 0,
+              "timed_out": false,
+              "interrupted": null,
+              "interference": [],
+              "gpu_samples": [],
+              "log_sha256": "2d74e5775c828b1695a6fcf359fe0966bc49f546fcb49adc3f7f2e4ca3e62015",
+              "seconds": 1.618641794
+            },
+            "process_sps": 5061.033287516855,
+            "native_metrics": {
+              "SPS": "6060.2453817195119,7668.9818942797356,7668.9818942797356,7668.9818942797356,7668.9818942797356,7668.9818942797356,7668.9818942797356,7668.9818942797356",
+              "uptime": "0.56499052047729492,1.1610064506530762,1.1610064506530762,1.1610064506530762,1.1610064506530762,1.1610064506530762,1.1610064506530762,1.1610064506530762",
+              "agent_steps": "3584,8192,8192,8192,8192,8192,8192,8192",
+              "env/perf": "0.1059473012574017,0.24479164183139801,0.24479164183139801,0.24479164183139801,0.24479164183139801,0.24479164183139801,0.24479164183139801,0.24479164183139801"
+            },
+            "checkpoints": [
+              {
+                "decisions": 8192,
+                "path": "candidates/nature/runner-s7/checkpoints/sprite_runner/runner-s7/0000000000008192.bin",
+                "sha256": "da4f14a347350b0f7f1825e00b4cf4e88d08a631635ac733102cf74f18ae4f9b",
+                "bytes": 5831296,
+                "seconds": 1.532837464
+              }
+            ],
+            "metrics_sha256": "e0c3f4d82c1fe23d4b8aea68fe0b91b1aba76888e3c384302f41ddd1742ad52f"
+          },
+          "evaluations": [
+            {
+              "game": "runner",
+              "decisions": 8192,
+              "skin": 0,
+              "episodes": 3,
+              "perf": 0.22222221891085306,
+              "csv": "candidates/nature/runner-s7/d8192-skin0.csv",
+              "csv_sha256": "95c1d40170434312e6f5448560a43e18262a7d843e8aaa7692fa589f02d1e0d5",
+              "manifest": "candidates/nature/runner-s7/d8192-skin0.manifest.json",
+              "manifest_sha256": "7425345d6c69fdfa1fca106db7f8eb56ead09be9e7517ecf50dbe381174c5365",
+              "process": {
+                "label": "candidates-nature-runner-s7-d8192-skin0",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_runner",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/runner-s7/checkpoints/sprite_runner/runner-s7/0000000000008192.bin",
+                  "--env.representation=0",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/runner-s7/d8192-skin0.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/runner-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222695656511032,
+                "log": "processes/candidates-nature-runner-s7-d8192-skin0.log",
+                "monotonic_finished_ns": 222696171781277,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "5790da97d64dbb94ae9685130a34a69437a1a7a1a7bab34fc53457ebebe9416f",
+                "seconds": 0.515270245
+              }
+            },
+            {
+              "game": "runner",
+              "decisions": 8192,
+              "skin": 1,
+              "episodes": 3,
+              "perf": 0.22222221891085306,
+              "csv": "candidates/nature/runner-s7/d8192-skin1.csv",
+              "csv_sha256": "d3dd232b487d642fe9492ab05d96d32e8486cda96ea67c72aafe38c70fce3405",
+              "manifest": "candidates/nature/runner-s7/d8192-skin1.manifest.json",
+              "manifest_sha256": "e72e103c27c19d09cd9fe5c83d0168a5d03e507a96ce7051f99a19d7b8ecefea",
+              "process": {
+                "label": "candidates-nature-runner-s7-d8192-skin1",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_runner",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/runner-s7/checkpoints/sprite_runner/runner-s7/0000000000008192.bin",
+                  "--env.representation=1",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/runner-s7/d8192-skin1.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/runner-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222696335787503,
+                "log": "processes/candidates-nature-runner-s7-d8192-skin1.log",
+                "monotonic_finished_ns": 222696851307882,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "5790da97d64dbb94ae9685130a34a69437a1a7a1a7bab34fc53457ebebe9416f",
+                "seconds": 0.515520379
+              }
+            },
+            {
+              "game": "runner",
+              "decisions": 8192,
+              "skin": 2,
+              "episodes": 3,
+              "perf": 0.22222221891085306,
+              "csv": "candidates/nature/runner-s7/d8192-skin2.csv",
+              "csv_sha256": "5d3931cbcf3013600df1b07ea0badd9af38c8654b2e0f8081c0967507ab05dfc",
+              "manifest": "candidates/nature/runner-s7/d8192-skin2.manifest.json",
+              "manifest_sha256": "a9243afa02a112d60983f4810e31b2928f7dc0fc8426439ff3a68cee0255b6aa",
+              "process": {
+                "label": "candidates-nature-runner-s7-d8192-skin2",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_runner",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/runner-s7/checkpoints/sprite_runner/runner-s7/0000000000008192.bin",
+                  "--env.representation=2",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/runner-s7/d8192-skin2.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/runner-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222697006247492,
+                "log": "processes/candidates-nature-runner-s7-d8192-skin2.log",
+                "monotonic_finished_ns": 222697521719979,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "5790da97d64dbb94ae9685130a34a69437a1a7a1a7bab34fc53457ebebe9416f",
+                "seconds": 0.515472487
+              }
+            }
+          ]
+        },
+        {
+          "game": "key",
+          "seed": 7,
+          "training": {
+            "game": "key",
+            "name": "key-s7",
+            "metadata": {
+              "schema": "sprite-packed-metadata-v1",
+              "encoder": 2,
+              "width": 96,
+              "height": 192,
+              "channels": 3,
+              "geometry": 4,
+              "input_size": 55300,
+              "action_sizes": [
+                5,
+                20,
+                15
+              ],
+              "hidden": 128,
+              "layers": 1,
+              "parameters": 1458208,
+              "encoder_parameters": 1403808,
+              "checkpoint_bytes": 5832832,
+              "encoder_rollout_bytes_per_item": 2148752,
+              "encoder_train_bytes_per_item": 3246624,
+              "encoder_gradient_bytes": 5615232,
+              "gpu_execution": false
+            },
+            "config_sha256": "30d229f7f6cd1a31974fcd9bd5d18b7f3fea2ec607e2a7280b0fbeca60a375e0",
+            "process": {
+              "label": "candidates-nature-key-s7-train",
+              "argv": [
+                "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_key",
+                "train",
+                "--headless",
+                "--base.result_fd=0"
+              ],
+              "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/key-s7",
+              "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+              "monotonic_started_ns": 222697700971365,
+              "log": "processes/candidates-nature-key-s7-train.log",
+              "monotonic_finished_ns": 222699319315476,
+              "returncode": 0,
+              "timed_out": false,
+              "interrupted": null,
+              "interference": [],
+              "gpu_samples": [],
+              "log_sha256": "e72bd086daf62786823cba1dcb3323ba20ce86a630bdd5a847a2780ddb61c3b2",
+              "seconds": 1.618344111
+            },
+            "process_sps": 5061.964228941418,
+            "native_metrics": {
+              "SPS": "6057.2834551160176,7682.6105977903608,7682.6105977903608,7682.6105977903608,7682.6105977903608,7682.6105977903608,7682.6105977903608,7682.6105977903608",
+              "uptime": "0.56578421592712402,1.1597945690155029,1.1597945690155029,1.1597945690155029,1.1597945690155029,1.1597945690155029,1.1597945690155029,1.1597945690155029",
+              "agent_steps": "3584,8192,8192,8192,8192,8192,8192,8192",
+              "env/perf": "0,0,0,0,0,0,0,0"
+            },
+            "checkpoints": [
+              {
+                "decisions": 8192,
+                "path": "candidates/nature/key-s7/checkpoints/sprite_key/key-s7/0000000000008192.bin",
+                "sha256": "1c50cb3ce6f4e7d11371f5273ac1f344b163cdf727aa7162d80cde1d78a99740",
+                "bytes": 5832832,
+                "seconds": 1.526450739
+              }
+            ],
+            "metrics_sha256": "1bbaf09b3ba6a87ac42b799e87849ed338f0fa8413cc1aec3cacbb5cd3322dbd"
+          },
+          "evaluations": [
+            {
+              "game": "key",
+              "decisions": 8192,
+              "skin": 0,
+              "episodes": 3,
+              "perf": 0.0,
+              "csv": "candidates/nature/key-s7/d8192-skin0.csv",
+              "csv_sha256": "68161bba2bd43ee53b60ceaf9ae3eb738b9665b24781ffc18676634edb6522d3",
+              "manifest": "candidates/nature/key-s7/d8192-skin0.manifest.json",
+              "manifest_sha256": "d6856a174f7b8d4e2cd5badff852044afd8409a93042f0f6cde4cf17658c4f76",
+              "process": {
+                "label": "candidates-nature-key-s7-d8192-skin0",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_key",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/key-s7/checkpoints/sprite_key/key-s7/0000000000008192.bin",
+                  "--env.representation=0",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/key-s7/d8192-skin0.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/key-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222699514583998,
+                "log": "processes/candidates-nature-key-s7-d8192-skin0.log",
+                "monotonic_finished_ns": 222700029891023,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "2b143d411d68c573a6e36cc8d3ae310776f53c010af0086ddcbcb61f5709ae15",
+                "seconds": 0.515307025
+              }
+            },
+            {
+              "game": "key",
+              "decisions": 8192,
+              "skin": 1,
+              "episodes": 3,
+              "perf": 0.0,
+              "csv": "candidates/nature/key-s7/d8192-skin1.csv",
+              "csv_sha256": "b58ca7c3028303721ea7cbdc8d59c65c89db66647818d2b70c2a6eecec5214ad",
+              "manifest": "candidates/nature/key-s7/d8192-skin1.manifest.json",
+              "manifest_sha256": "8f1f8efcf937a523b9764eed104244861021e224713e373ea597bf5fddc61499",
+              "process": {
+                "label": "candidates-nature-key-s7-d8192-skin1",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_key",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/key-s7/checkpoints/sprite_key/key-s7/0000000000008192.bin",
+                  "--env.representation=1",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/key-s7/d8192-skin1.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/key-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222700193416026,
+                "log": "processes/candidates-nature-key-s7-d8192-skin1.log",
+                "monotonic_finished_ns": 222700759300868,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "2b143d411d68c573a6e36cc8d3ae310776f53c010af0086ddcbcb61f5709ae15",
+                "seconds": 0.565884842
+              }
+            },
+            {
+              "game": "key",
+              "decisions": 8192,
+              "skin": 2,
+              "episodes": 3,
+              "perf": 0.0,
+              "csv": "candidates/nature/key-s7/d8192-skin2.csv",
+              "csv_sha256": "4c648b52ada03733ebb2737b3149aa8a5e1e727635f99133f0afb762ba286b60",
+              "manifest": "candidates/nature/key-s7/d8192-skin2.manifest.json",
+              "manifest_sha256": "fecf5ca70a3b81ace88b54d7244ec7fa215d1e79a3ef69de33cf32126f15d9eb",
+              "process": {
+                "label": "candidates-nature-key-s7-d8192-skin2",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_key",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/key-s7/checkpoints/sprite_key/key-s7/0000000000008192.bin",
+                  "--env.representation=2",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/key-s7/d8192-skin2.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/key-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222700917968426,
+                "log": "processes/candidates-nature-key-s7-d8192-skin2.log",
+                "monotonic_finished_ns": 222701433462782,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "2b143d411d68c573a6e36cc8d3ae310776f53c010af0086ddcbcb61f5709ae15",
+                "seconds": 0.515494356
+              }
+            }
+          ]
+        },
+        {
+          "game": "push",
+          "seed": 7,
+          "training": {
+            "game": "push",
+            "name": "push-s7",
+            "metadata": {
+              "schema": "sprite-packed-metadata-v1",
+              "encoder": 2,
+              "width": 96,
+              "height": 192,
+              "channels": 3,
+              "geometry": 4,
+              "input_size": 55300,
+              "action_sizes": [
+                5,
+                20,
+                15
+              ],
+              "hidden": 128,
+              "layers": 1,
+              "parameters": 1458208,
+              "encoder_parameters": 1403808,
+              "checkpoint_bytes": 5832832,
+              "encoder_rollout_bytes_per_item": 2148752,
+              "encoder_train_bytes_per_item": 3246624,
+              "encoder_gradient_bytes": 5615232,
+              "gpu_execution": false
+            },
+            "config_sha256": "b7b85a35f0303743386e8ebefd4639b3c771a7769a94b578ff7dcefde8300243",
+            "process": {
+              "label": "candidates-nature-push-s7-train",
+              "argv": [
+                "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_push",
+                "train",
+                "--headless",
+                "--base.result_fd=0"
+              ],
+              "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/push-s7",
+              "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+              "monotonic_started_ns": 222701606163032,
+              "log": "processes/candidates-nature-push-s7-train.log",
+              "monotonic_finished_ns": 222703224397048,
+              "returncode": 0,
+              "timed_out": false,
+              "interrupted": null,
+              "interference": [],
+              "gpu_samples": [],
+              "log_sha256": "d30826f4be2a0de908ab677ff04e3e11a3aad3be31e099c17588e563e7ea3aaa",
+              "seconds": 1.618234016
+            },
+            "process_sps": 5062.308614825212,
+            "native_metrics": {
+              "SPS": "5996.1116777113057,7700.5309659623181,7700.5309659623181,7700.5309659623181,7700.5309659623181,7700.5309659623181,7700.5309659623181,7700.5309659623181",
+              "uptime": "0.57179439067840576,1.1678094863891602,1.1678094863891602,1.1678094863891602,1.1678094863891602,1.1678094863891602,1.1678094863891602,1.1678094863891602",
+              "agent_steps": "3584,8192,8192,8192,8192,8192,8192,8192",
+              "env/perf": "0.0555555559694767,0.05000000074505806,0.05000000074505806,0.05000000074505806,0.05000000074505806,0.05000000074505806,0.05000000074505806,0.05000000074505806"
+            },
+            "checkpoints": [
+              {
+                "decisions": 8192,
+                "path": "candidates/nature/push-s7/checkpoints/sprite_push/push-s7/0000000000008192.bin",
+                "sha256": "f25e59fef690f884c799a3c3d6dea71ce1e01fd02c596dbb6c730d70ef4f7662",
+                "bytes": 5832832,
+                "seconds": 1.528961986
+              }
+            ],
+            "metrics_sha256": "1a61f1c34a86179bd0eaeef8193b166885783895836f1c566762e1487427f2ba"
+          },
+          "evaluations": [
+            {
+              "game": "push",
+              "decisions": 8192,
+              "skin": 0,
+              "episodes": 3,
+              "perf": 0.0,
+              "csv": "candidates/nature/push-s7/d8192-skin0.csv",
+              "csv_sha256": "c4301eebe47b8d7abd2db383d45e31eace491dbd71e50df1b5605085720b9f4c",
+              "manifest": "candidates/nature/push-s7/d8192-skin0.manifest.json",
+              "manifest_sha256": "d748afd7ad2f84628298b03384d68e56167b2ffc1954a01afb06c22be4f6b8a4",
+              "process": {
+                "label": "candidates-nature-push-s7-d8192-skin0",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_push",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/push-s7/checkpoints/sprite_push/push-s7/0000000000008192.bin",
+                  "--env.representation=0",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/push-s7/d8192-skin0.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/push-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222703433942024,
+                "log": "processes/candidates-nature-push-s7-d8192-skin0.log",
+                "monotonic_finished_ns": 222703899491803,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "2b143d411d68c573a6e36cc8d3ae310776f53c010af0086ddcbcb61f5709ae15",
+                "seconds": 0.465549779
+              }
+            },
+            {
+              "game": "push",
+              "decisions": 8192,
+              "skin": 1,
+              "episodes": 3,
+              "perf": 0.0,
+              "csv": "candidates/nature/push-s7/d8192-skin1.csv",
+              "csv_sha256": "7bfe6db2416186c28467ba11564248f1c56542b60454a50e12bbdc1b9cb3c620",
+              "manifest": "candidates/nature/push-s7/d8192-skin1.manifest.json",
+              "manifest_sha256": "dde6297e41fd75a2237dbd96fa366a116e8f3a9ef14c3d3e089ede701dd8698e",
+              "process": {
+                "label": "candidates-nature-push-s7-d8192-skin1",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_push",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/push-s7/checkpoints/sprite_push/push-s7/0000000000008192.bin",
+                  "--env.representation=1",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/push-s7/d8192-skin1.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/push-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222704058941189,
+                "log": "processes/candidates-nature-push-s7-d8192-skin1.log",
+                "monotonic_finished_ns": 222704524269446,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "2b143d411d68c573a6e36cc8d3ae310776f53c010af0086ddcbcb61f5709ae15",
+                "seconds": 0.465328257
+              }
+            },
+            {
+              "game": "push",
+              "decisions": 8192,
+              "skin": 2,
+              "episodes": 3,
+              "perf": 0.0,
+              "csv": "candidates/nature/push-s7/d8192-skin2.csv",
+              "csv_sha256": "9e92756e6be1a7012977ce2813600aafcfa1d5c237bd860ea23d27b102331b84",
+              "manifest": "candidates/nature/push-s7/d8192-skin2.manifest.json",
+              "manifest_sha256": "6958f3e48206ab4ebc5a092c0bfc049ff149fe08e5c87d4cd7755ce69b1181af",
+              "process": {
+                "label": "candidates-nature-push-s7-d8192-skin2",
+                "argv": [
+                  "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_push",
+                  "sprite_eval",
+                  "--headless",
+                  "--base.result_fd=0",
+                  "--base.load_model_path=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/push-s7/checkpoints/sprite_push/push-s7/0000000000008192.bin",
+                  "--env.representation=2",
+                  "--sprite_eval.output=/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/push-s7/d8192-skin2.csv",
+                  "--sprite_eval.episodes=3",
+                  "--sprite_eval.slots=2"
+                ],
+                "cwd": "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/candidates/nature/push-s7",
+                "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+                "monotonic_started_ns": 222704695795017,
+                "log": "processes/candidates-nature-push-s7-d8192-skin2.log",
+                "monotonic_finished_ns": 222705161214709,
+                "returncode": 0,
+                "timed_out": false,
+                "interrupted": null,
+                "interference": [],
+                "gpu_samples": [],
+                "log_sha256": "2b143d411d68c573a6e36cc8d3ae310776f53c010af0086ddcbcb61f5709ae15",
+                "seconds": 0.465419692
+              }
+            }
+          ]
+        }
+      ],
+      "feedback": {
+        "score": 0.1537037036485142,
+        "worst_game_utility": 0,
+        "games": [
+          {
+            "game": "catch",
+            "score": 0.3666666696468989,
+            "utility": 0.3666666696468989
+          },
+          {
+            "game": "platform",
+            "score": 0.0,
+            "utility": 0
+          },
+          {
+            "game": "maze",
+            "score": 0.3333333333333333,
+            "utility": 0.3333333333333333
+          },
+          {
+            "game": "runner",
+            "score": 0.22222221891085306,
+            "utility": 0.22222221891085306
+          },
+          {
+            "game": "key",
+            "score": 0.0,
+            "utility": 0
+          },
+          {
+            "game": "push",
+            "score": 0.0,
+            "utility": 0
+          }
+        ],
+        "cost": 10.063652114,
+        "training_jobs_charged": 6,
+        "scientific_claim": false
+      },
+      "status": "complete"
+    }
+  ],
+  "trials": [
+    {
+      "name": "happy-cat-1",
+      "proposal": {
+        "protocol": "native-cross-game-protein-v1",
+        "trial": 0,
+        "observations_replayed": 0,
+        "gp_observations": 0,
+        "random": 0,
+        "pareto": 0,
+        "normalized": [
+          -1,
+          -0.333333313,
+          -1,
+          -1,
+          1,
+          -1,
+          -1,
+          -1,
+          0,
+          0,
+          0,
+          -1,
+          -1,
+          0,
+          0,
+          -1,
+          -1,
+          -1
+        ],
+        "policy": {
+          "cnn_depth": 1,
+          "cnn_projection": 32,
+          "cnn_global_pool": 0,
+          "cnn_channels_1": 8,
+          "cnn_kernel_1": 8,
+          "cnn_stride_1": 4,
+          "cnn_pool_1": 0,
+          "cnn_residual_1": 0,
+          "cnn_channels_2": 16,
+          "cnn_kernel_2": 3,
+          "cnn_stride_2": 2,
+          "cnn_pool_2": 0,
+          "cnn_residual_2": 0,
+          "cnn_channels_3": 16,
+          "cnn_kernel_3": 3,
+          "cnn_stride_3": 1,
+          "cnn_pool_3": 0,
+          "cnn_residual_3": 0
+        },
+        "success_observations": 0,
+        "failure_observations": 0
+      },
+      "feedback": {
+        "score": 0.1953703703151809,
+        "worst_game_utility": 0,
+        "games": [
+          {
+            "game": "catch",
+            "score": 0.3666666696468989,
+            "utility": 0.3666666696468989
+          },
+          {
+            "game": "platform",
+            "score": 0.0,
+            "utility": 0
+          },
+          {
+            "game": "maze",
+            "score": 0.3333333333333333,
+            "utility": 0.3333333333333333
+          },
+          {
+            "game": "runner",
+            "score": 0.4722222189108531,
+            "utility": 0.4722222189108531
+          },
+          {
+            "game": "key",
+            "score": 0.0,
+            "utility": 0
+          },
+          {
+            "game": "push",
+            "score": 0.0,
+            "utility": 0
+          }
+        ],
+        "cost": 7.654319891,
+        "training_jobs_charged": 6,
+        "scientific_claim": false
+      },
+      "duplicate_of": null
+    },
+    {
+      "name": "mystic-tree-2",
+      "proposal": {
+        "protocol": "native-cross-game-protein-v1",
+        "trial": 1,
+        "observations_replayed": 1,
+        "gp_observations": 0,
+        "random": 1,
+        "pareto": 0,
+        "normalized": [
+          -0.657592297,
+          -0.809118032,
+          -0.785693884,
+          -0.123926342,
+          -0.588823795,
+          0.299364209,
+          0.579610944,
+          -0.732391953,
+          -0.814411759,
+          -0.0679418445,
+          -0.0693262219,
+          -0.42804563,
+          0.634306073,
+          0.352225542,
+          0.0218154192,
+          0.807444453,
+          0.624112487,
+          -0.727982283
+        ],
+        "policy": {
+          "cnn_depth": 1,
+          "cnn_projection": 16,
+          "cnn_global_pool": 0,
+          "cnn_channels_1": 16,
+          "cnn_kernel_1": 2,
+          "cnn_stride_1": 8,
+          "cnn_pool_1": 2,
+          "cnn_residual_1": 0,
+          "cnn_channels_2": 8,
+          "cnn_kernel_2": 3,
+          "cnn_stride_2": 2,
+          "cnn_pool_2": 1,
+          "cnn_residual_2": 1,
+          "cnn_channels_3": 16,
+          "cnn_kernel_3": 3,
+          "cnn_stride_3": 4,
+          "cnn_pool_3": 2,
+          "cnn_residual_3": 0
+        },
+        "success_observations": 1,
+        "failure_observations": 0
+      },
+      "feedback": {
+        "score": 0.1953703703151809,
+        "worst_game_utility": 0,
+        "games": [
+          {
+            "game": "catch",
+            "score": 0.3666666696468989,
+            "utility": 0.3666666696468989
+          },
+          {
+            "game": "platform",
+            "score": 0.0,
+            "utility": 0
+          },
+          {
+            "game": "maze",
+            "score": 0.3333333333333333,
+            "utility": 0.3333333333333333
+          },
+          {
+            "game": "runner",
+            "score": 0.4722222189108531,
+            "utility": 0.4722222189108531
+          },
+          {
+            "game": "key",
+            "score": 0.0,
+            "utility": 0
+          },
+          {
+            "game": "push",
+            "score": 0.0,
+            "utility": 0
+          }
+        ],
+        "cost": 6.401048172,
+        "training_jobs_charged": 6,
+        "scientific_claim": false
+      },
+      "duplicate_of": null
+    }
+  ],
+  "scientific_claim": false,
+  "mode": "smoke",
+  "plan_sha256": "3d9a3fcb1ba8fc6a20c9c6c040193679985acc202919e23aaab02d621bddf2d5",
+  "observations_replayed": 2,
+  "final_unused_proposal": {
+    "protocol": "native-cross-game-protein-v1",
+    "trial": 2,
+    "observations_replayed": 2,
+    "gp_observations": 0,
+    "random": 1,
+    "pareto": 0,
+    "normalized": [
+      -0.101834595,
+      0.248761892,
+      0.782408834,
+      0.377769947,
+      -0.24489069,
+      0.97516942,
+      -0.471545875,
+      -0.0682812929,
+      -0.00167441368,
+      -0.670537591,
+      -0.835324526,
+      -0.676681519,
+      -0.259174824,
+      -0.426510274,
+      0.642974138,
+      -0.436024845,
+      0.106828094,
+      0.884287715
+    ],
+    "policy": {
+      "cnn_depth": 2,
+      "cnn_projection": 64,
+      "cnn_global_pool": 1,
+      "cnn_channels_1": 16,
+      "cnn_kernel_1": 4,
+      "cnn_stride_1": 8,
+      "cnn_pool_1": 1,
+      "cnn_residual_1": 0,
+      "cnn_channels_2": 16,
+      "cnn_kernel_2": 2,
+      "cnn_stride_2": 1,
+      "cnn_pool_2": 0,
+      "cnn_residual_2": 0,
+      "cnn_channels_3": 16,
+      "cnn_kernel_3": 4,
+      "cnn_stride_3": 2,
+      "cnn_pool_3": 1,
+      "cnn_residual_3": 1
+    },
+    "success_observations": 2,
+    "failure_observations": 0
+  },
+  "ended_monotonic_ns": 222749129485002,
+  "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151",
+  "process_count": 199
+}

@@ -1,0 +1,99 @@
+{
+  "source": "build/sprite-overnight-smoke-20261016-v2/result.json",
+  "source_sha256": "faa278fb052855cc53db84381c45492acc3f50925b13d9c9fba04baccff9856e",
+  "trial": {
+    "name": "happy-cat-1",
+    "proposal": {
+      "protocol": "native-cross-game-protein-v1",
+      "trial": 0,
+      "observations_replayed": 0,
+      "gp_observations": 0,
+      "random": 0,
+      "pareto": 0,
+      "normalized": [
+        -1,
+        -0.333333313,
+        -1,
+        -1,
+        1,
+        -1,
+        -1,
+        -1,
+        0,
+        0,
+        0,
+        -1,
+        -1,
+        0,
+        0,
+        -1,
+        -1,
+        -1
+      ],
+      "policy": {
+        "cnn_depth": 1,
+        "cnn_projection": 32,
+        "cnn_global_pool": 0,
+        "cnn_channels_1": 8,
+        "cnn_kernel_1": 8,
+        "cnn_stride_1": 4,
+        "cnn_pool_1": 0,
+        "cnn_residual_1": 0,
+        "cnn_channels_2": 16,
+        "cnn_kernel_2": 3,
+        "cnn_stride_2": 2,
+        "cnn_pool_2": 0,
+        "cnn_residual_2": 0,
+        "cnn_channels_3": 16,
+        "cnn_kernel_3": 3,
+        "cnn_stride_3": 1,
+        "cnn_pool_3": 0,
+        "cnn_residual_3": 0
+      },
+      "success_observations": 0,
+      "failure_observations": 0
+    },
+    "feedback": {
+      "score": 0.1953703703151809,
+      "worst_game_utility": 0,
+      "games": [
+        {
+          "game": "catch",
+          "score": 0.3666666696468989,
+          "utility": 0.3666666696468989
+        },
+        {
+          "game": "platform",
+          "score": 0.0,
+          "utility": 0
+        },
+        {
+          "game": "maze",
+          "score": 0.3333333333333333,
+          "utility": 0.3333333333333333
+        },
+        {
+          "game": "runner",
+          "score": 0.4722222189108531,
+          "utility": 0.4722222189108531
+        },
+        {
+          "game": "key",
+          "score": 0.0,
+          "utility": 0
+        },
+        {
+          "game": "push",
+          "score": 0.0,
+          "utility": 0
+        }
+      ],
+      "cost": 7.654319891,
+      "training_jobs_charged": 6,
+      "scientific_claim": false
+    },
+    "duplicate_of": null
+  },
+  "probe_only": true,
+  "original_observations_unchanged": true
+}

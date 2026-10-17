@@ -1,0 +1,84 @@
+{
+  "schema": "sprite-overnight-v1",
+  "mode": "smoke",
+  "build": "/home/claude/cnn/build/sprite-overnight-build-20261016",
+  "settings": {
+    "seconds": 900,
+    "trials": 2,
+    "decisions": 8192,
+    "seeds": [
+      7
+    ],
+    "baselines": [
+      "tile",
+      "nature"
+    ],
+    "checkpoint_count": 1,
+    "eval_seed": 420,
+    "episodes": 3,
+    "slots": 2,
+    "skins": [
+      0,
+      1,
+      2
+    ],
+    "max_steps": 2048,
+    "min_free_gib": 20,
+    "max_artifact_gib": 100,
+    "offset": 0.0,
+    "target": 1.0,
+    "timeouts": {
+      "training": 45,
+      "evaluation": 30,
+      "numerical": 120,
+      "proposal": 60
+    }
+  },
+  "games": [
+    "catch",
+    "platform",
+    "maze",
+    "runner",
+    "key",
+    "push"
+  ],
+  "recipes": {
+    "catch": "85119880488e5e20679ba50aac3771abf4e63642c288a827f153ea414afe4317",
+    "platform": "0e383c308c15041616d8592166618e5d0c4c9eb966857add871ae3cbdf8f4f99",
+    "maze": "21a1c0c6ac3783bbf9b6bf762092b367d667fd612a63ca2d907ab528776b1193",
+    "runner": "79a0c5a9a6a7d9ae76c2e45b71a1fef4b245dc1dca6820b7c64c95254b7d4631",
+    "key": "b8d30ce8e1fa6b68a774f5c622b2f5b7e44ce107c6c2ad7d3bda04c81edfb39f",
+    "push": "74988c4ebaf4490d83bf3377db598328a0b2e58f198093e91a1e96577e3be67e"
+  },
+  "prepared_at_utc": "2026-10-17T05:05:55Z",
+  "seeds_swept": false,
+  "complete_training_replicas_required": true,
+  "architecture_dimensions": 18,
+  "gpu_executed": false,
+  "held_out_confirmation": false,
+  "scientific_claim": false,
+  "inputs": {
+    "/home/claude/cnn/research/sprite_overnight.py": "65d9816c964a1d76919f1523f98818b9f928696c1f4885c46370333bdde1ad50",
+    "/home/claude/cnn/research/sprite_pixel_benchmarks.py": "b1d0a57ca1be9a299b6a2e9d94f466541c9ac8f5c054aa2ab8e0473d1c1d124f",
+    "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/campaign.ini": "0c853536281678953aa28c5459d7f2e58564945a5387b1bf612d326d2621f9cd",
+    "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/optimizer.ini": "4b3f13e13113f9230a9643a836975005a41614fd85949ea2d3152ea451bf7721",
+    "/home/claude/cnn/build/sprite-overnight-build-20261016/source.sha256": "c47ad8e5540392b097889b4ed5547bf41a377f2393836ba7d0a55201c4040d28",
+    "/home/claude/cnn/build/sprite-overnight-build-20261016/packed-checks": "bf17cd5dee598ca3fb2789c1d5bff1871a49c2c2c115d0c2dd5148513ea49bbe",
+    "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_catch": "5e8c4c5b8365e9cd30b629c81b935b5a186df0d0f054749083cb253364778f5c",
+    "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_platform": "ddc2aee8313112f70a5b7c3fd51b76f46ace9164418091197fd1bf7ea2a73eb7",
+    "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_maze": "a87238e15952cbbc6a15a2f65dfde508d82acd3d81f0dd112c8bbf40a22d97c7",
+    "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_runner": "01d294422add9a66da4c4491c39f9bf6344d7833b5c092fddcb76c154bfa65e1",
+    "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_key": "6e60e58d7f69b0d014cc4484927a9e37dcf6668f3b98ff7f83ebb57e347af94d",
+    "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_push": "f5ca250bc2ee1dbc4e1eb2fbbd2e87d3047026fd04f137546516b0abb3d69e3d"
+  },
+  "optimizer_description": {
+    "argv": [
+      "/home/claude/cnn/build/sprite-overnight-build-20261016/sprite_catch",
+      "research_protein_describe",
+      "/home/claude/cnn/build/sprite-overnight-smoke-20261016-v2/optimizer.ini"
+    ],
+    "stdout": "{\"protocol\":\"native-cross-game-protein-v1\",\"dimensions\":18,\"gpu_queried\":false,\"policy_executed\":false,\"coordinates\":[\"cnn_depth\",\"cnn_projection\",\"cnn_global_pool\",\"cnn_channels_1\",\"cnn_kernel_1\",\"cnn_stride_1\",\"cnn_pool_1\",\"cnn_residual_1\",\"cnn_channels_2\",\"cnn_kernel_2\",\"cnn_stride_2\",\"cnn_pool_2\",\"cnn_residual_2\",\"cnn_channels_3\",\"cnn_kernel_3\",\"cnn_stride_3\",\"cnn_pool_3\",\"cnn_residual_3\"]}\n",
+    "stderr": "",
+    "returncode": 0
+  }
+}

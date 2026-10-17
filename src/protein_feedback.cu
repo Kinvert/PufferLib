@@ -118,12 +118,14 @@ static int research_protein_feedback(int argc, char** argv) {
     double random_control = feedback_option(&ini, "num_random_samples", 10);
     double iteration_control = feedback_option(&ini, "gp_training_iter", 50);
     double rng_seed = feedback_option(&ini, "seed", 73);
+    double max_cost = feedback_option(&ini, "max_suggestion_cost", 3600);
     feedback_require(isfinite(random_control) && random_control >= 0 && random_control <= 100
         && floor(random_control) == random_control
         && isfinite(iteration_control) && iteration_control >= 1 && iteration_control <= 100
         && floor(iteration_control) == iteration_control
         && isfinite(rng_seed) && rng_seed >= 0 && rng_seed <= 4294967295.0
-        && floor(rng_seed) == rng_seed, "bad optimizer controls");
+        && floor(rng_seed) == rng_seed
+        && isfinite(max_cost) && max_cost > 0 && max_cost <= 172800, "bad optimizer controls");
     int random_samples = (int)random_control;
     int gp_iterations = (int)iteration_control;
     int devices = 0;
@@ -136,7 +138,7 @@ static int research_protein_feedback(int argc, char** argv) {
         .gp_learning_rate = 0.001f, .optimizer_reset_frequency = 50,
         .gp_max_obs = 750, .infer_batch_size = 4096, .use_success_prob = 1,
         .prune_pareto = 1, .use_logit = 0, .global_search_scale = 1,
-        .max_suggestion_cost = 3600, .expansion_rate = 0.1f,
+        .max_suggestion_cost = (float)max_cost, .expansion_rate = 0.1f,
         .cost_random_suggestion = -0.8f, .early_stop_quantile = 0.5f,
         .success_cap = 8192, .failure_cap = 1024, .top_k = 5,
         .rng_seed = (unsigned long long)rng_seed,

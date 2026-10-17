@@ -1,0 +1,9 @@
+{
+  "completed_models": 4,
+  "complete_curve_points": 72,
+  "missing_curve_points": 0,
+  "raw_points": 72,
+  "native_processes": 199,
+  "scientific_claim": false,
+  "gpu_execution": false
+}

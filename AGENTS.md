@@ -18,6 +18,23 @@
   or push. Old completion audits bind their old source snapshots; optional new
   branches change current file hashes without rewriting those prior receipts.
 
+- October16 sprite overnight implementation supersedes preparation-only status
+  for the NEW allocation: `research/run_sprite_overnight.sh` prepare/run performs
+  native CUDA validation, fixed tile/Nature/IMPALA/Impoola controls, then an
+  actual all-six-sprite aggregate-to-native-PROTEIN loop. Read
+  `NEXT_5090_SPRITE_BENCHMARKS.md` and the overnight5060 result report. The full
+  5090 plan is PREPARED, NOT RUN:12h cap,24 trials, seven fixed training replicas,
+  1Mi decisions/eight checkpoints/all three skins, per-game learners held matched.
+  Local scope COMPLETED:199-process two-trial all-game smoke; a separate actual
+  aggregate-to-GP probe; positive/zero B3/B32 CUDA math for all five families;
+  residual-family repeated training/reload/eval follow-up. Do not restart these
+  finished packets. Original two-point smoke was still random warmup; don't
+  claim it reached GP. Its first real aggregate drives a separate GP-active
+  probe. Numerical fixtures remain scoped, not arbitrary-branch/full-learner
+  proof. All raw weights/arrays remain local; compact export excludes them.
+  Remote cnn-research has newer divergent work: no force push or overwrite.
+  Publication/reconciliation remains before a5090 pull; no5090 run was started.
+
 - October16 sprite cleanup goal COMPLETE: Catch, Platform, Maze, Runner, Key,
   Push and sprite_common are now REAL LOCAL directories under ~/cnn, replacing
   the old links. Their INIs are local too. Edit here; earlier worktree copies
