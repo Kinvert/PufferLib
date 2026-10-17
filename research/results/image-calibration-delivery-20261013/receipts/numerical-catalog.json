@@ -1,0 +1,69 @@
+{
+  "schema": "native-image-validation-catalog-v1",
+  "games": {
+    "connect4cnn": "h576-w672-c3",
+    "pongcnn": "h640-w620-c3",
+    "flappycnn": "h640-w420-c3",
+    "breakoutcnn": "h330-w576-c3",
+    "snakecnn": "h616-w616-c3",
+    "mazecnn": "h616-w616-c3"
+  },
+  "shapes": {
+    "h576-w672-c3": {
+      "shape_hwc": [
+        576,
+        672,
+        3
+      ],
+      "bundle": "h576-w672-c3/bundle",
+      "bundle_sha256": "6cfeab404e5866419f7bfab949302cb8a8898ed8036dbe851d5c175e59d68197"
+    },
+    "h640-w620-c3": {
+      "shape_hwc": [
+        640,
+        620,
+        3
+      ],
+      "bundle": "h640-w620-c3/bundle",
+      "bundle_sha256": "80adc1154abec4a164589aa0d439c949f4674097d1db07fdcfeccccef432ab96"
+    },
+    "h640-w420-c3": {
+      "shape_hwc": [
+        640,
+        420,
+        3
+      ],
+      "bundle": "h640-w420-c3/bundle",
+      "bundle_sha256": "0a7482317902b94e6aa42feab2736c5cf9239653bebcf2edd9e672579af9ff4b"
+    },
+    "h330-w576-c3": {
+      "shape_hwc": [
+        330,
+        576,
+        3
+      ],
+      "bundle": "h330-w576-c3/bundle",
+      "bundle_sha256": "a21a6b7a785dd8eba0db863980795751753028895e3d60710de0497056ee912b"
+    },
+    "h616-w616-c3": {
+      "shape_hwc": [
+        616,
+        616,
+        3
+      ],
+      "bundle": "h616-w616-c3/bundle",
+      "bundle_sha256": "20620f9c09a3e2aac60a5d18533b43f16e829df52c977b2045ade92ef88983e7"
+    }
+  },
+  "batches": [
+    1,
+    4,
+    16
+  ],
+  "registry_sha256": "6543a8b8d9909976d1ae03ff117e0cac221f1fb9a67f9299e5a18dce8aca89ab",
+  "gpu_queried": false,
+  "cuda_executed": false,
+  "numerical_acceptance": false,
+  "compact_mode_exports": true,
+  "worker_partition": "per-batch-v1"
+}

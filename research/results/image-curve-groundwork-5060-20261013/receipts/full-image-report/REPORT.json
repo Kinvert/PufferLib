@@ -1,0 +1,36 @@
+{
+  "schema": "audited-image-feedback-report-v1",
+  "status": "ok",
+  "termination": "ok",
+  "plan_sha256": "8ef34a19b2893f0e64f820a9981c865ba0dd150170a564db926d007624ccc936",
+  "result_sha256": "e59d83d3e3ab4ebaee34ec934539776d3fbb4df2a7d881b1d9cd7ce1a1d2e274",
+  "hardware": {
+    "gpu_name": "NVIDIA GeForce RTX 5060",
+    "gpu_uuid": "GPU-56b0df25-b4c9-46eb-e498-bc5c71904097",
+    "driver": "591.86",
+    "host": "G240",
+    "cuda_compiler": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2025 NVIDIA Corporation\nBuilt on Fri_Feb_21_20:23:50_PST_2025\nCuda compilation tools, release 12.8, V12.8.93\nBuild cuda_12.8.r12.8/compiler.35583870_0\n"
+  },
+  "panels": 1,
+  "training_jobs": 6,
+  "checkpoints": 54,
+  "native_bins": 110,
+  "training_process_seconds": 13.530211734,
+  "policy_executed": false,
+  "gpu_queried": false,
+  "publication_claim_qualified": false,
+  "files_sha256": {
+    "training.csv": "27ed855fae45c162468f27f990e31f1fdb96869fbcf4a27bc55ec4707d50d155",
+    "checkpoints.csv": "4075da514a65e9f5b469460003b36d337c46bc5be1b9c08f0279b39b8f78fdee",
+    "native-bins.csv": "434099ffd08191696305b4603cee0e0fe67b1fe86a1acdfcc992868d419a6336",
+    "anchors.csv": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "anchor-selections.csv": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "review/training.csv": "bacf2b897b56da949a7b2f3e1a50e34d351d9ade883b9465ace1a9750fd5f18d",
+    "review/REPORT.md": "f3b02000b8a2b0ee23a3bceb5e043ff7876a96ba3319b07d05990b6e1d4ca90c",
+    "review/observations.csv": "dd662460928891c79c1c5614241e4b7e36c10f8cca5a87b0fef41930df2ae2ed",
+    "review/analysis.json": "45c3c5de9f6c4a46051a274adf20a8367a184ce3f3861deacf61b6f8a19ae04b",
+    "panels/panel/data.json": "b75f041421293e64950f625100b20b2b56d676c3b4a70a897bdd172360a5f30e",
+    "panels/panel/curves.html": "59102b837549f82f5d853cb7a974982b76d80396bd3d7a984752536953debb2a",
+    "REPORT.md": "b84cebca51bfe4abf77d1f3c1a75c6634fee4001b8caeb6f64241d144297a72d"
+  }
+}

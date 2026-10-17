@@ -1,0 +1,101 @@
+{
+  "binary": "/home/claude/cnn-audit-20261008/build/image-portability-20261012/snakecnn-final-policy/puffer",
+  "binary_info": {
+    "default_encoder": "explicit",
+    "environment": "snakecnn",
+    "evaluation": "first-death-or-game-horizon-v1",
+    "float32": true,
+    "image_contract": {
+      "dtype": "float32",
+      "layout": "NHWC",
+      "preprocessing": "none",
+      "shape_hwc": [
+        616,
+        616,
+        3
+      ],
+      "version": "human-geometry-v1"
+    },
+    "receipt_version": 1,
+    "rules": "snake-local-episodic-v1"
+  },
+  "binary_sha256": "3e4365e7f38ae5bcf525b9b40297173d51434314e0598f7e74f04582ac4ec777",
+  "checkpoint": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/panel/jobs/snakecnn/swift-fox-3-s7/checkpoints/snakecnn/swift-fox-3/0000000000000064.bin",
+  "checkpoint_sha256": "973b596de76a7bc04c91528f44e7724a0bdb98249aba397093e4531ee9320a73",
+  "command": [
+    "/home/claude/cnn-audit-20261008/build/image-portability-20261012/snakecnn-final-policy/puffer",
+    "eval_exact",
+    "--headless"
+  ],
+  "config": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/panel/jobs/snakecnn/swift-fox-3-s7/config/default.ini",
+  "counts": {
+    "deaths": 1,
+    "episodes": 1,
+    "estimand": "mean-ending-snake-length-all-assigned-episodes-v1",
+    "foods": 0,
+    "horizon_ends": 0,
+    "mean_decisions": 6.0,
+    "mean_foods": 0.0,
+    "mean_perf": 0.008333333767950535,
+    "mean_return": -1.0,
+    "mean_score": 1.0,
+    "policy_runtime_certified": false,
+    "score": 1
+  },
+  "cwd": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/panel/execution/evaluations/job-0004/s64-r2",
+  "effective_env_ini_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "effective_ini_sha256": "8597c53f9c5469e3050bc6a88170ba3540e00232448f745e715e2c06e367e589",
+  "episodes_sha256": "05f02bfaaf2a8e88a2cbf96c7f50b54b19e0921e8b294b785482bec54d38ccbb",
+  "estimand": "mean-ending-snake-length-all-assigned-episodes-v1",
+  "evaluation": "first-death-or-game-horizon-v1",
+  "evaluation_process_seconds": 0.514962744,
+  "evaluation_representation": 2,
+  "family": "flex",
+  "gpu_runtime_qualified": false,
+  "manifest_sha256": "baccb17c9e6b3661399a63f996367a8bb5d3a5e96f7a267102320f5749cfa549",
+  "note": "Evaluator GPU acceptance is pending. Tooling snapshots describe the launcher; compiled native provenance requires separate build receipts.",
+  "parameters": 55848,
+  "policy": {
+    "cnn_channels_1": "8",
+    "cnn_depth": "1",
+    "cnn_global_pool": "1",
+    "cnn_kernel_1": "8",
+    "cnn_pool_1": "0",
+    "cnn_projection": "32",
+    "cnn_residual_1": "0",
+    "cnn_stride_1": "4",
+    "encoder": "4",
+    "hidden_size": "128",
+    "num_layers": "1"
+  },
+  "prepare_only": false,
+  "rules": "snake-local-episodic-v1",
+  "status": "ok",
+  "suite": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/panel/suites/snakecnn/s7/r2/suite.json",
+  "suite_sha256": "746de051db3ced2e815fa51d1e4d6ee29364f012cbc5877005d07d3141b0e0ac",
+  "tooling_sha256": {
+    "ocean/connect4cnn/claim.py": "c1fb06be57a10952a27c1fbb6369612ccfbc4e45a63b66f1c424157d99fd5f43",
+    "ocean/connect4cnn/deterministic_eval.py": "e176ac25295357344a0def44958d2e48f00b63713681cc3181ff073100aa1ca1",
+    "ocean/snakecnn/exact_eval.py": "f1be281a18b959a163685c4204b4fed3397cf88a7c664e48862666ac83ca82df"
+  },
+  "training_appearance": {
+    "representation": "0",
+    "representation_mode": "1",
+    "representation_seed": "17"
+  },
+  "training_ini_sha256": "0801cccf12a10c062a98f0847bc5aed2589b3e763d7f99bdf9626283cb576c96",
+  "world": {
+    "cell_size": 12.0,
+    "height": 26.0,
+    "leave_corpse_on_death": 0.0,
+    "max_snake_length": 128.0,
+    "max_steps": 2048.0,
+    "num_agents": 1.0,
+    "num_food": 4.0,
+    "reward_death": -1.0,
+    "reward_food": 0.1,
+    "rule_version": 1.0,
+    "vision": 5.0,
+    "width": 26.0
+  }
+}

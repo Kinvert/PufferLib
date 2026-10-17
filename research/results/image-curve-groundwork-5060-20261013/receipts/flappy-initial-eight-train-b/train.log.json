@@ -1,0 +1,23 @@
+{
+  "command": [
+    "/home/claude/cnn-audit-20261008/build/image-panels-20261013/flappy-initial-policy/puffer",
+    "train",
+    "--headless"
+  ],
+  "cwd": "/home/claude/cnn-audit-20261008/build/image-panels-20261013/flappy-initial-eight-train-b",
+  "status": "ok",
+  "timeout": 30,
+  "environment": {
+    "PUFFER_CHECKPOINT_RECEIPTS": "1",
+    "PUFFER_SAVE_INITIAL_CHECKPOINT": "1",
+    "NVCC_ARCH": null,
+    "NVCC_EXTRA": null,
+    "NVCC_APPEND_FLAGS": null,
+    "CUDA_HOME": "/usr/local/cuda",
+    "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+  },
+  "launch_monotonic_ns": 604147039260576,
+  "pid": 1126809,
+  "returncode": 0,
+  "end_monotonic_ns": 604149058503410
+}

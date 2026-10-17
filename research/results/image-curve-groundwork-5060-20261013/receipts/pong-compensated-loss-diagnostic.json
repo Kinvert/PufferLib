@@ -1,0 +1,63 @@
+{
+  "status": "diagnostic-completed",
+  "probes": [
+    {
+      "epsilon": 1e-06,
+      "losses": [
+        -71.11807724355903,
+        -71.11807623060612
+      ],
+      "derivative": -0.5064764536655275,
+      "analytical": -0.5064764251284546,
+      "absolute_error": 2.8537072926937412e-08,
+      "within_original_tolerance": true
+    },
+    {
+      "epsilon": 0.0001,
+      "losses": [
+        -71.1181273847251,
+        -71.11802608944006
+      ],
+      "derivative": -0.5064764251727638,
+      "analytical": -0.5064764251284546,
+      "absolute_error": 4.430922295739492e-11,
+      "within_original_tolerance": true
+    }
+  ],
+  "reference_calls": 4,
+  "numerical_acceptance": false,
+  "publication_claim_qualified": false,
+  "cpu_neural_reference": false,
+  "hardware": {
+    "gpu_name": "NVIDIA GeForce RTX 5060",
+    "gpu_uuid": "GPU-56b0df25-b4c9-46eb-e498-bc5c71904097",
+    "driver": "591.86",
+    "host": "G240",
+    "cuda_compiler": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2025 NVIDIA Corporation\nBuilt on Fri_Feb_21_20:23:50_PST_2025\nCuda compilation tools, release 12.8, V12.8.93\nBuild cuda_12.8.r12.8/compiler.35583870_0\n"
+  },
+  "process": {
+    "command": [
+      "/home/claude/cnn/.venv/bin/python",
+      "/home/claude/cnn-audit-20261008/research/image_loss_probe.py",
+      "_worker",
+      "--out",
+      "/home/claude/cnn-audit-20261008/build/image-panels-20261012/pong-nature-compensated-loss-probe"
+    ],
+    "cwd": "/home/claude/cnn-audit-20261008",
+    "status": "ok",
+    "timeout": 60,
+    "environment": {
+      "PUFFER_CHECKPOINT_RECEIPTS": null,
+      "PUFFER_SAVE_INITIAL_CHECKPOINT": null,
+      "NVCC_ARCH": null,
+      "NVCC_EXTRA": null,
+      "NVCC_APPEND_FLAGS": null,
+      "CUDA_HOME": "/usr/local/cuda",
+      "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+    },
+    "launch_monotonic_ns": 568661475021962,
+    "pid": 1110967,
+    "returncode": 0,
+    "end_monotonic_ns": 568664065392330
+  }
+}

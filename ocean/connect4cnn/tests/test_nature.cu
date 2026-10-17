@@ -22,6 +22,10 @@ static Allocator params, acts, grads, rollout;
 static Prec input, upstream;
 static cudaStream_t test_stream;
 
+extern "C" void naturetest_image_shape(int* shape) {
+    shape[0] = OBS_HEIGHT; shape[1] = OBS_WIDTH; shape[2] = OBS_CHANNELS;
+}
+
 extern "C" int naturetest_alias_enabled() {
 #ifdef C4_DENSE_PATCH_ALIAS
     return 1;
@@ -52,7 +56,13 @@ static int test_init(int B, int hidden, Dict* policy = NULL) {
     return params.total_elems;
 }
 
-extern "C" int naturetest_init(int B, int hidden) { return test_init(B, hidden); }
+extern "C" int naturetest_init(int B, int hidden) {
+    Dict policy = {0};
+    dict_set(&policy, "encoder", 2);
+    int n = test_init(B, hidden, &policy);
+    dict_clear(&policy); enc.config = NULL;
+    return n;
+}
 
 extern "C" int compacttest_init(int B, int hidden, int channels, int depth, int stride, int projection) {
     Dict policy = {};

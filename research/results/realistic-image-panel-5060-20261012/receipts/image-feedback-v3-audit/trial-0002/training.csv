@@ -1,0 +1,7 @@
+candidate,environment,seed,parameters,train_seconds,process_sps,native_avg_sps,native_metrics_ini
+swift-fox-3,connect4cnn,7,56232,0.865949495,73.90731257369693,,/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/panel/jobs/connect4cnn/swift-fox-3-s7/metrics/connect4cnn/swift-fox-3.ini
+swift-fox-3,pongcnn,7,55720,0.715603076,89.4350543568653,,/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/panel/jobs/pongcnn/swift-fox-3-s7/metrics/pongcnn/swift-fox-3.ini
+swift-fox-3,flappycnn,7,55592,0.665388334,96.18443355515758,,/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/panel/jobs/flappycnn/swift-fox-3-s7/metrics/flappycnn/swift-fox-3.ini
+swift-fox-3,breakoutcnn,7,55720,0.565266369,113.22095831248718,,/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/panel/jobs/breakoutcnn/swift-fox-3-s7/metrics/breakoutcnn/swift-fox-3.ini
+swift-fox-3,snakecnn,7,55848,0.715779849,89.41296697498954,,/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/panel/jobs/snakecnn/swift-fox-3-s7/metrics/snakecnn/swift-fox-3.ini
+swift-fox-3,mazecnn,7,55976,0.865745638,73.92471551788518,,/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0002/panel/jobs/mazecnn/swift-fox-3-s7/metrics/mazecnn/swift-fox-3.ini

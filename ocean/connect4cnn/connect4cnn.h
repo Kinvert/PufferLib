@@ -13,10 +13,7 @@ typedef float obs_t;
 #define ACT_SIZES {7}
 #define CONNECT4CNN_CELL_PIXELS 6
 #define CONNECT4CNN_SIDE_PADDING 1
-#define OBS_CHANNELS 1
-#define OBS_HEIGHT (6 * CONNECT4CNN_CELL_PIXELS)
-#define OBS_WIDTH (7 * CONNECT4CNN_CELL_PIXELS + 2 * CONNECT4CNN_SIDE_PADDING)
-#define OBS_SIZE (OBS_CHANNELS * OBS_HEIGHT * OBS_WIDTH)
+#include "image.h"
 #define NUM_ATNS 1
 #define HOLD_FRAMES 30
 
@@ -231,6 +228,9 @@ int compute_env_move(Connect4* env) {
     return 0;
 }
 
+#ifdef CNN_IMAGE_V1
+#include "image_v1.h"
+#else
 void compute_observation(Connect4* env) {
     obs_t* obs = env->agents[0].observations;
     if (env->representation != 0) {
@@ -275,6 +275,8 @@ void compute_observation(Connect4* env) {
     }
 }
 
+#endif
+
 static void reset_board(Connect4* env) {
     float* obs = env->agents[0].observations;
     env->tick = 0;
@@ -284,6 +286,9 @@ static void reset_board(Connect4* env) {
     for (int i = 0; i < OBS_SIZE; i++) {
         obs[i] = 0;
     }
+#ifdef CNN_IMAGE_V1
+    compute_observation(env);
+#endif
 }
 
 void puf_reset(Connect4* env) {

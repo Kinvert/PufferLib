@@ -35,7 +35,7 @@ for stage in range(1, 4):
     for key, bounds in {
         "channels": ("uniform_pow2", {8, 16, 32}),
         "kernel": ("int_uniform", set(range(1, 9 if stage == 1 else 6))),
-        "stride": ("uniform_pow2", {4, 8} if stage == 1 else {1, 2, 4}),
+        "stride": ("uniform_pow2", {1, 2, 4, 8} if stage == 1 else {1, 2, 4}),
         "pool": ("int_uniform", {0, 1, 2}),
         "residual": ("int_uniform", {0, 1}),
     }.items():

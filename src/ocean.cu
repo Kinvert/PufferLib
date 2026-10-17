@@ -33,14 +33,14 @@ void puf_normal_init(Prec* dst, float std, ulong seed, cudaStream_t stream) {
 #include "nature.cu"
 #endif
 #endif
-#if defined(PUFFER_CONNECT4CNN) || defined(PUFFER_PONGCNN) || defined(PUFFER_FLAPPYCNN) || defined(PUFFER_BREAKOUTCNN) || defined(PUFFER_SNAKECNN) || defined(PUFFER_MAZECNN)
+#if defined(PUFFER_CONNECT4CNN) || defined(PUFFER_PONGCNN) || defined(PUFFER_FLAPPYCNN) || defined(PUFFER_BREAKOUTCNN) || defined(PUFFER_SNAKECNN) || defined(PUFFER_MAZECNN) || defined(PUFFER_FORAGECNN)
 #include "../ocean/connect4cnn/cnn.cu"
 #include "../ocean/connect4cnn/nature.cu"
 #include "../ocean/connect4cnn/flex.cu"
 #include "../ocean/connect4cnn/flex2.cu"
 #if defined(C4_IMPALA_CNN) || defined(C4_IMPOOLA_CNN)
 #include "../ocean/connect4cnn/impala.cu"
-#elif !defined(C4_NATURE_CNN)
+#elif !defined(C4_NATURE_CNN) && !defined(CNN_IMAGE_V1)
 #include "../ocean/connect4cnn/connect4cnn.cu"
 #endif
 #endif
@@ -98,12 +98,22 @@ static void create_custom_encoder(Encoder* enc, Dict* policy = NULL) {
         create_nature_encoder(enc);
 #endif
     }
-#elif defined(PUFFER_CONNECT4CNN) || defined(PUFFER_PONGCNN) || defined(PUFFER_FLAPPYCNN) || defined(PUFFER_BREAKOUTCNN) || defined(PUFFER_SNAKECNN) || defined(PUFFER_MAZECNN)
+#elif defined(PUFFER_CONNECT4CNN) || defined(PUFFER_PONGCNN) || defined(PUFFER_FLAPPYCNN) || defined(PUFFER_BREAKOUTCNN) || defined(PUFFER_SNAKECNN) || defined(PUFFER_MAZECNN) || defined(PUFFER_FORAGECNN)
     DictItem* type = policy ? dict_find(policy, "encoder") : NULL;
+#ifdef CNN_IMAGE_V1
+    assert(type && (type->value == 2 || type->value == 4
+#if defined(C4_IMPALA_CNN) || defined(C4_IMPOOLA_CNN)
+        || type->value == 0
+#endif
+        ) && "image-v1 supports Nature, Flex, IMPALA and Impoola only");
+#endif
+#ifndef CNN_IMAGE_V1
     if (type && type->value == 1) {
         c4_cnn::create_connect4_encoder(enc);
         enc->config = policy;
-    } else if (type && type->value == 2) {
+    } else
+#endif
+    if (type && type->value == 2) {
         create_nature_encoder(enc);
     } else if (type && type->value == 3) {
         create_compact_encoder(enc, policy);
@@ -113,7 +123,7 @@ static void create_custom_encoder(Encoder* enc, Dict* policy = NULL) {
         create_flex2_encoder(enc, policy);
     } else {
         assert((!type || type->value == 0) && "unsupported pixel encoder ID");
-#ifdef C4_NATURE_CNN
+#if defined(C4_NATURE_CNN) || (defined(CNN_IMAGE_V1) && !defined(C4_IMPALA_CNN) && !defined(C4_IMPOOLA_CNN))
         create_nature_encoder(enc);
 #else
         create_connect4_encoder(enc);

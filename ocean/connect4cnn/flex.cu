@@ -231,7 +231,7 @@ static void* flex_create_weights(void* self) {
         snprintf(key, sizeof(key), "cnn_kernel_%d", s);
         int k = flex_option(enc->config, key, 1, s == 1 ? 8 : 5);
         snprintf(key, sizeof(key), "cnn_stride_%d", s);
-        int stride = flex_option(enc->config, key, s == 1 ? 4 : 1, s == 1 ? 8 : 4);
+        int stride = flex_option(enc->config, key, 1, s == 1 ? 8 : 4);
         assert((stride & (stride - 1)) == 0);
         flex_conv(w, H, W, ci, co, k, stride);
         H = (H + stride - 1) / stride; W = (W + stride - 1) / stride; ci = co;

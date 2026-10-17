@@ -1,0 +1,7 @@
+candidate,environment,seed,parameters,train_seconds,process_sps,native_avg_sps,native_metrics_ini
+happy-cat-1,connect4cnn,7,60616,2.824147683,181.29363527339302,,/home/claude/cnn-audit-20261008/build/image-panels-20261012/eight-checkpoint-validated/jobs/connect4cnn/happy-cat-1-s7/metrics/connect4cnn/happy-cat-1.ini
+happy-cat-1,pongcnn,7,60104,2.619902616,195.42711124954272,,/home/claude/cnn-audit-20261008/build/image-panels-20261012/eight-checkpoint-validated/jobs/pongcnn/happy-cat-1-s7/metrics/pongcnn/happy-cat-1.ini
+happy-cat-1,flappycnn,7,59976,2.018939119,253.59853359699053,,/home/claude/cnn-audit-20261008/build/image-panels-20261012/eight-checkpoint-validated/jobs/flappycnn/happy-cat-1-s7/metrics/flappycnn/happy-cat-1.ini
+happy-cat-1,breakoutcnn,7,60104,1.422811128,359.8509949241836,,/home/claude/cnn-audit-20261008/build/image-panels-20261012/eight-checkpoint-validated/jobs/breakoutcnn/happy-cat-1-s7/metrics/breakoutcnn/happy-cat-1.ini
+happy-cat-1,snakecnn,7,60232,2.420784118,211.50171805613277,,/home/claude/cnn-audit-20261008/build/image-panels-20261012/eight-checkpoint-validated/jobs/snakecnn/happy-cat-1-s7/metrics/snakecnn/happy-cat-1.ini
+happy-cat-1,mazecnn,7,60360,2.620344101,195.39418498685183,,/home/claude/cnn-audit-20261008/build/image-panels-20261012/eight-checkpoint-validated/jobs/mazecnn/happy-cat-1-s7/metrics/mazecnn/happy-cat-1.ini

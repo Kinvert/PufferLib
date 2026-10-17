@@ -1,5 +1,8 @@
 #pragma once
 #include <stdint.h>
+#ifndef CNN_IMAGE_INFO_JSON
+#define CNN_IMAGE_INFO_JSON ""
+#endif
 
 // Version 1: episode identity, not slot/scheduling order, determines randomness.
 #ifdef __CUDACC__

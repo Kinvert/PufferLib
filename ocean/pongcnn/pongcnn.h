@@ -9,10 +9,7 @@ typedef float obs_t;
 #include "../connect4cnn/appearance.h"
 
 #define ACT_SIZES {3}
-#define OBS_CHANNELS 1
-#define OBS_HEIGHT 36
-#define OBS_WIDTH 44
-#define OBS_SIZE (OBS_CHANNELS * OBS_HEIGHT * OBS_WIDTH)
+#include "../connect4cnn/image.h"
 #define PONGCNN_SCORE_ROWS 2
 #define PONGCNN_MARGIN 2
 #define NUM_ATNS 1
@@ -119,6 +116,9 @@ static void pongcnn_texture(obs_t* obs, int representation) {
     }
 }
 
+#ifdef CNN_IMAGE_V1
+#include "image_v1.h"
+#else
 void compute_observations(Pong* env) {
     obs_t* obs = env->agents[0].observations;
     memset(obs, 0, OBS_SIZE * sizeof(obs_t));
@@ -169,6 +169,8 @@ void compute_observations(Pong* env) {
         pongcnn_texture(obs, env->representation);
     }
 }
+
+#endif
 
 void reset_round(Pong* env) {
     env->paddle_yl = env->height / 2 - env->paddle_height / 2;

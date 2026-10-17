@@ -1,0 +1,42 @@
+{
+  "family": "impoola",
+  "actions": 2,
+  "descriptor_sha256": "0c9d7569467e058d98126577458d175c26483f7303d06702fd88c349f9526f95",
+  "parameters": 151360,
+  "bytes": 605440,
+  "command": [
+    "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/metadata/flappycnn/impoola",
+    "--describe-flex",
+    "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/configs/flappycnn/impoola.ini",
+    "2"
+  ],
+  "timing": {
+    "command": [
+      "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/metadata/flappycnn/impoola",
+      "--describe-flex",
+      "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/configs/flappycnn/impoola.ini",
+      "2"
+    ],
+    "cwd": "/home/claude/cnn-audit-20261008",
+    "status": "ok",
+    "timeout": 30,
+    "environment": {
+      "PUFFER_CHECKPOINT_RECEIPTS": null,
+      "NVCC_ARCH": null,
+      "NVCC_EXTRA": null,
+      "NVCC_APPEND_FLAGS": null,
+      "CUDA_HOME": "/usr/local/cuda",
+      "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+    },
+    "launch_monotonic_ns": 559177302316916,
+    "pid": 1038213,
+    "returncode": 0,
+    "end_monotonic_ns": 559177416553166
+  },
+  "inputs_sha256": {
+    "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/metadata/flappycnn/impoola": "6cd603b8817caa8b8319ba2843a8cb2f9bcbb8a7d7bf834d7201c86fba574ea7",
+    "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/configs/flappycnn/impoola.ini": "1ac93876959ca089690cb8615b44b983ffa3abdcb95a728fef7d9041350e0db7"
+  },
+  "numerical_acceptance": false,
+  "runtime_binary_source_certified": false
+}

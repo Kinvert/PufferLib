@@ -1,0 +1,7 @@
+candidate,environment,seed,parameters,train_seconds,process_sps,native_avg_sps,native_metrics_ini
+mystic-tree-2,connect4cnn,7,56232,0.82344258,77.72248066161455,,/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/jobs/connect4cnn/mystic-tree-2-s7/metrics/connect4cnn/mystic-tree-2.ini
+mystic-tree-2,pongcnn,7,55720,0.765740008,83.57928191209254,,/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/jobs/pongcnn/mystic-tree-2-s7/metrics/pongcnn/mystic-tree-2.ini
+mystic-tree-2,flappycnn,7,55592,0.665676227,96.1428355169427,,/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/jobs/flappycnn/mystic-tree-2-s7/metrics/flappycnn/mystic-tree-2.ini
+mystic-tree-2,breakoutcnn,7,55720,0.565355877,113.20303299862928,,/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/jobs/breakoutcnn/mystic-tree-2-s7/metrics/breakoutcnn/mystic-tree-2.ini
+mystic-tree-2,snakecnn,7,55848,0.715393788,89.46121852542561,,/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/jobs/snakecnn/mystic-tree-2-s7/metrics/snakecnn/mystic-tree-2.ini
+mystic-tree-2,mazecnn,7,55976,0.865957474,73.90663158592936,,/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/jobs/mazecnn/mystic-tree-2-s7/metrics/mazecnn/mystic-tree-2.ini

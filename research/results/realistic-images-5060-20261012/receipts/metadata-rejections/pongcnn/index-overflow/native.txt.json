@@ -1,0 +1,23 @@
+{
+  "command": [
+    "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/metadata/pongcnn/default",
+    "--storage",
+    "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/rejects/pongcnn/index-overflow/config.ini"
+  ],
+  "cwd": "/home/claude/cnn-audit-20261008",
+  "status": "failed",
+  "timeout": 30,
+  "environment": {
+    "PUFFER_CHECKPOINT_RECEIPTS": null,
+    "NVCC_ARCH": null,
+    "NVCC_EXTRA": null,
+    "NVCC_APPEND_FLAGS": null,
+    "CUDA_HOME": "/usr/local/cuda",
+    "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+  },
+  "launch_monotonic_ns": 559176458208521,
+  "pid": 1038201,
+  "returncode": 1,
+  "error": "Process failed: /home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/rejects/pongcnn/index-overflow/native.txt",
+  "end_monotonic_ns": 559176522365347
+}

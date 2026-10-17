@@ -1,0 +1,1 @@
+ForageCNN: spawn coverage, connectivity, texture histograms, rewards, death/success/horizon, dirty pixels and appearance/RNG determinism PASS

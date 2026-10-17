@@ -1,0 +1,47 @@
+{
+  "status": "passed",
+  "hardware": {
+    "gpu_name": "NVIDIA GeForce RTX 5060",
+    "gpu_uuid": "GPU-56b0df25-b4c9-46eb-e498-bc5c71904097",
+    "driver": "591.86",
+    "host": "G240",
+    "cuda_compiler": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2025 NVIDIA Corporation\nBuilt on Fri_Feb_21_20:23:50_PST_2025\nCuda compilation tools, release 12.8, V12.8.93\nBuild cuda_12.8.r12.8/compiler.35583870_0\n"
+  },
+  "config_sha256": "87dbc4c5b467d8585a5dd00ab44c3214947a8477b2db946e8e60cd9427e0f3c5",
+  "catalog_sha256": "24804332f7090f3e745ed0a648ce469fa3bd435905747b1219c69dfd9e5720d3",
+  "checks": {
+    "h576-w672-c3": {
+      "path": "h576-w672-c3",
+      "report_sha256": "580ddd463cca5a9daf3e45084efe7df1d0b8a4b352852fa3dcadd968f6a10fe1",
+      "cases": 18,
+      "native_calls": 72
+    },
+    "h640-w620-c3": {
+      "path": "h640-w620-c3",
+      "report_sha256": "dcc9bae3c0aee6b1daa15dc3a103c07c148145aa4d8cf6c4c42cc2caea07c00d",
+      "cases": 18,
+      "native_calls": 72
+    },
+    "h640-w420-c3": {
+      "path": "h640-w420-c3",
+      "report_sha256": "ca7ecd7284c134d21f609b45168ea1e16a5b6fa2c13dabd0c08980589290026a",
+      "cases": 18,
+      "native_calls": 72
+    },
+    "h330-w576-c3": {
+      "path": "h330-w576-c3",
+      "report_sha256": "94c1825040cf969275474b47f116402698f06df5db7a2225100872b804a322de",
+      "cases": 18,
+      "native_calls": 72
+    },
+    "h616-w616-c3": {
+      "path": "h616-w616-c3",
+      "report_sha256": "3e9f312455cc3c124ae2a2752c274905f5e9f98ae34d9d0d43b435f82fee28da",
+      "cases": 18,
+      "native_calls": 72
+    }
+  },
+  "total_native_calls": 360,
+  "cpu_neural_reference": false,
+  "full_policy_qualified": false
+}

@@ -6,11 +6,23 @@ is required on the5090. Do not edit a checkout serving an ongoing campaign.
 
 ## Delivery status
 
-The tooling is local in G240's `/home/claude/cnn`. Local history has diverged
-from newer `origin/cnn-research`. Do not force-push or overwrite remote work,
-or assume pulling the old branch gets this launcher. Publication must supply
-the actual pushed revision before the5090 starts. Local preparation is not
-a claim that the source was pushed.
+Delivery uses **Kinvert/PufferLib, branch `cnn-research`**. The delivery merge
+preserves both the existing remote image-research history and sprite tooling
+through `d4527b4e`. Do not force-push, reset an active campaign, or use upstream.
+
+In the idle5090 checkout, before preparation:
+
+```bash
+git switch cnn-research
+git pull --ff-only origin cnn-research
+git merge-base --is-ancestor d4527b4e HEAD
+git merge-base --is-ancestor ba7a9b164e851925db283baa4c55c46f8d9d1e45 HEAD
+```
+
+If pull reports local divergence or modifications, stop and preserve that
+checkout; use a separate clean checkout rather than discarding its work.
+The launcher records the actual pulled revision. Publication does not mean
+the full5090 campaign has run: that allocation remains PREPARED, NOT RUN.
 
 ## Existing environment
 

@@ -1,0 +1,24 @@
+..................................................................E....
+======================================================================
+ERROR: test_failed_learning_keeps_review_and_never_creates_reference_anchors (research.tests.test_prepare_image_calibration.CalibrationPreparationTests.test_failed_learning_keeps_review_and_never_creates_reference_anchors)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/claude/cnn-audit-20261008/research/tests/test_prepare_image_calibration.py", line 92, in test_failed_learning_keeps_review_and_never_creates_reference_anchors
+    gate=tool.qualify(allocation,destination)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/claude/cnn-audit-20261008/research/prepare_image_calibration.py", line 122, in qualify
+    gate = learning.qualify(plan,analysis,value["normalization"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/claude/cnn-audit-20261008/research/image_learning_gate.py", line 29, in qualify
+    _,rows,schedules,_=curves.panel_rows(plan,analysis,name)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/claude/cnn-audit-20261008/research/image_curve_feedback.py", line 75, in panel_rows
+    require(len(steps)==CHECKPOINTS and steps==sorted(set(steps)) and all(type(s) is int and s>0 for s in steps)
+  File "/home/claude/cnn-audit-20261008/ocean/connect4cnn/claim.py", line 35, in require
+    raise ValueError(message)
+ValueError: Exactly eight chronological checkpoint stages required
+
+----------------------------------------------------------------------
+Ran 71 tests in 0.992s
+
+FAILED (errors=1)

@@ -1,0 +1,2 @@
+version,block_seed,episode_id,slot,representation,env_seed,policy_seed,decisions,score,foods,perf,episode_return,end_reason,action_hash,start_observation_hash,start_world_hash,start_rng
+1,7007,0,0,0,1061661388,2357506090215940220,6,1,0,0x1.111112p-7,-0x1p+0,1,d07bc5e99c7df1a9,888715e3d628e325,456dc4f1304fa2d0,2838778143

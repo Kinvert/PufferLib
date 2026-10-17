@@ -1,0 +1,1 @@
+{"environment":"breakoutcnn","default_encoder":"explicit","float32":true,"rules":"breakout-native-v1","receipt_version":1,"evaluation":"first-terminal-or-frame-cap-v1","image_contract":{"version":"human-geometry-v1","shape_hwc":[330,576,3],"layout":"NHWC","dtype":"float32","preprocessing":"none"}}

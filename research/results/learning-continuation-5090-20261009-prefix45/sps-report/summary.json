@@ -1,0 +1,446 @@
+{
+  "snapshot_utc": "2026-10-09T14:40:45.788770+00:00",
+  "campaign": "/home/keith/Git/ml/cnn-5090/build/learning-continuation/5090-20261009-overnight-v2",
+  "panels": [
+    {
+      "stage": "calibration",
+      "status": "ok",
+      "completed_training_jobs": 24,
+      "planned_training_jobs": 24,
+      "completed_drawing_evaluations": 656,
+      "planned_drawing_evaluations": 656,
+      "completed_repeat_eager_checks": 48
+    },
+    {
+      "stage": "references",
+      "status": "ok",
+      "completed_training_jobs": 24,
+      "planned_training_jobs": 24,
+      "completed_drawing_evaluations": 656,
+      "planned_drawing_evaluations": 656,
+      "completed_repeat_eager_checks": 48
+    },
+    {
+      "stage": "trial-0000",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0001",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0002",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0003",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0004",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0005",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0006",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0007",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0008",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0009",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0010",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0011",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0012",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0013",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0014",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0015",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0016",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0017",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0018",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0019",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0020",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0021",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0022",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0023",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0024",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0025",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0026",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0027",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0028",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0029",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0030",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0031",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0032",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0033",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0034",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0035",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0036",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0037",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0038",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0039",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0040",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0041",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0042",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0043",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0044",
+      "status": "ok",
+      "completed_training_jobs": 12,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 328,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 24
+    },
+    {
+      "stage": "trial-0045",
+      "status": "failed",
+      "completed_training_jobs": 6,
+      "planned_training_jobs": 12,
+      "completed_drawing_evaluations": 164,
+      "planned_drawing_evaluations": 328,
+      "completed_repeat_eager_checks": 12
+    }
+  ],
+  "completed_training_jobs": 594,
+  "completed_checkpoints": 2376,
+  "native_metric_bins": 10890,
+  "timing": "Checkpoint CLOCK_MONOTONIC minus process launch; startup/writes included; evaluation excluded.",
+  "native_metric_semantics": "Original step-bin means, not instantaneous samples or qualified native-average SPS.",
+  "audit_status": "Snapshot consistency checks only; final campaign audit remains separate.",
+  "score_or_frontier_claim": false,
+  "policy_execution": false
+}

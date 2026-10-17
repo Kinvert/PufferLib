@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")/../../.."
+source research/image_test_flags.sh
 source ocean/connect4cnn/runtime_env.sh
 cuda_dir="${CUDA_HOME:-/usr/local/cuda}"
 nccl_dir="${NCCL_ROOT:-}"
@@ -10,6 +11,9 @@ fi
 mkdir -p build/connect4cnn
 test_name="${1:-test_encoder}"
 case "$test_name" in test_encoder|test_nature|test_impala|test_cnn|test_flex2) ;; *) echo "Unknown encoder test: $test_name" >&2; exit 1 ;; esac
+if [[ -n "${CNN_TEST_IMAGE:-}" && "$test_name" != test_nature && "$test_name" != test_impala ]]; then
+    echo 'Portable image harness supports Nature/Flex/IMPALA/Impoola only.' >&2; exit 1
+fi
 alias_def=()
 case "${C4_DENSE_PATCH_ALIAS:-0}" in
     0) ;;
@@ -26,13 +30,13 @@ test_receipt="${test_output}.build"
 if [[ $# == 2 ]]; then
     if [[ -e "$test_output" || -e "$test_receipt" ]]; then echo 'Explicit test outputs require fresh paths.' >&2; exit 1; fi
     mkdir -p "$test_receipt"
-    rg --files src ocean/connect4cnn | sort | xargs sha256sum > "$test_receipt/source.sha256"
+    { rg --files src ocean/connect4cnn; echo research/image_test_flags.sh; } | sort | xargs sha256sum > "$test_receipt/source.sha256"
     git rev-parse HEAD > "$test_receipt/revision.txt"
     git status --short > "$test_receipt/worktree.txt"
     "$cuda_dir/bin/nvcc" --version > "$test_receipt/compiler.txt"
     printf '%s\n' "C4_DENSE_PATCH_ALIAS=${C4_DENSE_PATCH_ALIAS:-0}" \
         "NVCC_ARCH=${NVCC_ARCH:-native}" "NVCC_PREPEND_FLAGS=${NVCC_PREPEND_FLAGS:-}" \
-        "NVCC_APPEND_FLAGS=${NVCC_APPEND_FLAGS:-}" > "$test_receipt/environment.txt"
+        "NVCC_APPEND_FLAGS=${NVCC_APPEND_FLAGS:-}" "CNN_TEST_IMAGE=${CNN_TEST_IMAGE:-legacy}" > "$test_receipt/environment.txt"
 fi
 mkdir -p "$(dirname "$test_output")"
 test_command=("$cuda_dir/bin/nvcc" -shared -O1 -std=c++17 -arch="${NVCC_ARCH:-native}"
@@ -40,7 +44,7 @@ test_command=("$cuda_dir/bin/nvcc" -shared -O1 -std=c++17 -arch="${NVCC_ARCH:-na
     --diag-suppress=2361 --diag-suppress=111 --diag-suppress=128
     -I. -Isrc -Ivendor -Iraylib-5.5_linux_amd64/include
     -I"$cuda_dir/include/cccl" -I"$nccl_dir/include"
-    "${alias_def[@]}" "ocean/connect4cnn/tests/$test_name.cu"
+    "${alias_def[@]}" "${image_test_defs[@]}" "ocean/connect4cnn/tests/$test_name.cu"
     raylib-5.5_linux_amd64/lib/libraylib.a
     -L"$cuda_dir/lib64" -L"$nccl_dir/lib" -L/usr/lib/wsl/lib
     -lcudart -lcublas -lcurand -lcusolver -lnccl -l:libnvidia-ml.so.1 -lGL -lpthread

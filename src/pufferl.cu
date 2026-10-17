@@ -3133,6 +3133,19 @@ TrainResult run_train(Ini* ini, TrainContext* ctx) {
         assert(fclose(fp) == 0 && "failed to close resolved checkpoint config");
         assert(rename(tmp, path) == 0 && "failed to publish resolved checkpoint config");
     }
+#ifdef CNN_IMAGE_V1
+    // Research curve controls: publish the same policy before its first update.
+    // The ordinary trainer and legacy builds do not enable this option.
+    const char* initial_receipt = getenv("PUFFER_SAVE_INITIAL_CHECKPOINT");
+    if (initial_receipt && strcmp(initial_receipt, "1") == 0) {
+        assert(!use_selfplay && pufferl->global_step == 0 && ctx->artifact_owner);
+        assert(receipts && strcmp(receipts, "1") == 0);
+        char initial_checkpoint[4096];
+        snprintf(initial_checkpoint, sizeof(initial_checkpoint), "%s/%016ld.bin",
+            checkpoint_dir, pufferl->global_step);
+        puf_save_weights(pufferl, initial_checkpoint);
+    }
+#endif
     Selfplay selfplay = {0};
     if (use_selfplay) {
         char initial_checkpoint[4096];

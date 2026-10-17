@@ -1,0 +1,11 @@
+{
+  "schema": "native-cnn-image-graph-check-v2",
+  "bundle": "/home/claude/cnn-audit-20261008/build/image-panels-20261013/cuda-catalog-v7/h640-w620-c3/bundle",
+  "bundle_sha256": "bd604431a2fbc8485897ff54bbda48107537a65c8dafa78cc15e7af6ab80c49c",
+  "config_sha256": "2da4c7903a512189abdaa4474c375220e06058ae4ea64fd87f6cdbd6f9258e56",
+  "parent": 1122993,
+  "token": "099ef44a7547b0cc7e418d6eb05b5882",
+  "hardware": "5060",
+  "timeout": 120,
+  "campaign_deadline_monotonic_ns": 604279494175479
+}

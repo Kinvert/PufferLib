@@ -1,5 +1,6 @@
 // Included after eval_make. Opt-in Connect4 measurement, outside the learner.
 #include "exact_protocol.h"
+static uint64_t c4_exact_observation_hash(const obs_t* obs);
 
 // GPU-free build identity. Raw weights do not encode their architecture.
 static void c4_exact_info() {
@@ -11,12 +12,23 @@ static void c4_exact_info() {
     const char* encoder = "impala";
 #elif defined(C4_NATURE_CNN)
     const char* encoder = "nature";
+#elif defined(CNN_IMAGE_V1)
+    const char* encoder = "explicit";
 #else
     const char* encoder = "tiny";
 #endif
     printf("{\"environment\":\"%s\",\"default_encoder\":\"%s\","
-        "\"float32\":%s,\"rules\":\"connect4-full-board-draw-v2\",\"receipt_version\":2}\n",
+        "\"float32\":%s,\"rules\":\"connect4-full-board-draw-v2\",\"receipt_version\":2" CNN_IMAGE_INFO_JSON,
         PUFFER_ENV_NAME,encoder,USE_BF16 ? "false" : "true");
+#ifdef CNN_IMAGE_V1
+    obs_t* observation = (obs_t*)calloc(OBS_SIZE, sizeof(obs_t));
+    assert(observation);
+    Env env = {}; env.agents[0].observations = observation;
+    compute_observation(&env);
+    printf(",\"empty_observation_hash\":\"%016llx\"", (unsigned long long)c4_exact_observation_hash(observation));
+    free(observation);
+#endif
+    printf("}\n");
 }
 
 static uint64_t c4_exact_observation_hash(const obs_t* obs) {

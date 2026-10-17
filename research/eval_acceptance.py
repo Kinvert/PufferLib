@@ -202,9 +202,11 @@ def load_packet(path, current_inputs=False):
             require(sha(folder / "descriptor.json") == layout["descriptor_sha256"]
                     and json.loads((folder / "native.txt").read_text()) == descriptor, "Native descriptor changed")
             preflight.validate_descriptor(descriptor, ev.read(path.parent / "inputs" / case["name"] / "training.ini"),
-                family, registry["actions"][case["task"]]["count"], case["checkpoint_bytes"])
+                family, registry["actions"][case["task"]]["count"], case["checkpoint_bytes"],
+                registry.get("image_contracts", {}).get(case["task"]), case["task"])
             recorded = Path(packet["preparation_root"])
-            binary = recorded / "policy-metadata" / preflight.FAMILIES[family][0]
+            binary_key = preflight.binary_key(registry, case["task"], family)
+            binary = recorded / "policy-metadata" / binary_key
             config = recorded / "inputs" / case["name"] / "training.ini"
             command = [str(binary), "--check-flex-bytes", str(config), str(layout["actions"]), case["checkpoint"]]
             timing = json.loads((folder / "native.txt.json").read_text())
@@ -213,7 +215,7 @@ def load_packet(path, current_inputs=False):
                     and type(timing["launch_monotonic_ns"]) is int and type(timing["end_monotonic_ns"]) is int
                     and timing["launch_monotonic_ns"] < timing["end_monotonic_ns"]
                     and timing["timeout"] == case["timeout"], "Wrong native layout process receipt")
-            require(layout["inputs_sha256"] == {str(binary): registry["binaries"][preflight.FAMILIES[family][0]],
+            require(layout["inputs_sha256"] == {str(binary): registry["binaries"][binary_key],
                     str(config): case["original_sha256"]["config"], case["checkpoint"]: case["original_sha256"]["checkpoint"]}
                     and layout["parameters"] == descriptor["total_parameters"] and layout["bytes"] == case["checkpoint_bytes"]
                     and layout["actions"] == registry["actions"][case["task"]]["count"], "Wrong layout input/shape binding")

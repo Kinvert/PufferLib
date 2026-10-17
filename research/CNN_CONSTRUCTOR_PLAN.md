@@ -1,5 +1,15 @@
 # Potential deliverable: native PufferLib CNN constructor and search
 
+October9 current direction: read [the realistic-image requirements](GENERALIZATION_PRIORITIES.md#current-operating-requirements-realistic-images-and-nature-range-curves).
+The constructor must support varied practical game/camera image sizes and RGB,
+not force every environment through36x44 grayscale. Human-readable640x480-class
+native frames and explicitly declared policy preprocessing are separate controls;
+build geometry from game state at the new resolution instead of enlarging the old
+raster. Portable input metadata, storage/memory preflight and baseline adaptation
+are near-term work. Target Nature-range training with roughly8 checkpoints,
+first strides1/2/4/8, fixed unswept seeds and selective profiling. Existing native
+paths remain specialized and no new GPU campaign is launched by this plan.
+
 **Goal:** deliver a clean, usable PufferLib tool that finds a useful CNN performance-versus-training-time frontier for each pixel environment and search budget. A winning fixed CNN remains a possible deliverable; this is an additional route, not a replacement for the existing research or an accepted upstream feature.
 
 September 15 sequencing: follow the [ordered milestones in the main paper plan](PAPER_PLAN.md#next-actions--ordered-implementation-milestones). The immediate [Connect4 protocol](CONNECT4_CLAIM_PROTOCOL.md) measures the full observed frontier with identical learner settings, decision budget and checkpoint cadence for all four fixed encoders. Validate timing/exact episode allocation, baseline fairness and simultaneous analysis, then confirm on fresh training seeds. Per-model hyperparameter selection and architecture search are separate later studies. Pong v2 remains necessary before further Pong quality claims; baseline attribution and portable image support remain delivery work. The [5090 audit](PONG_EVALUATION_AUDIT_RESULTS.md) found sparse match completion and substantial recipe dependence. The tool must expose reliable tradeoffs even when our current compact model loses; more architecture trials cannot repair a biased/incomplete evaluation protocol.

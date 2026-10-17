@@ -1,5 +1,26 @@
 # CNN experiment history
 
+## Completed 5090 campaign received as exports — October8
+
+Pulled `6e30f9bb` in a separate G240 audit worktree; originalb102 sources remain
+unchanged. The remote report records192 jobs/5,248 drawing-checkpoint evaluations,
+12 native trials plus controls/references and4h54m28s campaign time. Kinvert relays
+that the authorized36-additional-trial/12h continuation is now running on5090;
+this analysis launches nothing and implements no continuation path.
+
+[Independent export analysis](results/learning-feedback-5090-20261008T173307Z/independent-export-analysis-v2/README.md)
+checks all seven tables, once-per-job costs, paired seeds, four-checkpoint coverage
+and SPS calculations, then retains every model/point in descriptive per-game
+frontiers and a self-contained viewer. Five artifact/scalar checks pass. Final
+aggregate frontier: swift-fox-3, happy-cat-1, quality-reference. Quality-reference
+scores0.353913 at631.885s versus Nature0.298506 at664.977s, but Nature has better
+final Flappy/Snake means. Quiet-owl-11's Maze half-budget checkpoint scores0.234848
+at50.841s versus Nature's full-budget0.229798 at120.559s; earlyPong also has a
+promising separated censoring-bound pair. These are adaptive-seed discoveries,
+not independently audited raw outcomes or confirmed superiority. Point-level
+seed/drawing data and candidate configs remain on5090; raw audit and fresh
+held-out multi-seed confirmation are still required for paper claims.
+
 ## Implemented and locally validated — staged real learning launcher 20261007
 
 [Evidence and exact qualification](results/learning-launcher-20261007/README.md).

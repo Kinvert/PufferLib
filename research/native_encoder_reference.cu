@@ -4,6 +4,13 @@
 #include <cstdio>
 #include <vector>
 
+// Independent reference shape; no production environment/constructor include.
+#ifndef CNN_REF_HEIGHT
+#define CNN_REF_HEIGHT 36
+#define CNN_REF_WIDTH 44
+#define CNN_REF_CHANNELS 1
+#endif
+
 struct Layer {
     int h, w, ci, oh, ow, co, k, stride, ph, pw, offset;
 };
@@ -30,7 +37,7 @@ struct Storage {
 
 static int topology(int model, int hidden, std::vector<Layer>& layers) {
     if (hidden != 64 && hidden != 128 && hidden != 256) return -1;
-    int h = 36, w = 44, ci = 1, offset = 0;
+    int h = CNN_REF_HEIGHT, w = CNN_REF_WIDTH, ci = CNN_REF_CHANNELS, offset = 0;
     auto conv = [&](int co, int k, int stride, bool same) {
         int oh = same ? (h + stride - 1) / stride : (h - k) / stride + 1;
         int ow = same ? (w + stride - 1) / stride : (w - k) / stride + 1;

@@ -1,0 +1,10 @@
+{
+  "status": "ok",
+  "pngs_verified": 261,
+  "lossless_memory_verified": 261,
+  "paired_world_states": 21,
+  "all_variants_and_formats_paired": true,
+  "gpu_used": false,
+  "policy_executed": false,
+  "display": "round-to-nearest RGB8; exact original floats retained separately"
+}

@@ -1,0 +1,42 @@
+environment,training_appearance,evaluation_representation,metric,status,expected,observed,failures,score_bounds_kind
+connect4cnn,mixed-s35173-c10,0,win fraction,complete_descriptive,376,376,0,point-estimate
+connect4cnn,mixed-s35173-c10,1,win fraction,complete_descriptive,376,376,0,point-estimate
+connect4cnn,mixed-s35173-c10,2,win fraction,complete_descriptive,376,376,0,point-estimate
+connect4cnn,mixed-s35173-c10,3,win fraction,complete_descriptive,376,376,0,point-estimate
+connect4cnn,mixed-s35173-c10,4,win fraction,complete_descriptive,376,376,0,point-estimate
+connect4cnn,mixed-s35173-c10,5,win fraction,complete_descriptive,376,376,0,point-estimate
+connect4cnn,mixed-s35173-c10,6,win fraction,complete_descriptive,376,376,0,point-estimate
+connect4cnn,mixed-s35173-c10,7,win fraction,complete_descriptive,376,376,0,point-estimate
+connect4cnn,mixed-s35173-c10,8,win fraction,complete_descriptive,376,376,0,point-estimate
+connect4cnn,mixed-s35173-c10,9,win fraction,complete_descriptive,376,376,0,point-estimate
+pongcnn,mixed-s35173-c7,0,mean final point fraction (censoring bounds),complete_descriptive,376,376,0,deterministic-censoring-not-confidence
+pongcnn,mixed-s35173-c7,1,mean final point fraction (censoring bounds),complete_descriptive,376,376,0,deterministic-censoring-not-confidence
+pongcnn,mixed-s35173-c7,2,mean final point fraction (censoring bounds),complete_descriptive,376,376,0,deterministic-censoring-not-confidence
+pongcnn,mixed-s35173-c7,3,mean final point fraction (censoring bounds),complete_descriptive,376,376,0,deterministic-censoring-not-confidence
+pongcnn,mixed-s35173-c7,4,mean final point fraction (censoring bounds),complete_descriptive,376,376,0,deterministic-censoring-not-confidence
+pongcnn,mixed-s35173-c7,5,mean final point fraction (censoring bounds),complete_descriptive,376,376,0,deterministic-censoring-not-confidence
+pongcnn,mixed-s35173-c7,6,mean final point fraction (censoring bounds),complete_descriptive,376,376,0,deterministic-censoring-not-confidence
+flappycnn,mixed-s35173-c7,0,mean pipes,complete_descriptive,376,376,0,point-estimate
+flappycnn,mixed-s35173-c7,1,mean pipes,complete_descriptive,376,376,0,point-estimate
+flappycnn,mixed-s35173-c7,2,mean pipes,complete_descriptive,376,376,0,point-estimate
+flappycnn,mixed-s35173-c7,3,mean pipes,complete_descriptive,376,376,0,point-estimate
+flappycnn,mixed-s35173-c7,4,mean pipes,complete_descriptive,376,376,0,point-estimate
+flappycnn,mixed-s35173-c7,5,mean pipes,complete_descriptive,376,376,0,point-estimate
+flappycnn,mixed-s35173-c7,6,mean pipes,complete_descriptive,376,376,0,point-estimate
+breakoutcnn,mixed-s35173-c5,0,mean score through terminal/frame cap,complete_descriptive,376,376,0,point-estimate
+breakoutcnn,mixed-s35173-c5,1,mean score through terminal/frame cap,complete_descriptive,376,376,0,point-estimate
+breakoutcnn,mixed-s35173-c5,2,mean score through terminal/frame cap,complete_descriptive,376,376,0,point-estimate
+breakoutcnn,mixed-s35173-c5,3,mean score through terminal/frame cap,complete_descriptive,376,376,0,point-estimate
+breakoutcnn,mixed-s35173-c5,4,mean score through terminal/frame cap,complete_descriptive,376,376,0,point-estimate
+snakecnn,mixed-s35173-c6,0,mean ending length,complete_descriptive,376,376,0,point-estimate
+snakecnn,mixed-s35173-c6,1,mean ending length,complete_descriptive,376,376,0,point-estimate
+snakecnn,mixed-s35173-c6,2,mean ending length,complete_descriptive,376,376,0,point-estimate
+snakecnn,mixed-s35173-c6,3,mean ending length,complete_descriptive,376,376,0,point-estimate
+snakecnn,mixed-s35173-c6,4,mean ending length,complete_descriptive,376,376,0,point-estimate
+snakecnn,mixed-s35173-c6,5,mean ending length,complete_descriptive,376,376,0,point-estimate
+mazecnn,mixed-s35173-c6,0,goal fraction,complete_descriptive,376,376,0,point-estimate
+mazecnn,mixed-s35173-c6,1,goal fraction,complete_descriptive,376,376,0,point-estimate
+mazecnn,mixed-s35173-c6,2,goal fraction,complete_descriptive,376,376,0,point-estimate
+mazecnn,mixed-s35173-c6,3,goal fraction,complete_descriptive,376,376,0,point-estimate
+mazecnn,mixed-s35173-c6,4,goal fraction,complete_descriptive,376,376,0,point-estimate
+mazecnn,mixed-s35173-c6,5,goal fraction,complete_descriptive,376,376,0,point-estimate

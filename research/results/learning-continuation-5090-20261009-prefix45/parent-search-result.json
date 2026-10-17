@@ -1,0 +1,1988 @@
+{
+  "status": "ok",
+  "mode": "development",
+  "trials": [
+    {
+      "index": 0,
+      "name": "happy-cat-1",
+      "proposal": {
+        "protocol": "native-cross-game-protein-v1",
+        "trial": 0,
+        "observations_replayed": 0,
+        "gp_observations": 0,
+        "random": 0,
+        "pareto": 0,
+        "normalized": [
+          -1,
+          -0.333333313,
+          -1,
+          -1,
+          1,
+          -1,
+          -1,
+          -1,
+          0,
+          0,
+          0,
+          -1,
+          -1,
+          0,
+          0,
+          -1,
+          -1,
+          -1
+        ],
+        "policy": {
+          "cnn_depth": 1,
+          "cnn_projection": 32,
+          "cnn_global_pool": 0,
+          "cnn_channels_1": 8,
+          "cnn_kernel_1": 8,
+          "cnn_stride_1": 4,
+          "cnn_pool_1": 0,
+          "cnn_residual_1": 0,
+          "cnn_channels_2": 16,
+          "cnn_kernel_2": 3,
+          "cnn_stride_2": 2,
+          "cnn_pool_2": 0,
+          "cnn_residual_2": 0,
+          "cnn_channels_3": 16,
+          "cnn_kernel_3": 3,
+          "cnn_stride_3": 1,
+          "cnn_pool_3": 0,
+          "cnn_residual_3": 0
+        },
+        "success_observations": 0,
+        "failure_observations": 0
+      },
+      "optimizer_process": {
+        "command": [
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/optimizer/worker",
+          "research_protein_propose",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/recipe.ini",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0000/history.tsv",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0000/proposal.json"
+        ],
+        "cwd": "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search",
+        "status": "ok",
+        "timeout": 120,
+        "environment": {
+          "PUFFER_CHECKPOINT_RECEIPTS": null,
+          "NVCC_ARCH": "sm_120",
+          "NVCC_EXTRA": null,
+          "NVCC_APPEND_FLAGS": null,
+          "CUDA_HOME": "/usr/local/cuda-13.1",
+          "NCCL_ROOT": "/home/keith/Git/ml/fzero-training/PufferLib-5.0/.venv/lib/python3.12/site-packages/nvidia/nccl"
+        },
+        "launch_monotonic_ns": 3005385713953542,
+        "pid": 2174318,
+        "returncode": 0,
+        "end_monotonic_ns": 3005386078066816
+      },
+      "architecture": {
+        "encoder": 4,
+        "cnn_depth": 1,
+        "cnn_projection": 32,
+        "cnn_global_pool": 0,
+        "cnn_channels_1": 8,
+        "cnn_kernel_1": 8,
+        "cnn_stride_1": 4,
+        "cnn_pool_1": 0,
+        "cnn_residual_1": 0
+      },
+      "duplicate_of": null,
+      "feedback": {
+        "score": 0.3114647702296551,
+        "score_upper": 0.3145396691127305,
+        "cost": 590.555044163,
+        "training_jobs_charged": 12,
+        "games": [
+          {
+            "environment": "connect4cnn",
+            "cells": 20,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.353030303030303,
+            "normalized_upper": 0.353030303030303
+          },
+          {
+            "environment": "pongcnn",
+            "cells": 14,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.5979790216209621,
+            "normalized_upper": 0.6164284149194151
+          },
+          {
+            "environment": "flappycnn",
+            "cells": 14,
+            "offset": 0.0,
+            "target": 100.0,
+            "normalized_lower": 0.15781385281385282,
+            "normalized_upper": 0.15781385281385282
+          },
+          {
+            "environment": "breakoutcnn",
+            "cells": 10,
+            "offset": 0.0,
+            "target": 20.0,
+            "normalized_lower": 0.3571212121212121,
+            "normalized_upper": 0.3571212121212121
+          },
+          {
+            "environment": "snakecnn",
+            "cells": 12,
+            "offset": 1.0,
+            "target": 20.0,
+            "normalized_lower": 0.2513290802764487,
+            "normalized_upper": 0.2513290802764487
+          },
+          {
+            "environment": "mazecnn",
+            "cells": 12,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.15151515151515152,
+            "normalized_upper": 0.15151515151515152
+          }
+        ],
+        "conservative_pong": true,
+        "publication_claim_qualified": false
+      },
+      "feedback_sha256": "3b87fd725bd88214057e36b51ebc7418756f142618c9026228c44e65acaac341",
+      "candidate_sha256": "298217dff1acb64abce3fa1f2a7732679b3e6541d3eb13d2ff9a8b656b597f8a",
+      "audit_sha256": "00dd5b0513f69b4a4f7472cf66ab35f33f3f0ec2aa54771dcc876aa0b844c82c",
+      "encoder_check": {
+        "report": "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0000/encoder-check/REPORT.json",
+        "sha256": "3caa4ae489a4a69de20e91eed0a397bbdc38f6f2848db8dc1fc246ac6ea42e0e"
+      }
+    },
+    {
+      "index": 1,
+      "name": "mystic-tree-2",
+      "proposal": {
+        "protocol": "native-cross-game-protein-v1",
+        "trial": 1,
+        "observations_replayed": 1,
+        "gp_observations": 0,
+        "random": 1,
+        "pareto": 0,
+        "normalized": [
+          0.250535369,
+          -0.097586453,
+          0.864957809,
+          0.779076815,
+          -0.713949323,
+          0.686388135,
+          -0.748153925,
+          0.875641465,
+          -0.108537197,
+          0.0978188515,
+          -0.522599936,
+          0.0166735649,
+          0.568199515,
+          0.448421121,
+          0.733319998,
+          -0.870256543,
+          -0.522990227,
+          -0.654067516
+        ],
+        "policy": {
+          "cnn_depth": 2,
+          "cnn_projection": 32,
+          "cnn_global_pool": 1,
+          "cnn_channels_1": 32,
+          "cnn_kernel_1": 2,
+          "cnn_stride_1": 8,
+          "cnn_pool_1": 0,
+          "cnn_residual_1": 1,
+          "cnn_channels_2": 16,
+          "cnn_kernel_2": 3,
+          "cnn_stride_2": 1,
+          "cnn_pool_2": 1,
+          "cnn_residual_2": 1,
+          "cnn_channels_3": 16,
+          "cnn_kernel_3": 4,
+          "cnn_stride_3": 1,
+          "cnn_pool_3": 0,
+          "cnn_residual_3": 0
+        },
+        "success_observations": 1,
+        "failure_observations": 0
+      },
+      "optimizer_process": {
+        "command": [
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/optimizer/worker",
+          "research_protein_propose",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/recipe.ini",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0001/history.tsv",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0001/proposal.json"
+        ],
+        "cwd": "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search",
+        "status": "ok",
+        "timeout": 120,
+        "environment": {
+          "PUFFER_CHECKPOINT_RECEIPTS": null,
+          "NVCC_ARCH": "sm_120",
+          "NVCC_EXTRA": null,
+          "NVCC_APPEND_FLAGS": null,
+          "CUDA_HOME": "/usr/local/cuda-13.1",
+          "NCCL_ROOT": "/home/keith/Git/ml/fzero-training/PufferLib-5.0/.venv/lib/python3.12/site-packages/nvidia/nccl"
+        },
+        "launch_monotonic_ns": 3006261849687888,
+        "pid": 2186585,
+        "returncode": 0,
+        "end_monotonic_ns": 3006262213781550
+      },
+      "architecture": {
+        "encoder": 4,
+        "cnn_depth": 2,
+        "cnn_projection": 32,
+        "cnn_global_pool": 1,
+        "cnn_channels_1": 32,
+        "cnn_kernel_1": 2,
+        "cnn_stride_1": 8,
+        "cnn_pool_1": 0,
+        "cnn_residual_1": 1,
+        "cnn_channels_2": 16,
+        "cnn_kernel_2": 3,
+        "cnn_stride_2": 1,
+        "cnn_pool_2": 1,
+        "cnn_residual_2": 1
+      },
+      "duplicate_of": null,
+      "feedback": {
+        "score": 0.10366161616161616,
+        "score_upper": 0.10366161616161616,
+        "cost": 792.955469133,
+        "training_jobs_charged": 12,
+        "games": [
+          {
+            "environment": "connect4cnn",
+            "cells": 20,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.013636363636363636,
+            "normalized_upper": 0.013636363636363636
+          },
+          {
+            "environment": "pongcnn",
+            "cells": 14,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.0,
+            "normalized_upper": 0.0
+          },
+          {
+            "environment": "flappycnn",
+            "cells": 14,
+            "offset": 0.0,
+            "target": 100.0,
+            "normalized_lower": 0.07378787878787878,
+            "normalized_upper": 0.07378787878787878
+          },
+          {
+            "environment": "breakoutcnn",
+            "cells": 10,
+            "offset": 0.0,
+            "target": 20.0,
+            "normalized_lower": 0.2921212121212121,
+            "normalized_upper": 0.2921212121212121
+          },
+          {
+            "environment": "snakecnn",
+            "cells": 12,
+            "offset": 1.0,
+            "target": 20.0,
+            "normalized_lower": 0.1414141414141414,
+            "normalized_upper": 0.1414141414141414
+          },
+          {
+            "environment": "mazecnn",
+            "cells": 12,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.10101010101010101,
+            "normalized_upper": 0.10101010101010101
+          }
+        ],
+        "conservative_pong": true,
+        "publication_claim_qualified": false
+      },
+      "feedback_sha256": "7ff54c2f56f79244fd389191d09d503960281813d7db9a4ec136de385565ca93",
+      "candidate_sha256": "007e8669d3caa5530317e29097d01620f8b38b30608e79e414196eeef0fd081f",
+      "audit_sha256": "f9500703d4a05461fcaf43c456d426bc269cacfa05dc352779bf849919bd66e6",
+      "encoder_check": {
+        "report": "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0001/encoder-check/REPORT.json",
+        "sha256": "031c996aeb8523a0392f0aafe79eb8ac61c9ec6ce332a0612169dc7c5cfcf037"
+      }
+    },
+    {
+      "index": 2,
+      "name": "swift-fox-3",
+      "proposal": {
+        "protocol": "native-cross-game-protein-v1",
+        "trial": 2,
+        "observations_replayed": 2,
+        "gp_observations": 0,
+        "random": 1,
+        "pareto": 0,
+        "normalized": [
+          0.17803216,
+          0.143665433,
+          0.491203189,
+          0.532328367,
+          -0.851540387,
+          0.33108449,
+          0.639810205,
+          -0.00447279215,
+          0.38951242,
+          -0.611729264,
+          0.29256618,
+          0.297656298,
+          -0.959030628,
+          0.761279941,
+          0.99813509,
+          -0.566226482,
+          -0.771505237,
+          -0.994883418
+        ],
+        "policy": {
+          "cnn_depth": 2,
+          "cnn_projection": 64,
+          "cnn_global_pool": 1,
+          "cnn_channels_1": 32,
+          "cnn_kernel_1": 2,
+          "cnn_stride_1": 8,
+          "cnn_pool_1": 2,
+          "cnn_residual_1": 0,
+          "cnn_channels_2": 16,
+          "cnn_kernel_2": 2,
+          "cnn_stride_2": 2,
+          "cnn_pool_2": 1,
+          "cnn_residual_2": 0,
+          "cnn_channels_3": 32,
+          "cnn_kernel_3": 5,
+          "cnn_stride_3": 1,
+          "cnn_pool_3": 0,
+          "cnn_residual_3": 0
+        },
+        "success_observations": 2,
+        "failure_observations": 0
+      },
+      "optimizer_process": {
+        "command": [
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/optimizer/worker",
+          "research_protein_propose",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/recipe.ini",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0002/history.tsv",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0002/proposal.json"
+        ],
+        "cwd": "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search",
+        "status": "ok",
+        "timeout": 120,
+        "environment": {
+          "PUFFER_CHECKPOINT_RECEIPTS": null,
+          "NVCC_ARCH": "sm_120",
+          "NVCC_EXTRA": null,
+          "NVCC_APPEND_FLAGS": null,
+          "CUDA_HOME": "/usr/local/cuda-13.1",
+          "NCCL_ROOT": "/home/keith/Git/ml/fzero-training/PufferLib-5.0/.venv/lib/python3.12/site-packages/nvidia/nccl"
+        },
+        "launch_monotonic_ns": 3007326190678634,
+        "pid": 2200687,
+        "returncode": 0,
+        "end_monotonic_ns": 3007326504678981
+      },
+      "architecture": {
+        "encoder": 4,
+        "cnn_depth": 2,
+        "cnn_projection": 64,
+        "cnn_global_pool": 1,
+        "cnn_channels_1": 32,
+        "cnn_kernel_1": 2,
+        "cnn_stride_1": 8,
+        "cnn_pool_1": 2,
+        "cnn_residual_1": 0,
+        "cnn_channels_2": 16,
+        "cnn_kernel_2": 2,
+        "cnn_stride_2": 2,
+        "cnn_pool_2": 1,
+        "cnn_residual_2": 0
+      },
+      "duplicate_of": null,
+      "feedback": {
+        "score": 0.1020988709146604,
+        "score_upper": 0.1020988709146604,
+        "cost": 564.53481803,
+        "training_jobs_charged": 12,
+        "games": [
+          {
+            "environment": "connect4cnn",
+            "cells": 20,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.0,
+            "normalized_upper": 0.0
+          },
+          {
+            "environment": "pongcnn",
+            "cells": 14,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.0,
+            "normalized_upper": 0.0
+          },
+          {
+            "environment": "flappycnn",
+            "cells": 14,
+            "offset": 0.0,
+            "target": 100.0,
+            "normalized_lower": 0.020086580086580087,
+            "normalized_upper": 0.020086580086580087
+          },
+          {
+            "environment": "breakoutcnn",
+            "cells": 10,
+            "offset": 0.0,
+            "target": 20.0,
+            "normalized_lower": 0.27924242424242424,
+            "normalized_upper": 0.27924242424242424
+          },
+          {
+            "environment": "snakecnn",
+            "cells": 12,
+            "offset": 1.0,
+            "target": 20.0,
+            "normalized_lower": 0.10871876661350345,
+            "normalized_upper": 0.10871876661350345
+          },
+          {
+            "environment": "mazecnn",
+            "cells": 12,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.20454545454545456,
+            "normalized_upper": 0.20454545454545456
+          }
+        ],
+        "conservative_pong": true,
+        "publication_claim_qualified": false
+      },
+      "feedback_sha256": "be502f6d30bdc858f687a79c321d48eb88356539da198eab286d35e93ad547d8",
+      "candidate_sha256": "c8dce92bc58ed66d6d816317d86fe934ed02a49be9916fe9ce6924e4442a2a61",
+      "audit_sha256": "223269f62f2f8c22fa203cd6913f174848410540adb709b7c1513075c17b729f",
+      "encoder_check": {
+        "report": "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0002/encoder-check/REPORT.json",
+        "sha256": "ee7b85f8736f8ee325d0daf43624e3cd1e3cc1eb570bbd81f6624040c056b3c5"
+      }
+    },
+    {
+      "index": 3,
+      "name": "quiet-owl-4",
+      "proposal": {
+        "protocol": "native-cross-game-protein-v1",
+        "trial": 3,
+        "observations_replayed": 3,
+        "gp_observations": 0,
+        "random": 1,
+        "pareto": 0,
+        "normalized": [
+          -0.0564799905,
+          -0.363447309,
+          -0.558855653,
+          -0.436141312,
+          0.51061821,
+          -0.209719121,
+          -0.765912235,
+          0.633720756,
+          -0.266469896,
+          0.887122869,
+          -0.779476047,
+          -0.288351357,
+          0.96773684,
+          -0.193733335,
+          -0.318987966,
+          0.981384158,
+          0.468176603,
+          0.191655397
+        ],
+        "policy": {
+          "cnn_depth": 2,
+          "cnn_projection": 32,
+          "cnn_global_pool": 0,
+          "cnn_channels_1": 16,
+          "cnn_kernel_1": 6,
+          "cnn_stride_1": 4,
+          "cnn_pool_1": 0,
+          "cnn_residual_1": 1,
+          "cnn_channels_2": 16,
+          "cnn_kernel_2": 5,
+          "cnn_stride_2": 1,
+          "cnn_pool_2": 1,
+          "cnn_residual_2": 1,
+          "cnn_channels_3": 16,
+          "cnn_kernel_3": 2,
+          "cnn_stride_3": 4,
+          "cnn_pool_3": 1,
+          "cnn_residual_3": 1
+        },
+        "success_observations": 3,
+        "failure_observations": 0
+      },
+      "optimizer_process": {
+        "command": [
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/optimizer/worker",
+          "research_protein_propose",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/recipe.ini",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0003/history.tsv",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0003/proposal.json"
+        ],
+        "cwd": "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search",
+        "status": "ok",
+        "timeout": 120,
+        "environment": {
+          "PUFFER_CHECKPOINT_RECEIPTS": null,
+          "NVCC_ARCH": "sm_120",
+          "NVCC_EXTRA": null,
+          "NVCC_APPEND_FLAGS": null,
+          "CUDA_HOME": "/usr/local/cuda-13.1",
+          "NCCL_ROOT": "/home/keith/Git/ml/fzero-training/PufferLib-5.0/.venv/lib/python3.12/site-packages/nvidia/nccl"
+        },
+        "launch_monotonic_ns": 3008128136311835,
+        "pid": 2212239,
+        "returncode": 0,
+        "end_monotonic_ns": 3008128450352547
+      },
+      "architecture": {
+        "encoder": 4,
+        "cnn_depth": 2,
+        "cnn_projection": 32,
+        "cnn_global_pool": 0,
+        "cnn_channels_1": 16,
+        "cnn_kernel_1": 6,
+        "cnn_stride_1": 4,
+        "cnn_pool_1": 0,
+        "cnn_residual_1": 1,
+        "cnn_channels_2": 16,
+        "cnn_kernel_2": 5,
+        "cnn_stride_2": 1,
+        "cnn_pool_2": 1,
+        "cnn_residual_2": 1
+      },
+      "duplicate_of": null,
+      "feedback": {
+        "score": 0.31076094384924274,
+        "score_upper": 0.3707513806297011,
+        "cost": 1720.33216577,
+        "training_jobs_charged": 12,
+        "games": [
+          {
+            "environment": "connect4cnn",
+            "cells": 20,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.40606060606060607,
+            "normalized_upper": 0.40606060606060607
+          },
+          {
+            "environment": "pongcnn",
+            "cells": 14,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.45798215888037347,
+            "normalized_upper": 0.8179247795631233
+          },
+          {
+            "environment": "flappycnn",
+            "cells": 14,
+            "offset": 0.0,
+            "target": 100.0,
+            "normalized_lower": 0.13707792207792208,
+            "normalized_upper": 0.13707792207792208
+          },
+          {
+            "environment": "breakoutcnn",
+            "cells": 10,
+            "offset": 0.0,
+            "target": 20.0,
+            "normalized_lower": 0.32636363636363636,
+            "normalized_upper": 0.32636363636363636
+          },
+          {
+            "environment": "snakecnn",
+            "cells": 12,
+            "offset": 1.0,
+            "target": 20.0,
+            "normalized_lower": 0.30475810738968634,
+            "normalized_upper": 0.30475810738968634
+          },
+          {
+            "environment": "mazecnn",
+            "cells": 12,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.23232323232323235,
+            "normalized_upper": 0.23232323232323235
+          }
+        ],
+        "conservative_pong": true,
+        "publication_claim_qualified": false
+      },
+      "feedback_sha256": "340643f63a7370691f0bd2817b12a5aa3d4496502667093de0fde37f2a846b75",
+      "candidate_sha256": "5f690e73e610a1dbb762fe05d657ffcf0a3d5519f018a4fda5dc1910b272db80",
+      "audit_sha256": "de037ca3a899346d87639a602d236daf86b7c3f8426d82856d780085baf8ee95",
+      "encoder_check": {
+        "report": "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0003/encoder-check/REPORT.json",
+        "sha256": "e7ecff86985ac576874f1f9de02c2498a34da04fad0c6711839c21ff9b5ed852"
+      }
+    },
+    {
+      "index": 4,
+      "name": "quiet-owl-5",
+      "proposal": {
+        "protocol": "native-cross-game-protein-v1",
+        "trial": 4,
+        "observations_replayed": 4,
+        "gp_observations": 0,
+        "random": 1,
+        "pareto": 0,
+        "normalized": [
+          -0.735158563,
+          0.677831769,
+          0.556547403,
+          0.0651063919,
+          0.166930199,
+          -0.502803087,
+          0.159248829,
+          0.0322178602,
+          -0.578730226,
+          0.350929618,
+          -0.0151857734,
+          -0.537079096,
+          -0.0918762088,
+          0.025821209,
+          -0.940024614,
+          -0.3518067,
+          0.950297117,
+          -0.410857618
+        ],
+        "policy": {
+          "cnn_depth": 1,
+          "cnn_projection": 128,
+          "cnn_global_pool": 1,
+          "cnn_channels_1": 16,
+          "cnn_kernel_1": 5,
+          "cnn_stride_1": 4,
+          "cnn_pool_1": 1,
+          "cnn_residual_1": 1,
+          "cnn_channels_2": 8,
+          "cnn_kernel_2": 4,
+          "cnn_stride_2": 2,
+          "cnn_pool_2": 0,
+          "cnn_residual_2": 0,
+          "cnn_channels_3": 16,
+          "cnn_kernel_3": 1,
+          "cnn_stride_3": 2,
+          "cnn_pool_3": 2,
+          "cnn_residual_3": 0
+        },
+        "success_observations": 4,
+        "failure_observations": 0
+      },
+      "optimizer_process": {
+        "command": [
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/optimizer/worker",
+          "research_protein_propose",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/recipe.ini",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0004/history.tsv",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0004/proposal.json"
+        ],
+        "cwd": "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search",
+        "status": "ok",
+        "timeout": 120,
+        "environment": {
+          "PUFFER_CHECKPOINT_RECEIPTS": null,
+          "NVCC_ARCH": "sm_120",
+          "NVCC_EXTRA": null,
+          "NVCC_APPEND_FLAGS": null,
+          "CUDA_HOME": "/usr/local/cuda-13.1",
+          "NCCL_ROOT": "/home/keith/Git/ml/fzero-training/PufferLib-5.0/.venv/lib/python3.12/site-packages/nvidia/nccl"
+        },
+        "launch_monotonic_ns": 3010254179079612,
+        "pid": 2235484,
+        "returncode": 0,
+        "end_monotonic_ns": 3010254543196704
+      },
+      "architecture": {
+        "encoder": 4,
+        "cnn_depth": 1,
+        "cnn_projection": 128,
+        "cnn_global_pool": 1,
+        "cnn_channels_1": 16,
+        "cnn_kernel_1": 5,
+        "cnn_stride_1": 4,
+        "cnn_pool_1": 1,
+        "cnn_residual_1": 1
+      },
+      "duplicate_of": null,
+      "feedback": {
+        "score": 0.11726222120958962,
+        "score_upper": 0.11726222120958962,
+        "cost": 902.558396635,
+        "training_jobs_charged": 12,
+        "games": [
+          {
+            "environment": "connect4cnn",
+            "cells": 20,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.0015151515151515152,
+            "normalized_upper": 0.0015151515151515152
+          },
+          {
+            "environment": "pongcnn",
+            "cells": 14,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.0,
+            "normalized_upper": 0.0
+          },
+          {
+            "environment": "flappycnn",
+            "cells": 14,
+            "offset": 0.0,
+            "target": 100.0,
+            "normalized_lower": 0.15701298701298702,
+            "normalized_upper": 0.15701298701298702
+          },
+          {
+            "environment": "breakoutcnn",
+            "cells": 10,
+            "offset": 0.0,
+            "target": 20.0,
+            "normalized_lower": 0.3224242424242424,
+            "normalized_upper": 0.3224242424242424
+          },
+          {
+            "environment": "snakecnn",
+            "cells": 12,
+            "offset": 1.0,
+            "target": 20.0,
+            "normalized_lower": 0.088782562466773,
+            "normalized_upper": 0.088782562466773
+          },
+          {
+            "environment": "mazecnn",
+            "cells": 12,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.13383838383838384,
+            "normalized_upper": 0.13383838383838384
+          }
+        ],
+        "conservative_pong": true,
+        "publication_claim_qualified": false
+      },
+      "feedback_sha256": "9b3bde82e9fbcd0af2c2c719efa773096e55c38429c0d4c1babc87ce75c1a93f",
+      "candidate_sha256": "6101d7e306f2fb8de87ad1ffd48e0bedee6844051435449e7627c04f1ca9c126",
+      "audit_sha256": "be3ec5eb6fd68254765a6ca29a11ba5abe823e57eb9f8f47e24e6ecb6891b957",
+      "encoder_check": {
+        "report": "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0004/encoder-check/REPORT.json",
+        "sha256": "bac15e687061d0fc66be54ceaaf6e62c3ca643e52cff9b1bebadbc0a73369dc3"
+      }
+    },
+    {
+      "index": 5,
+      "name": "quiet-owl-6",
+      "proposal": {
+        "protocol": "native-cross-game-protein-v1",
+        "trial": 5,
+        "observations_replayed": 5,
+        "gp_observations": 5,
+        "random": 0,
+        "pareto": 2,
+        "normalized": [
+          -0.960973084,
+          -0.538982153,
+          -0.767809093,
+          -1,
+          0.964850545,
+          -1,
+          -0.935970545,
+          -0.579484999,
+          -0.229028404,
+          0.496640027,
+          -0.351696968,
+          -1,
+          -1,
+          0.295232177,
+          -0.0809565485,
+          -0.590031147,
+          -0.899555027,
+          -0.690725684
+        ],
+        "policy": {
+          "cnn_depth": 1,
+          "cnn_projection": 32,
+          "cnn_global_pool": 0,
+          "cnn_channels_1": 8,
+          "cnn_kernel_1": 8,
+          "cnn_stride_1": 4,
+          "cnn_pool_1": 0,
+          "cnn_residual_1": 0,
+          "cnn_channels_2": 16,
+          "cnn_kernel_2": 4,
+          "cnn_stride_2": 2,
+          "cnn_pool_2": 0,
+          "cnn_residual_2": 0,
+          "cnn_channels_3": 16,
+          "cnn_kernel_3": 3,
+          "cnn_stride_3": 1,
+          "cnn_pool_3": 0,
+          "cnn_residual_3": 0
+        },
+        "success_observations": 5,
+        "failure_observations": 0
+      },
+      "optimizer_process": {
+        "command": [
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/optimizer/worker",
+          "research_protein_propose",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/recipe.ini",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0005/history.tsv",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0005/proposal.json"
+        ],
+        "cwd": "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search",
+        "status": "ok",
+        "timeout": 120,
+        "environment": {
+          "PUFFER_CHECKPOINT_RECEIPTS": null,
+          "NVCC_ARCH": "sm_120",
+          "NVCC_EXTRA": null,
+          "NVCC_APPEND_FLAGS": null,
+          "CUDA_HOME": "/usr/local/cuda-13.1",
+          "NCCL_ROOT": "/home/keith/Git/ml/fzero-training/PufferLib-5.0/.venv/lib/python3.12/site-packages/nvidia/nccl"
+        },
+        "launch_monotonic_ns": 3011441399941204,
+        "pid": 2252607,
+        "returncode": 0,
+        "end_monotonic_ns": 3011441814043921
+      },
+      "architecture": {
+        "encoder": 4,
+        "cnn_depth": 1,
+        "cnn_projection": 32,
+        "cnn_global_pool": 0,
+        "cnn_channels_1": 8,
+        "cnn_kernel_1": 8,
+        "cnn_stride_1": 4,
+        "cnn_pool_1": 0,
+        "cnn_residual_1": 0
+      },
+      "duplicate_of": 0,
+      "feedback": {
+        "score": 0.3114647702296551,
+        "score_upper": 0.3145396691127305,
+        "cost": 597.685743124,
+        "training_jobs_charged": 12,
+        "games": [
+          {
+            "environment": "connect4cnn",
+            "cells": 20,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.353030303030303,
+            "normalized_upper": 0.353030303030303
+          },
+          {
+            "environment": "pongcnn",
+            "cells": 14,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.5979790216209621,
+            "normalized_upper": 0.6164284149194151
+          },
+          {
+            "environment": "flappycnn",
+            "cells": 14,
+            "offset": 0.0,
+            "target": 100.0,
+            "normalized_lower": 0.15781385281385282,
+            "normalized_upper": 0.15781385281385282
+          },
+          {
+            "environment": "breakoutcnn",
+            "cells": 10,
+            "offset": 0.0,
+            "target": 20.0,
+            "normalized_lower": 0.3571212121212121,
+            "normalized_upper": 0.3571212121212121
+          },
+          {
+            "environment": "snakecnn",
+            "cells": 12,
+            "offset": 1.0,
+            "target": 20.0,
+            "normalized_lower": 0.2513290802764487,
+            "normalized_upper": 0.2513290802764487
+          },
+          {
+            "environment": "mazecnn",
+            "cells": 12,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.15151515151515152,
+            "normalized_upper": 0.15151515151515152
+          }
+        ],
+        "conservative_pong": true,
+        "publication_claim_qualified": false
+      },
+      "feedback_sha256": "7c9f7cd6f22d51bf5e40630fad01496954132317c7ff9150120ad20208e39496",
+      "candidate_sha256": "8c66406942810b7a39afbaf6015b4a9f39a8c8790ec92d2f25bcaa2e8bd0acfc",
+      "audit_sha256": "14948b4f700eed690d7a2de4fbf827d0e5254d4125508f5496766df5b46294a1",
+      "encoder_check": {
+        "report": "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0005/encoder-check/REPORT.json",
+        "sha256": "41fae299fc0faff87c59af41bb85a325c2ca65f2ceb3b64750b6de7a91e982af"
+      }
+    },
+    {
+      "index": 6,
+      "name": "quiet-owl-7",
+      "proposal": {
+        "protocol": "native-cross-game-protein-v1",
+        "trial": 6,
+        "observations_replayed": 6,
+        "gp_observations": 6,
+        "random": 0,
+        "pareto": 2,
+        "normalized": [
+          -0.172466248,
+          -0.738063097,
+          -0.695032358,
+          -0.807385147,
+          0.759248495,
+          0.10498929,
+          -0.809529543,
+          1,
+          0.154833496,
+          1,
+          -0.73628372,
+          -0.699474156,
+          0.862987518,
+          -0.515698671,
+          0.0442941189,
+          1,
+          0.573295474,
+          -0.0678563714
+        ],
+        "policy": {
+          "cnn_depth": 2,
+          "cnn_projection": 16,
+          "cnn_global_pool": 0,
+          "cnn_channels_1": 8,
+          "cnn_kernel_1": 7,
+          "cnn_stride_1": 8,
+          "cnn_pool_1": 0,
+          "cnn_residual_1": 1,
+          "cnn_channels_2": 16,
+          "cnn_kernel_2": 5,
+          "cnn_stride_2": 1,
+          "cnn_pool_2": 0,
+          "cnn_residual_2": 1,
+          "cnn_channels_3": 8,
+          "cnn_kernel_3": 3,
+          "cnn_stride_3": 4,
+          "cnn_pool_3": 2,
+          "cnn_residual_3": 0
+        },
+        "success_observations": 6,
+        "failure_observations": 0
+      },
+      "optimizer_process": {
+        "command": [
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/optimizer/worker",
+          "research_protein_propose",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/recipe.ini",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0006/history.tsv",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0006/proposal.json"
+        ],
+        "cwd": "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search",
+        "status": "ok",
+        "timeout": 120,
+        "environment": {
+          "PUFFER_CHECKPOINT_RECEIPTS": null,
+          "NVCC_ARCH": "sm_120",
+          "NVCC_EXTRA": null,
+          "NVCC_APPEND_FLAGS": null,
+          "CUDA_HOME": "/usr/local/cuda-13.1",
+          "NCCL_ROOT": "/home/keith/Git/ml/fzero-training/PufferLib-5.0/.venv/lib/python3.12/site-packages/nvidia/nccl"
+        },
+        "launch_monotonic_ns": 3012336187192393,
+        "pid": 2265303,
+        "returncode": 0,
+        "end_monotonic_ns": 3012336601416502
+      },
+      "architecture": {
+        "encoder": 4,
+        "cnn_depth": 2,
+        "cnn_projection": 16,
+        "cnn_global_pool": 0,
+        "cnn_channels_1": 8,
+        "cnn_kernel_1": 7,
+        "cnn_stride_1": 8,
+        "cnn_pool_1": 0,
+        "cnn_residual_1": 1,
+        "cnn_channels_2": 16,
+        "cnn_kernel_2": 5,
+        "cnn_stride_2": 1,
+        "cnn_pool_2": 0,
+        "cnn_residual_2": 1
+      },
+      "duplicate_of": null,
+      "feedback": {
+        "score": 0.2446283801569807,
+        "score_upper": 0.26610345969139404,
+        "cost": 763.713273053,
+        "training_jobs_charged": 12,
+        "games": [
+          {
+            "environment": "connect4cnn",
+            "cells": 20,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.18484848484848485,
+            "normalized_upper": 0.18484848484848485
+          },
+          {
+            "environment": "pongcnn",
+            "cells": 14,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.4233303933441018,
+            "normalized_upper": 0.552180870550582
+          },
+          {
+            "environment": "flappycnn",
+            "cells": 14,
+            "offset": 0.0,
+            "target": 100.0,
+            "normalized_lower": 0.2345887445887446,
+            "normalized_upper": 0.2345887445887446
+          },
+          {
+            "environment": "breakoutcnn",
+            "cells": 10,
+            "offset": 0.0,
+            "target": 20.0,
+            "normalized_lower": 0.2981818181818182,
+            "normalized_upper": 0.2981818181818182
+          },
+          {
+            "environment": "snakecnn",
+            "cells": 12,
+            "offset": 1.0,
+            "target": 20.0,
+            "normalized_lower": 0.22076023391812863,
+            "normalized_upper": 0.22076023391812863
+          },
+          {
+            "environment": "mazecnn",
+            "cells": 12,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.10606060606060606,
+            "normalized_upper": 0.10606060606060606
+          }
+        ],
+        "conservative_pong": true,
+        "publication_claim_qualified": false
+      },
+      "feedback_sha256": "9c414c3af81d788ad78c7b6eb9bb3020aa75d3a7f44fdd439ccf3994ece9d87f",
+      "candidate_sha256": "5bb6dfc8dd5e89784d944f14839b50610b0a3691cd13804992bf1cf5b767b7ba",
+      "audit_sha256": "4048fd1ed6a8cbdb7875a4ced622b553e23e22d1c3c5cb87a71aabd504c2b355",
+      "encoder_check": {
+        "report": "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0006/encoder-check/REPORT.json",
+        "sha256": "66aeaaf374f1ce1a0bd794f5a2bd6ae5eead749f925db5270d6992dd667b3849"
+      }
+    },
+    {
+      "index": 7,
+      "name": "quiet-owl-8",
+      "proposal": {
+        "protocol": "native-cross-game-protein-v1",
+        "trial": 7,
+        "observations_replayed": 7,
+        "gp_observations": 7,
+        "random": 0,
+        "pareto": 2,
+        "normalized": [
+          -0.384553373,
+          -0.354651868,
+          -1,
+          -0.638358414,
+          0.790349662,
+          0.139031053,
+          -0.664603829,
+          0.191130161,
+          0.0676124096,
+          0.776251495,
+          -1,
+          0.0765217543,
+          0.527136803,
+          0.195811212,
+          -0.359144598,
+          0.892861009,
+          -0.0208273232,
+          0.261500597
+        ],
+        "policy": {
+          "cnn_depth": 2,
+          "cnn_projection": 32,
+          "cnn_global_pool": 0,
+          "cnn_channels_1": 8,
+          "cnn_kernel_1": 7,
+          "cnn_stride_1": 8,
+          "cnn_pool_1": 0,
+          "cnn_residual_1": 1,
+          "cnn_channels_2": 16,
+          "cnn_kernel_2": 5,
+          "cnn_stride_2": 1,
+          "cnn_pool_2": 1,
+          "cnn_residual_2": 1,
+          "cnn_channels_3": 16,
+          "cnn_kernel_3": 2,
+          "cnn_stride_3": 4,
+          "cnn_pool_3": 1,
+          "cnn_residual_3": 1
+        },
+        "success_observations": 7,
+        "failure_observations": 0
+      },
+      "optimizer_process": {
+        "command": [
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/optimizer/worker",
+          "research_protein_propose",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/recipe.ini",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0007/history.tsv",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0007/proposal.json"
+        ],
+        "cwd": "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search",
+        "status": "ok",
+        "timeout": 120,
+        "environment": {
+          "PUFFER_CHECKPOINT_RECEIPTS": null,
+          "NVCC_ARCH": "sm_120",
+          "NVCC_EXTRA": null,
+          "NVCC_APPEND_FLAGS": null,
+          "CUDA_HOME": "/usr/local/cuda-13.1",
+          "NCCL_ROOT": "/home/keith/Git/ml/fzero-training/PufferLib-5.0/.venv/lib/python3.12/site-packages/nvidia/nccl"
+        },
+        "launch_monotonic_ns": 3013424139126014,
+        "pid": 2279756,
+        "returncode": 0,
+        "end_monotonic_ns": 3013424553325141
+      },
+      "architecture": {
+        "encoder": 4,
+        "cnn_depth": 2,
+        "cnn_projection": 32,
+        "cnn_global_pool": 0,
+        "cnn_channels_1": 8,
+        "cnn_kernel_1": 7,
+        "cnn_stride_1": 8,
+        "cnn_pool_1": 0,
+        "cnn_residual_1": 1,
+        "cnn_channels_2": 16,
+        "cnn_kernel_2": 5,
+        "cnn_stride_2": 1,
+        "cnn_pool_2": 1,
+        "cnn_residual_2": 1
+      },
+      "duplicate_of": null,
+      "feedback": {
+        "score": 0.27002396205555385,
+        "score_upper": 0.2715267988082739,
+        "cost": 763.12092215,
+        "training_jobs_charged": 12,
+        "games": [
+          {
+            "environment": "connect4cnn",
+            "cells": 20,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.14242424242424243,
+            "normalized_upper": 0.14242424242424243
+          },
+          {
+            "environment": "pongcnn",
+            "cells": 14,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.5967413268256144,
+            "normalized_upper": 0.6057583473419348
+          },
+          {
+            "environment": "flappycnn",
+            "cells": 14,
+            "offset": 0.0,
+            "target": 100.0,
+            "normalized_lower": 0.23166666666666666,
+            "normalized_upper": 0.23166666666666666
+          },
+          {
+            "environment": "breakoutcnn",
+            "cells": 10,
+            "offset": 0.0,
+            "target": 20.0,
+            "normalized_lower": 0.3337878787878788,
+            "normalized_upper": 0.3337878787878788
+          },
+          {
+            "environment": "snakecnn",
+            "cells": 12,
+            "offset": 1.0,
+            "target": 20.0,
+            "normalized_lower": 0.21703880914407228,
+            "normalized_upper": 0.21703880914407228
+          },
+          {
+            "environment": "mazecnn",
+            "cells": 12,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.0984848484848485,
+            "normalized_upper": 0.0984848484848485
+          }
+        ],
+        "conservative_pong": true,
+        "publication_claim_qualified": false
+      },
+      "feedback_sha256": "6b69ffd52ef489948501bb0e1fbd82979c3f6197f01f918f5519021cf62d6c2b",
+      "candidate_sha256": "576036b47a4f883b6df5db36c20a26cb9599f218267e267a7f6e2f651cc773f0",
+      "audit_sha256": "01792a20980d49a3b5e5c17f82a5e522712e28bc786649f294d750be2cde080b",
+      "encoder_check": {
+        "report": "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0007/encoder-check/REPORT.json",
+        "sha256": "610a548d3b7fc53de0a1ca46e902af3a16a2abee98fe266e234171552714e118"
+      }
+    },
+    {
+      "index": 8,
+      "name": "quiet-owl-9",
+      "proposal": {
+        "protocol": "native-cross-game-protein-v1",
+        "trial": 8,
+        "observations_replayed": 8,
+        "gp_observations": 8,
+        "random": 0,
+        "pareto": 2,
+        "normalized": [
+          0.10886389,
+          -0.191797435,
+          -1,
+          -0.852251053,
+          1,
+          -0.30835861,
+          -0.909382582,
+          -0.185297608,
+          -0.322209626,
+          0.319686204,
+          -0.76297462,
+          -0.0739755034,
+          0.447539628,
+          0.163830906,
+          -0.258006424,
+          1,
+          0.195681006,
+          0.152428746
+        ],
+        "policy": {
+          "cnn_depth": 2,
+          "cnn_projection": 32,
+          "cnn_global_pool": 0,
+          "cnn_channels_1": 8,
+          "cnn_kernel_1": 8,
+          "cnn_stride_1": 4,
+          "cnn_pool_1": 0,
+          "cnn_residual_1": 0,
+          "cnn_channels_2": 16,
+          "cnn_kernel_2": 4,
+          "cnn_stride_2": 1,
+          "cnn_pool_2": 1,
+          "cnn_residual_2": 1,
+          "cnn_channels_3": 16,
+          "cnn_kernel_3": 2,
+          "cnn_stride_3": 4,
+          "cnn_pool_3": 1,
+          "cnn_residual_3": 1
+        },
+        "success_observations": 8,
+        "failure_observations": 0
+      },
+      "optimizer_process": {
+        "command": [
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/optimizer/worker",
+          "research_protein_propose",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/recipe.ini",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0008/history.tsv",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0008/proposal.json"
+        ],
+        "cwd": "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search",
+        "status": "ok",
+        "timeout": 120,
+        "environment": {
+          "PUFFER_CHECKPOINT_RECEIPTS": null,
+          "NVCC_ARCH": "sm_120",
+          "NVCC_EXTRA": null,
+          "NVCC_APPEND_FLAGS": null,
+          "CUDA_HOME": "/usr/local/cuda-13.1",
+          "NCCL_ROOT": "/home/keith/Git/ml/fzero-training/PufferLib-5.0/.venv/lib/python3.12/site-packages/nvidia/nccl"
+        },
+        "launch_monotonic_ns": 3014513090665352,
+        "pid": 2294316,
+        "returncode": 0,
+        "end_monotonic_ns": 3014513554937403
+      },
+      "architecture": {
+        "encoder": 4,
+        "cnn_depth": 2,
+        "cnn_projection": 32,
+        "cnn_global_pool": 0,
+        "cnn_channels_1": 8,
+        "cnn_kernel_1": 8,
+        "cnn_stride_1": 4,
+        "cnn_pool_1": 0,
+        "cnn_residual_1": 0,
+        "cnn_channels_2": 16,
+        "cnn_kernel_2": 4,
+        "cnn_stride_2": 1,
+        "cnn_pool_2": 1,
+        "cnn_residual_2": 1
+      },
+      "duplicate_of": null,
+      "feedback": {
+        "score": 0.31600236644099317,
+        "score_upper": 0.31861871693122046,
+        "cost": 1046.831524599,
+        "training_jobs_charged": 12,
+        "games": [
+          {
+            "environment": "connect4cnn",
+            "cells": 20,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.36363636363636365,
+            "normalized_upper": 0.36363636363636365
+          },
+          {
+            "environment": "pongcnn",
+            "cells": 14,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.5946194238301317,
+            "normalized_upper": 0.6103175267714952
+          },
+          {
+            "environment": "flappycnn",
+            "cells": 14,
+            "offset": 0.0,
+            "target": 100.0,
+            "normalized_lower": 0.13071428571428573,
+            "normalized_upper": 0.13071428571428573
+          },
+          {
+            "environment": "breakoutcnn",
+            "cells": 10,
+            "offset": 0.0,
+            "target": 20.0,
+            "normalized_lower": 0.3984848484848485,
+            "normalized_upper": 0.3984848484848485
+          },
+          {
+            "environment": "snakecnn",
+            "cells": 12,
+            "offset": 1.0,
+            "target": 20.0,
+            "normalized_lower": 0.2292663476874003,
+            "normalized_upper": 0.2292663476874003
+          },
+          {
+            "environment": "mazecnn",
+            "cells": 12,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.17929292929292928,
+            "normalized_upper": 0.17929292929292928
+          }
+        ],
+        "conservative_pong": true,
+        "publication_claim_qualified": false
+      },
+      "feedback_sha256": "c3d11ade60bbb5f1be0bd9cc8abf2922e027cc4e237de10fca91d3b611cdb585",
+      "candidate_sha256": "d09159ef6d248c789de7e5c079e27ce57134404df397cf2a7888f0e6e0e63b92",
+      "audit_sha256": "9b18653cb5168110a682b1fbc4d7d22e8b34a74fa83663440e92a5da473bf86b",
+      "encoder_check": {
+        "report": "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0008/encoder-check/REPORT.json",
+        "sha256": "8554104cb0b7635afd8796c8e680ffc4302e46b393d539e248c2c459928b2635"
+      }
+    },
+    {
+      "index": 9,
+      "name": "quiet-owl-10",
+      "proposal": {
+        "protocol": "native-cross-game-protein-v1",
+        "trial": 9,
+        "observations_replayed": 9,
+        "gp_observations": 9,
+        "random": 0,
+        "pareto": 2,
+        "normalized": [
+          -0.0479598939,
+          -0.0951246023,
+          -1,
+          -1,
+          1,
+          -0.395571411,
+          -1,
+          -0.327790439,
+          -0.608421445,
+          0.459360689,
+          -0.612723649,
+          -0.505609393,
+          0.568735659,
+          0.591247797,
+          -0.409626812,
+          0.965697169,
+          -0.24447903,
+          -0.16958046
+        ],
+        "policy": {
+          "cnn_depth": 2,
+          "cnn_projection": 32,
+          "cnn_global_pool": 0,
+          "cnn_channels_1": 8,
+          "cnn_kernel_1": 8,
+          "cnn_stride_1": 4,
+          "cnn_pool_1": 0,
+          "cnn_residual_1": 0,
+          "cnn_channels_2": 8,
+          "cnn_kernel_2": 4,
+          "cnn_stride_2": 1,
+          "cnn_pool_2": 0,
+          "cnn_residual_2": 1,
+          "cnn_channels_3": 32,
+          "cnn_kernel_3": 2,
+          "cnn_stride_3": 4,
+          "cnn_pool_3": 1,
+          "cnn_residual_3": 0
+        },
+        "success_observations": 9,
+        "failure_observations": 0
+      },
+      "optimizer_process": {
+        "command": [
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/optimizer/worker",
+          "research_protein_propose",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/recipe.ini",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0009/history.tsv",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0009/proposal.json"
+        ],
+        "cwd": "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search",
+        "status": "ok",
+        "timeout": 120,
+        "environment": {
+          "PUFFER_CHECKPOINT_RECEIPTS": null,
+          "NVCC_ARCH": "sm_120",
+          "NVCC_EXTRA": null,
+          "NVCC_APPEND_FLAGS": null,
+          "CUDA_HOME": "/usr/local/cuda-13.1",
+          "NCCL_ROOT": "/home/keith/Git/ml/fzero-training/PufferLib-5.0/.venv/lib/python3.12/site-packages/nvidia/nccl"
+        },
+        "launch_monotonic_ns": 3015888266632900,
+        "pid": 2311199,
+        "returncode": 0,
+        "end_monotonic_ns": 3015888730865632
+      },
+      "architecture": {
+        "encoder": 4,
+        "cnn_depth": 2,
+        "cnn_projection": 32,
+        "cnn_global_pool": 0,
+        "cnn_channels_1": 8,
+        "cnn_kernel_1": 8,
+        "cnn_stride_1": 4,
+        "cnn_pool_1": 0,
+        "cnn_residual_1": 0,
+        "cnn_channels_2": 8,
+        "cnn_kernel_2": 4,
+        "cnn_stride_2": 1,
+        "cnn_pool_2": 0,
+        "cnn_residual_2": 1
+      },
+      "duplicate_of": null,
+      "feedback": {
+        "score": 0.2592391096309621,
+        "score_upper": 0.2838771777209539,
+        "cost": 981.180135573,
+        "training_jobs_charged": 12,
+        "games": [
+          {
+            "environment": "connect4cnn",
+            "cells": 20,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.29545454545454547,
+            "normalized_upper": 0.29545454545454547
+          },
+          {
+            "environment": "pongcnn",
+            "cells": 14,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.28680930652884223,
+            "normalized_upper": 0.434637715068793
+          },
+          {
+            "environment": "flappycnn",
+            "cells": 14,
+            "offset": 0.0,
+            "target": 100.0,
+            "normalized_lower": 0.20134199134199135,
+            "normalized_upper": 0.20134199134199135
+          },
+          {
+            "environment": "breakoutcnn",
+            "cells": 10,
+            "offset": 0.0,
+            "target": 20.0,
+            "normalized_lower": 0.3054545454545455,
+            "normalized_upper": 0.3054545454545455
+          },
+          {
+            "environment": "snakecnn",
+            "cells": 12,
+            "offset": 1.0,
+            "target": 20.0,
+            "normalized_lower": 0.3072833599149389,
+            "normalized_upper": 0.3072833599149389
+          },
+          {
+            "environment": "mazecnn",
+            "cells": 12,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.1590909090909091,
+            "normalized_upper": 0.1590909090909091
+          }
+        ],
+        "conservative_pong": true,
+        "publication_claim_qualified": false
+      },
+      "feedback_sha256": "0708a50e1c99c10e3f9eca651d0bf552919eb94c8675fd73fc72b8c95a304f25",
+      "candidate_sha256": "e17be12d0059d9af37acb0f2e909c0c1e2317ae5ea01883ea283314b1462b9b7",
+      "audit_sha256": "1ce712dd2a22f2971e2314563239a4833a094ca84179f4a8c19f0da4b00769f9",
+      "encoder_check": {
+        "report": "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0009/encoder-check/REPORT.json",
+        "sha256": "179977b59f82ba93e80430cfc724349718a4716a047ee255f035ce40a9fca01f"
+      }
+    },
+    {
+      "index": 10,
+      "name": "quiet-owl-11",
+      "proposal": {
+        "protocol": "native-cross-game-protein-v1",
+        "trial": 10,
+        "observations_replayed": 10,
+        "gp_observations": 10,
+        "random": 0,
+        "pareto": 2,
+        "normalized": [
+          -0.801036537,
+          -0.707731247,
+          -1,
+          -1,
+          1,
+          -1,
+          -1,
+          -0.629818678,
+          -0.519206405,
+          0.274368793,
+          -0.643460512,
+          -0.642334461,
+          -1,
+          -0.188131779,
+          -0.364574045,
+          -0.945652783,
+          -1,
+          -0.362522066
+        ],
+        "policy": {
+          "cnn_depth": 1,
+          "cnn_projection": 16,
+          "cnn_global_pool": 0,
+          "cnn_channels_1": 8,
+          "cnn_kernel_1": 8,
+          "cnn_stride_1": 4,
+          "cnn_pool_1": 0,
+          "cnn_residual_1": 0,
+          "cnn_channels_2": 8,
+          "cnn_kernel_2": 4,
+          "cnn_stride_2": 1,
+          "cnn_pool_2": 0,
+          "cnn_residual_2": 0,
+          "cnn_channels_3": 16,
+          "cnn_kernel_3": 2,
+          "cnn_stride_3": 1,
+          "cnn_pool_3": 0,
+          "cnn_residual_3": 0
+        },
+        "success_observations": 10,
+        "failure_observations": 0
+      },
+      "optimizer_process": {
+        "command": [
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/optimizer/worker",
+          "research_protein_propose",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/recipe.ini",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0010/history.tsv",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0010/proposal.json"
+        ],
+        "cwd": "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search",
+        "status": "ok",
+        "timeout": 120,
+        "environment": {
+          "PUFFER_CHECKPOINT_RECEIPTS": null,
+          "NVCC_ARCH": "sm_120",
+          "NVCC_EXTRA": null,
+          "NVCC_APPEND_FLAGS": null,
+          "CUDA_HOME": "/usr/local/cuda-13.1",
+          "NCCL_ROOT": "/home/keith/Git/ml/fzero-training/PufferLib-5.0/.venv/lib/python3.12/site-packages/nvidia/nccl"
+        },
+        "launch_monotonic_ns": 3017212359499706,
+        "pid": 2336682,
+        "returncode": 0,
+        "end_monotonic_ns": 3017212873959415
+      },
+      "architecture": {
+        "encoder": 4,
+        "cnn_depth": 1,
+        "cnn_projection": 16,
+        "cnn_global_pool": 0,
+        "cnn_channels_1": 8,
+        "cnn_kernel_1": 8,
+        "cnn_stride_1": 4,
+        "cnn_pool_1": 0,
+        "cnn_residual_1": 0
+      },
+      "duplicate_of": null,
+      "feedback": {
+        "score": 0.22141289393373517,
+        "score_upper": 0.2539979496969736,
+        "cost": 602.143736396,
+        "training_jobs_charged": 12,
+        "games": [
+          {
+            "environment": "connect4cnn",
+            "cells": 20,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.2590909090909091,
+            "normalized_upper": 0.2590909090909091
+          },
+          {
+            "environment": "pongcnn",
+            "cells": 14,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.06780940582919019,
+            "normalized_upper": 0.26331974040862083
+          },
+          {
+            "environment": "flappycnn",
+            "cells": 14,
+            "offset": 0.0,
+            "target": 100.0,
+            "normalized_lower": 0.19019480519480522,
+            "normalized_upper": 0.19019480519480522
+          },
+          {
+            "environment": "breakoutcnn",
+            "cells": 10,
+            "offset": 0.0,
+            "target": 20.0,
+            "normalized_lower": 0.3039393939393939,
+            "normalized_upper": 0.3039393939393939
+          },
+          {
+            "environment": "snakecnn",
+            "cells": 12,
+            "offset": 1.0,
+            "target": 20.0,
+            "normalized_lower": 0.2372408293460925,
+            "normalized_upper": 0.2372408293460925
+          },
+          {
+            "environment": "mazecnn",
+            "cells": 12,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.27020202020202017,
+            "normalized_upper": 0.27020202020202017
+          }
+        ],
+        "conservative_pong": true,
+        "publication_claim_qualified": false
+      },
+      "feedback_sha256": "ee40bbc1dcda9f787805c6c31884f748b8e7bcd7044d1eb84c969ab1ebef8f92",
+      "candidate_sha256": "974dae9ed04311d2608926f1ec51309f2f1db14722009c44b5b3046b79c1e046",
+      "audit_sha256": "66ef75c31dd5048d5536fd75d5b01f19817a451308c784264e9c30c9e03f9831",
+      "encoder_check": {
+        "report": "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0010/encoder-check/REPORT.json",
+        "sha256": "85824fcc2473f89d211d1dfe558b8c8adc66f83adc1e631cde6240b684f0f239"
+      }
+    },
+    {
+      "index": 11,
+      "name": "quiet-owl-12",
+      "proposal": {
+        "protocol": "native-cross-game-protein-v1",
+        "trial": 11,
+        "observations_replayed": 11,
+        "gp_observations": 11,
+        "random": 0,
+        "pareto": 2,
+        "normalized": [
+          -1,
+          -0.0832810402,
+          -1,
+          -0.524675488,
+          0.7541188,
+          -1,
+          -1,
+          -0.724052072,
+          -0.0621632338,
+          0.346776545,
+          0.0924468637,
+          -1,
+          -1,
+          0.772521138,
+          0.266030878,
+          -0.240467608,
+          -1,
+          -1
+        ],
+        "policy": {
+          "cnn_depth": 1,
+          "cnn_projection": 32,
+          "cnn_global_pool": 0,
+          "cnn_channels_1": 8,
+          "cnn_kernel_1": 7,
+          "cnn_stride_1": 4,
+          "cnn_pool_1": 0,
+          "cnn_residual_1": 0,
+          "cnn_channels_2": 16,
+          "cnn_kernel_2": 4,
+          "cnn_stride_2": 2,
+          "cnn_pool_2": 0,
+          "cnn_residual_2": 0,
+          "cnn_channels_3": 32,
+          "cnn_kernel_3": 4,
+          "cnn_stride_3": 2,
+          "cnn_pool_3": 0,
+          "cnn_residual_3": 0
+        },
+        "success_observations": 11,
+        "failure_observations": 0
+      },
+      "optimizer_process": {
+        "command": [
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/optimizer/worker",
+          "research_protein_propose",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/recipe.ini",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0011/history.tsv",
+          "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0011/proposal.json"
+        ],
+        "cwd": "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search",
+        "status": "ok",
+        "timeout": 120,
+        "environment": {
+          "PUFFER_CHECKPOINT_RECEIPTS": null,
+          "NVCC_ARCH": "sm_120",
+          "NVCC_EXTRA": null,
+          "NVCC_APPEND_FLAGS": null,
+          "CUDA_HOME": "/usr/local/cuda-13.1",
+          "NCCL_ROOT": "/home/keith/Git/ml/fzero-training/PufferLib-5.0/.venv/lib/python3.12/site-packages/nvidia/nccl"
+        },
+        "launch_monotonic_ns": 3018112878333330,
+        "pid": 2353381,
+        "returncode": 0,
+        "end_monotonic_ns": 3018113393081091
+      },
+      "architecture": {
+        "encoder": 4,
+        "cnn_depth": 1,
+        "cnn_projection": 32,
+        "cnn_global_pool": 0,
+        "cnn_channels_1": 8,
+        "cnn_kernel_1": 7,
+        "cnn_stride_1": 4,
+        "cnn_pool_1": 0,
+        "cnn_residual_1": 0
+      },
+      "duplicate_of": null,
+      "feedback": {
+        "score": 0.2649624219740395,
+        "score_upper": 0.3265056018526271,
+        "cost": 603.116174814,
+        "training_jobs_charged": 12,
+        "games": [
+          {
+            "environment": "connect4cnn",
+            "cells": 20,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.3848484848484849,
+            "normalized_upper": 0.3848484848484849
+          },
+          {
+            "environment": "pongcnn",
+            "cells": 14,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.22368126838255264,
+            "normalized_upper": 0.5929403476540782
+          },
+          {
+            "environment": "flappycnn",
+            "cells": 14,
+            "offset": 0.0,
+            "target": 100.0,
+            "normalized_lower": 0.2023160173160173,
+            "normalized_upper": 0.2023160173160173
+          },
+          {
+            "environment": "breakoutcnn",
+            "cells": 10,
+            "offset": 0.0,
+            "target": 20.0,
+            "normalized_lower": 0.3134848484848485,
+            "normalized_upper": 0.3134848484848485
+          },
+          {
+            "environment": "snakecnn",
+            "cells": 12,
+            "offset": 1.0,
+            "target": 20.0,
+            "normalized_lower": 0.2381711855396066,
+            "normalized_upper": 0.2381711855396066
+          },
+          {
+            "environment": "mazecnn",
+            "cells": 12,
+            "offset": 0.0,
+            "target": 1.0,
+            "normalized_lower": 0.22727272727272727,
+            "normalized_upper": 0.22727272727272727
+          }
+        ],
+        "conservative_pong": true,
+        "publication_claim_qualified": false
+      },
+      "feedback_sha256": "791c49e40e7c0c31bb69abe3d4dff3d8e29368a043c4a28e6c24e85733872dcd",
+      "candidate_sha256": "ee6bdd86b4e95db4dad2cf676541bc547af1a9350d6d4717392eeb34db650304",
+      "audit_sha256": "819097c3da3f7fc921b0fec66cea16906d4427bcb2cbbcef1fa4e23b3d46f0ec",
+      "encoder_check": {
+        "report": "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/trial-0011/encoder-check/REPORT.json",
+        "sha256": "84748ecd5da2f65c1445db11278d3d0b76499d0750dd45ce83ec37258569ee5c"
+      }
+    }
+  ],
+  "started_monotonic_ns": 3005385632659561,
+  "learning_quality_claim": false,
+  "plan_sha256": "5c1cf873e4741bcea60afc8b95c84d6427a93a03be20ce794336c5ae01846447",
+  "history": "PUFFER_CROSS_GAME_V1 18\n0 0.31146477022965507 590.55504416300005 -1 -0.333333313 -1 -1 1 -1 -1 -1 0 0 0 -1 -1 0 0 -1 -1 -1\n0 0.10366161616161616 792.95546913299995 0.250535369 -0.097586453 0.864957809 0.779076815 -0.713949323 0.686388135 -0.748153925 0.875641465 -0.108537197 0.0978188515 -0.522599936 0.0166735649 0.568199515 0.448421121 0.733319998 -0.870256543 -0.522990227 -0.654067516\n0 0.1020988709146604 564.53481803 0.17803216 0.143665433 0.491203189 0.532328367 -0.851540387 0.33108449 0.639810205 -0.00447279215 0.38951242 -0.611729264 0.29256618 0.297656298 -0.959030628 0.761279941 0.99813509 -0.566226482 -0.771505237 -0.994883418\n0 0.31076094384924274 1720.3321657700001 -0.0564799905 -0.363447309 -0.558855653 -0.436141312 0.51061821 -0.209719121 -0.765912235 0.633720756 -0.266469896 0.887122869 -0.779476047 -0.288351357 0.96773684 -0.193733335 -0.318987966 0.981384158 0.468176603 0.191655397\n0 0.11726222120958962 902.55839663500001 -0.735158563 0.677831769 0.556547403 0.0651063919 0.166930199 -0.502803087 0.159248829 0.0322178602 -0.578730226 0.350929618 -0.0151857734 -0.537079096 -0.0918762088 0.025821209 -0.940024614 -0.3518067 0.950297117 -0.410857618\n0 0.31146477022965507 597.68574312400006 -0.960973084 -0.538982153 -0.767809093 -1 0.964850545 -1 -0.935970545 -0.579484999 -0.229028404 0.496640027 -0.351696968 -1 -1 0.295232177 -0.0809565485 -0.590031147 -0.899555027 -0.690725684\n0 0.24462838015698071 763.71327305299997 -0.172466248 -0.738063097 -0.695032358 -0.807385147 0.759248495 0.10498929 -0.809529543 1 0.154833496 1 -0.73628372 -0.699474156 0.862987518 -0.515698671 0.0442941189 1 0.573295474 -0.0678563714\n0 0.27002396205555385 763.12092214999996 -0.384553373 -0.354651868 -1 -0.638358414 0.790349662 0.139031053 -0.664603829 0.191130161 0.0676124096 0.776251495 -1 0.0765217543 0.527136803 0.195811212 -0.359144598 0.892861009 -0.0208273232 0.261500597\n0 0.31600236644099317 1046.831524599 0.10886389 -0.191797435 -1 -0.852251053 1 -0.30835861 -0.909382582 -0.185297608 -0.322209626 0.319686204 -0.76297462 -0.0739755034 0.447539628 0.163830906 -0.258006424 1 0.195681006 0.152428746\n0 0.25923910963096208 981.18013557300003 -0.0479598939 -0.0951246023 -1 -1 1 -0.395571411 -1 -0.327790439 -0.608421445 0.459360689 -0.612723649 -0.505609393 0.568735659 0.591247797 -0.409626812 0.965697169 -0.24447903 -0.16958046\n0 0.22141289393373517 602.14373639600001 -0.801036537 -0.707731247 -1 -1 1 -1 -1 -0.629818678 -0.519206405 0.274368793 -0.643460512 -0.642334461 -1 -0.188131779 -0.364574045 -0.945652783 -1 -0.362522066\n0 0.26496242197403952 603.11617481400003 -1 -0.0832810402 -1 -0.524675488 0.7541188 -1 -1 -0.724052072 -0.0621632338 0.346776545 0.0924468637 -1 -1 0.772521138 0.266030878 -0.240467608 -1 -1\n",
+  "hardware": {
+    "gpu_name": "NVIDIA GeForce RTX 5090",
+    "gpu_uuid": "GPU-87022f1b-da24-3ddc-cc42-aed4aca77a6a",
+    "driver": "580.105.08",
+    "host": "keith-MS-7E70",
+    "cuda_compiler": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2025 NVIDIA Corporation\nBuilt on Tue_Dec_16_07:23:41_PM_PST_2025\nCuda compilation tools, release 13.1, V13.1.115\nBuild cuda_13.1.r13.1/compiler.37061995_0\n"
+  },
+  "final_observations_replayed": 12,
+  "final_unused_proposal": {
+    "protocol": "native-cross-game-protein-v1",
+    "trial": 12,
+    "observations_replayed": 12,
+    "gp_observations": 12,
+    "random": 0,
+    "pareto": 2,
+    "normalized": [
+      -0.368144572,
+      -0.287166029,
+      -0.59722656,
+      -0.517543674,
+      1,
+      -0.538608789,
+      -1,
+      -0.389784932,
+      0.0372707546,
+      0.317568839,
+      -1,
+      0.403566182,
+      0.114329636,
+      0.622868538,
+      0.225854248,
+      1,
+      0.674895048,
+      0.0264862478
+    ],
+    "policy": {
+      "cnn_depth": 2,
+      "cnn_projection": 32,
+      "cnn_global_pool": 0,
+      "cnn_channels_1": 8,
+      "cnn_kernel_1": 8,
+      "cnn_stride_1": 4,
+      "cnn_pool_1": 0,
+      "cnn_residual_1": 0,
+      "cnn_channels_2": 16,
+      "cnn_kernel_2": 4,
+      "cnn_stride_2": 1,
+      "cnn_pool_2": 1,
+      "cnn_residual_2": 1,
+      "cnn_channels_3": 32,
+      "cnn_kernel_3": 3,
+      "cnn_stride_3": 4,
+      "cnn_pool_3": 2,
+      "cnn_residual_3": 1
+    },
+    "success_observations": 12,
+    "failure_observations": 0
+  },
+  "final_optimizer_process": {
+    "command": [
+      "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/optimizer/worker",
+      "research_protein_propose",
+      "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/recipe.ini",
+      "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/final-feedback/history.tsv",
+      "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search/execution/final-feedback/proposal.json"
+    ],
+    "cwd": "/home/keith/Git/ml/cnn-5090-learning/build/learning-feedback/5090-20261008T173307Z/prepared/execution/search",
+    "status": "ok",
+    "timeout": 120,
+    "environment": {
+      "PUFFER_CHECKPOINT_RECEIPTS": null,
+      "NVCC_ARCH": "sm_120",
+      "NVCC_EXTRA": null,
+      "NVCC_APPEND_FLAGS": null,
+      "CUDA_HOME": "/usr/local/cuda-13.1",
+      "NCCL_ROOT": "/home/keith/Git/ml/fzero-training/PufferLib-5.0/.venv/lib/python3.12/site-packages/nvidia/nccl"
+    },
+    "launch_monotonic_ns": 3019036779125620,
+    "pid": 2366513,
+    "returncode": 0,
+    "end_monotonic_ns": 3019037293527165
+  },
+  "ended_monotonic_ns": 3019037294042212
+}

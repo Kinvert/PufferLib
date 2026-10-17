@@ -1,0 +1,22 @@
+{
+  "status": "artifact-comparisons-passed",
+  "cases": [
+    {
+      "name": "image-checkpoint",
+      "task": "flappycnn",
+      "family": "flex",
+      "parameters": 59976,
+      "episodes": 5,
+      "slots": 4,
+      "tail_offset": 4,
+      "tail_episodes": 1,
+      "repeat_equal": true,
+      "eager_equal": true,
+      "independent_tail_equal": true,
+      "policy_math_certified": false,
+      "frontier_superiority_certified": false
+    }
+  ],
+  "policy_math_certified": false,
+  "frontier_superiority_certified": false
+}

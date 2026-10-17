@@ -1,0 +1,90 @@
+{
+  "status": "ok",
+  "browser": "Chrome headless, software rendering",
+  "frames": 261,
+  "checks": [
+    {
+      "game": "connect4cnn",
+      "input": "rgb",
+      "variants": 10,
+      "all_images_loaded": true
+    },
+    {
+      "game": "connect4cnn",
+      "input": "legacy",
+      "variants": 10,
+      "all_images_loaded": true
+    },
+    {
+      "game": "pongcnn",
+      "input": "rgb",
+      "variants": 7,
+      "all_images_loaded": true
+    },
+    {
+      "game": "pongcnn",
+      "input": "legacy",
+      "variants": 7,
+      "all_images_loaded": true
+    },
+    {
+      "game": "flappycnn",
+      "input": "rgb",
+      "variants": 7,
+      "all_images_loaded": true
+    },
+    {
+      "game": "flappycnn",
+      "input": "legacy",
+      "variants": 7,
+      "all_images_loaded": true
+    },
+    {
+      "game": "breakoutcnn",
+      "input": "rgb",
+      "variants": 5,
+      "all_images_loaded": true
+    },
+    {
+      "game": "breakoutcnn",
+      "input": "legacy",
+      "variants": 5,
+      "all_images_loaded": true
+    },
+    {
+      "game": "snakecnn",
+      "input": "rgb",
+      "variants": 6,
+      "all_images_loaded": true
+    },
+    {
+      "game": "snakecnn",
+      "input": "legacy",
+      "variants": 6,
+      "all_images_loaded": true
+    },
+    {
+      "game": "mazecnn",
+      "input": "rgb",
+      "variants": 6,
+      "all_images_loaded": true
+    },
+    {
+      "game": "mazecnn",
+      "input": "legacy",
+      "variants": 6,
+      "all_images_loaded": true
+    },
+    {
+      "game": "foragecnn",
+      "input": "rgb",
+      "variants": 5,
+      "all_images_loaded": true
+    }
+  ],
+  "pixel_inspector": true,
+  "zoom": true,
+  "moment_selection": true,
+  "keyboard": true,
+  "comparison": true
+}

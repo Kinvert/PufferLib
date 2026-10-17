@@ -1,0 +1,93 @@
+{
+  "binary": "/home/claude/cnn-audit-20261008/build/image-portability-20261012/pongcnn-final-policy/puffer",
+  "binary_info": {
+    "default_encoder": "explicit",
+    "environment": "pongcnn",
+    "evaluation": "first-match-terminal-or-decision-cap-v1",
+    "float32": true,
+    "image_contract": {
+      "dtype": "float32",
+      "layout": "NHWC",
+      "preprocessing": "none",
+      "shape_hwc": [
+        640,
+        620,
+        3
+      ],
+      "version": "human-geometry-v1"
+    },
+    "receipt_version": 1,
+    "representation_count": 7,
+    "rules": "pong-native-v1"
+  },
+  "binary_sha256": "0f7e1eb65cd603fb5edd7d9c3058962b8ecea5e56935a4bb6d44ce80d4d93fe3",
+  "checkpoint": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0000/panel/jobs/pongcnn/happy-cat-1-s7/checkpoints/pongcnn/happy-cat-1/0000000000000064.bin",
+  "checkpoint_sha256": "ab20212cd109d55e9d74647eb68cc6b5138d6e0f16b4152105797d35f1626ee0",
+  "command": [
+    "/home/claude/cnn-audit-20261008/build/image-portability-20261012/pongcnn-final-policy/puffer",
+    "eval_exact",
+    "--headless"
+  ],
+  "config": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0000/panel/jobs/pongcnn/happy-cat-1-s7/config/default.ini",
+  "counts": {
+    "bounds_kind": "deterministic-censoring-not-confidence",
+    "capped": 0,
+    "completed": 1,
+    "episodes": 1,
+    "estimand": "mean-final-match-point-fraction-with-censoring-bounds-v1",
+    "left_points": 21,
+    "mean_bounded_net_points": -21.0,
+    "mean_decisions": 225.0,
+    "mean_final_point_fraction_lower": 0.0,
+    "mean_final_point_fraction_upper": 0.0,
+    "mean_match_win_lower": 0.0,
+    "mean_match_win_upper": 0.0,
+    "policy_runtime_certified": false,
+    "right_points": 0,
+    "wins": 0
+  },
+  "cwd": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0000/panel/execution/repeat-checks/job-0001/repeat",
+  "effective_env_ini_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "effective_ini_sha256": "3fe3a9f6d487b9d21d53406413ecadf1e28a1ddb112023c034290b957c703782",
+  "episodes_sha256": "b62464a10c2bfa7681f78bac637d1c625ccfd852147d9874c2d9028d7fe45e4c",
+  "estimand": "mean-final-match-point-fraction-with-censoring-bounds-v1",
+  "evaluation": "first-match-terminal-or-decision-cap-v1",
+  "evaluation_process_seconds": 3.275514197,
+  "evaluation_representation": 0,
+  "family": "flex",
+  "gpu_runtime_qualified": false,
+  "manifest_sha256": "9e256094ade8ca7af4fd5d90eacfef78610e0eda8fb4e1b94bda5719e49788cc",
+  "max_decisions": 512,
+  "note": "Evaluator GPU acceptance is pending. Censoring bounds are not confidence intervals. Tooling snapshots describe the launcher; compiled native provenance requires separate build receipts.",
+  "parameters": 60104,
+  "policy": {
+    "cnn_channels_1": "8",
+    "cnn_depth": "1",
+    "cnn_global_pool": "1",
+    "cnn_kernel_1": "8",
+    "cnn_pool_1": "0",
+    "cnn_projection": "64",
+    "cnn_residual_1": "0",
+    "cnn_stride_1": "4",
+    "encoder": "4",
+    "hidden_size": "128",
+    "num_layers": "1"
+  },
+  "prepare_only": false,
+  "rules": "pong-native-v1",
+  "status": "ok",
+  "suite": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0000/panel/suites/pongcnn/s7/r0/suite.json",
+  "suite_sha256": "0e0812ef614f4805a1af74f0a9e6e8b7d6feff84f1c441e44a64b685be106345",
+  "tooling_sha256": {
+    "ocean/connect4cnn/claim.py": "c1fb06be57a10952a27c1fbb6369612ccfbc4e45a63b66f1c424157d99fd5f43",
+    "ocean/connect4cnn/deterministic_eval.py": "e176ac25295357344a0def44958d2e48f00b63713681cc3181ff073100aa1ca1",
+    "ocean/pongcnn/exact_eval.py": "5191548aee05f31a300c3fac014c7bc3a89e4c6a34891b4e8747165ced0e0daf"
+  },
+  "training_appearance": {
+    "representation": "0",
+    "representation_mix_catalog": "1",
+    "representation_mode": "1",
+    "representation_seed": "17"
+  },
+  "training_ini_sha256": "b9e69f24f7c6410056c9ca1dbd29bec884b4daa1b620b6fde28ca5310db7047b"
+}

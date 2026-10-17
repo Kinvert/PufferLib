@@ -10,10 +10,7 @@ typedef float obs_t;
 #include "../connect4cnn/appearance.h"
 
 #define ACT_SIZES {2}
-#define OBS_CHANNELS 1
-#define OBS_HEIGHT 36
-#define OBS_WIDTH 44
-#define OBS_SIZE (OBS_CHANNELS * OBS_HEIGHT * OBS_WIDTH)
+#include "../connect4cnn/image.h"
 #define NUM_ATNS 1
 #define FLAPPYCNN_LEGACY_REPRESENTATIONS 4
 #define FLAPPYCNN_NUM_REPRESENTATIONS 7
@@ -165,6 +162,9 @@ static inline void flappycnn_bird(Flappy* env, obs_t* obs) {
         obs[(int)cy * OBS_WIDTH + (int)cx] = 1;
 }
 
+#ifdef CNN_IMAGE_V1
+#include "image_v1.h"
+#else
 static inline void flappy_compute_observations(Flappy* env) {
     obs_t* obs = env->agents[0].observations;
     memset(obs, 0, OBS_SIZE * sizeof(obs_t));
@@ -202,6 +202,8 @@ static inline void flappy_compute_observations(Flappy* env) {
         for (int i = 0; i < OBS_SIZE; i++) obs[i] = 1.0f - obs[i];
     }
 }
+
+#endif
 
 static inline void flappy_add_log(Flappy* env) {
     env->log.perf += flappy_clampf((float)env->score / 20.0f, 0.0f, 1.0f);

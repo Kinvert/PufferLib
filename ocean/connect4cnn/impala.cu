@@ -19,8 +19,8 @@ struct ImpalaActivations {
 static constexpr int IMP_H[3] = {OBS_HEIGHT, (OBS_HEIGHT + 1) / 2, (OBS_HEIGHT + 3) / 4};
 static constexpr int IMP_W[3] = {OBS_WIDTH, (OBS_WIDTH + 1) / 2, (OBS_WIDTH + 3) / 4};
 static constexpr int IMP_C[3] = {16, 32, 32};
-static constexpr int IMP_AREA = ((OBS_HEIGHT + 7) / 8) * ((OBS_WIDTH + 7) / 8);
-static constexpr int IMP_FLAT = IMP_AREA * 32;
+static constexpr int IMP_SPATIAL = ((OBS_HEIGHT + 7) / 8) * ((OBS_WIDTH + 7) / 8);
+static constexpr int IMP_FLAT = IMP_SPATIAL * 32;
 
 __global__ void imp_patches(const precision_t* input, precision_t* patches,
         int B, int H, int W, int C, bool relu) {
@@ -131,10 +131,8 @@ __global__ void imp_readout(const precision_t* input, precision_t* output, int B
     float sum = 0;
     if (gap) {
         int b = idx / 32, c = idx % 32;
-        for (int p = 0; p < IMP_AREA; p++) {
-            sum += fmaxf(0.0f, to_float(input[(b * IMP_AREA + p) * 32 + c]));
-        }
-        sum /= IMP_AREA;
+        for (int p = 0; p < IMP_SPATIAL; p++) sum += fmaxf(0.0f, to_float(input[(b * IMP_SPATIAL + p) * 32 + c]));
+        sum /= IMP_SPATIAL;
     } else sum = fmaxf(0.0f, to_float(input[idx]));
     output[idx] = from_float(sum);
 }
@@ -143,8 +141,7 @@ __global__ void imp_readout_grad(const precision_t* input, const precision_t* gr
         precision_t* output, int B, bool gap) {
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
     if (idx >= B * IMP_FLAT) return;
-    float v = gap ? to_float(grad[(idx / IMP_FLAT) * 32 + idx % 32]) / IMP_AREA
-        : to_float(grad[idx]);
+    float v = gap ? to_float(grad[(idx / IMP_FLAT) * 32 + idx % 32]) / IMP_SPATIAL : to_float(grad[idx]);
     output[idx] = from_float(to_float(input[idx]) > 0 ? v : 0.0f);
 }
 
@@ -218,8 +215,7 @@ static void imp_backward(void* weights, void* activations, Prec upstream, cudaSt
     imp_bias_grad<<<w->hidden, 256, 0, stream>>>(g.data, a->bias_grad[15].data, a->batch, w->hidden);
     Prec gr = {.data = a->grad[1].data, .shape = {a->batch, w->readout}};
     puf_mm_nn(&g, &w->weight[15], &gr, stream);
-    imp_readout_grad<<<grid_size(a->batch * IMP_FLAT), BLOCK_SIZE, 0, stream>>>(
-        a->conv[14].data, gr.data, g.data, a->batch, w->gap);
+    imp_readout_grad<<<grid_size(a->batch * IMP_FLAT), BLOCK_SIZE, 0, stream>>>(a->conv[14].data, gr.data, g.data, a->batch, w->gap);
     for (int s = 2; s >= 0; s--) {
         int H = IMP_H[s], W = IMP_W[s], C = IMP_C[s], i = s * 5;
         int PH = (H + 1) / 2, PW = (W + 1) / 2, n = a->batch * PH * PW * C;
@@ -295,12 +291,16 @@ static void imp_reg_train(void* weights, void* activations, Allocator* acts, All
     alloc_register(acts, &a->input);
     a->grad_patches = {.shape = {numel(a->patches.shape)}};
     alloc_register(acts, &a->grad_patches);
+    int grad_size = w->hidden, skip_size = 0;
+    for (int s = 0; s < 3; s++) {
+        grad_size = max(grad_size, IMP_H[s] * IMP_W[s] * IMP_C[s]);
+        skip_size = max(skip_size, ((IMP_H[s] + 1) / 2) * ((IMP_W[s] + 1) / 2) * IMP_C[s]);
+    }
     for (int i = 0; i < 2; i++) {
-        a->grad[i] = {.shape = {(int64_t)B * max(OBS_HEIGHT * OBS_WIDTH * 16, w->hidden)}};
+        a->grad[i] = {.shape = {(int64_t)B * grad_size}};
         alloc_register(acts, &a->grad[i]);
     }
-    a->skip_grad = {.shape = {(int64_t)B * ((OBS_HEIGHT + 1) / 2)
-        * ((OBS_WIDTH + 1) / 2) * 16}};
+    a->skip_grad = {.shape = {(int64_t)B * skip_size}};
     alloc_register(acts, &a->skip_grad);
     for (int s = 0; s < 3; s++) {
         a->winner[s] = {.shape = {numel(a->pool[s].shape)}};
@@ -315,10 +315,6 @@ static void imp_reg_train(void* weights, void* activations, Allocator* acts, All
 
 static void* imp_create_weights(void* self) {
     Encoder* enc = (Encoder*)self;
-#ifndef SPRITE_PACKED_VIEW
-    static_assert(OBS_CHANNELS == 1 && OBS_HEIGHT == 36 && OBS_WIDTH == 44,
-        "IMPALA Connect4 input contract");
-#endif
     assert(enc->in_dim == OBS_SIZE && enc->out_dim > 0);
     ImpalaWeights* w = (ImpalaWeights*)calloc(1, sizeof(*w));
     w->hidden = enc->out_dim;

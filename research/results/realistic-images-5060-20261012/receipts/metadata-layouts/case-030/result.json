@@ -1,0 +1,42 @@
+{
+  "family": "nature",
+  "actions": 3,
+  "descriptor_sha256": "215dd51b2b42146e6023debed82781896cd98f1d21dbb1b476e900bbd299d250",
+  "parameters": 20736800,
+  "bytes": 82947200,
+  "command": [
+    "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/metadata/breakoutcnn/default",
+    "--describe-flex",
+    "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/configs/breakoutcnn/nature.ini",
+    "3"
+  ],
+  "timing": {
+    "command": [
+      "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/metadata/breakoutcnn/default",
+      "--describe-flex",
+      "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/configs/breakoutcnn/nature.ini",
+      "3"
+    ],
+    "cwd": "/home/claude/cnn-audit-20261008",
+    "status": "ok",
+    "timeout": 30,
+    "environment": {
+      "PUFFER_CHECKPOINT_RECEIPTS": null,
+      "NVCC_ARCH": null,
+      "NVCC_EXTRA": null,
+      "NVCC_APPEND_FLAGS": null,
+      "CUDA_HOME": "/usr/local/cuda",
+      "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+    },
+    "launch_monotonic_ns": 559170960302887,
+    "pid": 1038098,
+    "returncode": 0,
+    "end_monotonic_ns": 559171024298380
+  },
+  "inputs_sha256": {
+    "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/metadata/breakoutcnn/default": "b9342772691f6edb2f6ccb06b9adbe725a00b9d347cdc76b0505c12a812a86cb",
+    "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/configs/breakoutcnn/nature.ini": "1538ddb8303a2c96b141c02a7f87f0e07a5b104d463c5632948ac7fc696d387e"
+  },
+  "numerical_acceptance": false,
+  "runtime_binary_source_certified": false
+}

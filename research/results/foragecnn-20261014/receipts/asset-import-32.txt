@@ -1,0 +1,1 @@
+Imported atlas:12 source sprites preserve RGBA/aspect ratio/integer scaling/padding at cell32 PASS

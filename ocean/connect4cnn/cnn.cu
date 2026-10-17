@@ -309,7 +309,9 @@ static void imp_reg_train(void* weights, void* activations, Allocator* acts, All
 
 static void* imp_create_weights(void* self) {
     Encoder* enc = (Encoder*)self;
-    static_assert(OBS_CHANNELS == 1 && OBS_HEIGHT == 36 && OBS_WIDTH == 44, "IMPALA Connect4 input contract");
+    // This legacy configurable family remains restricted; its pooling kernels
+    // are also shared by Flex. Portable image builds reject encoder 1.
+    assert(OBS_CHANNELS == 1 && OBS_HEIGHT == 36 && OBS_WIDTH == 44);
     assert(enc->in_dim == OBS_SIZE && enc->out_dim >= 8 && enc->out_dim % 8 == 0);
     assert(enc->config && "experimental CNN needs policy config");
     double channels = dict_get(enc->config, "cnn_channels");

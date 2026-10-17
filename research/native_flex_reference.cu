@@ -17,7 +17,7 @@ static int graph(int model, int hidden, const int* settings, std::vector<Op>& op
     int depth = settings[0], projection = settings[1], gap = settings[2];
     if (depth < 1 || depth > 3 || projection < 16 || projection > 128
             || (projection & (projection - 1)) || gap < 0 || gap > 1) return -1;
-    int h = 36, w = 44, ci = 1, offset = 0;
+    int h = CNN_REF_HEIGHT, w = CNN_REF_WIDTH, ci = CNN_REF_CHANNELS, offset = 0;
     auto conv = [&](int co, int k, int s, bool skip) {
         int oh = (h + s - 1) / s, ow = (w + s - 1) / s;
         int ph = std::max((oh - 1) * s + k - h, 0) / 2;
@@ -28,7 +28,7 @@ static int graph(int model, int hidden, const int* settings, std::vector<Op>& op
     for (int j = 0; j < depth; j++) {
         const int* p = settings + 3 + 5 * j;
         if ((p[0] != 8 && p[0] != 16 && p[0] != 32) || p[1] < 1
-                || p[1] > (j == 0 ? 8 : 5) || p[2] < (j == 0 ? 4 : 1)
+                || p[1] > (j == 0 ? 8 : 5) || p[2] < 1
                 || p[2] > (j == 0 ? 8 : 4) || (p[2] & (p[2]-1))
                 || p[3] < 0 || p[3] > 2 || p[4] < 0 || p[4] > 1) return -1;
         conv(p[0], p[1], p[2], false);
@@ -46,7 +46,7 @@ static int graph(int model, int hidden, const int* settings, std::vector<Op>& op
 }
 
 __global__ static void graph_forward(const double* x, const double* weights,
-                                    double* y, Op op, int batch) {
+                                    double* y, Op op, int batch, bool accurate_loss) {
     Layer l = op.l;
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= batch*l.oh*l.ow*l.co) return;
@@ -55,11 +55,23 @@ __global__ static void graph_forward(const double* x, const double* weights,
     double sum=0;
     if (!op.type) {
         int cols=l.k*l.k*l.ci;
+        double compensation=0;
         for(int ky=0;ky<l.k;ky++) for(int kx=0;kx<l.k;kx++) {
             int y0=oy*l.stride+ky-l.ph, x0=ox*l.stride+kx-l.pw;
             if(y0<0||y0>=l.h||x0<0||x0>=l.w) continue;
-            for(int ic=0;ic<l.ci;ic++) sum += x[((b*l.h+y0)*l.w+x0)*l.ci+ic]
-                * weights[l.offset+c*cols+(ky*l.k+kx)*l.ci+ic];
+            for(int ic=0;ic<l.ci;ic++) {
+                double term=x[((b*l.h+y0)*l.w+x0)*l.ci+ic]
+                    * weights[l.offset+c*cols+(ky*l.k+kx)*l.ci+ic];
+                // Finite differences subtract nearly equal forward losses.
+                // Large flattened heads need accurate accumulation there;
+                // ordinary layer/gradient oracle calls retain their arithmetic.
+                if (accurate_loss && l.k==1 && l.ci>=8192) {
+                    double corrected=term-compensation;
+                    double next=sum+corrected;
+                    compensation=(next-sum)-corrected;
+                    sum=next;
+                } else sum+=term;
+            }
         }
         sum += weights[l.offset+l.co*cols+c];
         if(op.skip) sum += x[i];
@@ -118,6 +130,23 @@ extern "C" int flexref_layout(int model,int hidden,const int* settings,int* rows
     return params; // Scalar metadata only, no device query/allocation.
 }
 
+extern "C" void flexref_image_shape(int* shape) {
+    shape[0] = CNN_REF_HEIGHT; shape[1] = CNN_REF_WIDTH; shape[2] = CNN_REF_CHANNELS;
+}
+
+extern "C" int flexref_stable_loss_contract() { return 1; }
+
+__global__ static void stable_loss_sum(const double* y,const double* upstream,double* loss,int n) {
+    double sum=0,compensation=0;
+    for(int i=0;i<n;i++) {
+        double corrected=y[i]*upstream[i]-compensation;
+        double next=sum+corrected;
+        compensation=(next-sum)-corrected;
+        sum=next;
+    }
+    *loss=sum;
+}
+
 extern "C" int flexref_run(int model,int hidden,const int* settings,int batch,
         const double* input,const double* weights,const double* upstream,
         const double* native_trace,double* trace,double* gradient,double* loss) {
@@ -127,9 +156,10 @@ extern "C" int flexref_run(int model,int hidden,const int* settings,int batch,
     if(params<0) return -1;
     try {
         Storage storage;
-        double* x=storage.add(size_t(batch)*1584), *w=storage.add(params), *g=storage.add(batch*hidden);
+        size_t input_size = size_t(batch) * CNN_REF_HEIGHT * CNN_REF_WIDTH * CNN_REF_CHANNELS;
+        double* x=storage.add(input_size), *w=storage.add(params), *g=storage.add(batch*hidden);
         double* dw=storage.add(params);
-        checked(cudaMemcpy(x,input,size_t(batch)*1584*sizeof(double),cudaMemcpyHostToDevice));
+        checked(cudaMemcpy(x,input,input_size*sizeof(double),cudaMemcpyHostToDevice));
         checked(cudaMemcpy(w,weights,params*sizeof(double),cudaMemcpyHostToDevice));
         checked(cudaMemcpy(g,upstream,batch*hidden*sizeof(double),cudaMemcpyHostToDevice));
         std::vector<double*> xs={x}, ys;
@@ -137,7 +167,7 @@ extern "C" int flexref_run(int model,int hidden,const int* settings,int batch,
         for(Op op:ops) {
             int n=batch*op.l.oh*op.l.ow*op.l.co;
             double* y=storage.add(n);
-            graph_forward<<<(n+127)/128,128>>>(xs.back(),w,y,op,batch);
+            graph_forward<<<(n+127)/128,128>>>(xs.back(),w,y,op,batch,loss!=nullptr);
             checked(cudaGetLastError()); ys.push_back(y);
             if(trace) checked(cudaMemcpy(trace+offset,y,n*sizeof(double),cudaMemcpyDeviceToHost));
             if(native_trace) {
@@ -149,7 +179,7 @@ extern "C" int flexref_run(int model,int hidden,const int* settings,int batch,
         }
         if(loss) {
             double* device_loss=storage.add(1);
-            loss_sum<<<1,1>>>(ys.back(),g,device_loss,batch*hidden);
+            stable_loss_sum<<<1,1>>>(ys.back(),g,device_loss,batch*hidden);
             checked(cudaMemcpy(loss,device_loss,sizeof(double),cudaMemcpyDeviceToHost));
         }
         if(gradient) for(int j=int(ops.size())-1;j>=0;j--) {

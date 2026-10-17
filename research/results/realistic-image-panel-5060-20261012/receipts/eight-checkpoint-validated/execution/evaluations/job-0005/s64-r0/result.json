@@ -1,0 +1,88 @@
+{
+  "binary": "/home/claude/cnn-audit-20261008/build/image-portability-20261012/mazecnn-final-policy/puffer",
+  "binary_info": {
+    "default_encoder": "explicit",
+    "environment": "mazecnn",
+    "evaluation": "first-goal-or-native-area-timeout-v1",
+    "float32": true,
+    "image_contract": {
+      "dtype": "float32",
+      "layout": "NHWC",
+      "preprocessing": "none",
+      "shape_hwc": [
+        616,
+        616,
+        3
+      ],
+      "version": "human-geometry-v1"
+    },
+    "levels": "seed-rotated-cyclic-v1",
+    "receipt_version": 1,
+    "rules": "maze-native-v1"
+  },
+  "binary_sha256": "2cfe6ff80ff9bde70edf4d3d585b7b354d66f7fae270688e5293ce1908f43971",
+  "checkpoint": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/eight-checkpoint-validated/jobs/mazecnn/happy-cat-1-s7/checkpoints/mazecnn/happy-cat-1/0000000000000064.bin",
+  "checkpoint_sha256": "7ea25f723b3fec8c585e72c5d31b4de0e09e8627afb8e1ca4c44f763e9c2f2db",
+  "command": [
+    "/home/claude/cnn-audit-20261008/build/image-portability-20261012/mazecnn-final-policy/puffer",
+    "eval_exact",
+    "--headless"
+  ],
+  "config": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/eight-checkpoint-validated/jobs/mazecnn/happy-cat-1-s7/config/default.ini",
+  "cwd": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/eight-checkpoint-validated/execution/evaluations/job-0005/s64-r0",
+  "effective_env_ini_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "effective_ini_sha256": "ca7f2e2de3fd0f1fa6c44fc1d18be93774052a35e667230bc0629fb3a29bfe23",
+  "error": "TimeoutExpired: Command '['/home/claude/cnn-audit-20261008/build/image-portability-20261012/mazecnn-final-policy/puffer', 'eval_exact', '--headless']' timed out after 30 seconds",
+  "estimand": "success-fraction-all-assigned-episodes-v1",
+  "evaluation": "first-goal-or-native-area-timeout-v1",
+  "evaluation_process_seconds": 30.046320794,
+  "evaluation_representation": 0,
+  "evaluation_world": {
+    "map_size": -1,
+    "num_maps": 8192
+  },
+  "family": "flex",
+  "gpu_runtime_qualified": false,
+  "heldout_exclusion_certified": false,
+  "level_panel": {
+    "count": 8192,
+    "offset": 0
+  },
+  "manifest_sha256": "96b1a1b7893e13acabfa5ab14d59a15ee6a985bbc228c3a957115e0dfdb649f0",
+  "note": "GPU acceptance remains pending. A matching prefix INI is a declaration, not verified checkpoint training/selection provenance. Compiled native provenance needs build receipts.",
+  "policy": {
+    "cnn_channels_1": "8",
+    "cnn_depth": "1",
+    "cnn_global_pool": "1",
+    "cnn_kernel_1": "8",
+    "cnn_pool_1": "0",
+    "cnn_projection": "64",
+    "cnn_residual_1": "0",
+    "cnn_stride_1": "4",
+    "encoder": "4",
+    "hidden_size": "128",
+    "num_layers": "1"
+  },
+  "prepare_only": false,
+  "rules": "maze-native-v1",
+  "spawn_csv_sha256": "96b1a1b7893e13acabfa5ab14d59a15ee6a985bbc228c3a957115e0dfdb649f0",
+  "spawn_ini_sha256": "11b084a5826c3e973dbeffc4246ea195a3f9cfce42641e4251353491486dd8e3",
+  "status": "failed",
+  "suite": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/eight-checkpoint-validated/suites/mazecnn/s7/r0/suite.json",
+  "suite_sha256": "5d262fc71c572f881758b29343629173fef4635ea338518b3125c99fa5de5a2f",
+  "tooling_sha256": {
+    "ocean/connect4cnn/claim.py": "c1fb06be57a10952a27c1fbb6369612ccfbc4e45a63b66f1c424157d99fd5f43",
+    "ocean/connect4cnn/deterministic_eval.py": "e176ac25295357344a0def44958d2e48f00b63713681cc3181ff073100aa1ca1",
+    "ocean/mazecnn/exact_eval.py": "07c1b7a873e148ac28692252ef650a329814967fe758fa4f44ecdbdb2d9ae919"
+  },
+  "training_appearance": {
+    "representation": "0",
+    "representation_mode": "1",
+    "representation_seed": "17"
+  },
+  "training_ini_sha256": "c1f9705a68715b01ee63c3ed5979f55979b230c9ebcf316fa119450bdff37313",
+  "training_world": {
+    "map_size": -1,
+    "num_maps": 8192
+  }
+}

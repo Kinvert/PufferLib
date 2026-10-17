@@ -1,0 +1,7 @@
+candidate,environment,seed,parameters,train_seconds,process_sps,native_avg_sps,native_metrics_ini
+happy-cat-1,connect4cnn,7,60616,0.866153994,73.88986305361307,,/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0000/panel/jobs/connect4cnn/happy-cat-1-s7/metrics/connect4cnn/happy-cat-1.ini
+happy-cat-1,pongcnn,7,60104,0.865997871,73.90318399524102,,/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0000/panel/jobs/pongcnn/happy-cat-1-s7/metrics/pongcnn/happy-cat-1.ini
+happy-cat-1,flappycnn,7,59976,0.665875558,96.11405499283997,,/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0000/panel/jobs/flappycnn/happy-cat-1-s7/metrics/flappycnn/happy-cat-1.ini
+happy-cat-1,breakoutcnn,7,60104,0.565502707,113.17364038718915,,/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0000/panel/jobs/breakoutcnn/happy-cat-1-s7/metrics/breakoutcnn/happy-cat-1.ini
+happy-cat-1,snakecnn,7,60232,0.71564534,89.42977257421951,,/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0000/panel/jobs/snakecnn/happy-cat-1-s7/metrics/snakecnn/happy-cat-1.ini
+happy-cat-1,mazecnn,7,60360,0.815997389,78.43162351099141,,/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0000/panel/jobs/mazecnn/happy-cat-1-s7/metrics/mazecnn/happy-cat-1.ini

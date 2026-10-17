@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CNN observation gallery</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#10141e;color:#e4eaf3;font:15px system-ui,sans-serif}a{color:#99caff}button,select{font:inherit;color:inherit;background:#202a3d;border:1px solid #465774;border-radius:7px;padding:8px 12px;cursor:pointer}button:hover,button.active{background:#35547f;border-color:#93bdff}header{padding:18px 24px;border-bottom:1px solid #344058}h1{font-size:23px;margin:0 0 8px}p{line-height:1.5;margin:7px 0}.muted{color:#aebbd0;font-size:13px}nav,.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0}main{display:grid;grid-template-columns:240px 1fr;gap:18px;padding:18px 24px}aside{max-height:calc(100vh - 240px);overflow:auto}.variant{display:block;text-align:left;width:100%;margin-bottom:6px;padding:11px}.variant small{color:#b4c3d7;display:block;margin-top:4px}section{min-width:0}.heading{font-size:20px;margin:0}.viewport{overflow:auto;border:1px solid #41516e;border-radius:8px;background:#080b10;min-height:160px;max-height:75vh;padding:12px;display:flex;align-items:flex-start;justify-content:flex-start}.viewport canvas{display:block;image-rendering:pixelated;max-width:none}.info{display:flex;gap:14px;flex-wrap:wrap;margin:8px 0}.badge{padding:5px 9px;background:#24344b;border-radius:5px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}.card{border:1px solid #344766;background:#172031;border-radius:8px;overflow:hidden;cursor:pointer;text-align:left;padding:10px}.card img{width:100%;height:210px;object-fit:contain;image-rendering:pixelated;background:#080b10}.card h3{font-size:15px;margin:8px 0 2px}.card p{font-size:12px;color:#b4c3d7}details{background:#192233;padding:10px;border-radius:6px;margin-top:12px}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px}.hidden{display:none!important}#pixel{font:13px ui-monospace,monospace;color:#c0e8bd;min-height:34px;margin:10px 0}.compare{display:grid;grid-template-columns:1fr 1fr;gap:12px}.compare canvas{max-width:100%;height:auto;image-rendering:pixelated}.compare>div{background:#080b10;padding:8px;border:1px solid #41516e;overflow:auto}label{display:flex;align-items:center;gap:6px}#error{color:#ffb7b7}@media(max-width:800px){main{grid-template-columns:1fr;padding:12px}aside{max-height:230px}header{padding:14px}.compare{grid-template-columns:1fr}}
+</style>
+<header><h1>The pixels the CNN receives</h1>
+<p id="summary">Native games · drawing variants · three progressed snapshots each. All images were read from the native <strong>observation buffer</strong>.</p>
+<p class="muted">The RGB inputs are the new realistic-image pipeline. The optional 36×44 grayscale view shows the historical input format. Snake and Maze show only the policy’s local 11×11 crop, never a privileged full map. These are deterministic rule-controller rollouts, not trained-policy performance.</p>
+<nav id="games" aria-label="Game"></nav>
+<div class="toolbar"><label>Input <select id="mode"><option value="rgb">Realistic RGB — new pipeline</option><option value="legacy">Historical 36×44 grayscale</option></select></label>
+<label>Moment <select id="moment"><option value="0">Earlier progressed frame</option><option value="1" selected>Middle frame</option><option value="2">Later frame</option></select></label>
+<button id="all">All variants / contact sheet</button><button id="single">Inspect selected variant</button><button id="compare">Compare RGB ↔ historical</button></div></header>
+<main><aside id="variants" aria-label="Drawing variants"></aside><section>
+<h2 class="heading" id="title"></h2><div class="info" id="info"></div>
+<div id="singleView"><div class="toolbar"><button id="previous">← Previous variant</button><button id="next">Next variant →</button>
+<label>Zoom <select id="zoom"><option value="fit">Fit view</option><option value="1">1× native pixels</option><option value="2">2×</option><option value="4">4×</option><option value="8">8×</option></select></label><a id="png" target="_blank" rel="noopener">Open PNG</a><a id="raw" download>Exact float32 memory (.gz)</a></div>
+<div class="viewport" id="viewport"><canvas id="image"></canvas></div><div id="pixel">Move over the frame to inspect the original float32 input values.</div></div>
+<div id="contact" class="grid hidden"></div><div id="comparison" class="compare hidden"></div>
+<details><summary>Frame receipt / exact memory layout</summary><p class="muted">PNG is an 8-bit display of the normalized floats. Cursor values come from a checked, unambiguous palette of the original float32 buffer. Downloaded memory is losslessly compressed little-endian float32, NHWC, row-major, top row first, no hidden resize or preprocessing. Its SHA256 is recorded below. One row contains width × channels values.</p><pre id="receipt"></pre></details>
+<p class="muted">Within each game/moment, all drawing IDs and both input formats have identical gameplay state, RNG and decision history. Repeated writes match exactly; variant 0 also matches across fresh native processes. Use ←/→ for variants, ↑/↓ for moments. <a href="manifest.json">Complete manifest</a></p>
+<p id="error" role="alert"></p></section></main>
+<script>
+'use strict';
+const DATA=__MANIFEST__;
+const $=id=>document.getElementById(id),keys=Object.keys(DATA.games);
+let game=keys[0],rep=0,mode='rgb',moment=1,view='single',generation=0,currentPixels=null;
+function frame(g=game,r=rep,m=mode,t=moment){const f=DATA.frames.find(f=>f.game===g&&f.representation===r&&f.mode===m&&f.moment===t);if(!f)throw Error('Missing frame');return f;}
+function el(tag,text){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;return e;}
+function dimensions(f){const[h,w,c]=f.shape_hwc;return `${w} × ${h} × ${c} · ${c===3?'RGB':'grayscale'} float32`;}
+function variantName(i){return frame(game,i).name;}
+function writeHash(){history.replaceState(null,'',`#${game}/${rep}/${mode}/${moment}/${view}`);}
+function loadHash(){const bits=location.hash.slice(1).split('/');if(keys.includes(bits[0]))game=bits[0];if(Number.isInteger(+bits[1])&&+bits[1]>=0&&+bits[1]<DATA.games[game].names.length)rep=+bits[1];if(['rgb','legacy'].includes(bits[2]))mode=bits[2];if([0,1,2].includes(+bits[3]))moment=+bits[3];if(['single','contact','compare'].includes(bits[4]))view=bits[4];}
+async function draw(canvas,f){const img=new Image();img.src=f.image;await img.decode();canvas.width=f.shape_hwc[1];canvas.height=f.shape_hwc[0];const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.imageSmoothingEnabled=false;ctx.drawImage(img,0,0);return ctx.getImageData(0,0,canvas.width,canvas.height);}
+function zoom(){const canvas=$('image'),f=frame();const z=$('zoom').value;let scale=z==='fit'?Math.min(($('viewport').clientWidth-26)/f.shape_hwc[1],f.shape_hwc[2]===1?12:1):+z;scale=Math.max(.05,scale);canvas.style.width=`${canvas.width*scale}px`;canvas.style.height=`${canvas.height*scale}px`;}
+async function render(){const token=++generation;currentPixels=null;
+ const available=m=>DATA.frames.some(f=>f.game===game&&f.mode===m);
+ if(!available(mode))mode='rgb';if(view==='compare'&&!available('legacy'))view='single';
+ $('mode').querySelector('option[value="legacy"]').disabled=!available('legacy');$('compare').disabled=!available('legacy');
+ $('summary').textContent=keys.length+' games · '+Object.values(DATA.games).reduce((n,g)=>n+g.names.length,0)+' drawing variants · '+DATA.frames.length+' frames from native observation buffers. Three progressed snapshots per input/drawing.';
+ writeHash();$('error').textContent='';$('mode').value=mode;$('moment').value=String(moment);
+ $('games').replaceChildren(...keys.map(g=>{const b=el('button',DATA.games[g].title);b.classList.toggle('active',g===game);b.onclick=()=>{game=g;rep=0;render().catch(error);};return b;}));
+ $('variants').replaceChildren(...DATA.games[game].names.map((_,i)=>{const b=el('button',`Variant ${i}`);b.className='variant'+(rep===i?' active':'');b.append(el('small',variantName(i)));b.onclick=()=>{rep=i;view='single';render().catch(error);};return b;}));
+ const f=frame();$('title').textContent=`${DATA.games[game].title} · ${view==='contact'?'all drawing variants':`variant ${rep}: ${f.name}`}`;
+ $('info').replaceChildren(...[dimensions(f),`Episode ${f.episode} · decision ${f.episode_decision} · tick ${f.tick}`,`Snapshot ${moment+1}/3 · seed ${f.seed}`].map(s=>{const span=el('span',s);span.className='badge';return span;}));
+ $('receipt').textContent=JSON.stringify({...f,palette:undefined,layout:'NHWC',memory_dtype:'little-endian float32',preprocessing:'none'},null,2);
+ $('singleView').classList.toggle('hidden',view!=='single');$('contact').classList.toggle('hidden',view!=='contact');$('comparison').classList.toggle('hidden',view!=='compare');
+ $('all').classList.toggle('active',view==='contact');$('single').classList.toggle('active',view==='single');$('compare').classList.toggle('active',view==='compare');
+ if(view==='single'){$('png').href=f.image;$('raw').href=f.raw_file;const pixels=await draw($('image'),f);if(token!==generation)return;currentPixels=pixels;zoom();$('pixel').textContent='Move over the frame to inspect the original float32 input values.';}
+ else if(view==='contact'){$('contact').replaceChildren(...DATA.games[game].names.map((_,i)=>{const f=frame(game,i);const name=f.name;const card=el('button');card.className='card';const img=new Image();img.src=f.image;img.alt=`${DATA.games[game].title} variant ${i}: ${name}`;card.append(img,el('h3',`Variant ${i} · ${name}`),el('p',`Episode decision ${f.episode_decision} · ${dimensions(f)}`));card.onclick=()=>{rep=i;view='single';render().catch(error);};return card;}));}
+ else{const children=['rgb','legacy'].map(m=>{const f=frame(game,rep,m);const box=el('div'),canvas=el('canvas');box.append(el('h3',DATA.modes[m].title),el('p',dimensions(f)),canvas);return{box,canvas,f};});$('comparison').replaceChildren(...children.map(x=>x.box));await Promise.all(children.map(x=>draw(x.canvas,x.f)));}
+}
+function error(e){$('error').textContent=e.message;console.error(e);}
+$('mode').onchange=e=>{mode=e.target.value;render().catch(error);};$('moment').onchange=e=>{moment=+e.target.value;render().catch(error);};$('zoom').onchange=zoom;window.onresize=()=>{if(currentPixels)zoom();};
+for(const[id,nextView]of[['all','contact'],['single','single'],['compare','compare']])$(id).onclick=()=>{view=nextView;render().catch(error);};
+function cycle(delta){rep=(rep+delta+DATA.games[game].names.length)%DATA.games[game].names.length;render().catch(error);}
+$('previous').onclick=()=>cycle(-1);$('next').onclick=()=>cycle(1);
+document.addEventListener('keydown',e=>{if(['SELECT','INPUT'].includes(e.target.tagName))return;if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();cycle(e.key==='ArrowLeft'?-1:1);}if(e.key==='ArrowUp'||e.key==='ArrowDown'){e.preventDefault();moment=(moment+(e.key==='ArrowUp'?2:1))%3;render().catch(error);}});
+$('image').onmousemove=e=>{if(!currentPixels)return;const rect=e.currentTarget.getBoundingClientRect();const x=Math.min(currentPixels.width-1,Math.floor((e.clientX-rect.left)*currentPixels.width/rect.width)),y=Math.min(currentPixels.height-1,Math.floor((e.clientY-rect.top)*currentPixels.height/rect.height));const at=(y*currentPixels.width+x)*4;const rgb=Array.from(currentPixels.data.slice(at,at+3));const values=frame().palette[rgb.join(',')];const c=frame().shape_hwc[2],offset=(y*currentPixels.width+x)*c;$('pixel').textContent=`x=${x}, y=${y} · NHWC element ${offset} · byte offset ${offset*4} · input ${c===1?'gray='+values[0]:'RGB=['+values.join(', ')+']'} · display RGB8=[${rgb.join(', ')}]`;};
+loadHash();render().catch(error);
+</script></html>

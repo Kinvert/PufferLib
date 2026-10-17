@@ -1,0 +1,22 @@
+{
+  "command": [
+    "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/metadata/flappycnn/default",
+    "--storage",
+    "/home/claude/cnn-audit-20261008/build/image-portability-20261012/metadata-verification-v3/configs/flappycnn/c8-res1.ini"
+  ],
+  "cwd": "/home/claude/cnn-audit-20261008",
+  "status": "ok",
+  "timeout": 30,
+  "environment": {
+    "PUFFER_CHECKPOINT_RECEIPTS": null,
+    "NVCC_ARCH": null,
+    "NVCC_EXTRA": null,
+    "NVCC_APPEND_FLAGS": null,
+    "CUDA_HOME": "/usr/local/cuda",
+    "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+  },
+  "launch_monotonic_ns": 559169579481375,
+  "pid": 1038069,
+  "returncode": 0,
+  "end_monotonic_ns": 559169643552483
+}

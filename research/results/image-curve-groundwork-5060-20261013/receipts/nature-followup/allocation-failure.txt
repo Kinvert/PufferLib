@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/home/claude/cnn-audit-20261008/research/cnn_graph_acceptance.py", line 309, in run
+    worker_timeout(timeout,deadline)
+  File "/home/claude/cnn-audit-20261008/research/cnn_graph_acceptance.py", line 303, in worker_timeout
+    require(remaining>0, "Campaign deadline before numerical worker")
+  File "/home/claude/cnn-audit-20261008/research/dense_alias_acceptance.py", line 41, in require
+    if not condition: raise ValueError(message)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: Campaign deadline before numerical worker

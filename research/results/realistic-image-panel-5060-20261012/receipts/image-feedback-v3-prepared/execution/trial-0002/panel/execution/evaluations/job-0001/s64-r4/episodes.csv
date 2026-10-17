@@ -1,0 +1,2 @@
+version,block_seed,episode_id,slot,representation,env_seed,policy_seed,decisions,last_rally_decisions,right_points,left_points,episode_return,completed,capped,point_fraction_lower,point_fraction_upper,native_perf,action_hash,start_observation_hash,start_world_hash,start_rng
+1,7007,0,0,4,1061661388,2357506090215940220,177,5,0,21,-0x1.5p+4,1,0,0x0p+0,0x0p+0,0x0p+0,3287c3c2b63ba1d4,ab136ff77c51ffe5,5a70e236e8cfff41,1807333915

@@ -1,0 +1,137 @@
+{
+  "schema": "native-policy-metadata-v2",
+  "model": "nature_cnn",
+  "observation_shape": [
+    3,
+    616,
+    616
+  ],
+  "discrete_actions": 4,
+  "hidden": 128,
+  "layers": 1,
+  "horizon": 16,
+  "encoder_parameters": 43731232,
+  "decoder_parameters": 640,
+  "core_parameters": 49152,
+  "total_parameters": 43781024,
+  "parameter_payload_bytes": 175124096,
+  "parameter_allocator_bytes": 175124096,
+  "raw_checkpoint_contiguous": true,
+  "checkpoint_bytes": null,
+  "parameter_tensors": [
+    {
+      "index": 0,
+      "group": "encoder",
+      "offset_bytes": 0,
+      "elements": 6144,
+      "shape": [
+        32,
+        192
+      ]
+    },
+    {
+      "index": 1,
+      "group": "encoder",
+      "offset_bytes": 24576,
+      "elements": 32,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "index": 2,
+      "group": "encoder",
+      "offset_bytes": 24704,
+      "elements": 32768,
+      "shape": [
+        64,
+        512
+      ]
+    },
+    {
+      "index": 3,
+      "group": "encoder",
+      "offset_bytes": 155776,
+      "elements": 64,
+      "shape": [
+        64
+      ]
+    },
+    {
+      "index": 4,
+      "group": "encoder",
+      "offset_bytes": 156032,
+      "elements": 36864,
+      "shape": [
+        64,
+        576
+      ]
+    },
+    {
+      "index": 5,
+      "group": "encoder",
+      "offset_bytes": 303488,
+      "elements": 64,
+      "shape": [
+        64
+      ]
+    },
+    {
+      "index": 6,
+      "group": "encoder",
+      "offset_bytes": 303744,
+      "elements": 43655168,
+      "shape": [
+        128,
+        341056
+      ]
+    },
+    {
+      "index": 7,
+      "group": "encoder",
+      "offset_bytes": 174924416,
+      "elements": 128,
+      "shape": [
+        128
+      ]
+    },
+    {
+      "index": 8,
+      "group": "decoder",
+      "offset_bytes": 174924928,
+      "elements": 640,
+      "shape": [
+        5,
+        128
+      ]
+    },
+    {
+      "index": 9,
+      "group": "core",
+      "offset_bytes": 174927488,
+      "elements": 49152,
+      "shape": [
+        384,
+        128
+      ]
+    }
+  ],
+  "environment": "snakecnn",
+  "image_contract": {
+    "version": "human-geometry-v1",
+    "shape_hwc": [
+      616,
+      616,
+      3
+    ],
+    "layout": "NHWC",
+    "dtype": "float32",
+    "preprocessing": "none"
+  },
+  "cuda_executed": false,
+  "gpu_queried": false,
+  "weights_initialized": false,
+  "policy_executed": false,
+  "checkpoint_contents_validated": false,
+  "numerical_acceptance": false
+}

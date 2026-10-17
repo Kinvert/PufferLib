@@ -1,0 +1,49 @@
+ M AGENTS.md
+ M ocean/breakoutcnn/breakoutcnn.h
+ M ocean/breakoutcnn/exact_eval.cu
+ M ocean/connect4cnn/cnn.cu
+ M ocean/connect4cnn/connect4cnn.h
+ M ocean/connect4cnn/deterministic_eval.py
+ M ocean/connect4cnn/exact_eval.cu
+ M ocean/connect4cnn/exact_protocol.h
+ M ocean/connect4cnn/flex.cu
+ M ocean/connect4cnn/impala.cu
+ M ocean/connect4cnn/nature.cu
+ M ocean/connect4cnn/sweep.py
+ M ocean/connect4cnn/tests/build_encoder_test.sh
+ M ocean/connect4cnn/tests/test_deterministic_eval.py
+ M ocean/connect4cnn/tests/test_nature.cu
+ M ocean/flappycnn/exact_eval.cu
+ M ocean/flappycnn/flappycnn.h
+ M ocean/mazecnn/exact_eval.cu
+ M ocean/mazecnn/mazecnn.h
+ M ocean/pongcnn/exact_eval.cu
+ M ocean/pongcnn/pongcnn.h
+ M ocean/snakecnn/exact_eval.cu
+ M ocean/snakecnn/game.h
+ M research/build_native_flex_reference.sh
+ M research/checkpoint_preflight.py
+ M research/cnn_graph_acceptance.py
+ M research/native_encoder_reference.cu
+ M research/native_flex_reference.cu
+ M research/policy_metadata.cu
+ M src/ocean.cu
+?? ocean/breakoutcnn/image_v1.h
+?? ocean/connect4cnn/image.h
+?? ocean/connect4cnn/image_v1.h
+?? ocean/flappycnn/image_v1.h
+?? ocean/mazecnn/image_v1.h
+?? ocean/pongcnn/image_v1.h
+?? ocean/snakecnn/image_v1.h
+?? raylib-5.5_linux_amd64
+?? research/REALISTIC_IMAGE_SWEEP_PROGRESS.md
+?? research/build_image_policy.sh
+?? research/build_image_probe.sh
+?? research/image_raster_probe.c
+?? research/image_test_flags.sh
+?? research/image_training_smoke.py
+?? research/prepare_image_inputs.py
+?? research/results/learning-continuation-5090-20261009-prefix45/independent-analysis/
+?? research/results/learning-feedback-5090-20261008T173307Z/independent-export-analysis/
+?? research/tests/test_image_inputs.py
+?? research/verify_image_metadata.py

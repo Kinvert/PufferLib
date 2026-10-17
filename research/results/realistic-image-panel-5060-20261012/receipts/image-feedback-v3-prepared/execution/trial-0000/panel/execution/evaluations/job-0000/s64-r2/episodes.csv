@@ -1,0 +1,2 @@
+version,block_seed,episode_id,slot,representation,env_seed,policy_seed,decisions,win,score,invalid,action_hash,start_observation_hash,start_player_pieces,start_env_pieces,start_rng
+1,7007,0,0,2,1061661388,2357506090215940220,8,0,-1,0,8b7aa2311576eafb,986021af4619ab25,0,0,1061661388

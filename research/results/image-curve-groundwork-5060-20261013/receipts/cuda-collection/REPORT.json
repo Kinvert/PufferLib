@@ -1,0 +1,51 @@
+{
+  "status": "passed",
+  "schema": "native-image-validation-collection-v1",
+  "hardware": {
+    "gpu_name": "NVIDIA GeForce RTX 5060",
+    "gpu_uuid": "GPU-56b0df25-b4c9-46eb-e498-bc5c71904097",
+    "driver": "591.86",
+    "host": "G240",
+    "cuda_compiler": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2025 NVIDIA Corporation\nBuilt on Fri_Feb_21_20:23:50_PST_2025\nCuda compilation tools, release 12.8, V12.8.93\nBuild cuda_12.8.r12.8/compiler.35583870_0\n"
+  },
+  "config_sha256": "021789c774719a2b33131ace5f85a48d40c1e38aac835bf8351ad37cb5aefabe",
+  "catalog_sha256": "fb1b0f549600370fa6ac9ea42ba46755cc2177b3b66f2afc03999b8b2b802293",
+  "checks": {
+    "h576-w672-c3": {
+      "path": "../initial-eight-remaining-cuda/h576-w672-c3",
+      "report_sha256": "169ce06b3d21eb6a54628ebd446a3750072897336b84e1dd7e8669d1791f94ba",
+      "cases": 18,
+      "native_calls": 72
+    },
+    "h640-w620-c3": {
+      "path": "../initial-eight-remaining-cuda/h640-w620-c3",
+      "report_sha256": "8738369e30e4991e6cd2fe36be93be1c00229cd3ab69c85e2eff5f6571fb2aa0",
+      "cases": 18,
+      "native_calls": 72
+    },
+    "h640-w420-c3": {
+      "path": "../flappy-initial-eight-cuda",
+      "report_sha256": "91099a2c188984ebcfdd8e2a0aa955f02a63bf4c714946132c9b3f792cce14b2",
+      "cases": 18,
+      "native_calls": 72
+    },
+    "h330-w576-c3": {
+      "path": "../initial-eight-remaining-cuda/h330-w576-c3",
+      "report_sha256": "9c6838adce0a79ae9c2dc6018019d18543eb5349fcde846c59a40b9f09b3fe17",
+      "cases": 18,
+      "native_calls": 72
+    },
+    "h616-w616-c3": {
+      "path": "../initial-eight-remaining-cuda/h616-w616-c3",
+      "report_sha256": "8effa9210ce24a1cb132d6826a6ced8e025465906673d67bd09e6bb95807135d",
+      "cases": 18,
+      "native_calls": 72
+    }
+  },
+  "total_cases": 90,
+  "total_native_calls": 360,
+  "cuda_executed_in_collection": false,
+  "cpu_neural_reference": false,
+  "full_policy_qualified": false,
+  "learning_or_frontier_claim": false
+}

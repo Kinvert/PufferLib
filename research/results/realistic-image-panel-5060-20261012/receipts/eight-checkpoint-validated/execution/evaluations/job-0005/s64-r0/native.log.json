@@ -1,0 +1,23 @@
+{
+  "command": [
+    "/home/claude/cnn-audit-20261008/build/image-portability-20261012/mazecnn-final-policy/puffer",
+    "eval_exact",
+    "--headless"
+  ],
+  "cwd": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/eight-checkpoint-validated/execution/evaluations/job-0005/s64-r0",
+  "status": "failed",
+  "timeout": 30,
+  "environment": {
+    "PUFFER_CHECKPOINT_RECEIPTS": null,
+    "NVCC_ARCH": null,
+    "NVCC_EXTRA": null,
+    "NVCC_APPEND_FLAGS": null,
+    "CUDA_HOME": "/usr/local/cuda",
+    "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+  },
+  "launch_monotonic_ns": 563087144949978,
+  "pid": 1080901,
+  "error": "Command '['/home/claude/cnn-audit-20261008/build/image-portability-20261012/mazecnn-final-policy/puffer', 'eval_exact', '--headless']' timed out after 30 seconds",
+  "returncode": -9,
+  "end_monotonic_ns": 563117191270772
+}

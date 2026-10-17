@@ -1,0 +1,1 @@
+{"schema":"native-image-build-v1","environment":"connect4cnn","compiled_family":"default","image_contract":{"version":"human-geometry-v1","shape_hwc":[576,672,3],"layout":"NHWC","dtype":"float32","preprocessing":"none"},"gpu_queried":false,"cuda_executed":false}

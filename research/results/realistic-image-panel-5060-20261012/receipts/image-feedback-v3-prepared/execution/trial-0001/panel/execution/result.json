@@ -1,0 +1,1148 @@
+{
+  "status": "ok",
+  "mode": "image5060",
+  "plan_sha256": "8b3ba15a238dab85ce49176fd8cfc20f3de68d6e60f2e3bf3ee4a50870f50274",
+  "jobs": [
+    {
+      "job_index": 0,
+      "id": "jobs/connect4cnn/mystic-tree-2-s7",
+      "process": {
+        "command": [
+          "/home/claude/cnn-audit-20261008/build/image-portability-20261012/connect4cnn-final-policy/puffer",
+          "train",
+          "--headless"
+        ],
+        "cwd": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/jobs/connect4cnn/mystic-tree-2-s7",
+        "status": "ok",
+        "timeout": 30,
+        "environment": {
+          "PUFFER_CHECKPOINT_RECEIPTS": "1",
+          "NVCC_ARCH": null,
+          "NVCC_EXTRA": null,
+          "NVCC_APPEND_FLAGS": null,
+          "CUDA_HOME": "/usr/local/cuda",
+          "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+        },
+        "launch_monotonic_ns": 564160361274309,
+        "pid": 1086960,
+        "returncode": 0,
+        "end_monotonic_ns": 564161184716889
+      },
+      "parameters": 56232,
+      "process_seconds": 0.82344258,
+      "checkpoint_seconds": {
+        "64": 0.733349282
+      },
+      "checkpoints": {
+        "64": {
+          "path": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/jobs/connect4cnn/mystic-tree-2-s7/checkpoints/connect4cnn/mystic-tree-2/0000000000000064.bin",
+          "sha256": "01d1637b16408f10d0be765fcf05e71563f176a4db202a37f6d498cb9d5291d8"
+        }
+      },
+      "process_sps": 77.72248066161455
+    },
+    {
+      "job_index": 1,
+      "id": "jobs/pongcnn/mystic-tree-2-s7",
+      "process": {
+        "command": [
+          "/home/claude/cnn-audit-20261008/build/image-portability-20261012/pongcnn-final-policy/puffer",
+          "train",
+          "--headless"
+        ],
+        "cwd": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/jobs/pongcnn/mystic-tree-2-s7",
+        "status": "ok",
+        "timeout": 30,
+        "environment": {
+          "PUFFER_CHECKPOINT_RECEIPTS": "1",
+          "NVCC_ARCH": null,
+          "NVCC_EXTRA": null,
+          "NVCC_APPEND_FLAGS": null,
+          "CUDA_HOME": "/usr/local/cuda",
+          "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+        },
+        "launch_monotonic_ns": 564170603918415,
+        "pid": 1087162,
+        "returncode": 0,
+        "end_monotonic_ns": 564171369658423
+      },
+      "parameters": 55720,
+      "process_seconds": 0.765740008,
+      "checkpoint_seconds": {
+        "64": 0.687909039
+      },
+      "checkpoints": {
+        "64": {
+          "path": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/jobs/pongcnn/mystic-tree-2-s7/checkpoints/pongcnn/mystic-tree-2/0000000000000064.bin",
+          "sha256": "384a95a683663898b6cf37eec923e912c433dcbb09c409661aff48aafe852259"
+        }
+      },
+      "process_sps": 83.57928191209254
+    },
+    {
+      "job_index": 2,
+      "id": "jobs/flappycnn/mystic-tree-2-s7",
+      "process": {
+        "command": [
+          "/home/claude/cnn-audit-20261008/build/image-portability-20261012/flappycnn-final-policy/puffer",
+          "train",
+          "--headless"
+        ],
+        "cwd": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/jobs/flappycnn/mystic-tree-2-s7",
+        "status": "ok",
+        "timeout": 30,
+        "environment": {
+          "PUFFER_CHECKPOINT_RECEIPTS": "1",
+          "NVCC_ARCH": null,
+          "NVCC_EXTRA": null,
+          "NVCC_APPEND_FLAGS": null,
+          "CUDA_HOME": "/usr/local/cuda",
+          "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+        },
+        "launch_monotonic_ns": 564204020554834,
+        "pid": 1087397,
+        "returncode": 0,
+        "end_monotonic_ns": 564204686231061
+      },
+      "parameters": 55592,
+      "process_seconds": 0.665676227,
+      "checkpoint_seconds": {
+        "64": 0.567377098
+      },
+      "checkpoints": {
+        "64": {
+          "path": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/jobs/flappycnn/mystic-tree-2-s7/checkpoints/flappycnn/mystic-tree-2/0000000000000064.bin",
+          "sha256": "7839acf339ad806ae7b4bb0c009f8775a9823a574713ae16b95b01bf16217baa"
+        }
+      },
+      "process_sps": 96.1428355169427
+    },
+    {
+      "job_index": 3,
+      "id": "jobs/breakoutcnn/mystic-tree-2-s7",
+      "process": {
+        "command": [
+          "/home/claude/cnn-audit-20261008/build/image-portability-20261012/breakoutcnn-final-policy/puffer",
+          "train",
+          "--headless"
+        ],
+        "cwd": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/jobs/breakoutcnn/mystic-tree-2-s7",
+        "status": "ok",
+        "timeout": 30,
+        "environment": {
+          "PUFFER_CHECKPOINT_RECEIPTS": "1",
+          "NVCC_ARCH": null,
+          "NVCC_EXTRA": null,
+          "NVCC_APPEND_FLAGS": null,
+          "CUDA_HOME": "/usr/local/cuda",
+          "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+        },
+        "launch_monotonic_ns": 564214396263185,
+        "pid": 1087566,
+        "returncode": 0,
+        "end_monotonic_ns": 564214961619062
+      },
+      "parameters": 55720,
+      "process_seconds": 0.565355877,
+      "checkpoint_seconds": {
+        "64": 0.491888957
+      },
+      "checkpoints": {
+        "64": {
+          "path": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/jobs/breakoutcnn/mystic-tree-2-s7/checkpoints/breakoutcnn/mystic-tree-2/0000000000000064.bin",
+          "sha256": "ee3afa6c9e77ea1f3ec81907a05744ed032d7d98936f9bbf2a0f8f9ad25c1f62"
+        }
+      },
+      "process_sps": 113.20303299862928
+    },
+    {
+      "job_index": 4,
+      "id": "jobs/snakecnn/mystic-tree-2-s7",
+      "process": {
+        "command": [
+          "/home/claude/cnn-audit-20261008/build/image-portability-20261012/snakecnn-final-policy/puffer",
+          "train",
+          "--headless"
+        ],
+        "cwd": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/jobs/snakecnn/mystic-tree-2-s7",
+        "status": "ok",
+        "timeout": 30,
+        "environment": {
+          "PUFFER_CHECKPOINT_RECEIPTS": "1",
+          "NVCC_ARCH": null,
+          "NVCC_EXTRA": null,
+          "NVCC_APPEND_FLAGS": null,
+          "CUDA_HOME": "/usr/local/cuda",
+          "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+        },
+        "launch_monotonic_ns": 564228212922545,
+        "pid": 1087707,
+        "returncode": 0,
+        "end_monotonic_ns": 564228928316333
+      },
+      "parameters": 55848,
+      "process_seconds": 0.715393788,
+      "checkpoint_seconds": {
+        "64": 0.627754701
+      },
+      "checkpoints": {
+        "64": {
+          "path": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/jobs/snakecnn/mystic-tree-2-s7/checkpoints/snakecnn/mystic-tree-2/0000000000000064.bin",
+          "sha256": "973b596de76a7bc04c91528f44e7724a0bdb98249aba397093e4531ee9320a73"
+        }
+      },
+      "process_sps": 89.46121852542561
+    },
+    {
+      "job_index": 5,
+      "id": "jobs/mazecnn/mystic-tree-2-s7",
+      "process": {
+        "command": [
+          "/home/claude/cnn-audit-20261008/build/image-portability-20261012/mazecnn-final-policy/puffer",
+          "train",
+          "--headless"
+        ],
+        "cwd": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/jobs/mazecnn/mystic-tree-2-s7",
+        "status": "ok",
+        "timeout": 30,
+        "environment": {
+          "PUFFER_CHECKPOINT_RECEIPTS": "1",
+          "NVCC_ARCH": null,
+          "NVCC_EXTRA": null,
+          "NVCC_APPEND_FLAGS": null,
+          "CUDA_HOME": "/usr/local/cuda",
+          "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+        },
+        "launch_monotonic_ns": 564235753055458,
+        "pid": 1087854,
+        "returncode": 0,
+        "end_monotonic_ns": 564236619012932
+      },
+      "parameters": 55976,
+      "process_seconds": 0.865957474,
+      "checkpoint_seconds": {
+        "64": 0.747994804
+      },
+      "checkpoints": {
+        "64": {
+          "path": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/jobs/mazecnn/mystic-tree-2-s7/checkpoints/mazecnn/mystic-tree-2/0000000000000064.bin",
+          "sha256": "6bf4f41e59e169063bf770344f8f19c40865654c16948e22ef3c40851e202ebe"
+        }
+      },
+      "process_sps": 73.90663158592936
+    }
+  ],
+  "evaluations": [
+    {
+      "job_index": 0,
+      "step": 64,
+      "representation": 0,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0000/s64-r0/result.json",
+      "result_sha256": "7c077b08d890c1fe4228aa4fc8fdba9a3d32d43665c3e88aa0f07300415a2374",
+      "counts": {
+        "episodes": 1,
+        "score": -1,
+        "wins": 0
+      },
+      "training_seconds": 0.733349282
+    },
+    {
+      "job_index": 0,
+      "step": 64,
+      "representation": 1,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0000/s64-r1/result.json",
+      "result_sha256": "9a7dafd88e882eeb57a7c243c1f3e6a93f6df25b35474280b1b55d3aa20c3318",
+      "counts": {
+        "episodes": 1,
+        "score": -1,
+        "wins": 0
+      },
+      "training_seconds": 0.733349282
+    },
+    {
+      "job_index": 0,
+      "step": 64,
+      "representation": 2,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0000/s64-r2/result.json",
+      "result_sha256": "24c7a29bf4f4fbe30423cb8f2c6c289273473282bd0f2b6e1a2d511203aceffd",
+      "counts": {
+        "episodes": 1,
+        "score": -1,
+        "wins": 0
+      },
+      "training_seconds": 0.733349282
+    },
+    {
+      "job_index": 0,
+      "step": 64,
+      "representation": 3,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0000/s64-r3/result.json",
+      "result_sha256": "3da8a4e5ae702034d37315a418e5e48ae12970fa213e74d5a8e0523a58e925a8",
+      "counts": {
+        "episodes": 1,
+        "score": -1,
+        "wins": 0
+      },
+      "training_seconds": 0.733349282
+    },
+    {
+      "job_index": 0,
+      "step": 64,
+      "representation": 4,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0000/s64-r4/result.json",
+      "result_sha256": "b0e73cdbb6eb89f0f7d1b28f500da896778597dbf26153930d8229005b7499a4",
+      "counts": {
+        "episodes": 1,
+        "score": -1,
+        "wins": 0
+      },
+      "training_seconds": 0.733349282
+    },
+    {
+      "job_index": 0,
+      "step": 64,
+      "representation": 5,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0000/s64-r5/result.json",
+      "result_sha256": "8191617476234b40baecef0a9b8d99b1a5c91f101fa465d97cb5e2735d99609d",
+      "counts": {
+        "episodes": 1,
+        "score": -1,
+        "wins": 0
+      },
+      "training_seconds": 0.733349282
+    },
+    {
+      "job_index": 0,
+      "step": 64,
+      "representation": 6,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0000/s64-r6/result.json",
+      "result_sha256": "6441555be1165bb56dc83f4c69598450c69f30779b825352da2cb4aa410c79fd",
+      "counts": {
+        "episodes": 1,
+        "score": -1,
+        "wins": 0
+      },
+      "training_seconds": 0.733349282
+    },
+    {
+      "job_index": 0,
+      "step": 64,
+      "representation": 7,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0000/s64-r7/result.json",
+      "result_sha256": "96870476f79427813f9b676651b8a8a3bb92b3a8c613cc42a691debb97615afc",
+      "counts": {
+        "episodes": 1,
+        "score": -1,
+        "wins": 0
+      },
+      "training_seconds": 0.733349282
+    },
+    {
+      "job_index": 0,
+      "step": 64,
+      "representation": 8,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0000/s64-r8/result.json",
+      "result_sha256": "779b9b12a05f8f96c9fbb2a98951b974d3916251211f71d71a7efcec967659b9",
+      "counts": {
+        "episodes": 1,
+        "score": -1,
+        "wins": 0
+      },
+      "training_seconds": 0.733349282
+    },
+    {
+      "job_index": 0,
+      "step": 64,
+      "representation": 9,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0000/s64-r9/result.json",
+      "result_sha256": "b134ba8abbf8e3cc9be854b3d583e2a6e362073761b8ba1b0b9af49e6191175a",
+      "counts": {
+        "episodes": 1,
+        "score": -1,
+        "wins": 0
+      },
+      "training_seconds": 0.733349282
+    },
+    {
+      "job_index": 1,
+      "step": 64,
+      "representation": 0,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0001/s64-r0/result.json",
+      "result_sha256": "52c9e24a26c23596b578b570786aba2c2c8b8e74a6792aa2835b1921d810eae6",
+      "counts": {
+        "bounds_kind": "deterministic-censoring-not-confidence",
+        "capped": 0,
+        "completed": 1,
+        "episodes": 1,
+        "estimand": "mean-final-match-point-fraction-with-censoring-bounds-v1",
+        "left_points": 21,
+        "mean_bounded_net_points": -21.0,
+        "mean_decisions": 225.0,
+        "mean_final_point_fraction_lower": 0.0,
+        "mean_final_point_fraction_upper": 0.0,
+        "mean_match_win_lower": 0.0,
+        "mean_match_win_upper": 0.0,
+        "policy_runtime_certified": false,
+        "right_points": 0,
+        "wins": 0
+      },
+      "training_seconds": 0.687909039
+    },
+    {
+      "job_index": 1,
+      "step": 64,
+      "representation": 1,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0001/s64-r1/result.json",
+      "result_sha256": "cae6f8646a5607aebd39a5463f112189c22fa086cac81ab387a38df1126c78fa",
+      "counts": {
+        "bounds_kind": "deterministic-censoring-not-confidence",
+        "capped": 0,
+        "completed": 1,
+        "episodes": 1,
+        "estimand": "mean-final-match-point-fraction-with-censoring-bounds-v1",
+        "left_points": 21,
+        "mean_bounded_net_points": -21.0,
+        "mean_decisions": 225.0,
+        "mean_final_point_fraction_lower": 0.0,
+        "mean_final_point_fraction_upper": 0.0,
+        "mean_match_win_lower": 0.0,
+        "mean_match_win_upper": 0.0,
+        "policy_runtime_certified": false,
+        "right_points": 0,
+        "wins": 0
+      },
+      "training_seconds": 0.687909039
+    },
+    {
+      "job_index": 1,
+      "step": 64,
+      "representation": 2,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0001/s64-r2/result.json",
+      "result_sha256": "dc059b22c4ce475ab3bb5a366295301429aa990ed92ef9c18d16eb53acde9149",
+      "counts": {
+        "bounds_kind": "deterministic-censoring-not-confidence",
+        "capped": 0,
+        "completed": 1,
+        "episodes": 1,
+        "estimand": "mean-final-match-point-fraction-with-censoring-bounds-v1",
+        "left_points": 21,
+        "mean_bounded_net_points": -21.0,
+        "mean_decisions": 225.0,
+        "mean_final_point_fraction_lower": 0.0,
+        "mean_final_point_fraction_upper": 0.0,
+        "mean_match_win_lower": 0.0,
+        "mean_match_win_upper": 0.0,
+        "policy_runtime_certified": false,
+        "right_points": 0,
+        "wins": 0
+      },
+      "training_seconds": 0.687909039
+    },
+    {
+      "job_index": 1,
+      "step": 64,
+      "representation": 3,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0001/s64-r3/result.json",
+      "result_sha256": "5d06798012a02b60a6f7e97890977ca2aa78d23b2e83d3b9159f4bb3c063cbe8",
+      "counts": {
+        "bounds_kind": "deterministic-censoring-not-confidence",
+        "capped": 0,
+        "completed": 1,
+        "episodes": 1,
+        "estimand": "mean-final-match-point-fraction-with-censoring-bounds-v1",
+        "left_points": 21,
+        "mean_bounded_net_points": -21.0,
+        "mean_decisions": 225.0,
+        "mean_final_point_fraction_lower": 0.0,
+        "mean_final_point_fraction_upper": 0.0,
+        "mean_match_win_lower": 0.0,
+        "mean_match_win_upper": 0.0,
+        "policy_runtime_certified": false,
+        "right_points": 0,
+        "wins": 0
+      },
+      "training_seconds": 0.687909039
+    },
+    {
+      "job_index": 1,
+      "step": 64,
+      "representation": 4,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0001/s64-r4/result.json",
+      "result_sha256": "dfbf68b08c74b6c97d8d2c51eca1ffd814a59a4dccbbafd66b9356ea53b71b44",
+      "counts": {
+        "bounds_kind": "deterministic-censoring-not-confidence",
+        "capped": 0,
+        "completed": 1,
+        "episodes": 1,
+        "estimand": "mean-final-match-point-fraction-with-censoring-bounds-v1",
+        "left_points": 21,
+        "mean_bounded_net_points": -21.0,
+        "mean_decisions": 177.0,
+        "mean_final_point_fraction_lower": 0.0,
+        "mean_final_point_fraction_upper": 0.0,
+        "mean_match_win_lower": 0.0,
+        "mean_match_win_upper": 0.0,
+        "policy_runtime_certified": false,
+        "right_points": 0,
+        "wins": 0
+      },
+      "training_seconds": 0.687909039
+    },
+    {
+      "job_index": 1,
+      "step": 64,
+      "representation": 5,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0001/s64-r5/result.json",
+      "result_sha256": "5a2780a4b4070ea39cc7591359364d3b34de73d3d20b3667135e6e4a2c9fc7eb",
+      "counts": {
+        "bounds_kind": "deterministic-censoring-not-confidence",
+        "capped": 0,
+        "completed": 1,
+        "episodes": 1,
+        "estimand": "mean-final-match-point-fraction-with-censoring-bounds-v1",
+        "left_points": 21,
+        "mean_bounded_net_points": -21.0,
+        "mean_decisions": 225.0,
+        "mean_final_point_fraction_lower": 0.0,
+        "mean_final_point_fraction_upper": 0.0,
+        "mean_match_win_lower": 0.0,
+        "mean_match_win_upper": 0.0,
+        "policy_runtime_certified": false,
+        "right_points": 0,
+        "wins": 0
+      },
+      "training_seconds": 0.687909039
+    },
+    {
+      "job_index": 1,
+      "step": 64,
+      "representation": 6,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0001/s64-r6/result.json",
+      "result_sha256": "4b3607757766f999ce745d7dc36f11bf4f2c6c00e84b3b19a4e64dc3b86a2142",
+      "counts": {
+        "bounds_kind": "deterministic-censoring-not-confidence",
+        "capped": 0,
+        "completed": 1,
+        "episodes": 1,
+        "estimand": "mean-final-match-point-fraction-with-censoring-bounds-v1",
+        "left_points": 21,
+        "mean_bounded_net_points": -21.0,
+        "mean_decisions": 225.0,
+        "mean_final_point_fraction_lower": 0.0,
+        "mean_final_point_fraction_upper": 0.0,
+        "mean_match_win_lower": 0.0,
+        "mean_match_win_upper": 0.0,
+        "policy_runtime_certified": false,
+        "right_points": 0,
+        "wins": 0
+      },
+      "training_seconds": 0.687909039
+    },
+    {
+      "job_index": 2,
+      "step": 64,
+      "representation": 0,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0002/s64-r0/result.json",
+      "result_sha256": "043d4f301655b20f35879f8987383416d268da8d5c8e218c39b4fe5e461bbac6",
+      "counts": {
+        "capped": 0,
+        "episodes": 1,
+        "mean_decisions": 37.0,
+        "mean_perf": 0.0,
+        "mean_pipes": 0.0,
+        "mean_return": -0.20742815732955933,
+        "pipes": 0,
+        "policy_runtime_certified": false
+      },
+      "training_seconds": 0.567377098
+    },
+    {
+      "job_index": 2,
+      "step": 64,
+      "representation": 1,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0002/s64-r1/result.json",
+      "result_sha256": "965d39467ce432b84348b0a71130e68af1c121bb7e3ab688ee0b979a06a9b007",
+      "counts": {
+        "capped": 0,
+        "episodes": 1,
+        "mean_decisions": 37.0,
+        "mean_perf": 0.0,
+        "mean_pipes": 0.0,
+        "mean_return": -0.20742815732955933,
+        "pipes": 0,
+        "policy_runtime_certified": false
+      },
+      "training_seconds": 0.567377098
+    },
+    {
+      "job_index": 2,
+      "step": 64,
+      "representation": 2,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0002/s64-r2/result.json",
+      "result_sha256": "4172b40f943343e469b2c356c2cf413a5a4f30ede9625d228ace34ddfae515a4",
+      "counts": {
+        "capped": 0,
+        "episodes": 1,
+        "mean_decisions": 37.0,
+        "mean_perf": 0.0,
+        "mean_pipes": 0.0,
+        "mean_return": -0.20742815732955933,
+        "pipes": 0,
+        "policy_runtime_certified": false
+      },
+      "training_seconds": 0.567377098
+    },
+    {
+      "job_index": 2,
+      "step": 64,
+      "representation": 3,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0002/s64-r3/result.json",
+      "result_sha256": "ea4dc2d687f03952f2d4f2f83dae5da8c75e33a04660429a38a61b9f81f4c9cd",
+      "counts": {
+        "capped": 0,
+        "episodes": 1,
+        "mean_decisions": 37.0,
+        "mean_perf": 0.0,
+        "mean_pipes": 0.0,
+        "mean_return": -0.20742815732955933,
+        "pipes": 0,
+        "policy_runtime_certified": false
+      },
+      "training_seconds": 0.567377098
+    },
+    {
+      "job_index": 2,
+      "step": 64,
+      "representation": 4,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0002/s64-r4/result.json",
+      "result_sha256": "5067dac9cba49f1a58130041a6451edb4b9cbb31ed92305efdc61842f21c392b",
+      "counts": {
+        "capped": 0,
+        "episodes": 1,
+        "mean_decisions": 37.0,
+        "mean_perf": 0.0,
+        "mean_pipes": 0.0,
+        "mean_return": -0.20742815732955933,
+        "pipes": 0,
+        "policy_runtime_certified": false
+      },
+      "training_seconds": 0.567377098
+    },
+    {
+      "job_index": 2,
+      "step": 64,
+      "representation": 5,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0002/s64-r5/result.json",
+      "result_sha256": "1b3a5b5f393d6bf63a659a11b070f40f397e46f7f18fdc75e8bf3218a56327c0",
+      "counts": {
+        "capped": 0,
+        "episodes": 1,
+        "mean_decisions": 37.0,
+        "mean_perf": 0.0,
+        "mean_pipes": 0.0,
+        "mean_return": -0.20742815732955933,
+        "pipes": 0,
+        "policy_runtime_certified": false
+      },
+      "training_seconds": 0.567377098
+    },
+    {
+      "job_index": 2,
+      "step": 64,
+      "representation": 6,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0002/s64-r6/result.json",
+      "result_sha256": "b93c2a6aa834e5c74552a1c30212607fbb560be93ede57c1416dc19969d7cf2e",
+      "counts": {
+        "capped": 0,
+        "episodes": 1,
+        "mean_decisions": 37.0,
+        "mean_perf": 0.0,
+        "mean_pipes": 0.0,
+        "mean_return": -0.20742815732955933,
+        "pipes": 0,
+        "policy_runtime_certified": false
+      },
+      "training_seconds": 0.567377098
+    },
+    {
+      "job_index": 3,
+      "step": 64,
+      "representation": 0,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0003/s64-r0/result.json",
+      "result_sha256": "72ac9d8e7556b6dfc714f3e4ae21404e108fcd90ecb90d8dd88a1b40187a66b6",
+      "counts": {
+        "capped": 0,
+        "completed": 1,
+        "episodes": 1,
+        "estimand": "score accumulated through first native terminal or fixed frame cap; all assigned episodes",
+        "mean_decisions": 181.0,
+        "mean_frames": 542.0,
+        "mean_perf": 0.0011574074160307646,
+        "mean_score": 1.0,
+        "policy_runtime_certified": false,
+        "score": 1
+      },
+      "training_seconds": 0.491888957
+    },
+    {
+      "job_index": 3,
+      "step": 64,
+      "representation": 1,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0003/s64-r1/result.json",
+      "result_sha256": "dd7f5c9fc7ee1bde2dd5950017473536fb5bfba4f7e64bd773c72166ee4aa807",
+      "counts": {
+        "capped": 0,
+        "completed": 1,
+        "episodes": 1,
+        "estimand": "score accumulated through first native terminal or fixed frame cap; all assigned episodes",
+        "mean_decisions": 181.0,
+        "mean_frames": 542.0,
+        "mean_perf": 0.0011574074160307646,
+        "mean_score": 1.0,
+        "policy_runtime_certified": false,
+        "score": 1
+      },
+      "training_seconds": 0.491888957
+    },
+    {
+      "job_index": 3,
+      "step": 64,
+      "representation": 2,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0003/s64-r2/result.json",
+      "result_sha256": "f55345ebf67a94f74865b6d20d06e54e8dd176951612de8fd2f440e830044254",
+      "counts": {
+        "capped": 0,
+        "completed": 1,
+        "episodes": 1,
+        "estimand": "score accumulated through first native terminal or fixed frame cap; all assigned episodes",
+        "mean_decisions": 181.0,
+        "mean_frames": 542.0,
+        "mean_perf": 0.0011574074160307646,
+        "mean_score": 1.0,
+        "policy_runtime_certified": false,
+        "score": 1
+      },
+      "training_seconds": 0.491888957
+    },
+    {
+      "job_index": 3,
+      "step": 64,
+      "representation": 3,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0003/s64-r3/result.json",
+      "result_sha256": "1d68f87ac2170ce1cc3a6aa3eaf224db50fc583c077dd538c7fd803891cb2c0c",
+      "counts": {
+        "capped": 0,
+        "completed": 1,
+        "episodes": 1,
+        "estimand": "score accumulated through first native terminal or fixed frame cap; all assigned episodes",
+        "mean_decisions": 210.0,
+        "mean_frames": 628.0,
+        "mean_perf": 0.002314814832061529,
+        "mean_score": 2.0,
+        "policy_runtime_certified": false,
+        "score": 2
+      },
+      "training_seconds": 0.491888957
+    },
+    {
+      "job_index": 3,
+      "step": 64,
+      "representation": 4,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0003/s64-r4/result.json",
+      "result_sha256": "64418445c93acbd8141202dffc0d1d663bb3f914d073404a8ac59f3417e59128",
+      "counts": {
+        "capped": 0,
+        "completed": 1,
+        "episodes": 1,
+        "estimand": "score accumulated through first native terminal or fixed frame cap; all assigned episodes",
+        "mean_decisions": 181.0,
+        "mean_frames": 542.0,
+        "mean_perf": 0.0011574074160307646,
+        "mean_score": 1.0,
+        "policy_runtime_certified": false,
+        "score": 1
+      },
+      "training_seconds": 0.491888957
+    },
+    {
+      "job_index": 4,
+      "step": 64,
+      "representation": 0,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0004/s64-r0/result.json",
+      "result_sha256": "77ee1a66f4c0613a3aedce50cfb5429550b51fc0fb40c8be9d1d2eeacd11d562",
+      "counts": {
+        "deaths": 1,
+        "episodes": 1,
+        "estimand": "mean-ending-snake-length-all-assigned-episodes-v1",
+        "foods": 0,
+        "horizon_ends": 0,
+        "mean_decisions": 6.0,
+        "mean_foods": 0.0,
+        "mean_perf": 0.008333333767950535,
+        "mean_return": -1.0,
+        "mean_score": 1.0,
+        "policy_runtime_certified": false,
+        "score": 1
+      },
+      "training_seconds": 0.627754701
+    },
+    {
+      "job_index": 4,
+      "step": 64,
+      "representation": 1,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0004/s64-r1/result.json",
+      "result_sha256": "460ae0aea077acb7c1d81cf85ba49f928aba36f440cebfd76e29dc9134830835",
+      "counts": {
+        "deaths": 1,
+        "episodes": 1,
+        "estimand": "mean-ending-snake-length-all-assigned-episodes-v1",
+        "foods": 0,
+        "horizon_ends": 0,
+        "mean_decisions": 6.0,
+        "mean_foods": 0.0,
+        "mean_perf": 0.008333333767950535,
+        "mean_return": -1.0,
+        "mean_score": 1.0,
+        "policy_runtime_certified": false,
+        "score": 1
+      },
+      "training_seconds": 0.627754701
+    },
+    {
+      "job_index": 4,
+      "step": 64,
+      "representation": 2,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0004/s64-r2/result.json",
+      "result_sha256": "bf9f160056b303786e98511f48cac62254270ee1e18ea0d74fab549773eaa9e1",
+      "counts": {
+        "deaths": 1,
+        "episodes": 1,
+        "estimand": "mean-ending-snake-length-all-assigned-episodes-v1",
+        "foods": 0,
+        "horizon_ends": 0,
+        "mean_decisions": 6.0,
+        "mean_foods": 0.0,
+        "mean_perf": 0.008333333767950535,
+        "mean_return": -1.0,
+        "mean_score": 1.0,
+        "policy_runtime_certified": false,
+        "score": 1
+      },
+      "training_seconds": 0.627754701
+    },
+    {
+      "job_index": 4,
+      "step": 64,
+      "representation": 3,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0004/s64-r3/result.json",
+      "result_sha256": "8d3d611f59a7fca1192c9866ef4188e1f5e783b1ee71ce5c1c89254caae495f0",
+      "counts": {
+        "deaths": 1,
+        "episodes": 1,
+        "estimand": "mean-ending-snake-length-all-assigned-episodes-v1",
+        "foods": 0,
+        "horizon_ends": 0,
+        "mean_decisions": 6.0,
+        "mean_foods": 0.0,
+        "mean_perf": 0.008333333767950535,
+        "mean_return": -1.0,
+        "mean_score": 1.0,
+        "policy_runtime_certified": false,
+        "score": 1
+      },
+      "training_seconds": 0.627754701
+    },
+    {
+      "job_index": 4,
+      "step": 64,
+      "representation": 4,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0004/s64-r4/result.json",
+      "result_sha256": "bcb486d74d9f99b09844a213ee1e214ce0ac91dc946402c99ebeb20632a70d3a",
+      "counts": {
+        "deaths": 1,
+        "episodes": 1,
+        "estimand": "mean-ending-snake-length-all-assigned-episodes-v1",
+        "foods": 0,
+        "horizon_ends": 0,
+        "mean_decisions": 6.0,
+        "mean_foods": 0.0,
+        "mean_perf": 0.008333333767950535,
+        "mean_return": -1.0,
+        "mean_score": 1.0,
+        "policy_runtime_certified": false,
+        "score": 1
+      },
+      "training_seconds": 0.627754701
+    },
+    {
+      "job_index": 4,
+      "step": 64,
+      "representation": 5,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0004/s64-r5/result.json",
+      "result_sha256": "c5d53d083bf0627043d545f0e268c030d7485cc7a202a17410321df47de51087",
+      "counts": {
+        "deaths": 1,
+        "episodes": 1,
+        "estimand": "mean-ending-snake-length-all-assigned-episodes-v1",
+        "foods": 0,
+        "horizon_ends": 0,
+        "mean_decisions": 6.0,
+        "mean_foods": 0.0,
+        "mean_perf": 0.008333333767950535,
+        "mean_return": -1.0,
+        "mean_score": 1.0,
+        "policy_runtime_certified": false,
+        "score": 1
+      },
+      "training_seconds": 0.627754701
+    },
+    {
+      "job_index": 5,
+      "step": 64,
+      "representation": 0,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0005/s64-r0/result.json",
+      "result_sha256": "7cf0a004336090fba73ac901ef77c8fefb3eaae366d4facd2a802baeee72c076",
+      "counts": {
+        "duplicate_native_log_entries": 0,
+        "episodes": 1,
+        "estimand": "success-fraction-all-assigned-episodes-v1",
+        "heldout_exclusion_certified": false,
+        "mean_decisions": 73.0,
+        "mean_return": 1.0,
+        "policy_runtime_certified": false,
+        "success_fraction": 1.0,
+        "successes": 1,
+        "timeouts": 0
+      },
+      "training_seconds": 0.747994804
+    },
+    {
+      "job_index": 5,
+      "step": 64,
+      "representation": 1,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0005/s64-r1/result.json",
+      "result_sha256": "d8b6d6181d297f38be4f2b3192be246b926704b2ba01311b194043ff2c215f0e",
+      "counts": {
+        "duplicate_native_log_entries": 0,
+        "episodes": 1,
+        "estimand": "success-fraction-all-assigned-episodes-v1",
+        "heldout_exclusion_certified": false,
+        "mean_decisions": 73.0,
+        "mean_return": 1.0,
+        "policy_runtime_certified": false,
+        "success_fraction": 1.0,
+        "successes": 1,
+        "timeouts": 0
+      },
+      "training_seconds": 0.747994804
+    },
+    {
+      "job_index": 5,
+      "step": 64,
+      "representation": 2,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0005/s64-r2/result.json",
+      "result_sha256": "16e97672e967a710667bbab6500c86d378e8772a143bdc6c530f97b558f58ec9",
+      "counts": {
+        "duplicate_native_log_entries": 0,
+        "episodes": 1,
+        "estimand": "success-fraction-all-assigned-episodes-v1",
+        "heldout_exclusion_certified": false,
+        "mean_decisions": 73.0,
+        "mean_return": 1.0,
+        "policy_runtime_certified": false,
+        "success_fraction": 1.0,
+        "successes": 1,
+        "timeouts": 0
+      },
+      "training_seconds": 0.747994804
+    },
+    {
+      "job_index": 5,
+      "step": 64,
+      "representation": 3,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0005/s64-r3/result.json",
+      "result_sha256": "510785113cc22ae1b7fab885e74775db06540b3b58d6df1efb31208d4e474885",
+      "counts": {
+        "duplicate_native_log_entries": 0,
+        "episodes": 1,
+        "estimand": "success-fraction-all-assigned-episodes-v1",
+        "heldout_exclusion_certified": false,
+        "mean_decisions": 73.0,
+        "mean_return": 1.0,
+        "policy_runtime_certified": false,
+        "success_fraction": 1.0,
+        "successes": 1,
+        "timeouts": 0
+      },
+      "training_seconds": 0.747994804
+    },
+    {
+      "job_index": 5,
+      "step": 64,
+      "representation": 4,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0005/s64-r4/result.json",
+      "result_sha256": "fb99e4660217beee250038e0b5e2fcbd7a3d8f5550beabbfece01b4d2a2d8a58",
+      "counts": {
+        "duplicate_native_log_entries": 0,
+        "episodes": 1,
+        "estimand": "success-fraction-all-assigned-episodes-v1",
+        "heldout_exclusion_certified": false,
+        "mean_decisions": 73.0,
+        "mean_return": 1.0,
+        "policy_runtime_certified": false,
+        "success_fraction": 1.0,
+        "successes": 1,
+        "timeouts": 0
+      },
+      "training_seconds": 0.747994804
+    },
+    {
+      "job_index": 5,
+      "step": 64,
+      "representation": 5,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/evaluations/job-0005/s64-r5/result.json",
+      "result_sha256": "03fc562cd21d6a6d8f93098f70d3583736b6ebf2ff60a946beeef5104eee9364",
+      "counts": {
+        "duplicate_native_log_entries": 0,
+        "episodes": 1,
+        "estimand": "success-fraction-all-assigned-episodes-v1",
+        "heldout_exclusion_certified": false,
+        "mean_decisions": 73.0,
+        "mean_return": 1.0,
+        "policy_runtime_certified": false,
+        "success_fraction": 1.0,
+        "successes": 1,
+        "timeouts": 0
+      },
+      "training_seconds": 0.747994804
+    }
+  ],
+  "repeat_checks": [
+    {
+      "job_index": 0,
+      "mode": "repeat",
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/repeat-checks/job-0000/repeat/result.json",
+      "result_sha256": "4eae48facb2d436eb987b4f46cc1974867fc53af3287eb948d86223d9e25eb03",
+      "episodes_sha256": "7ad8fb46cbb07c503f298918ee8f080688ecc4eebdb414901e7127314e6c71f6"
+    },
+    {
+      "job_index": 0,
+      "mode": "eager",
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/repeat-checks/job-0000/eager/result.json",
+      "result_sha256": "e29ebe200f15d4df938d4826bbaabca9dc2db4231d850d0857ae93dd50b68fe3",
+      "episodes_sha256": "7ad8fb46cbb07c503f298918ee8f080688ecc4eebdb414901e7127314e6c71f6"
+    },
+    {
+      "job_index": 1,
+      "mode": "repeat",
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/repeat-checks/job-0001/repeat/result.json",
+      "result_sha256": "b16ace15204ad196e1db7090e0c836f2e4f48c2e291665b7e3ee26c8eda48a9d",
+      "episodes_sha256": "b62464a10c2bfa7681f78bac637d1c625ccfd852147d9874c2d9028d7fe45e4c"
+    },
+    {
+      "job_index": 1,
+      "mode": "eager",
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/repeat-checks/job-0001/eager/result.json",
+      "result_sha256": "44b601d9f619e7326d2be3435834366948a7c7e5b6f04f9d37743f7de68a8922",
+      "episodes_sha256": "b62464a10c2bfa7681f78bac637d1c625ccfd852147d9874c2d9028d7fe45e4c"
+    },
+    {
+      "job_index": 2,
+      "mode": "repeat",
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/repeat-checks/job-0002/repeat/result.json",
+      "result_sha256": "0c88c865cf5d4e9676a8043556607b98179aeef6c599494dc9e1c15ab9332b35",
+      "episodes_sha256": "c7b9224178b94dc94da54f80bc948466bbfd18d81897b91122b8120382db60db"
+    },
+    {
+      "job_index": 2,
+      "mode": "eager",
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/repeat-checks/job-0002/eager/result.json",
+      "result_sha256": "7e6e4edfc7dc062e88a5dc783f9ce23e18709f16826926c9a9e4d49dc81a31c7",
+      "episodes_sha256": "c7b9224178b94dc94da54f80bc948466bbfd18d81897b91122b8120382db60db"
+    },
+    {
+      "job_index": 3,
+      "mode": "repeat",
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/repeat-checks/job-0003/repeat/result.json",
+      "result_sha256": "542a9931d624f27dad848e40bb72ac4bfa4c3d0a112cd4688404d7199050fb72",
+      "episodes_sha256": "d9008cbe0886d97d0c8d4f64851ad19ccdc8d124c5349542b4e524b65bf69f94"
+    },
+    {
+      "job_index": 3,
+      "mode": "eager",
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/repeat-checks/job-0003/eager/result.json",
+      "result_sha256": "decc3faf6dadf9ee7b0ce527c96abe493e903776c19bb57e17493b0e59496b52",
+      "episodes_sha256": "d9008cbe0886d97d0c8d4f64851ad19ccdc8d124c5349542b4e524b65bf69f94"
+    },
+    {
+      "job_index": 4,
+      "mode": "repeat",
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/repeat-checks/job-0004/repeat/result.json",
+      "result_sha256": "11dbd39ac7cc562b2a44a146a1a686ca2b5df6ebff66f40d19febc4654618c40",
+      "episodes_sha256": "559af4284856d5e09e637c621d1fa29edf9030c05fefd68ff9b1d0d7644f63f2"
+    },
+    {
+      "job_index": 4,
+      "mode": "eager",
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/repeat-checks/job-0004/eager/result.json",
+      "result_sha256": "0e534672b03ea7096cce932fb0d8f159083a1cf837af657a7bf528983bf5db06",
+      "episodes_sha256": "559af4284856d5e09e637c621d1fa29edf9030c05fefd68ff9b1d0d7644f63f2"
+    },
+    {
+      "job_index": 5,
+      "mode": "repeat",
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/repeat-checks/job-0005/repeat/result.json",
+      "result_sha256": "c1925be09685997e71b085776dbd92c456f84d39d58c1b54954d0cb0ed2b2d4e",
+      "episodes_sha256": "7f7a113ae82eb0a2a6ff8a00ffb980fd0338a4779c8fe957b9ae4fd94604bdf9"
+    },
+    {
+      "job_index": 5,
+      "mode": "eager",
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/repeat-checks/job-0005/eager/result.json",
+      "result_sha256": "3de443648e4b6323ea5abe89c2e4fa49b2e86febae0ac4d69e0579559b0768c7",
+      "episodes_sha256": "7f7a113ae82eb0a2a6ff8a00ffb980fd0338a4779c8fe957b9ae4fd94604bdf9"
+    }
+  ],
+  "learning_quality_claim": false,
+  "started_monotonic_ns": 564159611406975,
+  "layout_checks": [
+    {
+      "job_index": 0,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/policy-layouts/job-0000/result.json",
+      "result_sha256": "84b9c25f67b0ae21c8e6ec8b8d330f31b9d6396c36e0a44d7139566bf0d87f5a"
+    },
+    {
+      "job_index": 1,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/policy-layouts/job-0001/result.json",
+      "result_sha256": "d9698a8d7cce0efc52253b97ea4816403438c36b3fc06c0975a8b494cb81f4e3"
+    },
+    {
+      "job_index": 2,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/policy-layouts/job-0002/result.json",
+      "result_sha256": "e085a49a3849c67e94ae0305e916d28b4cc9c29120c6b68c0252a4bbbd7007f2"
+    },
+    {
+      "job_index": 3,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/policy-layouts/job-0003/result.json",
+      "result_sha256": "7a336b39dcfeae08a670534efe24a1d741ba4c3d3b1f2c554074a8a65571dca8"
+    },
+    {
+      "job_index": 4,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/policy-layouts/job-0004/result.json",
+      "result_sha256": "161b76b70589ac59792a2da92180d3f3c880f7bdde8076a4ae53760756b8465d"
+    },
+    {
+      "job_index": 5,
+      "result": "/home/claude/cnn-audit-20261008/build/image-panels-20261012/image-feedback-v3-prepared/execution/trial-0001/panel/execution/policy-layouts/job-0005/result.json",
+      "result_sha256": "218fdca62a078fef8890022f79e6fbf79c7aea892f18ebddc8220e297276e5a4"
+    }
+  ],
+  "hardware": {
+    "gpu_name": "NVIDIA GeForce RTX 5060",
+    "gpu_uuid": "GPU-56b0df25-b4c9-46eb-e498-bc5c71904097",
+    "driver": "591.86",
+    "host": "G240",
+    "cuda_compiler": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2025 NVIDIA Corporation\nBuilt on Fri_Feb_21_20:23:50_PST_2025\nCuda compilation tools, release 12.8, V12.8.93\nBuild cuda_12.8.r12.8/compiler.35583870_0\n"
+  },
+  "ended_monotonic_ns": 564251397172162
+}

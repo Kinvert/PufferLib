@@ -1,0 +1,25 @@
+{
+  "command": [
+    "/home/claude/cnn/.venv/bin/python",
+    "/home/claude/cnn-audit-20261008/research/cnn_graph_acceptance.py",
+    "_worker",
+    "--out",
+    "/home/claude/cnn-audit-20261008/build/image-panels-20261013/pong-nature-compensated-check/worker-5"
+  ],
+  "cwd": "/home/claude/cnn-audit-20261008/build/image-panels-20261013/pong-nature-compensated-check/worker-5",
+  "status": "ok",
+  "timeout": 120,
+  "environment": {
+    "PUFFER_CHECKPOINT_RECEIPTS": null,
+    "PUFFER_SAVE_INITIAL_CHECKPOINT": null,
+    "NVCC_ARCH": null,
+    "NVCC_EXTRA": null,
+    "NVCC_APPEND_FLAGS": null,
+    "CUDA_HOME": "/usr/local/cuda",
+    "NCCL_ROOT": "/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl"
+  },
+  "launch_monotonic_ns": 603618535560745,
+  "pid": 1124149,
+  "returncode": 0,
+  "end_monotonic_ns": 603683484600619
+}

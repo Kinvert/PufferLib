@@ -1,0 +1,5 @@
+src/ocean.cu: OK
+ocean/foragecnn/foragecnn.h: OK
+ocean/foragecnn/sprites.h: OK
+ocean/foragecnn/imported_sprites.h: OK
+config/foragecnn.ini: OK
