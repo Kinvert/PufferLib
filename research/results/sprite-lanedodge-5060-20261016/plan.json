@@ -1,0 +1,38 @@
+{
+  "suite": "sprite-lanedodge-5060",
+  "date": "2026-10-16",
+  "rules": "sprite-lanedodge-v1",
+  "hardware": "RTX 5060 8GB (WSL G240), CUDA 12.8, sm_120, float32",
+  "binary": "build/sprite_lanedodge/puffer",
+  "seed": 7,
+  "note": "Full 640x480 pixel input is 921600 floats; the forage partial-view A64/MB256 recipe does not fit 8GB. Pixel allocation chosen from measured SPS probes.",
+  "coin_semantics": "Arrival branch consumes entities on both rows (consume-once). All pre-fix results in results.md are historical pump-metric artifacts; fixed-code results are in the fixed-code section.",
+  "rates": {
+    "selected": "hazard_rate=1, coin_rate=40 (INI default)",
+    "selection": "Matched-rate state grid on the fixed game (84M, seed 7, holdout 2027/9001): h20c40 0.543 mean, h10c40 0.628, h5c40 0.755, h3c40 0.773, h2c40 0.796, h1c40 0.830, h0c40 0.877 (ceiling; no hazards in play). h1c40 is the closest-to-target rate that keeps hazards in play (~4 per episode); the ~90% state target is approached (0.82/0.84) but not reached under the corrected coin semantics.",
+    "pre_fix_trail": "h45c25 0.820923/0.793350, h30c25 0.868923/0.850152, h30c40 0.864800/0.890751, h20c40 0.969907/0.962675 (pump metric; preserved, not pooled)"
+  },
+  "state": {
+    "observation_mode": 0,
+    "obs_size": 9,
+    "recipe": "A256/H64/MB2048, H128-L1",
+    "budget": "INI default 16777216, then 83886080 (forage state-controls reference), then 280000000, each <= 5 min wall clock",
+    "target": "~90% perf",
+    "note": "state scaling decided from holdout 2027/9001 trajectory; every run_id preserved; single seed 7, serial",
+    "canonical_fixed": "ld-state-h1c40-84M-s7 (84M at h1c40), repeat ld-state-h1c40-84M-s7-repeat byte-identical 80/80; holdout 0.823194/0.836414; eval double-run identical"
+  },
+  "pixel": {
+    "observation_mode": 1,
+    "obs_size": 921600,
+    "recipe": "A4/H64/MB64, H128-L1 core, Nature CNN (SPRITE_CNN_RESEARCH encoder)",
+    "oom_rationale": "Full-res 921600-float obs: A8/H64/MB64 ~8.4GB > 7.4GB free (probe OOM); A4/H64/MB64 ~6.4GB fits (measured 470.5 SPS). A8/H32/MB64 also fits (504.9 SPS) but H32 breaks horizon parity with the state recipe; A4 kept for H64 parity.",
+    "budget": "timeout 300 wall clock on the INI default total_timesteps=16777216 (LR anneals over 16.7M, not over the truncated allocation), checkpoint interval 55 epochs (256 decisions/epoch), nearest-300s timestamp-only checkpoint selection, no score peeking",
+    "target": "~50% perf",
+    "canonical_fixed": "ld-pixel-h1c40-300s-s7 at h1c40 with PUFFER_WEIGHTS_MIRROR=build/ld-pixel-h1c40/selected.bin"
+  },
+  "eval": {
+    "worlds": [2027, 9001],
+    "episodes": 64,
+    "flags": "headless eval_agents=1 horizon=1 minibatch=1 seed=7 metric=perf; rates matched to the training run (fixed-code runs use the INI h1c40 defaults)"
+  }
+}

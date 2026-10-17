@@ -1,0 +1,98 @@
+[
+  {
+    "name": "happy-otter-1",
+    "family": "connected",
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 199457.531482035,
+    "monotonic_finished": 199469.680024521,
+    "process_seconds": 12.148542485985672,
+    "log_sha256": "46ddc7b1f5b6bf1b99f8c23f519b3803359b28fa39736674024928c0bafb2543",
+    "steps": 8388608,
+    "process_sps": 690503.2442926334,
+    "native_uptime": 11.182869911193848,
+    "native_last_bin_sps": 756491.026476409,
+    "training_perf": 0.9884408712387085,
+    "training_grape_exits": 0.9963133931159973,
+    "parameters": 67968,
+    "checkpoints": {
+      "0000000002097152.bin": "b489f59db52725945f8ce45c8d064f46335861fc250f05810f90fb43fdf19cf9",
+      "0000000004194304.bin": "07c64b15607e314ce53f4c87daa48a7e7f0c56e89932dfa907c2e5672e600e78",
+      "0000000006291456.bin": "6ed563b4d8be608bd4a0277d18abd473d23f4ae01c45e851bf4023c1300a8926",
+      "0000000008388608.bin": "1f7c282e1c841be12e490a5e641d184dcca7466c60fc4a1e389bf7700aec28df"
+    },
+    "final_checkpoint": "/home/claude/cnn/build/sprite-forage-connectivity-20261016/happy-otter-1/checkpoints/sprite_forage/happy-otter-1/0000000008388608.bin"
+  },
+  {
+    "name": "mystic-fern-2",
+    "family": "unchecked",
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 199469.73360477,
+    "monotonic_finished": 199480.024300367,
+    "process_seconds": 10.290695596981095,
+    "log_sha256": "08047a30b9b8b0f3e958a8936ccf55aa20481883670043b8307eafcc2f08c8a1",
+    "steps": 8388608,
+    "process_sps": 815164.3317931689,
+    "native_uptime": 9.959045648574829,
+    "native_last_bin_sps": 845091.7007231049,
+    "training_perf": 0.9890057444572449,
+    "training_grape_exits": 0.9980879426002502,
+    "parameters": 67968,
+    "checkpoints": {
+      "0000000002097152.bin": "822708ccd130111e16a9a5ac0a04bd481316da692224599acf18ac3a5b898243",
+      "0000000004194304.bin": "67d366ba875f0cbbd7192588aa1e6cc734d0d182dc6148b37b860a8283edf1ec",
+      "0000000006291456.bin": "42e70feb8510bdee4df6f98f07f6b3e85e80cf0ca5dffa348dc517c1914526f8",
+      "0000000008388608.bin": "8b35dcca2103c3d514e2c52daba514f48090543c3c43bcfee25bd7e7ccd75f42"
+    },
+    "final_checkpoint": "/home/claude/cnn/build/sprite-forage-connectivity-20261016/mystic-fern-2/checkpoints/sprite_forage/mystic-fern-2/0000000008388608.bin"
+  },
+  {
+    "name": "mystic-fern-3",
+    "family": "unchecked",
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 199480.081012043,
+    "monotonic_finished": 199490.324911197,
+    "process_seconds": 10.24389915401116,
+    "log_sha256": "fd782c614b0e07d8b606f326e346c07efca7cf88a80ec6d5de2ea74e7da6cf5e",
+    "steps": 8388608,
+    "process_sps": 818888.1864104752,
+    "native_uptime": 9.846903324127197,
+    "native_last_bin_sps": 847957.5836479882,
+    "training_perf": 0.9900950789451599,
+    "training_grape_exits": 0.9973586797714233,
+    "parameters": 67968,
+    "checkpoints": {
+      "0000000002097152.bin": "822708ccd130111e16a9a5ac0a04bd481316da692224599acf18ac3a5b898243",
+      "0000000004194304.bin": "67d366ba875f0cbbd7192588aa1e6cc734d0d182dc6148b37b860a8283edf1ec",
+      "0000000006291456.bin": "42e70feb8510bdee4df6f98f07f6b3e85e80cf0ca5dffa348dc517c1914526f8",
+      "0000000008388608.bin": "8b35dcca2103c3d514e2c52daba514f48090543c3c43bcfee25bd7e7ccd75f42"
+    },
+    "final_checkpoint": "/home/claude/cnn/build/sprite-forage-connectivity-20261016/mystic-fern-3/checkpoints/sprite_forage/mystic-fern-3/0000000008388608.bin"
+  },
+  {
+    "name": "happy-otter-4",
+    "family": "connected",
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 199490.393418913,
+    "monotonic_finished": 199501.741370538,
+    "process_seconds": 11.347951624979032,
+    "log_sha256": "888433708866d82970643b03bb0f55ab16237bb7537b9703c9075f9fda7ebb3f",
+    "steps": 8388608,
+    "process_sps": 739217.8145644412,
+    "native_uptime": 11.008686780929565,
+    "native_last_bin_sps": 749593.967598794,
+    "training_perf": 0.9893836379051208,
+    "training_grape_exits": 0.9973201155662537,
+    "parameters": 67968,
+    "checkpoints": {
+      "0000000002097152.bin": "b489f59db52725945f8ce45c8d064f46335861fc250f05810f90fb43fdf19cf9",
+      "0000000004194304.bin": "07c64b15607e314ce53f4c87daa48a7e7f0c56e89932dfa907c2e5672e600e78",
+      "0000000006291456.bin": "6ed563b4d8be608bd4a0277d18abd473d23f4ae01c45e851bf4023c1300a8926",
+      "0000000008388608.bin": "1f7c282e1c841be12e490a5e641d184dcca7466c60fc4a1e389bf7700aec28df"
+    },
+    "final_checkpoint": "/home/claude/cnn/build/sprite-forage-connectivity-20261016/happy-otter-4/checkpoints/sprite_forage/happy-otter-4/0000000008388608.bin"
+  }
+]

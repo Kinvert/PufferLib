@@ -64,6 +64,10 @@ if [ "$ENV" = "all" ]; then
     FAILED=""
     for env_dir in ocean/*/; do
         env=$(basename "$env_dir")
+        if [ ! -f "$env_dir/$env.h" ] && [ ! -f "$env_dir/$env.c" ] \
+            && [ ! -f "$env_dir/$env.cu" ]; then
+            continue
+        fi
         if bash "$0" "$env" && bash "$0" "$env" --float; then
             echo "OK: $env"
         else

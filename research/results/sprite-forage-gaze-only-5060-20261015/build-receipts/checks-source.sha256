@@ -1,0 +1,6 @@
+205cae58c9f5e30f900ce0a94c0f1ef07db913518639431c36213c9b54c28db7  /home/claude/cnn/build/sprite-forage-gaze-only-build-20261015/checks
+e46c9fe28dad0ab52dd72ab5093a73c3d03281fb237d689ae57614dac096f51c  /home/claude/cnn/build/sprite-forage-gaze-only-build-20261015/source/research/forage_attention_encoder.cu
+90ee93adc87013ee58f814ddfc72f3122c0b5ca6c5af783562a25c4ddc3f76e1  /home/claude/cnn/build/sprite-forage-gaze-only-build-20261015/source/research/native_encoder_reference.cu
+a23e1c4130ebec7792df18bcc30e8fe8244b70259b255b083d91d0bf92589544  /home/claude/cnn/build/sprite-forage-gaze-only-build-20261015/source/research/sprite_encoders.cu
+3ee9c1f967e3c78abab27b29108e5eed7dc4262c80552f10fa82de91da8e545c  /home/claude/cnn/build/sprite-forage-gaze-only-build-20261015/source/research/sprite_exact_eval.cu
+59a25908f48896ffd2a22fb1441421fb275ab92a90492a7b3d7198e89016c58a  /home/claude/cnn/build/sprite-forage-gaze-only-build-20261015/source/research/test_forage_attention.cu

@@ -17,6 +17,9 @@ typedef float obs_t;
 #ifndef FORAGE_STATE_ONEHOT
 #define FORAGE_STATE_ONEHOT 0
 #endif
+#ifndef FORAGE_PLAYER_VIEW
+#define FORAGE_PLAYER_VIEW 1
+#endif
 #if FORAGE_GAZE_MODE == 1
 #define ACT_SIZES {5, 5}
 #define NUM_ATNS 2
@@ -27,7 +30,7 @@ typedef float obs_t;
 #define ACT_SIZES {5, FORAGE_AREA}
 #define NUM_ATNS 2
 #endif
-#define FORAGE_VIEW_TILES 17
+#define FORAGE_VIEW_TILES (9 + 8 * FORAGE_PLAYER_VIEW)
 #define FORAGE_STATE_VALUES (FORAGE_VIEW_TILES * (FORAGE_STATE_ONEHOT ? FORAGE_TILE_TYPES : 1))
 #define FORAGE_TILE_PIXELS (FORAGE_CELL * FORAGE_CELL * OBS_CHANNELS)
 #define FORAGE_VIEW_PIXELS (FORAGE_VIEW_TILES * FORAGE_TILE_PIXELS)
@@ -48,8 +51,7 @@ typedef float obs_t;
 #define FORAGE_REPRESENTATIONS 5
 // Temporary research version: read by research/sprite_forage_report.py and
 // checked by research/run_sprite_forage_*.sh. Remove before the clean env PR.
-#define FORAGE_RULES "sprite-forage-state-v6"
-// TODO: Sync the src/ocean.cu Nature encoder integration into ~/cnn before building here.
+#define FORAGE_RULES "sprite-forage-state-v7"
 #define PUF_NATURE_ENCODER
 
 struct Log {
@@ -180,20 +182,21 @@ void forage_make_tiles(int rep) {
         for (int pixel = 0; pixel < FORAGE_CELL * FORAGE_CELL; pixel++) {
             int x = pixel % FORAGE_CELL;
             int y = pixel / FORAGE_CELL;
-            int sx = rep == 2 ? 15 - x / 2 : x / 2; // todo maybe give this a more meaningful variable name so I can understand better
-            unsigned char glyph = kind ? FORAGE_ART[kind][y / 2][sx] : '.';
+            // Enlarge 16x16 art by 2; representation 2 mirrors it horizontally.
+            int sprite_x = rep == 2 ? 15 - x / 2 : x / 2;
+            unsigned char glyph = kind ? FORAGE_ART[kind][y / 2][sprite_x] : '.';
             Color color = forage_color(glyph, rep == 1);
             if (rep == 4 && kind != FORAGE_EMPTY) {
                 const unsigned char* source = FORAGE_IMPORTED[kind] + pixel * 4;
                 glyph = source[3] ? '!' : '.';
                 color = (Color){source[0], source[1], source[2], source[3]};
             }
-            if (glyph == '.') { // todo this whole chunk is unclear to me
+            if (glyph == '.') {
                 color = forage_color('.', rep == 1);
-                int blade = rep == 3
+                int ground_texture = rep == 3
                     ? ((x / 2 + 3 * (y / 2)) % 7 == 0 || (x + y) % 11 == 0)
                     : ((x == 4 || x == 24) && y % 16 >= 9 && y % 16 <= 12);
-                if (blade) {
+                if (ground_texture) {
                     color = forage_color('G', rep == 1);
                 }
             }
@@ -207,11 +210,11 @@ void forage_make_tiles(int rep) {
 
 // Copy one cached tile into the observation.
 void write_pixel_cell(Env* env, int cell) {
-    int kind = cell == env->player_idx ? FORAGE_PLAYER : env->grid[cell]; // todo is there a faster way to write this? 99% of the time it's NOT the player
+    int kind = cell == env->player_idx ? FORAGE_PLAYER : env->grid[cell];
     obs_t* obs = env->agents[0].observations;
     int left = (cell % FORAGE_WIDTH) * FORAGE_CELL;
     int top = (cell / FORAGE_WIDTH) * FORAGE_CELL;
-    const float* tile = forage_tiles[env->representation][kind]; // todo does const ACTUALLY make us faster?
+    float* tile = forage_tiles[env->representation][kind];
     obs += (top * OBS_WIDTH + left) * 3;
     for (int y = 0; y < FORAGE_CELL; y++) {
         memcpy(obs + y * OBS_WIDTH * 3, tile + y * FORAGE_CELL * 3,
@@ -240,11 +243,11 @@ void compute_observations(Env* env) {
     }
     obs_t* obs = env->agents[0].observations;
     // Distinct semantic codes, not reward magnitudes. Walls differ from empty ground.
-    const float values[] = {0, .75f, .25f, .5f, .25f, .25f, .25f, .25f,
-        -.25f, -.25f, -.5f, -1, 1}; // todo it's unclear what this does or means
+    const float tile_codes[] = {0, .75f, .25f, .5f, .25f, .25f, .25f, .25f,
+        -.25f, -.25f, -.5f, -1, 1};
     if (env->state_layout == 1) {
         for (int cell = 0; cell < FORAGE_AREA; cell++) {
-            obs[cell] = values[env->grid[cell]];
+            obs[cell] = tile_codes[env->grid[cell]];
         }
         obs[env->player_idx] = 1;
         return;
@@ -271,51 +274,23 @@ void compute_observations(Env* env) {
             obs[4 + 3 * slot] = dy;
         }
     }
-    if (env->state_layout == 2) { // todo idk what this means, state layout is 2
+    if (env->state_layout == 2) {
         int offset = 2 + 3 * (10 * env->copies + env->trees);
         for (int y = -2; y <= 2; y++) {
             for (int x = -2; x <= 2; x++) {
                 int sx = px + x, sy = py + y;
                 float value = sx < 0 || sx >= FORAGE_WIDTH || sy < 0 || sy >= FORAGE_HEIGHT
-                    ? -1 : values[env->grid[sy * FORAGE_WIDTH + sx]];
+                    ? -1 : tile_codes[env->grid[sy * FORAGE_WIDTH + sx]];
                 obs[offset++] = x == 0 && y == 0 ? 1 : value;
             }
         }
     }
 }
 
-bool forage_connected(Env* env) {
-    unsigned char visited[FORAGE_AREA] = {0};
-    int queue[FORAGE_AREA];
-    int head = 0, tail = 1, free_cells = 0;
-    int delta[] = {-FORAGE_WIDTH, FORAGE_WIDTH, -1, 1};
-    queue[0] = env->player_idx;
-    visited[env->player_idx] = 1;
-    for (int i = 0; i < FORAGE_AREA; i++) {
-        free_cells += env->grid[i] < FORAGE_TOADSTOOL;
-    }
-    while (head < tail) {
-        int cell = queue[head++];
-        // The grape is an exit: it must be reachable, but cannot be a passage.
-        if (env->grid[cell] == FORAGE_GRAPE) {
-            continue;
-        }
-        for (int a = 0; a < 4; a++) {
-            int next_idx = cell + delta[a];
-            if (visited[next_idx] || env->grid[next_idx] >= FORAGE_TOADSTOOL) {
-                continue;
-            }
-            visited[next_idx] = 1;
-            queue[tail++] = next_idx;
-        }
-    }
-    return tail == free_cells;
-}
-
 void puf_init(Env* env, Dict* kwargs) {
     env->rng += (unsigned int)dict_get(kwargs, "seed");
     env->observation_mode = dict_get(kwargs, "observation_mode");
-#ifdef FORAGE_ATTENTION
+#ifdef FORAGE_ATTENTION // todo seems like too many macros, maybe find a cleaner simple C way to do it
     env->partial_observation = dict_get(kwargs, "partial_observation");
 #endif
     env->state_layout = dict_get(kwargs, "state_layout");
@@ -349,26 +324,22 @@ void puf_reset(Env* env) {
         }
     }
     env->player_idx = forage_random_empty_idx(env);
-    // Apples must be reachable without crossing a fatal item or the grape exit.
     for (int n = 0; n < env->trees + 10 * env->copies; n++) {
         int kind = n < env->trees ? FORAGE_TREE : 1 + (n - env->trees) / env->copies;
         // Exactly one grape; every other collectible uses copies_per_type.
         if (kind == FORAGE_GRAPE && (n - env->trees) % env->copies != 0) {
             continue;
         }
-        while (true) {
-            int cell = forage_random_empty_idx(env);
-            env->grid[cell] = kind;
-            if ((kind < FORAGE_TOADSTOOL && kind != FORAGE_GRAPE) || forage_connected(env)) {
-                break;
-            }
-            env->grid[cell] = FORAGE_EMPTY;
-        }
+        int cell = forage_random_empty_idx(env);
+        env->grid[cell] = kind;
     }
-    env->tick = env->negatives = env->apples = 0;
+    env->tick = 0;
+    env->negatives = 0;
+    env->apples = 0;
     env->episode_return = 0;
-    env->agents[0].rewards[0] = env->agents[0].terminals[0] = 0;
-#ifdef FORAGE_ATTENTION
+    env->agents[0].rewards[0] = 0;
+    env->agents[0].terminals[0] = 0;
+#ifdef FORAGE_ATTENTION // todo not a huge fan of this macro, is there a better cleaner way?
     env->gaze_idx = env->player_idx;
     if (env->partial_observation) {
         compute_observations(env);
@@ -401,7 +372,7 @@ void puf_step(Env* env) {
         }
     }
     int action = env->agents[0].actions[0];
-#ifdef FORAGE_ATTENTION
+#ifdef FORAGE_ATTENTION // todo maybe too many macros here like this idk, I don't like the initial look of this.
     forage_attention_action(env);
 #endif
     env->agents[0].rewards[0] = env->step_cost;

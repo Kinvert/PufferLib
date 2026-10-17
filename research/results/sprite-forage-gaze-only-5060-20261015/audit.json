@@ -1,0 +1,25 @@
+{
+  "audit": "PASS",
+  "processes": 8,
+  "checkpoints": 9,
+  "exact_episode_executions": 308,
+  "fixed_train_seed": 7,
+  "independent_training_n": 1,
+  "seed_swept": false,
+  "rows": [
+    {
+      "name": "mossy-owl-3",
+      "pixels": 1,
+      "selection": "nearest300",
+      "steps": 7569408,
+      "elapsed_seconds": 270.11959133199707,
+      "elapsed_sps": 28022.432444363632,
+      "parameters": 87592,
+      "train_process_seconds": 270.2408483129984,
+      "process_sps": 28009.85878801327,
+      "collection_perf": 0.048828125,
+      "grape_exits": 0.08203125
+    }
+  ],
+  "quality_or_pareto_claim": false
+}

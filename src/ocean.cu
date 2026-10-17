@@ -26,6 +26,13 @@ void puf_normal_init(Prec* dst, float std, ulong seed, cudaStream_t stream) {
 #ifdef PUFFER_ASTEROIDS
 #include "../ocean/asteroids/asteroids.cu"
 #endif
+#ifdef PUF_NATURE_ENCODER
+#ifdef SPRITE_CNN_RESEARCH
+#include "../research/sprite_encoders.cu"
+#else
+#include "nature.cu"
+#endif
+#endif
 #if defined(PUFFER_CONNECT4CNN) || defined(PUFFER_PONGCNN) || defined(PUFFER_FLAPPYCNN) || defined(PUFFER_BREAKOUTCNN) || defined(PUFFER_SNAKECNN) || defined(PUFFER_MAZECNN)
 #include "../ocean/connect4cnn/cnn.cu"
 #include "../ocean/connect4cnn/nature.cu"
@@ -83,6 +90,14 @@ static void create_custom_encoder(Encoder* enc, Dict* policy = NULL) {
 #endif
 #elif defined(PUFFER_ASTEROIDS)
     create_asteroids_encoder(enc);
+#elif defined(PUF_NATURE_ENCODER)
+    if (enc->in_dim == OBS_HEIGHT * OBS_WIDTH * OBS_CHANNELS) {
+#ifdef SPRITE_CNN_RESEARCH
+        create_sprite_research_encoder(enc, policy);
+#else
+        create_nature_encoder(enc);
+#endif
+    }
 #elif defined(PUFFER_CONNECT4CNN) || defined(PUFFER_PONGCNN) || defined(PUFFER_FLAPPYCNN) || defined(PUFFER_BREAKOUTCNN) || defined(PUFFER_SNAKECNN) || defined(PUFFER_MAZECNN)
     DictItem* type = policy ? dict_find(policy, "encoder") : NULL;
     if (type && type->value == 1) {

@@ -7,10 +7,14 @@ optional two/three-frame sprite animation, are in [TODO.md](TODO.md).
 
 State/pixel game determinism, actual state-policy repeatability and comparison
 rules are documented in `research/SPRITE_FORAGE_BENCHMARK.md`.
-Current version is `sprite-forage-state-v6`: apples and a single grape exit
+Current version is `sprite-forage-state-v7`: apples and a single grape exit
 give positive reward; neutral collectibles disappear without item reward.
-V6 removes nearest-object sorting from state layout2; game rules and pixels
-are unchanged from v5. Old sorted layout2 checkpoints have the same size but
+V7 removes connectivity rejection during placement: maps stay deterministic,
+but are no longer guaranteed connected. Spawn RNG streams differ from v6;
+keep older checkpoints/results attached to their original generator version.
+The [5060 ablation](../../research/results/sprite-forage-connectivity-5060-20261016/README.md)
+records the speed and learning comparison. V6 removed nearest-object sorting
+from state layout2. Old sorted layout2 checkpoints have the same size but
 different observation semantics. Use weights trained with the unsorted layout.
 Earlier v4 and equal-positive/count-perf calibration results
 are historical and do not describe this revised task.
@@ -62,21 +66,20 @@ Headless simulation needs no window, GPU graphics context or image decoder.
 
 Actions:0 wait,1 up,2 down,3 left,4 right. Movement is one cell; trees block it.
 Each reset scatters one grape, three copies of each other collectible, eight
-interior trees and the player without overlaps. Nonlethal cells remain reachable
-without passing through the grape exit: apples cannot require crossing the
-grape or a fatal chokepoint. Nonfatal penalty objects can still be traversed.
+interior trees and the player without overlaps. Placement does not reject
+disconnected or impossible maps. Nonfatal penalty objects can still be traversed.
 Objects disappear on collection; there is no respawn until the next episode.
 
 | Object | Reward | Effect |
 |---|---:|---|
 |Apple|`env.reward_good` (1)|Collect; earns apple perf credit|
-|Grape cluster: exactly one|`env.reward_grape` (1)|Positive terminal/exit|
+|Grape cluster: exactly one|`env.reward_grape` (3.71950364)|Positive terminal/exit|
 |Leaf, pear, flower, beetle, striped mushroom|`env.reward_other` (0)|Disappear; no item reward or perf credit|
-|Spotted apple, wasp|`env.reward_bad` (-0.5)|Negative collectible|
-|Spotted toadstool|`env.reward_death` (-1)|Death|
+|Spotted apple, wasp|`env.reward_bad` (-1.68730032)|Negative collectible|
+|Spotted toadstool|`env.reward_death` (-0.5)|Death|
 
 Every decision adds `env.step_cost` (-0.001). Reward controls remain configurable.
-Episodes end on the grape, death or `env.max_steps` (512 by default).
+Episodes end on the grape, death or `env.max_steps` (676 by default).
 Collecting the last apple does not end an episode. Same-step autoreset preserves
 terminal reward. Defaults give three apples, one grape,15 neutral collectibles
 and nine negative collectibles.
@@ -163,6 +166,16 @@ same silhouette and color counts. Their distinguishing signal is the spatial
 arrangement of markings. All ten classes use recognizable, non-solid artwork.
 
 ## State throughput record — October15, RTX5060
+
+The default INI now uses this tested8,388,608-decision state recipe: seed7,
+256 agents, four threads, H64/MB2048, H128/L1, the tuned learner and rewards.
+It retains full-state observations; it does not enable attention automatically.
+The same learner/rewards also underlie the longer partial-state experiments.
+Full-resolution pixels need smaller batches; use the explicit research pixel
+recipes rather than changing only observation_mode with this large state batch.
+The custom player-plus-gaze pixel recipe is recorded in
+[the matched comparison](../../research/FORAGE_PIXELS_MATCHED_TIME.md).
+Evaluation reports below retain their original512-step evaluation cap.
 
 | Source | Process SPS | Native adjusted-average SPS | Evaluation perf | Grape exits |
 |---|---:|---:|---:|---:|

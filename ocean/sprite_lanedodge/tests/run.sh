@@ -26,4 +26,6 @@ sha256sum config/sprite_lanedodge.ini ocean/sprite_lanedodge/sprite_lanedodge.h 
     ocean/sprite_lanedodge/tests/test_environment.c \
     ocean/sprite_lanedodge/tests/run.sh \
     src/pufferenv.h src/pufferl.cu src/ocean.cu src/nature.cu \
-    research/sprite_encoders.cu > "$lanedodge_out/source.sha256"
+    research/sprite_encoders.cu research/lanedodge_tilecnn_encoder.cu \
+    research/lanedodge_tilecnn_dispatch.cu research/lanedodge_tilecnn_core.patch \
+    research/build_lanedodge_tilecnn.sh > "$lanedodge_out/source.sha256"

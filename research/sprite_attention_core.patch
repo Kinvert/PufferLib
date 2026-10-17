@@ -1,0 +1,14 @@
+--- a/src/ocean.cu
++++ b/src/ocean.cu
+@@ -91,6 +91,11 @@
+     create_asteroids_encoder(enc);
+ #elif defined(PUF_NATURE_ENCODER)
++#ifdef SPRITE_ATTENTION
++    if (enc->in_dim == SPRITE_VIEW_OBS
++            || enc->in_dim == OBS_HEIGHT * OBS_WIDTH * OBS_CHANNELS) {
++#else
+     if (enc->in_dim == OBS_HEIGHT * OBS_WIDTH * OBS_CHANNELS) {
++#endif
+ #ifdef SPRITE_CNN_RESEARCH
+         create_sprite_research_encoder(enc, policy);
+ #else

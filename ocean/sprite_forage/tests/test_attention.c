@@ -20,7 +20,7 @@ static void setup(Fixture* f, int partial, int pixels, int skin) {
     dict_set(args, "observation_mode", pixels);
     dict_set(args, "representation", skin);
     f->size = puf_observation_size(args);
-    assert(f->size == (partial ? (pixels ? 52228 : FORAGE_STATE_VALUES + 4) : (pixels ? 921600 : 141)));
+    assert(f->size == (partial ? (pixels ? FORAGE_VIEW_OBS : FORAGE_STATE_VALUES + 4) : (pixels ? 921600 : 141)));
     f->storage = calloc(f->size + 2, sizeof(float));
     assert(f->storage);
     f->storage[0] = 12345;
@@ -36,9 +36,9 @@ static void setup(Fixture* f, int partial, int pixels, int skin) {
 }
 
 // Independent row-major view construction, with local center omitted.
-static void cells(Env* e, int output[17]) {
+static void cells(Env* e, int output[FORAGE_VIEW_TILES]) {
     int n = 0;
-    for (int view = 0; view < 2; view++) {
+    for (int view = FORAGE_PLAYER_VIEW ? 0 : 1; view < 2; view++) {
         int center = view ? e->gaze_idx : e->player_idx;
         for (int dy = -1; dy <= 1; dy++) {
             for (int dx = -1; dx <= 1; dx++) {
@@ -52,17 +52,17 @@ static void cells(Env* e, int output[17]) {
             }
         }
     }
-    assert(n == 17);
+    assert(n == FORAGE_VIEW_TILES);
 }
 
 static void views(Fixture* state, Fixture* pixels, float* full) {
-    int indices[17];
+    int indices[FORAGE_VIEW_TILES];
     cells(&pixels->env, indices);
     Env shadow = pixels->env;
     shadow.partial_observation = 0;
     shadow.agents[0].observations = full;
     compute_observations(&shadow);
-    for (int i = 0; i < 17; i++) {
+    for (int i = 0; i < FORAGE_VIEW_TILES; i++) {
         int cell = indices[i];
         assert(forage_attention_cell(&pixels->env, i) == cell);
         int kind = cell < 0 ? FORAGE_TREE
@@ -187,9 +187,9 @@ int main(void) {
             }
         }
 #endif
-        int indices[17], visible[FORAGE_AREA] = {0};
+        int indices[FORAGE_VIEW_TILES], visible[FORAGE_AREA] = {0};
         cells(&f[3].env, indices);
-        for (int i = 0; i < 17; i++) {
+        for (int i = 0; i < FORAGE_VIEW_TILES; i++) {
             if (indices[i] >= 0) {
                 visible[indices[i]] = 1;
             }

@@ -1,4 +1,4 @@
-// Research encoder: shared CNN on 17 tiles, then spatially ordered features + geometry.
+// Research encoder: shared tile CNN, then spatially ordered features + geometry.
 #define FORAGE_TILE_FEATURES 16
 #define FORAGE_FEATURES (FORAGE_VIEW_TILES * FORAGE_TILE_FEATURES + 4)
 

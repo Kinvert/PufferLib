@@ -1,0 +1,70 @@
+{
+  "training": {
+    "connected": {
+      "process_seconds_mean": 11.748247055482352,
+      "process_sps": 714030.6090248105,
+      "native_last_bin_sps": [
+        756491.026476409,
+        749593.967598794
+      ],
+      "training_perf": [
+        0.9884408712387085,
+        0.9893836379051208
+      ]
+    },
+    "unchecked": {
+      "process_seconds_mean": 10.267297375496128,
+      "process_sps": 817022.0159416249,
+      "native_last_bin_sps": [
+        845091.7007231049,
+        847957.5836479882
+      ],
+      "training_perf": [
+        0.9890057444572449,
+        0.9900950789451599
+      ]
+    }
+  },
+  "evaluation": [
+    {
+      "trained": "connected",
+      "generator": "connected",
+      "episodes": 128,
+      "perf": 0.98828125,
+      "grape_exits": 0.9921875,
+      "deaths": 0.0
+    },
+    {
+      "trained": "connected",
+      "generator": "unchecked",
+      "episodes": 128,
+      "perf": 0.98828125,
+      "grape_exits": 0.9921875,
+      "deaths": 0.0
+    },
+    {
+      "trained": "unchecked",
+      "generator": "connected",
+      "episodes": 128,
+      "perf": 0.99609375,
+      "grape_exits": 1.0,
+      "deaths": 0.0
+    },
+    {
+      "trained": "unchecked",
+      "generator": "unchecked",
+      "episodes": 128,
+      "perf": 0.99609375,
+      "grape_exits": 1.0,
+      "deaths": 0.0
+    }
+  ],
+  "training_repeats_exact": {
+    "connected": true,
+    "unchecked": true
+  },
+  "independent_training_seeds": 1,
+  "seed_swept": false,
+  "campaign_seconds": 48.69520455400925,
+  "process_sps_change_percent": 14.423948443537338
+}

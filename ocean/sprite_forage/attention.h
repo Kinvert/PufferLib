@@ -1,4 +1,4 @@
-// Research view: eight player neighbors, then the gaze's row-major 3x3 cells.
+// Research view: optional player neighbors, then the gaze's row-major 3x3 cells.
 void forage_attention_action(Env* env) {
 #if FORAGE_GAZE_MODE == 1
     // Same ordering as player movement: noop, up, down, left, right.
@@ -20,8 +20,13 @@ void forage_attention_action(Env* env) {
 }
 
 int forage_attention_cell(Env* env, int slot) {
+#if FORAGE_PLAYER_VIEW
     int center = slot < 8 ? env->player_idx : env->gaze_idx;
     int at = slot < 8 ? slot + (slot >= 4) : slot - 8;
+#else
+    int center = env->gaze_idx;
+    int at = slot;
+#endif
     int x = center % FORAGE_WIDTH + at % 3 - 1;
     int y = center / FORAGE_WIDTH + at / 3 - 1;
     if (x < 0 || x >= FORAGE_WIDTH || y < 0 || y >= FORAGE_HEIGHT) {

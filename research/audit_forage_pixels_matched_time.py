@@ -13,7 +13,17 @@ from run_forage_attention_budget import ROOT, read, sha
 
 def audit(packet):
     plan = json.loads((packet / 'plan.json').read_text())
-    assert plan['schema'] == 'forage-matched-time-v1'
+    assert plan['schema'] in ('forage-matched-time-v1', 'forage-gaze-only-v1')
+    gaze_only = plan['schema'] == 'forage-gaze-only-v1'
+    if gaze_only:
+        assert plan['view_tiles'] == 9 and plan['player_view'] is False
+        assert 'FORAGE_PLAYER_VIEW=0\n' in plan['build_flags']
+        assert sha(ROOT / 'research/forage_gaze_only.py') == plan['wrapper_sha256']
+        reference = Path(plan['reference_packet'])
+        assert sha(reference / 'plan.json') == plan['reference_plan_sha256']
+        assert sha(reference / 'audit.json') == plan['reference_audit_sha256']
+        assert json.loads((reference / 'audit.json').read_text())['audit'] == 'PASS'
+        assert sha(Path(plan['binary']).parent / 'math.log') == plan['encoder_checks_sha256']
     assert plan['fixed_train_seed'] == 7 and plan['seed_swept'] is False
     assert plan['actions'] == [5, 20, 15]
     assert sha(ROOT / 'research/forage_pixels_matched_time.py') == plan['tool_sha256']
@@ -34,7 +44,7 @@ def audit(packet):
         load = lambda path: json.loads((stage / path).read_text())
         training, evaluations, summary = load('training.json'), load('evaluations.json'), load('summary.json')
         assert summary['training'] == training and summary['evaluations'] == evaluations
-        assert len(training) == 2
+        assert len(training) == (1 if gaze_only else 2)
         processes = list(stage.glob('*.process.json'))
         assert len(processes) == len(training) + len(evaluations)
         for path in processes:
@@ -64,9 +74,15 @@ def audit(packet):
             if common is None:
                 common = recipe
             assert recipe == common
+            if gaze_only:
+                baseline = read(reference / 'full' / plan['reference_name'] / 'runtime/config/sprite_forage.ini')
+                baseline_recipe = {s: dict(baseline[s]) for s in ('env', 'vec', 'policy', 'train')}
+                baseline_recipe['env'].pop('observation_mode')
+                baseline_recipe['train'].pop('total_timesteps')
+                assert recipe == baseline_recipe
             assigned_steps = job['calibration_steps'] if stage_name == 'calibration' else budgets[name]['steps']
             assert config.getint('train', 'total_timesteps') == tr['steps'] == assigned_steps
-            assert tr['parameters'] == (103976 if job['pixels'] else 83200)
+            assert tr['parameters'] == (87592 if gaze_only else 103976 if job['pixels'] else 83200)
             assert tr['process_sps'] == assigned_steps/tr['process_seconds']
             receipt = load(name + '.process.json')
             assert all(tr[k] == v for k, v in receipt.items())
@@ -146,6 +162,10 @@ def audit(packet):
                         grape_exits=statistics.fmean(e['grape_exits'] for e in ev)))
     for world in (420, 1337):
         manifests = [rows(Path(j['manifests'][str(world)]['path'])) for j in plan['jobs']]
+        if gaze_only:
+            baseline_plan = json.loads((reference / 'plan.json').read_text())
+            baseline_job = next(j for j in baseline_plan['jobs'] if j['name'] == plan['reference_name'])
+            manifests.append(rows(Path(baseline_job['manifests'][str(world)]['path'])))
         assert [[r[k] for k in WORLD_KEYS] for r in manifests[0]] == [[r[k] for k in WORLD_KEYS] for r in manifests[1]]
     ordered = sorted(process_times)
     assert all(a[1] <= b[0] for a, b in zip(ordered, ordered[1:]))

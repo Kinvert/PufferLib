@@ -1,0 +1,26 @@
+{
+  "models": {
+    "state": {
+      "process_seconds": 7.4318767090153415,
+      "process_sps": 141091.68397909647,
+      "parameters": 102272,
+      "steps": 1048576,
+      "perf": 0.6376716404920444,
+      "successes": 0.953125,
+      "deaths": 0.046875
+    },
+    "pixels": {
+      "process_seconds": 81.66348198600463,
+      "process_sps": 12840.206840307195,
+      "parameters": 139560,
+      "steps": 1048576,
+      "perf": 0.6871179202571511,
+      "successes": 0.96875,
+      "deaths": 0.03125
+    }
+  },
+  "campaign_seconds": 102.20222956102225,
+  "independent_training_seeds": 1,
+  "seed_swept": false,
+  "frontier_claim": false
+}

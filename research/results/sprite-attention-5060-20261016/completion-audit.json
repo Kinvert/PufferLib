@@ -1,0 +1,25 @@
+{
+  "authoritative_sources_local": true,
+  "current_production_headers_match_tested_research_builds": 16,
+  "main_sanitizer_suites": 19,
+  "before_after_exact_state_traces": 6,
+  "cleanup_state_trainings": 24,
+  "cleanup_full_image_pixel_canaries": 12,
+  "matched_native_processes_successful_and_nonoverlapping": 114,
+  "independent_cuda_encoder_cases": 20,
+  "exact_canary_training_pairs": 14,
+  "finite_shape_bound_pilot_checkpoints": 56,
+  "assigned_episode_rows": 1022,
+  "lane_original_pixel_training_reproduced": true,
+  "main_normal_native_targets_compiled": 8,
+  "original_reader_failure_preserved": true,
+  "status": "complete_after_reporting_reader_recovery",
+  "limits": [
+    "one independent training seed",
+    "development evaluation worlds",
+    "positive/zero encoder math fixtures only",
+    "learned gaze usefulness unproven",
+    "no Nature/Pareto/generalization claim"
+  ],
+  "audit_tool_sha256": "263bd5ac2679a99b689c16b96bab089da94b464f345b552343ff87ac60b5c296"
+}

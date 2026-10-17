@@ -26,7 +26,8 @@ static void setup(Fixture* f, int rep, unsigned int seed, int mode, int max_step
     int hazard_rate, int coin_rate) {
     memset(f, 0, sizeof(*f));
     int size = mode == 1 ? LD_PIXEL_OBS_SIZE
-        : mode == 2 ? LD_ROI_OBS_SIZE : STATE_OBS_SIZE;
+        : mode == 2 ? LD_ROI_OBS_SIZE : mode == 3 ? LD_VIEW_OBS
+        : mode == 4 ? LD_VIEW_STATE : STATE_OBS_SIZE;
     f->storage = (float*)calloc(size + 2, sizeof(float)); assert(f->storage);
     f->storage[0] = 12345; f->storage[size + 1] = -12345;
     f->env.agents[0].observations = f->storage + 1;
@@ -35,6 +36,7 @@ static void setup(Fixture* f, int rep, unsigned int seed, int mode, int max_step
     f->env.agents[0].terminals = &f->terminal; f->env.rng = seed;
     Dict kwargs = {0};
     dict_set(&kwargs, "observation_mode", mode);
+    dict_set(&kwargs, "mode7", 0);
     dict_set(&kwargs, "representation", rep);
     dict_set(&kwargs, "max_steps", max_steps);
     dict_set(&kwargs, "hazard_rate", hazard_rate);
@@ -197,6 +199,10 @@ int main(void) {
     assert(puf_observation_size(&kwargs) == LD_PIXEL_OBS_SIZE);
     dict_set(&kwargs, "observation_mode", 2);
     assert(puf_observation_size(&kwargs) == LD_ROI_OBS_SIZE);
+    dict_set(&kwargs, "observation_mode", 3);
+    assert(puf_observation_size(&kwargs) == LD_VIEW_OBS);
+    dict_set(&kwargs, "observation_mode", 4);
+    assert(puf_observation_size(&kwargs) == LD_VIEW_STATE);
     dict_clear(&kwargs);
 
     // State semantics: lane value, nearest-wins distances, missing entities.
@@ -242,6 +248,20 @@ int main(void) {
     assert(fabsf(d.reward - (-.001f + -.5f)) < 1e-6f);
     assert(fabsf(d.env.log.perf - 0.5f * (1.f / 50.f)) < 1e-6f);
     assert(d.env.tick == 0 && d.env.coins == 0);
+
+    // Row-13 visibility: a hazard that reached the player row in another
+    // lane is visible in the state (nearest distance) and kills a lane
+    // change that moves into it.
+    Fixture r13; setup(&r13, 0, 7, 0, 50, 0, 0);
+    r13.env.grid[12 * LD_WIDTH + LD_LANE_X(0)] = LD_HAZARD;
+    r13.actions[0] = 0;
+    puf_step(&r13.env);
+    assert(r13.env.grid[13 * LD_WIDTH + LD_LANE_X(0)] == LD_HAZARD);
+    assert(r13.env.agents[0].observations[1] == 1.f / 14.f);
+    r13.actions[0] = 1;
+    puf_step(&r13.env);
+    assert(r13.terminal == 1);
+    assert(r13.env.log.n == 1 && r13.env.log.deaths == 1);
 
     // Coin lands on the player row: collected, cell cleared.
     Fixture c; setup(&c, 0, 7, 0, 50, 0, 0);
@@ -398,6 +418,42 @@ int main(void) {
     assert(o[9 * LD_CELL * LD_CELL * 3 + 2] == 0.f);
     assert(!memcmp(o, ld_tiles[0][LD_GRASS], LD_CELL * LD_CELL * 3 * sizeof(float)));
 
+    // Mode 3: the player window (the player is the bottom-center cell) and
+    // the gaze window follow their centers; out-of-range cells are grass.
+    Fixture vw; setup(&vw, 0, 7, 3, 50, 0, 0);
+    float* v = vw.env.agents[0].observations;
+    // Reset: the gaze sits on the player cell.
+    assert(vw.env.gaze_idx == vw.env.player_idx);
+    assert(v[LD_VIEW_PIXELS] == 1.f / 9.f);
+    assert(v[LD_VIEW_PIXELS + 1] == 6.f / 19.f);
+    assert(v[LD_VIEW_PIXELS + 2] == 13.f / 14.f);
+    // The player is the bottom-center slot of the player window.
+    assert(!memcmp(v + 7 * LD_CELL * LD_CELL * 3, ld_tiles[0][LD_PLAYER],
+        LD_CELL * LD_CELL * 3 * sizeof(float)));
+    // A hazard directly ahead of the player fills the center slot of the
+    // player window and the gaze window (gaze on the player cell).
+    vw.env.grid[12 * LD_WIDTH + LD_LANE_X(1)] = LD_HAZARD;
+    write_view(&vw.env);
+    assert(!memcmp(v + 4 * LD_CELL * LD_CELL * 3, ld_tiles[0][LD_HAZARD],
+        LD_CELL * LD_CELL * 3 * sizeof(float)));
+    assert(!memcmp(v + 10 * LD_CELL * LD_CELL * 3, ld_tiles[0][LD_HAZARD],
+        LD_CELL * LD_CELL * 3 * sizeof(float)));
+    assert(!memcmp(v + 13 * LD_CELL * LD_CELL * 3, ld_tiles[0][LD_PLAYER],
+        LD_CELL * LD_CELL * 3 * sizeof(float)));
+    vw.env.grid[12 * LD_WIDTH + LD_LANE_X(1)] = LD_DIVIDER;
+    // Gaze action: valid IDs retarget the window, invalid ones are ignored.
+    vw.actions[0] = 0;
+    vw.actions[1] = LD_AREA + 5;
+    puf_step(&vw.env);
+    assert(vw.env.gaze_idx == vw.env.player_idx);
+    vw.actions[1] = 0;
+    puf_step(&vw.env);
+    assert(vw.env.gaze_idx == 0);
+    assert(v[LD_VIEW_PIXELS + 1] == 0.f);
+    assert(v[LD_VIEW_PIXELS + 2] == 0.f);
+    assert(!memcmp(v + 9 * LD_CELL * LD_CELL * 3, ld_tiles[0][LD_GRASS],
+        LD_CELL * LD_CELL * 3 * sizeof(float)));
+
     // Pixel reset cache: first reset writes the full image; a repeated world writes nothing.
     Fixture r; setup(&r, 0, 7, 1, 400, 45, 25);
     tracked_obs = r.env.agents[0].observations;
@@ -415,9 +471,66 @@ int main(void) {
     assert(memcmp(r.storage + 1, r1.storage + 1, OBS_SIZE * sizeof(float)));
     assert(memcmp(r.storage + 1, r2.storage + 1, OBS_SIZE * sizeof(float)));
 
+    // Every tile must occupy its own 64x64 position in the enlarged 3x3 view.
+    Env painted = vw.env;
+    Client canvas = {0};
+    canvas.pixels = calloc(OBS_WIDTH * OBS_HEIGHT, sizeof(Color));
+    assert(canvas.pixels);
+    painted.client = &canvas;
+    for (int cell = 0; cell < 9; cell++) {
+        painted.grid[(cell / 3) * LD_WIDTH + cell % 3] = cell % LD_TILE_TYPES;
+    }
+    ld_draw_window(&painted, 1, 1, 64, 64);
+    for (int y = 0; y < 192; y++) {
+        for (int x = 0; x < 192; x++) {
+            int cell = (y / 64) * 3 + x / 64;
+            int pixel = ((y % 64) / 2 * LD_CELL + (x % 64) / 2) * 3;
+            const float* tile = ld_tiles[painted.representation][cell % LD_TILE_TYPES];
+            Color actual = canvas.pixels[(64 + y) * OBS_WIDTH + 64 + x];
+            assert(actual.r == (unsigned char)(tile[pixel] * 255 + .5f));
+            assert(actual.g == (unsigned char)(tile[pixel + 1] * 255 + .5f));
+            assert(actual.b == (unsigned char)(tile[pixel + 2] * 255 + .5f));
+            assert(actual.a == 255);
+        }
+    }
+    free(canvas.pixels);
+
+    // Matched partial state and RGB: every visible category and geometry agree.
+    for (int skin = 0; skin < LD_REPRESENTATIONS; skin++) {
+        Fixture semantic, visual;
+        setup(&semantic, skin, 7, 4, 400, 45, 25);
+        setup(&visual, skin, 7, 3, 400, 45, 25);
+        unsigned int sequence = 420;
+        for (int step = 0; step < 1024; step++) {
+            same_world(&semantic, &visual);
+            float* state = semantic.env.agents[0].observations;
+            float* rgb = visual.env.agents[0].observations;
+            for (int slot = 0; slot < LD_VIEW_TILES; slot++) {
+                int cell = ld_view_cell(&semantic.env, slot);
+                int kind = cell < 0 ? LD_GRASS : cell == semantic.env.player_idx
+                    ? LD_PLAYER : semantic.env.grid[cell];
+                for (int k = 0; k < LD_TILE_TYPES; k++) {
+                    assert(state[slot * LD_TILE_TYPES + k] == (k == kind));
+                }
+                assert(!memcmp(rgb + slot * LD_CELL * LD_CELL * 3,
+                    ld_tiles[skin][kind], LD_CELL * LD_CELL * 3 * sizeof(float)));
+            }
+            assert(!memcmp(state + LD_VIEW_TILES * LD_TILE_TYPES,
+                rgb + LD_VIEW_PIXELS, LD_VIEW_GEOMETRY * sizeof(float)));
+            sequence = sequence * 1664525u + 1013904223u;
+            semantic.actions[0] = visual.actions[0] = (sequence >> 16) % 3;
+            semantic.actions[1] = visual.actions[1] = (sequence >> 8) % LD_AREA;
+            puf_step(&semantic.env);
+            puf_step(&visual.env);
+        }
+        free(semantic.storage);
+        free(visual.storage);
+    }
+
     free(s.env.agents[0].observations - 1);
     free(cl.env.agents[0].observations - 1);
     free(d.env.agents[0].observations - 1);
+    free(r13.env.agents[0].observations - 1);
     free(c.env.agents[0].observations - 1);
     free(cp.env.agents[0].observations - 1);
     free(d2.env.agents[0].observations - 1);
@@ -429,6 +542,7 @@ int main(void) {
     free(px.env.agents[0].observations - 1);
     free(ro.env.agents[0].observations - 1);
     free(ro2.env.agents[0].observations - 1);
+    free(vw.env.agents[0].observations - 1);
     free(r.env.agents[0].observations - 1);
     free(r1.env.agents[0].observations - 1);
     free(r2.env.agents[0].observations - 1);

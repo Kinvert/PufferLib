@@ -1,0 +1,48 @@
+[
+  {
+    "name": "happy-otter-pilot",
+    "mode": 4,
+    "steps": 1048576,
+    "parameters": 102272,
+    "checkpoint": "/home/claude/cnn/build/sprite-lanedodge-pilots-20261016/happy-otter-pilot/checkpoints/sprite_lanedodge/happy-otter-pilot/0000000001048576.bin",
+    "checkpoints": {
+      "0000000000262144.bin": "e228ad5250f96d21e513a6eb31caccd6d40ddc98f99ec7c4d8e1ef47401cfbd5",
+      "0000000000524288.bin": "e44759d520aa397e5066dcdf5857082138c5a3c807c8adc8049a0fcca01ecad9",
+      "0000000000786432.bin": "9dd9a5e2568ae622c855b76238b5a2939c13abbcba4876dbee238a2a58e0fc91",
+      "0000000001048576.bin": "5240bb4218ad39106425573c7b8759abfcb9fa8c7209ddc571a095295364dcdd"
+    },
+    "process_sps": 141091.68397909647,
+    "native_uptime": 7.113689422607422,
+    "native_last_bin_sps": 150534.5566973273,
+    "training_perf": 0.643481969833374,
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 203819.582837645,
+    "monotonic_finished": 203827.014714354,
+    "process_seconds": 7.4318767090153415,
+    "log_sha256": "a632ba25a944422ebddafdf24191391f14c81d8637bb8dde37685bfca004774c"
+  },
+  {
+    "name": "mystic-maple-pilot",
+    "mode": 3,
+    "steps": 1048576,
+    "parameters": 139560,
+    "checkpoint": "/home/claude/cnn/build/sprite-lanedodge-pilots-20261016/mystic-maple-pilot/checkpoints/sprite_lanedodge/mystic-maple-pilot/0000000001048576.bin",
+    "checkpoints": {
+      "0000000000262144.bin": "b2f20a8395c4b79879e0d6c523ae66b54a1330d5c84bcdfa3f774162faaa9a28",
+      "0000000000524288.bin": "f8fc585177f263da1a95d18240a7a1caab2c8203e4814fab8faff41dbfab1219",
+      "0000000000786432.bin": "ed39dc9fad944667add1b7e98214931f40ae26edeb96146d3d9a5e7abc0aeda4",
+      "0000000001048576.bin": "a81a456ff5a20cb0d89753a2ea2b98b0e3b7325c737a0352938ef6426c1fc218"
+    },
+    "process_sps": 12840.206840307195,
+    "native_uptime": 81.16516375541687,
+    "native_last_bin_sps": 12867.408645945836,
+    "training_perf": 0.6953492164611816,
+    "returncode": 0,
+    "timed_out": false,
+    "monotonic_started": 203832.827295872,
+    "monotonic_finished": 203914.490777858,
+    "process_seconds": 81.66348198600463,
+    "log_sha256": "206b36e7794efa6c8e895298fc9505ba05a66229204bc5b0cce1d5529c0525f8"
+  }
+]

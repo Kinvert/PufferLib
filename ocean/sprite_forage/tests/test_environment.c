@@ -114,7 +114,7 @@ int main(void) {
         for (int kind = 1; kind <= 10; kind++) {
             assert(counts[kind] == (kind == FORAGE_GRAPE ? 1 : 3));
         }
-        assert(forage_connected(&f[rep].env)); observation(&f[rep]);
+        observation(&f[rep]);
         if (rep) { same_world(&f[0], &f[rep]); assert(memcmp(f[0].storage, f[rep].storage, (OBS_SIZE + 2) * sizeof(float))); }
     }
     // Repeating a world copies nothing; a different world copies only changed tile IDs.
@@ -148,7 +148,7 @@ int main(void) {
         if (step % 17 == 0) for (int rep = 0; rep < FORAGE_REPRESENTATIONS; rep++) observation(&f[rep]);
     }
     for (unsigned int seed = 0; seed < 32; seed++) {
-        f[0].env.rng = seed; puf_reset(&f[0].env); assert(forage_connected(&f[0].env));
+        f[0].env.rng = seed; puf_reset(&f[0].env);
         int counts[13] = {0}; for (int i = 0; i < FORAGE_AREA; i++) counts[f[0].env.grid[i]]++;
         for (int kind = 1; kind <= 10; kind++) {
             assert(counts[kind] == (kind == FORAGE_GRAPE ? 1 : 3));
@@ -265,6 +265,6 @@ int main(void) {
         assert(f[0].env.log.deaths == (i == 4));
     }
     for (int rep = 0; rep < FORAGE_REPRESENTATIONS; rep++) close_fixture(&f[rep]);
-    puts("Sprite Forage: spawn coverage, connectivity, texture histograms, rewards, death/success/horizon, dirty pixels and appearance/RNG determinism PASS");
+    puts("Sprite Forage: spawn coverage, texture histograms, rewards, death/success/horizon, dirty pixels and appearance/RNG determinism PASS");
     return 0;
 }

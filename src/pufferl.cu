@@ -64,6 +64,13 @@ int grid_size(int N) {
 // Compile vs a single env: -DENV_HEADER=ocean/<env>/<env>.h or .cu (--cu)
 #include ENV_HEADER
 
+// Fixed-size environments keep OBS_SIZE; others resolve their shape from the INI.
+#ifdef OBS_SIZE
+int puf_observation_size(Dict* kwargs) {
+    return OBS_SIZE;
+}
+#endif
+
 typedef struct {
     float* data;
     int64_t shape[PUF_MAX_DIMS];
@@ -1023,7 +1030,8 @@ static void env_setup(PuffeRL* p, VecEnv* vec, Dict* vk, Dict* ek) {
 #endif
     vec->size = num_envs;
 
-    size_t obs_bytes = total_agents * OBS_SIZE * sizeof(obs_t);
+    int obs_size = p->env.obs.shape[1];
+    size_t obs_bytes = (size_t)total_agents * obs_size * sizeof(obs_t);
     size_t mask_bytes = total_agents * vec->mask_size * sizeof(unsigned char);
     cudaHostAlloc((void**)&vec->observations, obs_bytes, cudaHostAllocPortable);
     cudaHostAlloc((void**)&vec->actions, total_agents * NUM_ATNS * sizeof(float),
@@ -1079,7 +1087,7 @@ static void env_setup(PuffeRL* p, VecEnv* vec, Dict* vk, Dict* ek) {
                 }
                 int phys = cursors[policy]++;
                 Agent* a = &eptr->agents[s];
-                a->observations = vec->observations + (size_t)phys * OBS_SIZE;
+                a->observations = vec->observations + (size_t)phys * obs_size;
                 a->actions = vec->actions + (size_t)phys * NUM_ATNS;
                 a->rewards = vec->rewards + phys;
                 a->terminals = vec->terminals + phys;
@@ -1097,9 +1105,10 @@ static void cpu_upload(PuffeRL* p, int start, int n, cudaStream_t stream) {
     VecEnv* v = p->vec;
     EnvBuf* e = &p->env;
     long mask = v->mask_size;
-    cudaMemcpyAsync(e->obs.data + (size_t)start * OBS_SIZE,
-        v->observations + (size_t)start * OBS_SIZE,
-        n * OBS_SIZE * sizeof(obs_t), cudaMemcpyHostToDevice, stream);
+    long obs_size = e->obs.shape[1];
+    cudaMemcpyAsync(e->obs.data + (size_t)start * obs_size,
+        v->observations + (size_t)start * obs_size,
+        n * obs_size * sizeof(obs_t), cudaMemcpyHostToDevice, stream);
     cudaMemcpyAsync(e->rewards.data + start, v->rewards + start,
         n * sizeof(float), cudaMemcpyHostToDevice, stream);
     cudaMemcpyAsync(e->terminals.data + start, v->terminals + start,
@@ -1756,8 +1765,9 @@ void puf_load_weights_into(Float dst, Prec params,
     assert(fp && "failed to open weights for reading");
     char* buf = (char*)malloc(nbytes);
     size_t nread = fread(buf, 1, nbytes, fp);
+    assert((int64_t)nread == nbytes && fgetc(fp) == EOF
+        && "checkpoint size does not match policy; check observation mode and model size");
     fclose(fp);
-    assert((int64_t)nread == nbytes && "failed to read weights");
     cudaMemcpy(dst.data, buf, nbytes, cudaMemcpyHostToDevice);
     free(buf);
     if (USE_BF16) {
@@ -1830,6 +1840,8 @@ PuffeRL* create_pufferl(Ini* ini, TrainContext* ctx) {
     Dict vec_kwargs = {0};
     dict_copy(&vec_kwargs, puf_ini_section(ini, "vec", 0));
     Dict* env_kwargs = puf_ini_section(ini, "env", 0);
+    int obs_size = puf_observation_size(env_kwargs);
+    assert(obs_size > 0);
     ncclUniqueId* nccl_id = ctx->nccl_id;
 
     PuffeRL* pufferl = (PuffeRL*)calloc(1, sizeof(PuffeRL));
@@ -1887,7 +1899,7 @@ PuffeRL* create_pufferl(Ini* ini, TrainContext* ctx) {
 
     // Device env IO (EnvBuf).
     pufferl->env = {
-        .obs =         {.shape = {total_agents, OBS_SIZE}},
+        .obs =         {.shape = {total_agents, obs_size}},
         .actions =     {.shape = {total_agents, NUM_ATNS}},
         .rewards =     {.shape = {total_agents}},
         .terminals =   {.shape = {total_agents}},
@@ -1895,12 +1907,12 @@ PuffeRL* create_pufferl(Ini* ini, TrainContext* ctx) {
     };
     EnvBuf* env = &pufferl->env;
     size_t mask_bytes = total_agents * act_n * sizeof(unsigned char);
-    cudaMalloc((void**)&env->obs.data, total_agents * OBS_SIZE * sizeof(obs_t));
+    cudaMalloc((void**)&env->obs.data, (size_t)total_agents * obs_size * sizeof(obs_t));
     cudaMalloc((void**)&env->actions.data, total_agents * NUM_ATNS * sizeof(float));
     cudaMalloc((void**)&env->rewards.data, total_agents * sizeof(float));
     cudaMalloc((void**)&env->terminals.data, total_agents * sizeof(float));
     cudaMalloc((void**)&env->action_mask.data, mask_bytes);
-    cudaMemset(env->obs.data, 0, total_agents * OBS_SIZE * sizeof(obs_t));
+    cudaMemset(env->obs.data, 0, (size_t)total_agents * obs_size * sizeof(obs_t));
     cudaMemset(env->actions.data, 0, total_agents * NUM_ATNS * sizeof(float));
     cudaMemset(env->rewards.data, 0, total_agents * sizeof(float));
     cudaMemset(env->terminals.data, 0, total_agents * sizeof(float));
@@ -1922,7 +1934,7 @@ PuffeRL* create_pufferl(Ini* ini, TrainContext* ctx) {
     nvmlInit();
     nvmlDeviceGetHandleByIndex(hypers.gpu_id, &pufferl->nvml_device);
 
-    int input_size = OBS_SIZE;
+    int input_size = obs_size;
     int hidden_size = hypers.hidden_size;
     int num_layers = hypers.num_layers;
     int decoder_output_size = is_continuous ? num_action_heads : act_n;
@@ -3041,6 +3053,9 @@ static PuffeRL* eval_make(Ini* ini, TrainContext* ctx, int mode, int render) {
 #if (defined(PUFFER_MAZECNN) || defined(PUFFER_MAZE)) && PUF_BACKEND == PUF_CPU
 #include "../ocean/mazecnn/exact_eval.cu"
 #endif
+#ifdef SPRITE_EXACT_RESEARCH
+#include "../research/sprite_exact_eval.cu"
+#endif
 
 EvalResult run_eval(Ini* ini, TrainContext* ctx, int mode, int verbose,
         int render) {
@@ -3605,6 +3620,12 @@ int main(int argc, char** argv) {
         exit(1);
     }
     const char* mode = argv[1];
+#ifdef SPRITE_EXACT_RESEARCH
+    if (strcmp(mode, "sprite_eval_manifest") == 0) {
+        sprite_eval_manifest(argc, argv);
+        return 0;
+    }
+#endif
 #ifdef PUFFER_RESEARCH_PROTEIN_FEEDBACK
     if (strcmp(mode, "research_protein_describe") == 0
             || strcmp(mode, "research_protein_propose") == 0) {
@@ -3697,6 +3718,10 @@ int main(int argc, char** argv) {
         run_sweep(&ini, argv[0]);
     } else if (strcmp(mode, "eval") == 0) {
         run_eval(&ini, &ctx, EVAL_SCORE, 1, render);
+#ifdef SPRITE_EXACT_RESEARCH
+    } else if (strcmp(mode, "sprite_eval") == 0) {
+        run_sprite_exact_eval(&ini, &ctx);
+#endif
 #if defined(PUFFER_CONNECT4CNN) || defined(PUFFER_CONNECT4)
     } else if (strcmp(mode, "eval_exact") == 0) {
         run_connect4_exact_eval(&ini, &ctx);

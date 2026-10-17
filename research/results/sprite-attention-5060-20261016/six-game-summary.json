@@ -1,0 +1,128 @@
+{
+  "games": {
+    "catch": {
+      "state": {
+        "process_seconds": 9.742070347012486,
+        "process_sps": 107633.79473250853,
+        "decisions": 1048576,
+        "parameters": 213632,
+        "perf": 0.590625002514571,
+        "successes": 0.0,
+        "deaths": 0.0
+      },
+      "pixels": {
+        "process_seconds": 84.77133621700341,
+        "process_sps": 12369.46409946617,
+        "decisions": 1048576,
+        "parameters": 253224,
+        "perf": 0.5812500040046871,
+        "successes": 0.0,
+        "deaths": 0.0
+      }
+    },
+    "platform": {
+      "state": {
+        "process_seconds": 7.281064926006366,
+        "process_sps": 144014.09830239485,
+        "decisions": 1048576,
+        "parameters": 64128,
+        "perf": 1.0,
+        "successes": 1.0,
+        "deaths": 0.0
+      },
+      "pixels": {
+        "process_seconds": 81.66599486998166,
+        "process_sps": 12839.811743791415,
+        "decisions": 1048576,
+        "parameters": 106024,
+        "perf": 1.0,
+        "successes": 1.0,
+        "deaths": 0.0
+      }
+    },
+    "maze": {
+      "state": {
+        "process_seconds": 7.231380387005629,
+        "process_sps": 145003.5738521279,
+        "decisions": 1048576,
+        "parameters": 66432,
+        "perf": 0.375,
+        "successes": 0.375,
+        "deaths": 0.0
+      },
+      "pixels": {
+        "process_seconds": 81.46434287299053,
+        "process_sps": 12871.594651353347,
+        "decisions": 1048576,
+        "parameters": 106024,
+        "perf": 0.34375,
+        "successes": 0.34375,
+        "deaths": 0.0
+      }
+    },
+    "runner": {
+      "state": {
+        "process_seconds": 7.332523724006023,
+        "process_sps": 143003.42412354652,
+        "decisions": 1048576,
+        "parameters": 70656,
+        "perf": 0.6966145797632635,
+        "successes": 0.015625,
+        "deaths": 0.015625
+      },
+      "pixels": {
+        "process_seconds": 81.7668949200015,
+        "process_sps": 12823.967462943261,
+        "decisions": 1048576,
+        "parameters": 105640,
+        "perf": 0.6966145792976022,
+        "successes": 0.015625,
+        "deaths": 0.015625
+      }
+    },
+    "key": {
+      "state": {
+        "process_seconds": 7.532076945994049,
+        "process_sps": 139214.72224970927,
+        "decisions": 1048576,
+        "parameters": 75648,
+        "perf": 0.46875,
+        "successes": 0.46875,
+        "deaths": 0.0
+      },
+      "pixels": {
+        "process_seconds": 82.06079093599692,
+        "process_sps": 12778.039159016074,
+        "decisions": 1048576,
+        "parameters": 106024,
+        "perf": 0.859375,
+        "successes": 0.859375,
+        "deaths": 0.015625
+      }
+    },
+    "push": {
+      "state": {
+        "process_seconds": 7.585896431002766,
+        "process_sps": 138227.03876032098,
+        "decisions": 1048576,
+        "parameters": 75648,
+        "perf": 0.96875,
+        "successes": 0.96875,
+        "deaths": 0.015625
+      },
+      "pixels": {
+        "process_seconds": 81.66211529599968,
+        "process_sps": 12840.421732883593,
+        "decisions": 1048576,
+        "parameters": 106024,
+        "perf": 0.828125,
+        "successes": 0.828125,
+        "deaths": 0.015625
+      }
+    }
+  },
+  "campaign_seconds": 795.4096072440152,
+  "independent_training_seeds": 1,
+  "seed_swept": false,
+  "pareto_or_generalization_claim": false
+}

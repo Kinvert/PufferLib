@@ -13,12 +13,21 @@ typedef float obs_t;
 #define LD_HEIGHT 15
 #define LD_AREA (LD_WIDTH * LD_HEIGHT)
 #define LD_CELL 32 // Each cell is 32x32 pixels.
+#define LD_MODE7_HORIZON 120 // Mode7 sky height; the road compresses below it.
+#define LD_SKY_R 36
+#define LD_SKY_G 58
+#define LD_SKY_B 84
 #define OBS_WIDTH (LD_WIDTH * LD_CELL)
 #define OBS_HEIGHT (LD_HEIGHT * LD_CELL)
 #define OBS_CHANNELS 3
 #define LD_PIXEL_OBS_SIZE (OBS_WIDTH * OBS_HEIGHT * OBS_CHANNELS)
 #define STATE_OBS_SIZE (1 + 2 * LD_LANES)
 #define LD_ROI_OBS_SIZE (9 * LD_CELL * LD_CELL * 3 + 3)
+#define LD_VIEW_TILES 18
+#define LD_VIEW_GEOMETRY 3
+#define LD_VIEW_PIXELS (LD_VIEW_TILES * LD_CELL * LD_CELL * 3)
+#define LD_VIEW_OBS (LD_VIEW_PIXELS + LD_VIEW_GEOMETRY)
+#define LD_VIEW_STATE (LD_VIEW_TILES * LD_TILE_TYPES + LD_VIEW_GEOMETRY)
 #define LD_REPRESENTATIONS 3
 #define LD_LANES 10
 #define LD_LANE_X(l) (5 + (l)) // Lane columns 5-14, adjacent.
@@ -41,6 +50,7 @@ typedef struct {
     Color* pixels;
     Texture2D roi_texture; // 96x96 gaze window, observation mode 2.
     Color* roi_pixels;
+    Color* m7_pixels; // Mode7 projection of the top-down map.
 } Client;
 
 struct Env {
@@ -56,9 +66,10 @@ struct Env {
     int lane;
     int player_idx; // Row-major grid cell of the player vehicle.
     int gaze_idx; // ROI window center; row-major cell, like Forage's gaze.
+    int representation;
+    int mode7; // 2.5D Mode7-style render of the full-map view.
     int tick;
     int observation_mode;
-    int representation;
     int coins;
     int coins_spawned;
     int max_steps;
@@ -90,6 +101,12 @@ int puf_observation_size(Dict* kwargs) {
     }
     if (mode == 2) {
         return LD_ROI_OBS_SIZE;
+    }
+    if (mode == 3) {
+        return LD_VIEW_OBS;
+    }
+    if (mode == 4) {
+        return LD_VIEW_STATE;
     }
     return STATE_OBS_SIZE;
 }
@@ -213,12 +230,43 @@ void write_roi(Env* env) {
     obs[9 * LD_CELL * LD_CELL * 3 + 2] = (float)gy / (float)(LD_HEIGHT - 1);
 }
 
+// Player window looks two rows ahead; the second window is centered on gaze.
+int ld_view_cell(Env* env, int slot) {
+    int center = slot < 9 ? env->player_idx - LD_WIDTH : env->gaze_idx;
+    int at = slot % 9;
+    int x = center % LD_WIDTH + at % 3 - 1;
+    int y = center / LD_WIDTH + at / 3 - 1;
+    return x < 0 || x >= LD_WIDTH || y < 0 || y >= LD_HEIGHT ? -1 : y * LD_WIDTH + x;
+}
+
+// Modes 3 and 4 share cells/actions/geometry; pixels versus one-hot identities.
+void write_view(Env* env) {
+    obs_t* obs = env->agents[0].observations;
+    if (env->observation_mode == 4) {
+        memset(obs, 0, LD_VIEW_STATE * sizeof(obs_t));
+    }
+    for (int slot = 0; slot < LD_VIEW_TILES; slot++) {
+        int cell = ld_view_cell(env, slot);
+        int kind = cell < 0 ? LD_GRASS : cell == env->player_idx ? LD_PLAYER : env->grid[cell];
+        if (env->observation_mode == 4) {
+            obs[slot * LD_TILE_TYPES + kind] = 1;
+        } else {
+            memcpy(obs + slot * LD_CELL * LD_CELL * 3, ld_tiles[env->representation][kind],
+                LD_CELL * LD_CELL * 3 * sizeof(obs_t));
+        }
+    }
+    int offset = env->observation_mode == 4 ? LD_VIEW_TILES * LD_TILE_TYPES : LD_VIEW_PIXELS;
+    obs[offset] = env->lane / (float)(LD_LANES - 1);
+    obs[offset + 1] = (env->gaze_idx % LD_WIDTH) / (float)(LD_WIDTH - 1);
+    obs[offset + 2] = (env->gaze_idx / LD_WIDTH) / (float)(LD_HEIGHT - 1);
+}
+
 void compute_observations(Env* env) {
     obs_t* obs = env->agents[0].observations;
     obs[0] = env->lane / (float)(LD_LANES - 1);
     for (int l = 0; l < LD_LANES; l++) {
         int hy = -1, cy = -1;
-        for (int y = LD_PLAYER_ROW - 1; y >= 0 && (hy < 0 || cy < 0); y--) {
+        for (int y = LD_PLAYER_ROW; y >= 0 && (hy < 0 || cy < 0); y--) {
             int kind = env->grid[y * LD_WIDTH + LD_LANE_X(l)];
             if (kind == LD_HAZARD && hy < 0) {
                 hy = y;
@@ -235,6 +283,7 @@ void puf_init(Env* env, Dict* kwargs) {
     env->rng += (unsigned int)dict_get(kwargs, "seed");
     env->observation_mode = dict_get(kwargs, "observation_mode");
     env->representation = dict_get(kwargs, "representation");
+    env->mode7 = dict_get(kwargs, "mode7");
     env->max_steps = dict_get(kwargs, "max_steps");
     env->hazard_rate = dict_get(kwargs, "hazard_rate");
     env->coin_rate = dict_get(kwargs, "coin_rate");
@@ -243,7 +292,7 @@ void puf_init(Env* env, Dict* kwargs) {
     env->reward_death = dict_get(kwargs, "reward_death");
     env->num_agents = 1;
     env->agents[0].policy = 0;
-    if (env->observation_mode) {
+    if (env->observation_mode >= 1 && env->observation_mode <= 3) {
         ld_make_tiles(env->representation);
         if (env->observation_mode == 1) {
             // Force every tile to be drawn on the first reset.
@@ -278,6 +327,8 @@ void puf_reset(Env* env) {
         }
     } else if (env->observation_mode == 2) {
         write_roi(env);
+    } else if (env->observation_mode == 3 || env->observation_mode == 4) {
+        write_view(env);
     } else {
         compute_observations(env);
     }
@@ -406,8 +457,109 @@ void puf_step(Env* env) {
         for (int i = 0; i < nd; i++) {
             write_pixel_cell(env, dirty[i]);
         }
-    } else {
+    } else if (env->observation_mode == 2) {
         write_roi(env);
+    } else {
+        write_view(env);
+    }
+}
+// Mode7-style 2.5D: the top-down map is projected behind a flat horizon.
+// The player row fills the bottom 120 screen px (y = 360..479; the
+// shoulder row below it is off camera), far rows compress toward the
+// horizon, and the horizontal sampling scale is halved so the bottom row
+// shows a 320 world px span (the road fills the full screen width there)
+// and the road converges to the vanishing point at (320, horizon),
+// fading with distance fog. The far band (y = 120..165) samples one repeated
+// world row; that band is drawn as sky and the repeated row fades in
+// over the last 8 rows (y = 158..165) so it does not read as a vertical
+// smear of the lane dashes.
+void ld_mode7(const Color* top, Color* out) {
+    for (int y = 0; y < LD_MODE7_HORIZON; y++) {
+        for (int x = 0; x < OBS_WIDTH; x++) {
+            out[y * OBS_WIDTH + x] =
+                (Color){LD_SKY_R, LD_SKY_G, LD_SKY_B, 255};
+        }
+    }
+    for (int y = LD_MODE7_HORIZON; y < OBS_HEIGHT; y++) {
+        // Row mapping: the bottom row is still the player row, but the
+        // player row spans only the bottom 120 screen px (y = 360..479);
+        // far rows compress toward the horizon (row 0 above y = 165).
+        float dist = 2.0f * (float)(OBS_HEIGHT - y)
+            / (float)(y - LD_MODE7_HORIZON);
+        if (dist > (float)LD_PLAYER_ROW) {
+            dist = (float)LD_PLAYER_ROW;
+        }
+        int d = (int)dist;
+        float frac = (d == LD_PLAYER_ROW) ? 0.0f : dist - (float)d;
+        int gy = (LD_PLAYER_ROW - d) * LD_CELL + (int)(frac * LD_CELL);
+        float fog = 1.0f - 0.03f * dist;
+        // Far band (y = 120..165): dist is clamped, so every row samples
+        // the same top pixel row of the world. Draw sky there and fade the
+        // repeated row in over the last 8 rows (y = 158..165) so the lane
+        // dashes do not read as a vertical smear ("hill") at the horizon.
+        float t = (float)(y - 158) / 8.0f;
+        if (t < 0.0f) {
+            t = 0.0f;
+        } else if (t > 1.0f) {
+            t = 1.0f;
+        }
+        float k = 1.0f - t;
+        const Color* row = top + gy * OBS_WIDTH;
+        Color* dst = out + y * OBS_WIDTH;
+        // Half the horizontal sampling scale: the bottom row spans 320
+        // world px (was 640), so the road fills the full width there.
+        float zx = (float)(OBS_HEIGHT - LD_MODE7_HORIZON)
+            / (2.0f * (float)(y - LD_MODE7_HORIZON));
+        if (zx > 7.f) {
+            zx = 7.f;
+        }
+        for (int x = 0; x < OBS_WIDTH; x++) {
+            float wx = 320.f + ((float)x - 320.f) * zx;
+            int wxi = (int)wx;
+            if (wx < 0.f) {
+                wxi = 0;
+            } else if (wx >= 640.f) {
+                wxi = 639;
+            }
+            float r = (float)row[wxi].r * fog;
+            float g = (float)row[wxi].g * fog;
+            float b = (float)row[wxi].b * fog;
+            dst[x] = (Color){(unsigned char)(r + (LD_SKY_R - r) * k),
+                             (unsigned char)(g + (LD_SKY_G - g) * k),
+                             (unsigned char)(b + (LD_SKY_B - b) * k), 255};
+        }
+    }
+}
+
+// Draw a 3x3 window (center cell cx,cy) at 2x into the full-map buffer;
+// out-of-range cells are grass.
+static void ld_draw_window(Env* env, int cx, int cy, int dx, int dy) {
+    for (int sy = 0; sy < 3; sy++) {
+        for (int sx = 0; sx < 3; sx++) {
+            int x = cx + sx - 1;
+            int y = cy + sy - 1;
+            int kind = LD_GRASS;
+            if (x >= 0 && x < LD_WIDTH && y >= 0 && y < LD_HEIGHT) {
+                int cell = y * LD_WIDTH + x;
+                kind = cell == env->player_idx ? LD_PLAYER : env->grid[cell];
+            }
+            const float* tile = ld_tiles[env->representation][kind];
+            for (int y2 = 0; y2 < LD_CELL; y2++) {
+                for (int x2 = 0; x2 < LD_CELL; x2++) {
+                    int source = (y2 * LD_CELL + x2) * 3;
+                    Color c = (Color){
+                        (unsigned char)(tile[source] * 255 + .5f),
+                        (unsigned char)(tile[source + 1] * 255 + .5f),
+                        (unsigned char)(tile[source + 2] * 255 + .5f), 255};
+                    int ty = dy + (sy * LD_CELL + y2) * 2;
+                    int tx = dx + (sx * LD_CELL + x2) * 2;
+                    env->client->pixels[ty * OBS_WIDTH + tx] = c;
+                    env->client->pixels[ty * OBS_WIDTH + tx + 1] = c;
+                    env->client->pixels[(ty + 1) * OBS_WIDTH + tx] = c;
+                    env->client->pixels[(ty + 1) * OBS_WIDTH + tx + 1] = c;
+                }
+            }
+        }
     }
 }
 
@@ -417,6 +569,7 @@ void puf_render(Env* env) {
         SetTargetFPS(PUF_STEPS_PER_SEC);
         env->client = (Client*)calloc(1, sizeof(Client));
         env->client->pixels = (Color*)calloc(OBS_WIDTH * OBS_HEIGHT, sizeof(Color));
+        env->client->m7_pixels = (Color*)calloc(OBS_WIDTH * OBS_HEIGHT, sizeof(Color));
         Image image = {env->client->pixels, OBS_WIDTH, OBS_HEIGHT, 1,
             PIXELFORMAT_UNCOMPRESSED_R8G8B8A8};
         env->client->texture = LoadTextureFromImage(image);
@@ -460,6 +613,22 @@ void puf_render(Env* env) {
         puf_web_vsync();
         return;
     }
+
+    if (env->observation_mode == 3 || env->observation_mode == 4) {
+        // Show the agent's view: the player window (the player is the
+        // bottom-center cell) above the gaze window, each scaled 2x.
+        int px = env->player_idx % LD_WIDTH;
+        int gx = env->gaze_idx % LD_WIDTH;
+        int gy = env->gaze_idx / LD_WIDTH;
+        ld_draw_window(env, px, LD_PLAYER_ROW - 1, 224, 0);
+        ld_draw_window(env, gx, gy, 224, 240);
+        UpdateTexture(env->client->texture, env->client->pixels);
+        BeginDrawing();
+        DrawTexture(env->client->texture, 0, 0, WHITE);
+        EndDrawing();
+        puf_web_vsync();
+        return;
+    }
     for (int cell = 0; cell < LD_AREA; cell++) {
         int kind = cell == env->player_idx ? LD_PLAYER : env->grid[cell];
         const float* tile = ld_tiles[env->representation][kind];
@@ -475,7 +644,12 @@ void puf_render(Env* env) {
             }
         }
     }
-    UpdateTexture(env->client->texture, env->client->pixels);
+    const Color* image = env->client->pixels;
+    if (env->mode7) {
+        ld_mode7(env->client->pixels, env->client->m7_pixels);
+        image = env->client->m7_pixels;
+    }
+    UpdateTexture(env->client->texture, image);
     BeginDrawing();
     DrawTexture(env->client->texture, 0, 0, WHITE);
     EndDrawing();
@@ -483,8 +657,13 @@ void puf_render(Env* env) {
 }
 
 void puf_close(Env* env) {
+    if (!env->client) {
+        // Never rendered (e.g. the headful eval probe); nothing to free.
+        return;
+    }
     UnloadTexture(env->client->roi_texture);
     free(env->client->roi_pixels);
+    free(env->client->m7_pixels);
     UnloadTexture(env->client->texture);
     free(env->client->pixels);
     free(env->client);

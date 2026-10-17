@@ -5,6 +5,36 @@ CNNs. A useful baseline does not require solving every episode or reaching
 100% perf. Prioritize deterministic rules, paired evaluation worlds, stable
 metrics and clear learning/time curves.
 
+## Next priority: finish the reference environment
+
+Kinvert wants Sprite Forage to be the example used to clean up the other
+sprite games. Finish this readability pass before more architecture work.
+
+- [ ] Resolve the remaining inline TODOs one at a time, showing small proposed
+  diffs first. Start with sprite coordinates and grass construction, then
+  pixel-copy comments and the state-value/layout explanations. Preserve bytes,
+  RNG consumption, rules, rewards and observation ordering during cleanup.
+- [ ] Record the concrete reference pattern in the README: simple native
+  init/reset/step/compute_observations/close lifecycle, explicit per-env RNG,
+  same game in state/pixels, cached sprites, changed-cell copies and separate
+  collection/exit metrics. Follow SKILL_ISSUES.md and the golden environments;
+  do not introduce a generic sprite engine or extra wrappers.
+- [ ] Review the eventual clean environment diff separately from temporary
+  CNN/attention research wiring. Other games should copy the clean lifecycle
+  and rendering pattern, not all the experimental switches and scripts.
+- [ ] Reuse determinism, state/pixel world parity and dirty/full redraw checks
+  as acceptance criteria for each later game cleanup. Run relevant checks after
+  behavior/rendering edits; do not launch training for every naming change.
+- [ ] Apply the finished pattern to one other sprite game before spreading it
+  across the suite. Preserve each game's mechanics and observation contract.
+
+Player neighbors plus gaze remains the selected attention configuration.
+The completed gaze-only ablation reaches4.88% collection versus53.71% with
+both views, despite higher SPS. Keep it as negative evidence, not the default.
+See [the ablation report](../../research/results/sprite-forage-gaze-only-5060-20261015/README.md).
+Precomputed smaller sprites remain the next performance experiment after this
+reference cleanup; no new training is scheduled by this list.
+
 ## Attention architecture — October15 prototype complete
 
 - [x] Revised controls requested by Kinvert: exactly five directional ROI
@@ -57,7 +87,20 @@ metrics and clear learning/time curves.
 
 ## Current state results and cleanup candidates — October15
 
-Current observation version is v6, with v5 game rules: neutral objects give zero
+October16 connectivity ablation is complete on RTX5060: unchecked placement
+817,022 process SPS versus714,031 with connectivity rejection (+14.42%);
+8Mi decisions/run, fixed seed7, two identical-checkpoint timing repeats per
+variant. Exact evaluation is99.61% versus98.83% collection on128 assigned
+episodes per generator; these are single-seed development results. A4096-map
+scalar check finds46 disconnected unchecked maps, but no unreachable apples
+or grapes in either variant. Kinvert approved removal: v7 now places each item
+once without connectivity rejection; the helper and rejection loop are removed.
+Sources, timing, determinism and cross-generator evaluation are in
+[the report](../../research/results/sprite-forage-connectivity-5060-20261016/README.md).
+The completed allocation must not automatically restart.
+
+Current version is v7: v6 observations with unchecked map placement. The v5
+reward rules remain: neutral objects give zero
 reward and disappear on pickup;
 perf is clamp((apples + grape - bad pickups) /4,0,1). The v4 reward/metric notes
 below are historical, not the current contract. State layout2 currently uses

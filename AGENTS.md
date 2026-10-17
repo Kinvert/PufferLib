@@ -1,5 +1,58 @@
 # Working preferences
 
+- October16 sprite cleanup goal COMPLETE: Catch, Platform, Maze, Runner, Key,
+  Push and sprite_common are now REAL LOCAL directories under ~/cnn, replacing
+  the old links. Their INIs are local too. Edit here; earlier worktree copies
+  are preserved and no longer receive changes. This supersedes older linked/
+  active-worktree routing below. Read research/SPRITE_CLEANUP_PLAN.md.
+  Original links/sources and captured before/after builds are retained under
+  build/sprite-cleanup-20261016. Its short native state/pixel comparison must
+  not restart automatically; inspect COMPLETE/failure.json/process receipts.
+  Read research/results/sprite-attention-5060-20261016/README.md and its
+  completion-audit.json: seven games including Lane have matched partial
+  state/tile-CNN pilots; nineteen final sanitizer suites pass. Six-game
+ 18-cell views use factored X/Y and four geometry floats; Lane retains its
+ 18-cell forward view/gaze300/three geometry floats with new state mode4.
+  Twenty CUDA positive/zero encoder cases,14 exact canary training pairs,
+ 56 pilot checkpoints,114 successful nonoverlapping GPU processes and1022
+  assigned episode rows pass. Root normal builds pass all seven plus g2048.
+  Pixel task perf: Catch58.13, Platform100, Maze34.38, Runner69.66, Key85.94,
+  Push82.81, Lane68.71 percent; metrics differ and cannot be blindly averaged.
+  One training seed7,1Mi decisions/model; no Pareto/generalization claim.
+  Historical reader failure remains beside COMPLETE; explicit recovery reused
+  all successful native work. No task GPU process remains or automatic retry,
+  fresh research allocation, dataset, system/CUDA/dependency change or push.
+
+- October16: Kinvert approved removing Forage reset connectivity rejection
+  after the RTX5060 ablation. Current main header is sprite-forage-state-v7:
+  deterministic placement without connectivity/solvability guarantees; old
+  v6 world RNG streams differ. Read research/results/sprite-forage-connectivity-
+  5060-20261016/README.md. Four new 8Mi-decision state trainings, fixed seed7,
+  two exact-checkpoint repeats per variant, and eight exact cross-generator
+  evaluations/512 assigned episodes completed. Observed process SPS714031
+  connected versus817022 unchecked (+14.42%); collection98.83% versus99.61%,
+  one independent training seed. Main helper/rejection loop removed; seven
+  ASan/UBSan suites pass in build/sprite-forage-unchecked-tests-20261016.
+  Raw build/sprite-forage-connectivity-20261016 is complete: no automatic
+  restart, no pixel result/Pareto claim, no GPU remains reserved by this task.
+
+- October15 gaze-only pixel ablation COMPLETE, negative learning result.
+  Read research/results/sprite-forage-gaze-only-5060-20261015/README.md.
+  Opt-in FORAGE_PLAYER_VIEW=0 exposes only chosen3x3,27652 pixel values;
+  default1 keeps17 tiles. Same actions5/20/15, geometry, learner/rewards,
+  seed7 and256 assigned development worlds as retained17-tile reference.
+  Gaze-only4.88% collection/8.20% grape exits,270.241s/7.569M/28010 SPS,
+  87592 params; reference53.71%/55.08%,295.053s/4.588M/15548 SPS,
+  103976 params. Both aim~300s, not exactly equal time/decisions/parameters.
+  Faster but much worse quality; no general gaze-use/failure/Pareto claim.
+  Nine-tile sanitizer/crop/leak checks and seven default suites pass;
+  independent CUDA smooth-positive/zero fixture gradients pass B1/3/8/64/256.
+  Eight train/eval processes/308 episodes/nine finite checkpoints pass audit,
+  including graph/repeat/eager/tail canary and reference/world binding.
+  Raw build/sprite-forage-gaze-only-5060-20261015 is complete; no automatic
+  restart/extension. No new state training/downsampling/main core/system/
+  CUDA/dependency change, commit or push. No GPU remains reserved.
+
 - October15 matched five-minute partial state/pixel comparison COMPLETE.
   Read research/results/sprite-forage-pixels-matched-5060-20261015/README.md.
   Same17 cells, factored5/20/15 actions, relative geometry; state225 values,

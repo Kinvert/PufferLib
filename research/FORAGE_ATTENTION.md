@@ -1,5 +1,10 @@
 # Sprite Forage attention prototype
 
+Latest pixel ablation: [gaze-only](results/sprite-forage-gaze-only-5060-20261015/README.md)
+is faster but falls to4.88% collection versus53.71% with the automatic player
+view. `FORAGE_PLAYER_VIEW=0` is opt-in; the default remains17 visible tiles.
+See [the gaze-only protocol](FORAGE_GAZE_ONLY.md).
+
 Latest state results: [matched action/observation ablations](results/sprite-forage-state-controls-5060-20261015/README.md).
 The factored-X/Y, one-hot, relative-offset candidate reaches93.55% collection
 perf /90.23% grape exits at97.3 seconds, with exact same-seed checkpoint and

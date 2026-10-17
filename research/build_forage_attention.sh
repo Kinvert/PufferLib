@@ -8,9 +8,11 @@ forage_gaze="${3:-0}"
 forage_relative="${4:-0}"
 forage_exact="${5:-0}"
 forage_onehot="${6:-0}"
+forage_player_view="${7:-1}"
 [[ "$forage_gaze" =~ ^[012]$ && "$forage_relative" =~ ^[01]$ ]]
 [[ "$forage_exact" =~ ^[01]$ ]]
 [[ "$forage_onehot" =~ ^[01]$ ]]
+[[ "$forage_player_view" =~ ^[01]$ ]]
 test ! -e "$forage_out"
 mkdir -p "$forage_out/source/ocean" "$forage_out/source/research"
 forage_out=$(realpath "$forage_out")
@@ -30,6 +32,7 @@ if [[ "$forage_exact" == 1 ]]; then
 fi
 printf 'SPRITE_EXACT_RESEARCH=%s\n' "$forage_exact" >> "$forage_out/attention-build.env"
 printf 'FORAGE_STATE_ONEHOT=%s\n' "$forage_onehot" >> "$forage_out/attention-build.env"
+printf 'FORAGE_PLAYER_VIEW=%s\n' "$forage_player_view" >> "$forage_out/attention-build.env"
 ln -s "$(realpath "$forage_core/vendor")" "$forage_out/source/vendor"
 ln -s "$PWD/raylib-5.5_linux_amd64" "$forage_out/source/raylib-5.5_linux_amd64"
 mkdir -p "$forage_out/runtime/config"
@@ -39,7 +42,7 @@ cat config/sprite_forage.ini research/recipes/sprite_forage_spatial_cnn.ini \
 source ocean/connect4cnn/runtime_env.sh
 cd "$forage_out/source"
 patch -p1 < "$forage_out/forage_attention_core.patch" > "$forage_out/patch.log"
-NVCC_EXTRA="-DFORAGE_ATTENTION -DSPRITE_CNN_RESEARCH -DFORAGE_GAZE_MODE=$forage_gaze -DFORAGE_RELATIVE_GAZE=$forage_relative -DFORAGE_STATE_ONEHOT=$forage_onehot $forage_extra" NVCC_ARCH=sm_120 \
+NVCC_EXTRA="-DFORAGE_ATTENTION -DSPRITE_CNN_RESEARCH -DFORAGE_GAZE_MODE=$forage_gaze -DFORAGE_RELATIVE_GAZE=$forage_relative -DFORAGE_STATE_ONEHOT=$forage_onehot -DFORAGE_PLAYER_VIEW=$forage_player_view $forage_extra" NVCC_ARCH=sm_120 \
     bash build.sh sprite_forage "$forage_out/puffer" --float > "$forage_out/build.log" 2>&1
 sha256sum "$forage_out/puffer" > "$forage_out/binary.sha256"
 rg --files --no-ignore src ocean research | sort | xargs sha256sum > "$forage_out/source.sha256"
