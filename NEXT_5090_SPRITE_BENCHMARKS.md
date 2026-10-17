@@ -24,6 +24,9 @@ checkout; use a separate clean checkout rather than discarding its work.
 The launcher records the actual pulled revision. Publication does not mean
 the full5090 campaign has run: that allocation remains PREPARED, NOT RUN.
 
+Merged-source build, raster and host verification is recorded in
+`research/results/sprite-delivery-reconciliation-20261016/README.md`.
+
 ## Existing environment
 
 Reuse working CUDA/NCCL/raylib and uv Python3.12. No new Python packages,

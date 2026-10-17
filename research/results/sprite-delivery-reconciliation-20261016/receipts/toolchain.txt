@@ -1,0 +1,3 @@
+CUDA_HOME=/usr/local/cuda
+NCCL_ROOT=/home/claude/PufferLib/.venv/lib/python3.12/site-packages/nvidia/nccl
+NVCC_ARCH=sm_120

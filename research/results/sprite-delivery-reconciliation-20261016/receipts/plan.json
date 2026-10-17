@@ -1,0 +1,93 @@
+{
+  "schema": "sprite-overnight-v1",
+  "mode": "overnight",
+  "build": "/home/claude/cnn/build/sprite-delivery-merged-20261016/build",
+  "settings": {
+    "seconds": 43200,
+    "trials": 24,
+    "decisions": 1048576,
+    "seeds": [
+      7,
+      42,
+      69,
+      123,
+      173,
+      2027,
+      9001
+    ],
+    "baselines": [
+      "tile",
+      "nature",
+      "impala",
+      "impoola"
+    ],
+    "checkpoint_count": 8,
+    "eval_seed": 420,
+    "episodes": 16,
+    "slots": 16,
+    "skins": [
+      0,
+      1,
+      2
+    ],
+    "max_steps": 2048,
+    "min_free_gib": 20,
+    "max_artifact_gib": 100,
+    "offset": 0.0,
+    "target": 1.0,
+    "timeouts": {
+      "training": 1800,
+      "evaluation": 120,
+      "numerical": 240,
+      "proposal": 120
+    }
+  },
+  "games": [
+    "catch",
+    "platform",
+    "maze",
+    "runner",
+    "key",
+    "push"
+  ],
+  "recipes": {
+    "catch": "b2819f10666bd4a94edb458d3e0d1cd38c49b4af247a3987c0f688dd173b8e73",
+    "platform": "26ea2319b63c663269e745466e0d8021efe373ebcb08b9ecb79e974df80cf31f",
+    "maze": "c59ddbde093c40e31ebd515a40cd61e058678317efa9e04fa5ed3ffa8d9fb5f1",
+    "runner": "4198d6f065904b2584ee132b43983d4ece9a1e914e0fac0ea4be80a9b12c22c0",
+    "key": "59cf4c6842fc2dce241e0e314d0a5683a2a5d683aad6ee40506ac7aa933a577a",
+    "push": "6bd1ac52231f598881715b0a2aac9709d35167aafd7fb10ba45cd4804ce44744"
+  },
+  "prepared_at_utc": "2026-10-17T06:10:10Z",
+  "seeds_swept": false,
+  "complete_training_replicas_required": true,
+  "architecture_dimensions": 18,
+  "gpu_executed": false,
+  "held_out_confirmation": false,
+  "scientific_claim": false,
+  "inputs": {
+    "/home/claude/cnn/research/sprite_overnight.py": "de3821b47c7956bdeb6764b1d5d72ff7f2c76c79cd061b75d7f53045edb44f90",
+    "/home/claude/cnn/research/sprite_pixel_benchmarks.py": "b1d0a57ca1be9a299b6a2e9d94f466541c9ac8f5c054aa2ab8e0473d1c1d124f",
+    "/home/claude/cnn/build/sprite-delivery-merged-20261016/campaign/campaign.ini": "20f53bbfbfdc6dbfe43242ef0a9c4e794e3df785fb28268038d94e8101f47f77",
+    "/home/claude/cnn/build/sprite-delivery-merged-20261016/campaign/optimizer.ini": "4b3f13e13113f9230a9643a836975005a41614fd85949ea2d3152ea451bf7721",
+    "/home/claude/cnn/build/sprite-delivery-merged-20261016/build/source.sha256": "900f8e225041ae4fbe0931505133cbaf77c39f066ee50b1c0a9b195baf006c08",
+    "/home/claude/cnn/build/sprite-delivery-merged-20261016/build/packed-checks": "3fab8088915cd1d3bd3d6967ead059953166b007fed171f57d091d4018488e8d",
+    "/home/claude/cnn/build/sprite-delivery-merged-20261016/build/packed-checks.sha256": "55e241605faa3437992e3c787581662c21c09ffc1dd04d96d16112e82b0d102a",
+    "/home/claude/cnn/build/sprite-delivery-merged-20261016/build/sprite_catch": "72e68cb0f8d30658bbef072989c6b094689eb6f461fb6778b6bd109576f3d0d4",
+    "/home/claude/cnn/build/sprite-delivery-merged-20261016/build/sprite_platform": "7434bd287da7fe660e16e481f31adf7ced6ffdd4e372cbccb8bd84efc371e46d",
+    "/home/claude/cnn/build/sprite-delivery-merged-20261016/build/sprite_maze": "b14350899967f7616c6ea1beae26e04b4064db59d90ee70560c7cfa52f7276c7",
+    "/home/claude/cnn/build/sprite-delivery-merged-20261016/build/sprite_runner": "d31a7fbf521dd5b2c7dc8a39dfabf964990d6a3c2c397f889514edb1fe68e3ef",
+    "/home/claude/cnn/build/sprite-delivery-merged-20261016/build/sprite_key": "8e81af6fd7549e1022745833d90ec284eb7a21ce54fd4555fcf331c6dbfbef71",
+    "/home/claude/cnn/build/sprite-delivery-merged-20261016/build/sprite_push": "42ab1de25388922a63e0a44193d437a65f77f4fdf743a03147b65681a1e83a00"
+  },
+  "optimizer_description": {
+    "argv": [
+      "/home/claude/cnn/build/sprite-delivery-merged-20261016/build/sprite_catch",
+      "research_protein_describe",
+      "/home/claude/cnn/build/sprite-delivery-merged-20261016/campaign/optimizer.ini"
+    ],
+    "stdout": "{\"protocol\":\"native-cross-game-protein-v1\",\"dimensions\":18,\"gpu_queried\":false,\"policy_executed\":false,\"coordinates\":[\"cnn_depth\",\"cnn_projection\",\"cnn_global_pool\",\"cnn_channels_1\",\"cnn_kernel_1\",\"cnn_stride_1\",\"cnn_pool_1\",\"cnn_residual_1\",\"cnn_channels_2\",\"cnn_kernel_2\",\"cnn_stride_2\",\"cnn_pool_2\",\"cnn_residual_2\",\"cnn_channels_3\",\"cnn_kernel_3\",\"cnn_stride_3\",\"cnn_pool_3\",\"cnn_residual_3\"]}\n",
+    "stderr": "",
+    "returncode": 0
+  }
+}
