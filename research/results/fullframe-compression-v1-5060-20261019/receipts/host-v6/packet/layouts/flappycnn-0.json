@@ -1,0 +1,218 @@
+{
+  "layout": {
+    "schema": "native-policy-metadata-v2",
+    "model": "fullframe_compression",
+    "observation_shape": [
+      3,
+      640,
+      420
+    ],
+    "discrete_actions": 2,
+    "hidden": 128,
+    "layers": 1,
+    "horizon": 16,
+    "encoder_parameters": 36776,
+    "decoder_parameters": 384,
+    "core_parameters": 49152,
+    "total_parameters": 86312,
+    "parameter_payload_bytes": 345248,
+    "parameter_allocator_bytes": 345248,
+    "raw_checkpoint_contiguous": true,
+    "checkpoint_bytes": null,
+    "parameter_tensors": [
+      {
+        "index": 0,
+        "group": "encoder",
+        "offset_bytes": 0,
+        "elements": 384,
+        "shape": [
+          8,
+          48
+        ]
+      },
+      {
+        "index": 1,
+        "group": "encoder",
+        "offset_bytes": 1536,
+        "elements": 8,
+        "shape": [
+          8
+        ]
+      },
+      {
+        "index": 2,
+        "group": "encoder",
+        "offset_bytes": 1568,
+        "elements": 1152,
+        "shape": [
+          16,
+          72
+        ]
+      },
+      {
+        "index": 3,
+        "group": "encoder",
+        "offset_bytes": 6176,
+        "elements": 16,
+        "shape": [
+          16
+        ]
+      },
+      {
+        "index": 4,
+        "group": "encoder",
+        "offset_bytes": 6240,
+        "elements": 2304,
+        "shape": [
+          16,
+          144
+        ]
+      },
+      {
+        "index": 5,
+        "group": "encoder",
+        "offset_bytes": 15456,
+        "elements": 16,
+        "shape": [
+          16
+        ]
+      },
+      {
+        "index": 6,
+        "group": "encoder",
+        "offset_bytes": 15520,
+        "elements": 32768,
+        "shape": [
+          128,
+          256
+        ]
+      },
+      {
+        "index": 7,
+        "group": "encoder",
+        "offset_bytes": 146592,
+        "elements": 128,
+        "shape": [
+          128
+        ]
+      },
+      {
+        "index": 8,
+        "group": "decoder",
+        "offset_bytes": 147104,
+        "elements": 384,
+        "shape": [
+          3,
+          128
+        ]
+      },
+      {
+        "index": 9,
+        "group": "core",
+        "offset_bytes": 148640,
+        "elements": 49152,
+        "shape": [
+          384,
+          128
+        ]
+      }
+    ],
+    "compression": {
+      "model": 0,
+      "layers": [
+        [
+          640,
+          420,
+          3,
+          8,
+          4,
+          4,
+          160,
+          105,
+          0,
+          0
+        ],
+        [
+          160,
+          105,
+          8,
+          16,
+          3,
+          2,
+          80,
+          53,
+          0,
+          1
+        ],
+        [
+          80,
+          53,
+          16,
+          16,
+          3,
+          2,
+          40,
+          27,
+          0,
+          1
+        ],
+        [
+          1,
+          1,
+          256,
+          128,
+          1,
+          1,
+          1,
+          1,
+          0,
+          0
+        ]
+      ]
+    },
+    "environment": "flappycnn",
+    "image_contract": {
+      "version": "human-geometry-v1",
+      "shape_hwc": [
+        640,
+        420,
+        3
+      ],
+      "layout": "NHWC",
+      "dtype": "float32",
+      "preprocessing": "none"
+    },
+    "cuda_executed": false,
+    "gpu_queried": false,
+    "weights_initialized": false,
+    "policy_executed": false,
+    "checkpoint_contents_validated": false,
+    "numerical_acceptance": false
+  },
+  "storage": {
+    "schema": "native-image-storage-v1",
+    "model": "fullframe_compression",
+    "shape_hwc": [
+      640,
+      420,
+      3
+    ],
+    "layout": "NHWC",
+    "dtype": "float32",
+    "agents": 16,
+    "buffers": 1,
+    "horizon": 16,
+    "learner_batch": 16,
+    "parameters": 86312,
+    "parameter_bytes": 345248,
+    "gradient_bytes": 345248,
+    "learner_activation_bytes": 138848128,
+    "actor_activation_bytes_per_buffer": 95215808,
+    "rollout_observation_bytes": 1651507200,
+    "storage_floor_bytes": 1938906976,
+    "peak_memory_certified": false,
+    "gpu_queried": false,
+    "cuda_executed": false
+  },
+  "config_sha256": "ff86b23c1c92e0cd36848dc1a89fbc9f4da9439ff16530f9fd4a445e15287939"
+}

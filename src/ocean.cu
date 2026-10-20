@@ -38,6 +38,9 @@ void puf_normal_init(Prec* dst, float std, ulong seed, cudaStream_t stream) {
 #include "../ocean/connect4cnn/nature.cu"
 #include "../ocean/connect4cnn/flex.cu"
 #include "../ocean/connect4cnn/flex2.cu"
+#if defined(CNN_IMAGE_V1) && defined(CNN_COMPRESSION_RESEARCH)
+#include "../research/fullframe_compression.cu"
+#endif
 #if defined(C4_IMPALA_CNN) || defined(C4_IMPOOLA_CNN)
 #include "../ocean/connect4cnn/impala.cu"
 #elif !defined(C4_NATURE_CNN) && !defined(CNN_IMAGE_V1)
@@ -100,6 +103,12 @@ static void create_custom_encoder(Encoder* enc, Dict* policy = NULL) {
     }
 #elif defined(PUFFER_CONNECT4CNN) || defined(PUFFER_PONGCNN) || defined(PUFFER_FLAPPYCNN) || defined(PUFFER_BREAKOUTCNN) || defined(PUFFER_SNAKECNN) || defined(PUFFER_MAZECNN) || defined(PUFFER_FORAGECNN)
     DictItem* type = policy ? dict_find(policy, "encoder") : NULL;
+#if defined(CNN_IMAGE_V1) && defined(CNN_COMPRESSION_RESEARCH)
+    if (type && type->value == 8) {
+        create_ffc_encoder(enc, policy);
+        return;
+    }
+#endif
 #ifdef CNN_IMAGE_V1
     assert(type && (type->value == 2 || type->value == 4
 #if defined(C4_IMPALA_CNN) || defined(C4_IMPOOLA_CNN)

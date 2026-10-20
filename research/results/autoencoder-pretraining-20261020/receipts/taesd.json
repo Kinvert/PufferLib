@@ -1,0 +1,41 @@
+{
+  "asset": {
+    "repo": "madebyollin/taesd",
+    "revision": "614f76814bbe30edbe2e627ace1c2234c81a2c0e",
+    "file": "diffusion_pytorch_model.safetensors",
+    "bytes": 9793292,
+    "sha256": "db169d69145ec4ff064e49d99c95fa05d3eb04ee453de35824a6d0f325513549",
+    "license": "mit",
+    "native_encoder8_compatible": false,
+    "source": "https://huggingface.co/madebyollin/taesd",
+    "checked": "2026-10-20"
+  },
+  "files": [
+    {
+      "url": "https://huggingface.co/madebyollin/taesd/resolve/614f76814bbe30edbe2e627ace1c2234c81a2c0e/diffusion_pytorch_model.safetensors",
+      "file": "model.safetensors",
+      "bytes": 9793292,
+      "sha256": "db169d69145ec4ff064e49d99c95fa05d3eb04ee453de35824a6d0f325513549"
+    },
+    {
+      "url": "https://huggingface.co/madebyollin/taesd/resolve/614f76814bbe30edbe2e627ace1c2234c81a2c0e/config.json",
+      "file": "config.json",
+      "bytes": 597,
+      "sha256": "3ebefd1aa96ac474cc6430fe6ea81febccf7ee82461715691ee9315c884adeef"
+    },
+    {
+      "url": "https://huggingface.co/madebyollin/taesd/resolve/614f76814bbe30edbe2e627ace1c2234c81a2c0e/README.md",
+      "file": "README.md",
+      "bytes": 1315,
+      "sha256": "929bdbabc7bbfa10e647b90767e962dbf8823537f9cc86e648fef334bed3bd10"
+    }
+  ],
+  "original_receipt_sha256": "05f8b3869e913307a2fece468b387008b8d99fd6555ce790985fb3f2c7835b76",
+  "inventory": {
+    "encoder_parameters": 1222532,
+    "decoder_parameters": 1222531,
+    "execution": false,
+    "native_conversion": false
+  },
+  "tensor_count": 134
+}

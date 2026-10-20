@@ -1,0 +1,11 @@
+{
+  "schema": "fullframe-compression-timing-build-v1",
+  "source_sha256": "dd28f14e9a4ac6197aeab10f72938ec6862852c66d6be08a94fd68fc1d8b7700",
+  "native_source_manifest_sha256": "c3408413f3730c7462b0b750dc71683368bedb04213dbe5f0819a024ebb2fbbe",
+  "builds": {
+    "flappycnn": "71e961b5a8fa58cabd203b454ed9c1fff33dd60de65797735c242dc13be5622c",
+    "pongcnn": "b74bf653048e64f1364dd5e157d7c080ce36480139cff30616cfde3d061b5cd6"
+  },
+  "supervisor_sha256": "46bca646af3d6b193f6cda82767639b43badc137860476e53f16c427a609c47c",
+  "gpu_queried": false
+}

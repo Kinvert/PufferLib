@@ -1,0 +1,209 @@
+{
+  "scope": "Host-only evidence; GPU acceptance pending",
+  "files": [
+    {
+      "source": "build/fullframe-compression-v1-5060-20261019-v6/plan.json",
+      "copy": "packet/plan.json",
+      "sha256": "8e4a21752213406c9c49687ac85146002a6504a718ce17945b1a0574fbc384c8",
+      "bytes": 1441
+    },
+    {
+      "source": "build/fullframe-compression-v1-5060-20261019-v6/sources.json",
+      "copy": "packet/sources.json",
+      "sha256": "c3408413f3730c7462b0b750dc71683368bedb04213dbe5f0819a024ebb2fbbe",
+      "bytes": 8323
+    },
+    {
+      "source": "build/fullframe-compression-v1-5060-20261019-v6/external.json",
+      "copy": "packet/external.json",
+      "sha256": "7e6ea335e0f845341f17ff5a0ba2bbfb8fbe40dbd4a87d7274e1f2864d8e576c",
+      "bytes": 1423
+    },
+    {
+      "source": "build/fullframe-compression-v1-5060-20261019-v6/provenance.json",
+      "copy": "packet/provenance.json",
+      "sha256": "11a463cfd8e0298928341629e9bb53b4fee875800345b9fe6a81c143db862a9f",
+      "bytes": 3876
+    },
+    {
+      "source": "build/fullframe-compression-v1-5060-20261019-v6/toolchain.json",
+      "copy": "packet/toolchain.json",
+      "sha256": "f955d1f34ba166f25c3f0863e394ccdc9a7bbd2451c9baa1f2bbe5d2ecc3ca8d",
+      "bytes": 319
+    },
+    {
+      "source": "build/fullframe-compression-v1-5060-20261019-v6/host-check.json",
+      "copy": "packet/host-check.json",
+      "sha256": "09d354cedf107395dca32e545ff7fa6865c4437a8ca9d8ae6e89644a97884bcc",
+      "bytes": 93
+    },
+    {
+      "source": "build/fullframe-compression-v1-5060-20261019-v6/host-check.log",
+      "copy": "packet/host-check.log",
+      "sha256": "9359b0d186fda98978bc65c513dc1fca0454fd57c7b578450cf6c334efd1f5db",
+      "bytes": 76
+    },
+    {
+      "source": "build/fullframe-compression-v1-5060-20261019-v6/host-check.process.json",
+      "copy": "packet/host-check.process.json",
+      "sha256": "b74d46da1ec28c122db63fa3a5717e431afaa8721fa7a488c10c8d2c7ea5cbfb",
+      "bytes": 501
+    },
+    {
+      "source": "build/fullframe-compression-v1-5060-20261019-v6/layouts/pongcnn-1.json",
+      "copy": "packet/layouts/pongcnn-1.json",
+      "sha256": "785c5c1ce9770c6c96e51b22701a8790f216216719da05dd2fd96e082cd4ca01",
+      "bytes": 4125
+    },
+    {
+      "source": "build/fullframe-compression-v1-5060-20261019-v6/layouts/pongcnn-2.json",
+      "copy": "packet/layouts/pongcnn-2.json",
+      "sha256": "c8387916c72f529937ca66b59d288ca4e5970d35dbc74aa6c6ba928d6af292be",
+      "bytes": 4158
+    },
+    {
+      "source": "build/fullframe-compression-v1-5060-20261019-v6/layouts/flappycnn-0.json",
+      "copy": "packet/layouts/flappycnn-0.json",
+      "sha256": "08aea4813b061b33ef6daf659b61c5b52ef6ab73b46d59dfb64f5d7858b4f3b2",
+      "bytes": 4128
+    },
+    {
+      "source": "build/fullframe-compression-v1-5060-20261019-v6/layouts/flappycnn-1.json",
+      "copy": "packet/layouts/flappycnn-1.json",
+      "sha256": "46c589c181b768e45b4925a3266b59163e8a95bb07db0b6f39575f3ffb34090f",
+      "bytes": 4126
+    },
+    {
+      "source": "build/fullframe-compression-v1-5060-20261019-v6/layouts/flappycnn-2.json",
+      "copy": "packet/layouts/flappycnn-2.json",
+      "sha256": "f7031d538f2fb9005174f5c3972d08063e2d858411846663996f7ecc2d850b3f",
+      "bytes": 4157
+    },
+    {
+      "source": "build/fullframe-compression-v1-5060-20261019-v6/layouts/pongcnn-0.json",
+      "copy": "packet/layouts/pongcnn-0.json",
+      "sha256": "1fe4ddb2060494cfb4839547cea2faca28fe5a9128139a536f6ddea587496474",
+      "bytes": 4127
+    },
+    {
+      "source": "build/fullframe-compression-v1-5060-20261019-v6/configs/pongcnn-2.ini",
+      "copy": "packet/configs/pongcnn-2.ini",
+      "sha256": "c05210585a7ecf43598679d966a130131f9df31a0a29c30553ac9e714ad78396",
+      "bytes": 1873
+    },
+    {
+      "source": "build/fullframe-compression-v1-5060-20261019-v6/configs/flappycnn-2.ini",
+      "copy": "packet/configs/flappycnn-2.ini",
+      "sha256": "035382f8e54403e6f99b0feaa3809077e3337bda88158e5e4960bd7bd1a485a0",
+      "bytes": 1900
+    },
+    {
+      "source": "build/fullframe-compression-v1-5060-20261019-v6/configs/pongcnn-1.ini",
+      "copy": "packet/configs/pongcnn-1.ini",
+      "sha256": "663fc4bb03497d8cf425aedf4991981801329eb0276b9b91cb77e02f11c12e7c",
+      "bytes": 1873
+    },
+    {
+      "source": "build/fullframe-compression-v1-5060-20261019-v6/configs/pongcnn-0.ini",
+      "copy": "packet/configs/pongcnn-0.ini",
+      "sha256": "10372c56b5c3711a6b0889278801b0d8c9e5fef9457f80c78d1bf88f51bd86f8",
+      "bytes": 1873
+    },
+    {
+      "source": "build/fullframe-compression-v1-5060-20261019-v6/configs/flappycnn-1.ini",
+      "copy": "packet/configs/flappycnn-1.ini",
+      "sha256": "b304cb002de3f20db68f811f727e09e5d95c0340f5bbc2f268bb949e6ff5bfe2",
+      "bytes": 1900
+    },
+    {
+      "source": "build/fullframe-compression-v1-5060-20261019-v6/configs/flappycnn-0.ini",
+      "copy": "packet/configs/flappycnn-0.ini",
+      "sha256": "ff86b23c1c92e0cd36848dc1a89fbc9f4da9439ff16530f9fd4a445e15287939",
+      "bytes": 1900
+    },
+    {
+      "source": "build/fullframe-compression-development/host-tests-v6.log",
+      "copy": "host-tests-v6.log",
+      "sha256": "c6f602cb61f81779a52b6ad64326b45ab82f51a1c3ec674efa73bb8a6fccbfbf",
+      "bytes": 1817
+    },
+    {
+      "source": "build/fullframe-compression-development/inspect-v6.log",
+      "copy": "inspect-v6.log",
+      "sha256": "8e4a21752213406c9c49687ac85146002a6504a718ce17945b1a0574fbc384c8",
+      "bytes": 1441
+    },
+    {
+      "source": "build/fullframe-compression-development/legacy-nature-comparison.json",
+      "copy": "legacy-nature-comparison.json",
+      "sha256": "6027ee59d6cbaab02de62e3282f423baa9c7b17f006b0e0d3a5734bb0c56cdb2",
+      "bytes": 3073
+    },
+    {
+      "source": "build/fullframe-compression-raster-20261019/pong.json",
+      "copy": "raster/pong.json",
+      "sha256": "d8f98f33d77972ad1f4eb91c750e6129f633b8fd41d31ce073c376f62772b826",
+      "bytes": 170
+    },
+    {
+      "source": "build/fullframe-compression-raster-20261019/flappy.json",
+      "copy": "raster/flappy.json",
+      "sha256": "59c00519bc551964205862d3a7d70cc2158946ed949663e1739c2986ffaba0f8",
+      "bytes": 170
+    },
+    {
+      "source": "build/fullframe-compression-raster-20261019/flappy.command.txt",
+      "copy": "raster/flappy.command.txt",
+      "sha256": "6b105423e8109afdbfe30bc270cffa2029babe3bba64c3e14e93b94e2d2c0b09",
+      "bytes": 489
+    },
+    {
+      "source": "build/fullframe-compression-raster-20261019/flappy.build.txt",
+      "copy": "raster/flappy.build.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "build/fullframe-compression-raster-20261019/pong.command.txt",
+      "copy": "raster/pong.command.txt",
+      "sha256": "3a03ccb5f7ee04e030da540ccf1a4fd84e861accd207e479a321acf91a74b0dc",
+      "bytes": 481
+    },
+    {
+      "source": "build/fullframe-compression-raster-20261019/source.sha256",
+      "copy": "raster/source.sha256",
+      "sha256": "15f4a686b557a0404b37c1ffab65297df69a45c9912390b152d8054806735a9a",
+      "bytes": 372
+    },
+    {
+      "source": "build/fullframe-compression-raster-20261019/flappy.csv",
+      "copy": "raster/flappy.csv",
+      "sha256": "fae3f259f0a01bf9f8fd5fbc555a1f645d0b703aed6318f052fe6e0aa37581b8",
+      "bytes": 2010
+    },
+    {
+      "source": "build/fullframe-compression-raster-20261019/pong.build.txt",
+      "copy": "raster/pong.build.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "build/fullframe-compression-raster-20261019/pong.csv",
+      "copy": "raster/pong.csv",
+      "sha256": "d9e7b948b1e000276ebedabfcd9dec62598d21ef269b883d2444cd0ff1e6c6d1",
+      "bytes": 1300
+    },
+    {
+      "source": "research/fullframe_compression.py",
+      "copy": "reader-and-tests/fullframe_compression.py",
+      "sha256": "6f24eb223921f10a3efe8ad9d965b60c37a41688624b382ae5ad8369cda0c3c3",
+      "bytes": 44624
+    },
+    {
+      "source": "research/tests/test_fullframe_compression.py",
+      "copy": "reader-and-tests/tests/test_fullframe_compression.py",
+      "sha256": "26c24933a24d312258495389b9ee6597d6ff8d76f35bf4bf03751e5126525725",
+      "bytes": 8145
+    }
+  ]
+}

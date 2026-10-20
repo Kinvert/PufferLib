@@ -1,0 +1,144 @@
+{
+  "status": "passed",
+  "metadata": {
+    "schema": "native-policy-metadata-v2",
+    "model": "nature_cnn",
+    "observation_shape": [
+      3,
+      640,
+      420
+    ],
+    "discrete_actions": 2,
+    "hidden": 128,
+    "layers": 1,
+    "horizon": 16,
+    "encoder_parameters": 30583072,
+    "decoder_parameters": 384,
+    "core_parameters": 49152,
+    "total_parameters": 30632608,
+    "parameter_payload_bytes": 122530432,
+    "parameter_allocator_bytes": 122530432,
+    "raw_checkpoint_contiguous": true,
+    "checkpoint_bytes": null,
+    "parameter_tensors": [
+      {
+        "index": 0,
+        "group": "encoder",
+        "offset_bytes": 0,
+        "elements": 6144,
+        "shape": [
+          32,
+          192
+        ]
+      },
+      {
+        "index": 1,
+        "group": "encoder",
+        "offset_bytes": 24576,
+        "elements": 32,
+        "shape": [
+          32
+        ]
+      },
+      {
+        "index": 2,
+        "group": "encoder",
+        "offset_bytes": 24704,
+        "elements": 32768,
+        "shape": [
+          64,
+          512
+        ]
+      },
+      {
+        "index": 3,
+        "group": "encoder",
+        "offset_bytes": 155776,
+        "elements": 64,
+        "shape": [
+          64
+        ]
+      },
+      {
+        "index": 4,
+        "group": "encoder",
+        "offset_bytes": 156032,
+        "elements": 36864,
+        "shape": [
+          64,
+          576
+        ]
+      },
+      {
+        "index": 5,
+        "group": "encoder",
+        "offset_bytes": 303488,
+        "elements": 64,
+        "shape": [
+          64
+        ]
+      },
+      {
+        "index": 6,
+        "group": "encoder",
+        "offset_bytes": 303744,
+        "elements": 30507008,
+        "shape": [
+          128,
+          238336
+        ]
+      },
+      {
+        "index": 7,
+        "group": "encoder",
+        "offset_bytes": 122331776,
+        "elements": 128,
+        "shape": [
+          128
+        ]
+      },
+      {
+        "index": 8,
+        "group": "decoder",
+        "offset_bytes": 122332288,
+        "elements": 384,
+        "shape": [
+          3,
+          128
+        ]
+      },
+      {
+        "index": 9,
+        "group": "core",
+        "offset_bytes": 122333824,
+        "elements": 49152,
+        "shape": [
+          384,
+          128
+        ]
+      }
+    ],
+    "environment": "flappycnn",
+    "image_contract": {
+      "version": "human-geometry-v1",
+      "shape_hwc": [
+        640,
+        420,
+        3
+      ],
+      "layout": "NHWC",
+      "dtype": "float32",
+      "preprocessing": "none"
+    },
+    "cuda_executed": false,
+    "gpu_queried": false,
+    "weights_initialized": false,
+    "policy_executed": false,
+    "checkpoint_contents_validated": false,
+    "numerical_acceptance": false
+  },
+  "binaries": {
+    "build/fullframe-compression-legacy-metadata-20261019/metadata": "54ab42f0e13e50a50033a80f50212cd1485e68d1f91ec931bb8c1aa2391d86b2",
+    "build/fullframe-compression-v1-5060-20261019-v2/builds/flappycnn/metadata": "069ce64724d1eecb1a9b2fbc88f30f4d77c56441af3aa9f672827a33b707cdeb"
+  }
+}

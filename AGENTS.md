@@ -1,5 +1,62 @@
 # Working preferences
 
+- October 20 optional autoencoder implementation: read
+  `NEXT_5090_AUTOENCODER.md` and `research/AUTOENCODER_PRETRAINING.md`.
+  Native CUDA reconstruction training, multi-shape shared weights, deterministic
+  episode collection, Adam-state resume and encoder-8 export are implemented.
+  Preparing tools does not collect a corpus or launch pretraining. GPU qualification
+  is a separate bounded allocation. Local `build/autoencoder-5060-20261020-v1`
+  queue is TERMINAL: its 600-second wait cap expired while another campaign
+  owned the GPU; `gpu_launched=false`, session 61521 exit 1. No automatic retry.
+  Read `research/results/autoencoder-pretraining-20261020/README.md`.
+  Full qualification including memory instrumentation is required before longer
+  pretraining. The prior compression WDDM failure is not waived. Existing TAESD
+  and MobileNetV3-Small-050 weights are acquired/checksummed under ignored
+  `build/backbones`; neither has a qualified native inference adapter yet.
+  See `research/PRETRAINED_BACKBONES_20261020.md`. No Torch/system/CUDA changes,
+  external model execution, corpus generation or long pretraining follows from
+  acquisition. No RL/Pareto/generalization improvement is established.
+
+- October20full-frame update:v6 validation queue is TERMINAL (session89498exit1).
+  All120numerical workers/144GPU finite-difference probes pass; first memcheck
+  failed WDDM debugger initialization/device support, exit99/2tool errors.
+  Native worker success is not memory acceptance. No train/eval/import smoke ran.
+  Read FULLFRAME_COMPRESSION_PROGRESS.md and retained v6 failure receipts. Ignore
+  stale queue.json executing status; do not restart failed stages or change the
+  CUDA/Windows/system setup. No commit/push or5090ready status is qualified.
+
+- October 19 full-frame compression increment is IN PROGRESS. Read
+  `research/NEXT_FULLFRAME_COMPRESSION_IMPLEMENTATION.md` and
+  `research/results/fullframe-compression-v1-5060-20261019/README.md`.
+  Research-only encoder 8 implements three full-frame RGB pipelines for Flappy
+  640x420 and Pong 640x620, with encoder import/export and fixed learner recipes.
+  Current validation packet is `build/fullframe-compression-v1-5060-20261019-v6`.
+  Its bounded idle queue may still be live: inspect the actual supervisor/process
+  and `queue.json`/stage receipts before any launch; do not launch a duplicate.
+  Earlier preparations, the v2 gradient failure and v3 foreign-GPU interruption
+  are retained. The native-branch numerical protocol is explicit; old failures
+  are not retroactively passes. Required GPU math/memory/training/import/eval
+  acceptance is not yet complete. No new dataset, system/CUDA change or push.
+  The 5090 handoff is `NEXT_5090_FULLFRAME_COMPRESSION.md`; publication and
+  final validation status remain pending.
+  v5 was canceled before CUDA: its earlier busy refusal left an empty math
+  directory. Admission now precedes output-directory creation. v6 adds explicit
+  RGB ramps/translated edges/dots/clipping and zero-input fixtures. Seventeen host
+  tests pass. Its queue waits for the observed foreign campaign owner to exit
+  and 120s stable GPU idle; inspect actual process state before any launch.
+  Optional `prepare-timing`/`timing` is now implemented:two captured native
+  builds pass; GPU timing remains unexecuted and requires accepted math/smoke.
+  It uses actual native reset frames,60fresh workers,B1/B16,20warmup/100iterations,
+  five replicas,300s cap; it never rebuilds accepted trainer/math binaries.
+
+- Shared GPU profiling workflow (October 16): read
+  `/home/claude/gpu-profiling/README.md`, `COMMANDS.md`, and `projects/cnn.md`
+  there before profiling. `~/cnn` is the first target; the shared tools also
+  serve other checkouts. Use native CUDA, preserve the working CUDA stack,
+  validate actual GPU capture, and report measured charts plus repeated
+  unprofiled throughput. This pointer does not restart completed experiments
+  or replace the current task's project-specific correctness/execution gates.
+
 - October16 delivery reconciliation supersedes earlier divergent/unpublished
   status: sprite tooling through d4527b4e is merged with Kinvert remote history
   through ba7a9b16. Preserve both histories; never force push. Read

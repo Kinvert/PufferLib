@@ -30,7 +30,16 @@ static int metadata_actions(const char* text) {
 }
 
 static const char* metadata_model(Dict* policy, bool allow_flex) {
-    int type = metadata_integer(policy, "encoder", 0, 4);
+    int type = metadata_integer(policy, "encoder", 0,
+#ifdef CNN_COMPRESSION_RESEARCH
+        8
+#else
+        4
+#endif
+    );
+#ifdef CNN_COMPRESSION_RESEARCH
+    if (type == 8) return "fullframe_compression";
+#endif
 #if defined(C4_IMPALA_CNN) || defined(C4_IMPOOLA_CNN)
     metadata_require(type == 0, "Residual metadata target requires encoder=0");
 #ifdef C4_IMPOOLA_CNN
@@ -66,7 +75,12 @@ static void metadata_kernel_limits(Weights weights, Dict* policy, long batch) {
             * 9 * IMP_C[s] <= INT_MAX, "IMPALA residual exceeds native 32-bit kernel indexing");
     }
 #else
-    NatureWeights* w = dict_get(policy, "encoder") == 4
+    NatureWeights* w;
+#ifdef CNN_COMPRESSION_RESEARCH
+    if (dict_get(policy,"encoder") == 8) w = &((FFCWeights*)weights.encoder)->net;
+    else
+#endif
+    w = dict_get(policy, "encoder") == 4
         ? &((FlexWeights*)weights.encoder)->net : (NatureWeights*)weights.encoder;
     for (int i = 0; i < w->count; i++) {
         NatureLayer d = w->layer[i];
@@ -223,6 +237,18 @@ int main(int argc, char** argv) {
     }
     metadata_require(offset == params.total_bytes, "Parameter offsets disagree with allocator");
     printf("]");
+#ifdef CNN_COMPRESSION_RESEARCH
+    if (dict_get(policy,"encoder") == 8) {
+        FFCWeights* f = (FFCWeights*)weights.encoder;
+        printf(",\"compression\":{\"model\":%d,\"layers\":[",f->model);
+        for (int i=0;i<4;i++) {
+            NatureLayer d=f->net.layer[i];
+            printf("%s[%d,%d,%d,%d,%d,%d,%d,%d,%d,%d]",i?",":"",
+                d.ih,d.iw,d.ci,d.co,d.k,d.stride,d.oh,d.ow,f->ph[i],f->pw[i]);
+        }
+        printf("]}");
+    }
+#endif
 #ifdef CNN_IMAGE_V1
     printf(",\"environment\":\"%s\"" CNN_IMAGE_INFO_JSON, PUFFER_ENV_NAME);
 #endif

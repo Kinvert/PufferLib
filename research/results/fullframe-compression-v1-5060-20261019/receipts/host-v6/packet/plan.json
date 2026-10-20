@@ -1,0 +1,29 @@
+{
+  "schema": "fullframe-compression-packet-v1",
+  "numerical_protocol": "ffc-native-branches-v2",
+  "builds": {
+    "flappycnn": {
+      "puffer": "a24ea0ba9af96082ece3fad9432b5fe4bb7ce09b4f14cb660bf6a2a389664824",
+      "metadata": "543c7acbb072a3eb7349e456aecc05bdc9fde3f420f979230ac41ce2b8b0053b"
+    },
+    "pongcnn": {
+      "puffer": "7e5bbe8bcd1b8473b8fcd2b1f6c75bf82c584ec3dfaed39480365b8232c92c54",
+      "metadata": "937e28f64c01f44bcd8b4f260fa1345af4e6c46a6eb433bb09db594649cfc4ed"
+    }
+  },
+  "checks_sha256": "a2819711fce31830d22f80e0b7d0fc0f3dcb6719112ab28ee7eba756bb7698ee",
+  "configs": {
+    "pongcnn-2.ini": "c05210585a7ecf43598679d966a130131f9df31a0a29c30553ac9e714ad78396",
+    "flappycnn-2.ini": "035382f8e54403e6f99b0feaa3809077e3337bda88158e5e4960bd7bd1a485a0",
+    "pongcnn-1.ini": "663fc4bb03497d8cf425aedf4991981801329eb0276b9b91cb77e02f11c12e7c",
+    "pongcnn-0.ini": "10372c56b5c3711a6b0889278801b0d8c9e5fef9457f80c78d1bf88f51bd86f8",
+    "flappycnn-1.ini": "b304cb002de3f20db68f811f727e09e5d95c0340f5bbc2f268bb949e6ff5bfe2",
+    "flappycnn-0.ini": "ff86b23c1c92e0cd36848dc1a89fbc9f4da9439ff16530f9fd4a445e15287939"
+  },
+  "math_seconds": 900,
+  "smoke_seconds": 900,
+  "training_seed": 7,
+  "evaluation_seed": 420,
+  "source_manifest_sha256": "c3408413f3730c7462b0b750dc71683368bedb04213dbe5f0819a024ebb2fbbe",
+  "external_manifest_sha256": "7e6ea335e0f845341f17ff5a0ba2bbfb8fbe40dbd4a87d7274e1f2864d8e576c"
+}

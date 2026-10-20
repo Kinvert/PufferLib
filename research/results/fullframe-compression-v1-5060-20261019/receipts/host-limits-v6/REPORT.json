@@ -1,0 +1,116 @@
+{
+  "schema": "fullframe-compression-report-v1",
+  "learning_or_frontier_claim": false,
+  "stages": {
+    "math": "missing",
+    "smoke": "missing"
+  },
+  "source_manifest_sha256": "c3408413f3730c7462b0b750dc71683368bedb04213dbe5f0819a024ebb2fbbe",
+  "registered_models": [
+    {
+      "game": "flappycnn",
+      "model": 0,
+      "raw_shape_hwc": [
+        640,
+        420,
+        3
+      ],
+      "encoder_parameters": 36776,
+      "total_parameters": 86312,
+      "storage_floor_bytes": 1938906976,
+      "peak_memory_certified": false,
+      "learner_batch": 16,
+      "actors": 16,
+      "horizon": 16,
+      "recipe_sha256": "ff86b23c1c92e0cd36848dc1a89fbc9f4da9439ff16530f9fd4a445e15287939"
+    },
+    {
+      "game": "flappycnn",
+      "model": 1,
+      "raw_shape_hwc": [
+        640,
+        420,
+        3
+      ],
+      "encoder_parameters": 36608,
+      "total_parameters": 86144,
+      "storage_floor_bytes": 1900196416,
+      "peak_memory_certified": false,
+      "learner_batch": 16,
+      "actors": 16,
+      "horizon": 16,
+      "recipe_sha256": "b304cb002de3f20db68f811f727e09e5d95c0340f5bbc2f268bb949e6ff5bfe2"
+    },
+    {
+      "game": "flappycnn",
+      "model": 2,
+      "raw_shape_hwc": [
+        640,
+        420,
+        3
+      ],
+      "encoder_parameters": 1255712,
+      "total_parameters": 1305248,
+      "storage_floor_bytes": 1805391040,
+      "peak_memory_certified": false,
+      "learner_batch": 16,
+      "actors": 16,
+      "horizon": 16,
+      "recipe_sha256": "035382f8e54403e6f99b0feaa3809077e3337bda88158e5e4960bd7bd1a485a0"
+    },
+    {
+      "game": "pongcnn",
+      "model": 0,
+      "raw_shape_hwc": [
+        640,
+        620,
+        3
+      ],
+      "encoder_parameters": 36776,
+      "total_parameters": 86440,
+      "storage_floor_bytes": 2859895328,
+      "peak_memory_certified": false,
+      "learner_batch": 16,
+      "actors": 16,
+      "horizon": 16,
+      "recipe_sha256": "10372c56b5c3711a6b0889278801b0d8c9e5fef9457f80c78d1bf88f51bd86f8"
+    },
+    {
+      "game": "pongcnn",
+      "model": 1,
+      "raw_shape_hwc": [
+        640,
+        620,
+        3
+      ],
+      "encoder_parameters": 36608,
+      "total_parameters": 86272,
+      "storage_floor_bytes": 2802752768,
+      "peak_memory_certified": false,
+      "learner_batch": 16,
+      "actors": 16,
+      "horizon": 16,
+      "recipe_sha256": "663fc4bb03497d8cf425aedf4991981801329eb0276b9b91cb77e02f11c12e7c"
+    },
+    {
+      "game": "pongcnn",
+      "model": 2,
+      "raw_shape_hwc": [
+        640,
+        620,
+        3
+      ],
+      "encoder_parameters": 2042144,
+      "total_parameters": 2091808,
+      "storage_floor_bytes": 2673319808,
+      "peak_memory_certified": false,
+      "learner_batch": 16,
+      "actors": 16,
+      "horizon": 16,
+      "recipe_sha256": "c05210585a7ecf43598679d966a130131f9df31a0a29c30553ac9e714ad78396"
+    }
+  ],
+  "status": "incomplete",
+  "native_processes": 18,
+  "gpu_query_or_execution": false
+}

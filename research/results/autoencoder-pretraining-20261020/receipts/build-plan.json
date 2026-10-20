@@ -1,0 +1,18 @@
+{
+  "schema": "native-autoencoder-packet-v1",
+  "sources_sha256": "27d882d4a16f7914a42d05c094cc9931547731e8c3ad6c2b83386cb6b1cc98fd",
+  "external_sha256": "7e6ea335e0f845341f17ff5a0ba2bbfb8fbe40dbd4a87d7274e1f2864d8e576c",
+  "binaries": {
+    "flappycnn": "4f64cd25e5ccfdb27f2f4c55aa20c315e87a7a1bb07aa404e43d0209375ea091",
+    "pongcnn": "71dcc97e9495be4acf80ac045de5f5cb8c13755ce6c0b772eda0cc8815352bfe"
+  },
+  "manifests": {
+    "flappycnn.json": "72b46038c62bd1a94f10eeb2f2032c2e9369bfe88b2c7b6158da11aa596a9672",
+    "pongcnn.json": "d69f8f3a49a34eb88ae51941e6658f22d3f702cd08fbeadad3c4723d0a6d5840"
+  },
+  "configs": {
+    "pongcnn.ini": "10372c56b5c3711a6b0889278801b0d8c9e5fef9457f80c78d1bf88f51bd86f8",
+    "flappycnn.ini": "ff86b23c1c92e0cd36848dc1a89fbc9f4da9439ff16530f9fd4a445e15287939"
+  },
+  "gpu_execution": false
+}

@@ -1,0 +1,42 @@
+{
+  "asset": {
+    "repo": "timm/mobilenetv3_small_050.lamb_in1k",
+    "revision": "5188129022623c1fd7e36401459eda145a81d7e9",
+    "file": "model.safetensors",
+    "bytes": 6420754,
+    "sha256": "2e3f6937afd4b3704450518a2710168775d6c70ebfb7a0e9aaf06200c6fbe0c4",
+    "license": "apache-2.0",
+    "native_encoder8_compatible": false,
+    "source": "https://huggingface.co/timm/mobilenetv3_small_050.lamb_in1k",
+    "checked": "2026-10-20"
+  },
+  "files": [
+    {
+      "url": "https://huggingface.co/timm/mobilenetv3_small_050.lamb_in1k/resolve/5188129022623c1fd7e36401459eda145a81d7e9/model.safetensors",
+      "file": "model.safetensors",
+      "bytes": 6420754,
+      "sha256": "2e3f6937afd4b3704450518a2710168775d6c70ebfb7a0e9aaf06200c6fbe0c4"
+    },
+    {
+      "url": "https://huggingface.co/timm/mobilenetv3_small_050.lamb_in1k/resolve/5188129022623c1fd7e36401459eda145a81d7e9/config.json",
+      "file": "config.json",
+      "bytes": 586,
+      "sha256": "b31d89a8b76d139867a4f4ae6e0ba4536799e64437938faa94c71536cd50e710"
+    },
+    {
+      "url": "https://huggingface.co/timm/mobilenetv3_small_050.lamb_in1k/resolve/5188129022623c1fd7e36401459eda145a81d7e9/README.md",
+      "file": "README.md",
+      "bytes": 4441,
+      "sha256": "8ff32b43f9abd31e71fa0baf0ba9d02ca4750edcb00ba71e25473d8b24b93369"
+    }
+  ],
+  "original_receipt_sha256": "53f2837d1c9b454d7d82ffba9e8a7a885f1cd52c5bb481b36ec9c0aba2ef58c3",
+  "inventory": {
+    "encoder_parameters": 0,
+    "decoder_parameters": 0,
+    "stored_elements": 1599754,
+    "execution": false,
+    "native_conversion": false
+  },
+  "tensor_count": 244
+}

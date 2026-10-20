@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "/home/claude/cnn/build/fullframe-compression-v1-5060-20261019-v6/checks",
+    "--host"
+  ],
+  "cwd": "/home/claude/cnn/build/fullframe-compression-v1-5060-20261019-v6/source",
+  "started_ns": 258475518995203,
+  "pid": 882129,
+  "finished_ns": 258475633194672,
+  "returncode": 0,
+  "timeout": false,
+  "log_sha256": "9359b0d186fda98978bc65c513dc1fca0454fd57c7b578450cf6c334efd1f5db",
+  "interference": [],
+  "gpu_samples": [],
+  "expected_failure": false,
+  "seconds": 0.114199469
+}

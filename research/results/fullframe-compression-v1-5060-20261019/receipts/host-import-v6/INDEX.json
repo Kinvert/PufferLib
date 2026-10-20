@@ -1,0 +1,23 @@
+{
+  "scope": "Host-only imported/exported artifact re-audit; GPU acceptance pending",
+  "files": [
+    {
+      "source": "build/fullframe-compression-development/host-tests-v6-import-audit.log",
+      "copy": "host-tests-v6-import-audit.log",
+      "sha256": "60ffa889dc47418f96fff0d0e1e367fe31bdeafdbce33fd29dbd1f94edc2923e",
+      "bytes": 2277
+    },
+    {
+      "source": "research/tests/test_fullframe_compression.py",
+      "copy": "test_fullframe_compression.py",
+      "sha256": "cfe2ab251f462bc3a8b76f0ab8910422642ca38441ceaa601b7b149a5ca65e5a",
+      "bytes": 10513
+    },
+    {
+      "source": "research/fullframe_compression.py",
+      "copy": "fullframe_compression.py",
+      "sha256": "3f7d6677d21a5bc59b866824391c8a0d4668646520f1716c1486a910a41fd8f7",
+      "bytes": 48170
+    }
+  ]
+}

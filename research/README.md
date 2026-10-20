@@ -1,5 +1,28 @@
 # CNN research workspace
 
+- [Optional native autoencoder pretraining](AUTOENCODER_PRETRAINING.md) and
+  [5090 commands](../NEXT_5090_AUTOENCODER.md): implemented collection, shared
+  variable-shape CUDA encoder/decoder training, deterministic optimizer resume
+  and PufferLib encoder export. Build/host checks pass; GPU qualification is
+  separately reported and gates pretraining. No corpus or long run starts by
+  default. [Existing pretrained weights](PRETRAINED_BACKBONES_20261020.md)
+  includes pinned TAESD and MobileNetV3 downloads and native-adapter limitations.
+
+- [Concrete first full-frame implementation handoff](NEXT_FULLFRAME_COMPRESSION_IMPLEMENTATION.md):
+  exact three pipelines, source interfaces, files/commands to build, manifests,
+  numerical checks and bounded5060/5090 smoke criteria. The specified new commands
+  are now implemented; see [current status](FULLFRAME_COMPRESSION_PROGRESS.md).
+  The earlier compression packet failed its WDDM memory instrumentation gate;
+  reading this note starts no campaign.
+
+- [October19 architecture/compression audit](ARCHITECTURE_COMPRESSION_AUDIT_20261019.md):
+  current search limits, actual source paths, discovery/evaluation cost and ranked
+  priorities. Primary target is real human-visible game frames, not tiny sprite art.
+  [Full-frame backbone design](PIXEL_COMPRESSION_AND_BACKBONE_DESIGN.md),
+  [primary-paper reading notes](PIXEL_COMPRESSION_LITERATURE_20261019.md), and
+  [implementation/experiment plan](COMPRESSION_EXPERIMENT_PLAN.md).
+  Research only; existing5090 launch packet and completed allocations unchanged.
+
 - [Native encoder profiler preparation](NATIVE_ENCODER_PROFILER.md): production
   registration audits and isolated future CUDA timing/workspace probes;
   compile/host checks and supervised preparation pass; GPU execution remains pending.

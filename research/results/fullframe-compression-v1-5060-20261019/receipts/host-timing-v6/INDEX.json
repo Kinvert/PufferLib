@@ -1,0 +1,83 @@
+{
+  "scope": "Optional timing preparation/host tests only; no GPU timing measured",
+  "files": [
+    {
+      "source": "research/fullframe_compression.py",
+      "copy": "fullframe_compression.py",
+      "sha256": "52e2197a8770f4b701c68ef03d6796d4753db77d4a309e45ef1cb78df3e75464",
+      "bytes": 55617
+    },
+    {
+      "source": "research/fullframe_compression_timing.cu",
+      "copy": "fullframe_compression_timing.cu",
+      "sha256": "dd28f14e9a4ac6197aeab10f72938ec6862852c66d6be08a94fd68fc1d8b7700",
+      "bytes": 4992
+    },
+    {
+      "source": "research/tests/test_fullframe_compression.py",
+      "copy": "tests/test_fullframe_compression.py",
+      "sha256": "ac266a928519ebb07128fd84b5b57cdd9bb2ac1e221a12dbc4bc8c761ee53420",
+      "bytes": 12058
+    },
+    {
+      "source": "build/fullframe-compression-development/host-tests-v6-timing-final.log",
+      "copy": "host-tests-v6-timing-final.log",
+      "sha256": "0cdf93ae9916f9fec1c292c1a305eac0093f564525dcc08608150ba0bc7bd951",
+      "bytes": 2553
+    },
+    {
+      "source": "build/fullframe-compression-development/inspect-with-timing-v6-final.log",
+      "copy": "inspect-with-timing-v6-final.log",
+      "sha256": "8e4a21752213406c9c49687ac85146002a6504a718ce17945b1a0574fbc384c8",
+      "bytes": 1441
+    },
+    {
+      "source": "build/fullframe-compression-v1-5060-20261019-v6/timing-prepared.json",
+      "copy": "timing-prepared.json",
+      "sha256": "1310a18cf25bfdecdfe28a06638d991860e5bf7036c88ffe19d5e5d266fbe492",
+      "bytes": 547
+    },
+    {
+      "source": "build/fullframe-compression-v1-5060-20261019-v6/timing-build/fullframe_compression_timing.cu",
+      "copy": "builds/fullframe_compression_timing.cu",
+      "sha256": "dd28f14e9a4ac6197aeab10f72938ec6862852c66d6be08a94fd68fc1d8b7700",
+      "bytes": 4992
+    },
+    {
+      "source": "build/fullframe-compression-v1-5060-20261019-v6/timing-build/flappycnn/build.started.json",
+      "copy": "builds/flappycnn/build.started.json",
+      "sha256": "f1a36522f5b645a82c91856c14b4c09a184ebc12acb1262d4dcf4a1c88309fd0",
+      "bytes": 1485
+    },
+    {
+      "source": "build/fullframe-compression-v1-5060-20261019-v6/timing-build/flappycnn/build.log",
+      "copy": "builds/flappycnn/build.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "build/fullframe-compression-v1-5060-20261019-v6/timing-build/flappycnn/build.process.json",
+      "copy": "builds/flappycnn/build.process.json",
+      "sha256": "24994752a19f21df0bc1bc2a3bdade59cca62cc87a09328e8272486c37ee6954",
+      "bytes": 1757
+    },
+    {
+      "source": "build/fullframe-compression-v1-5060-20261019-v6/timing-build/pongcnn/build.started.json",
+      "copy": "builds/pongcnn/build.started.json",
+      "sha256": "c412c8ea59fffb52f45bc70720365cfe0171cb1f78ecd1ba334a93808526a4a1",
+      "bytes": 1475
+    },
+    {
+      "source": "build/fullframe-compression-v1-5060-20261019-v6/timing-build/pongcnn/build.log",
+      "copy": "builds/pongcnn/build.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "build/fullframe-compression-v1-5060-20261019-v6/timing-build/pongcnn/build.process.json",
+      "copy": "builds/pongcnn/build.process.json",
+      "sha256": "c3e1779b780c44d8218b607c4ac773f42851557688babcf5eb192fe7705fac49",
+      "bytes": 1747
+    }
+  ]
+}

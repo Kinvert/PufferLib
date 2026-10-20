@@ -1,0 +1,22 @@
+test_busy_admission_creates_no_numerical_outputs (test_fullframe_compression.Contracts.test_busy_admission_creates_no_numerical_outputs) ... ok
+test_changed_export_cannot_keep_its_old_import_acceptance (test_fullframe_compression.Contracts.test_changed_export_cannot_keep_its_old_import_acceptance) ... ok
+test_changed_registration_is_not_blessed_by_its_filename (test_fullframe_compression.Contracts.test_changed_registration_is_not_blessed_by_its_filename) ... ok
+test_equal_size_checkpoint_with_wrong_identity_is_rejected (test_fullframe_compression.Contracts.test_equal_size_checkpoint_with_wrong_identity_is_rejected) ... ok
+test_evaluator_rejects_missing_and_duplicate_assignments (test_fullframe_compression.Contracts.test_evaluator_rejects_missing_and_duplicate_assignments) ... ok
+test_expected_rejection_cannot_accept_success (test_fullframe_compression.Contracts.test_expected_rejection_cannot_accept_success) ... ok
+test_expired_stage_cannot_launch_a_policy (test_fullframe_compression.Contracts.test_expired_stage_cannot_launch_a_policy) ... ok
+test_export_uses_registered_offsets_instead_of_a_prefix (test_fullframe_compression.Contracts.test_export_uses_registered_offsets_instead_of_a_prefix) ... ok
+test_failed_process_keeps_negative_receipt (test_fullframe_compression.Contracts.test_failed_process_keeps_negative_receipt) ... ok
+test_native_allocation_at_limit_is_rejected_before_execution (test_fullframe_compression.Contracts.test_native_allocation_at_limit_is_rejected_before_execution) ... ok
+test_native_bin_means_are_not_final_training_throughput (test_fullframe_compression.Contracts.test_native_bin_means_are_not_final_training_throughput) ... ok
+test_nonfinite_episode_is_rejected (test_fullframe_compression.Contracts.test_nonfinite_episode_is_rejected) ... ok
+test_seed_and_learner_are_fixed_across_models (test_fullframe_compression.Contracts.test_seed_and_learner_are_fixed_across_models) ... ok
+test_slot_order_is_not_a_different_episode (test_fullframe_compression.Contracts.test_slot_order_is_not_a_different_episode) ... ok
+test_timeout_keeps_terminal_receipt (test_fullframe_compression.Contracts.test_timeout_keeps_terminal_receipt) ... ok
+test_timing_cannot_bypass_incomplete_acceptance (test_fullframe_compression.Contracts.test_timing_cannot_bypass_incomplete_acceptance) ... ok
+test_timing_refuses_mutated_captured_source (test_fullframe_compression.Contracts.test_timing_refuses_mutated_captured_source) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 0.164s
+
+OK

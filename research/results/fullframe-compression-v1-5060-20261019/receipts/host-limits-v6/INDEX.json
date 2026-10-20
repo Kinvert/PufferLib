@@ -1,0 +1,35 @@
+{
+  "scope": "Host-only deadline/allocation follow-up; GPU acceptance pending",
+  "files": [
+    {
+      "source": "build/fullframe-compression-development/host-tests-v6-limits.log",
+      "copy": "host-tests-v6-limits.log",
+      "sha256": "b9d4f636639bdcf7e521dd6c564d4b8b5dd93bd1ae7258f584c3f4224cebc310",
+      "bytes": 2115
+    },
+    {
+      "source": "research/tests/test_fullframe_compression.py",
+      "copy": "test_fullframe_compression.py",
+      "sha256": "c0a3c256a05e636b3999914833311be0f21d2d5b5c651912a64a1d8c982de5bb",
+      "bytes": 9890
+    },
+    {
+      "source": "research/fullframe_compression.py",
+      "copy": "fullframe_compression.py",
+      "sha256": "1225227138aeb1a28dc1b3894c37c5b9a5833d88eecc887b60dd5b8989bdd84b",
+      "bytes": 46702
+    },
+    {
+      "source": "build/fullframe-compression-v1-5060-20261019-v6/REPORT.json",
+      "copy": "REPORT.json",
+      "sha256": "e17c293a3f8d970c9615065c35fa301e9c17d0a820e4d4b79daac0827575b549",
+      "bytes": 2966
+    },
+    {
+      "source": "build/fullframe-compression-v1-5060-20261019-v6/REPORT.md",
+      "copy": "REPORT.md",
+      "sha256": "08c09baa76cc34cf4335994cf2ec5949afea49a1d0f850bff2167031eb4984af",
+      "bytes": 804
+    }
+  ]
+}
