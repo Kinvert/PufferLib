@@ -1,0 +1,19 @@
+./src/pufferl.cu(2766): warning #177-D: variable "attempts" was declared but never referenced
+              int attempts = 0;
+                  ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+research/forage_encoder_probe.cuh(26): warning #177-D: variable "b" was declared but never referenced
+      int b=i/cells,cell=i%cells,offset=i*classes;float top=-
+          ^
+
+research/pretrain_autoencoder.cu: In function ‘void ae_checkpoint(const char*, long int, uint64_t, Allocator*, float*, float*, int)’:
+research/pretrain_autoencoder.cu:179:27: warning: ‘.tmp’ directive output may be truncated writing 4 bytes into a region of size between 1 and 4096 [-Wformat-truncation=]
+  179 |     snprintf(tmp,sizeof(tmp),"%s.tmp",path);
+      |                           ^~~~~~~~
+In function ‘int snprintf(char*, size_t, const char*, ...)’,
+    inlined from ‘void ae_checkpoint(const char*, long int, uint64_t, Allocator*, float*, float*, int)’ at research/pretrain_autoencoder.cu:179:9:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:54:32: note: ‘__builtin___snprintf_chk’ output between 5 and 4100 bytes into a destination of size 4096
+   54 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+      |        ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                                                  

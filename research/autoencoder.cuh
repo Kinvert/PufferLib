@@ -2,6 +2,8 @@
 struct AEDecoder {
     NatureWeights net;
     int source_h[4], source_w[4];
+    bool spatial;
+    int latent_values;
 };
 
 struct AEActivations {
@@ -37,6 +39,7 @@ __global__ void ae_bias(float* x, const float* bias, int n, int C, bool relu) {
 
 static AEDecoder ae_decoder(int H, int W) {
     AEDecoder d = {};
+    d.latent_values = 128;
     d.net.count = 4;
     d.net.layer[0] = {1, 1, 128, 256, 1, 1, 1, 1};
     int heights[] = {1, (H + 15) / 16, (H + 3) / 4, H};
@@ -50,16 +53,32 @@ static AEDecoder ae_decoder(int H, int W) {
     return d;
 }
 
+#ifdef CNN_SPATIAL_RESEARCH
+static AEDecoder ae_spatial_decoder(int H, int W, int stride, int channels) {
+    AEDecoder d = {}; d.spatial = true; d.net.count = 3;
+    int hs[] = {(H + 3) / 4, (H + 1) / 2, H};
+    int ws[] = {(W + 3) / 4, (W + 1) / 2, W};
+    int cs[] = {channels, 16, 8, 3};
+    int sh = (H + stride - 1) / stride, sw = (W + stride - 1) / stride;
+    d.latent_values = sh * sw * channels;
+    for (int i = 0; i < 3; i++) {
+        d.source_h[i] = i ? hs[i - 1] : sh; d.source_w[i] = i ? ws[i - 1] : sw;
+        d.net.layer[i] = {hs[i], ws[i], cs[i], cs[i + 1], 3, 1, hs[i], ws[i]};
+    }
+    return d;
+}
+#endif
+
 static void ae_register(AEDecoder* d, AEActivations* a, Allocator* acts, Allocator* grads, int B) {
-    a->grad_latent = {.shape = {B, 128}};
+    a->grad_latent = {.shape = {B, d->latent_values}};
     alloc_register(acts, &a->grad_latent);
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < d->net.count; i++) {
         NatureLayer l = d->net.layer[i];
         a->net.output[i] = {.shape = {B * l.oh * l.ow, l.co}};
         a->net.grad_output[i] = {.shape = {B * l.oh * l.ow, l.co}};
         alloc_register(acts, &a->net.output[i]);
         alloc_register(acts, &a->net.grad_output[i]);
-        if (i) {
+        if (i || d->spatial) {
             a->resized[i] = {.shape = {B, l.ih * l.iw * l.ci}};
             a->grad_resized[i] = {.shape = {B, l.ih * l.iw * l.ci}};
             a->net.patches[i] = {.shape = {B * l.oh * l.ow, l.k * l.k * l.ci}};
@@ -80,9 +99,9 @@ static Prec ae_forward(AEDecoder* d, AEActivations* a, Prec latent, cudaStream_t
     int B = latent.shape[0];
     a->latent = latent;
     Prec x = latent;
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < d->net.count; i++) {
         NatureLayer l = d->net.layer[i];
-        if (i) {
+        if (i || d->spatial) {
             ae_resize<<<grid_size(B * l.ih * l.iw * l.ci), BLOCK_SIZE, 0, stream>>>(
                 x.data, a->resized[i].data, B, d->source_h[i], d->source_w[i], l.ih, l.iw, l.ci);
             flex_patches<<<grid_size(numel(a->net.patches[i].shape)), BLOCK_SIZE, 0, stream>>>(
@@ -91,7 +110,7 @@ static Prec ae_forward(AEDecoder* d, AEActivations* a, Prec latent, cudaStream_t
         }
         puf_mm(&x, &d->net.weight[i], &a->net.output[i], stream);
         ae_bias<<<grid_size(numel(a->net.output[i].shape)), BLOCK_SIZE, 0, stream>>>(
-            a->net.output[i].data, d->net.bias[i].data, numel(a->net.output[i].shape), l.co, i != 3);
+            a->net.output[i].data, d->net.bias[i].data, numel(a->net.output[i].shape), l.co, i != d->net.count - 1);
         x = a->net.output[i];
     }
     return x;
@@ -99,23 +118,24 @@ static Prec ae_forward(AEDecoder* d, AEActivations* a, Prec latent, cudaStream_t
 
 static Prec ae_backward(AEDecoder* d, AEActivations* a, cudaStream_t stream) {
     int B = a->latent.shape[0];
-    for (int i = 3; i >= 0; i--) {
+    for (int i = d->net.count - 1; i >= 0; i--) {
         NatureLayer l = d->net.layer[i];
         Prec* dy = &a->net.grad_output[i];
-        if (i != 3) nature_relu_backward<<<grid_size(numel(dy->shape)), BLOCK_SIZE, 0, stream>>>(
+        if (i != d->net.count - 1) nature_relu_backward<<<grid_size(numel(dy->shape)), BLOCK_SIZE, 0, stream>>>(
             dy->data, a->net.output[i].data, numel(dy->shape));
-        Prec x = i ? a->net.patches[i] : a->latent;
+        Prec x = i || d->spatial ? a->net.patches[i] : a->latent;
         puf_mm_tn(dy, &x, &a->net.weight_grad[i], stream);
         nature_bias_backward<<<l.co, 256, 0, stream>>>(dy->data, a->net.bias_grad[i].data, B * l.oh * l.ow, l.co);
-        if (!i) {
+        if (!i && !d->spatial) {
             puf_mm_nn(dy, &d->net.weight[i], &a->grad_latent, stream);
         } else {
             puf_mm_nn(dy, &d->net.weight[i], &a->net.grad_patches[i], stream);
             flex_unpatch<<<grid_size(numel(a->resized[i].shape)), BLOCK_SIZE, 0, stream>>>(
                 a->net.grad_patches[i].data, a->grad_resized[i].data, l, B, 1, 1);
             int n = B * d->source_h[i] * d->source_w[i] * l.ci;
+            Prec target = i ? a->net.grad_output[i - 1] : a->grad_latent;
             ae_resize_backward<<<grid_size(n), BLOCK_SIZE, 0, stream>>>(a->grad_resized[i].data,
-                a->net.grad_output[i - 1].data, B, d->source_h[i], d->source_w[i], l.ih, l.iw, l.ci);
+                target.data, B, d->source_h[i], d->source_w[i], l.ih, l.iw, l.ci);
         }
     }
     return a->grad_latent;

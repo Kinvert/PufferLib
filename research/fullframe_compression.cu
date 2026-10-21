@@ -70,14 +70,15 @@ __global__ void ffc_adaptive_backward(const precision_t* dy, precision_t* dx,
 static Prec ffc_forward(void* weights, void* activations, Prec input, cudaStream_t stream) {
     FFCWeights* w = (FFCWeights*)weights;
     FFCActivations* a = (FFCActivations*)activations;
-    int B = a->net.output[3].shape[0];
-    assert(numel(input.shape) == (long)B * w->height * w->width * 3);
+    NatureLayer last = w->net.layer[w->net.count - 1];
+    int B = a->net.output[w->net.count - 1].shape[0] / (last.oh * last.ow);
+    assert(numel(input.shape) == (long)B * w->height * w->width * w->net.layer[0].ci);
     if (w->model) {
         ffc_area<<<grid_size(numel(a->reduced.shape)), BLOCK_SIZE, 0, stream>>>(
             input.data, a->reduced.data, B, w->height, w->width);
         input = a->reduced;
     }
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < w->net.count; i++) {
         NatureLayer d = w->net.layer[i];
         if (i == 3 && w->model != 2) {
             NatureLayer prev = w->net.layer[2];
@@ -99,6 +100,8 @@ static Prec ffc_forward(void* weights, void* activations, Prec input, cudaStream
         input = a->net.output[i];
         if (i == 2 && w->model == 2) input.shape[0] = B, input.shape[1] = d.oh * d.ow * d.co;
     }
+    input.shape[0] = B;
+    input.shape[1] = last.oh * last.ow * last.co;
     return input;
 }
 
@@ -106,9 +109,14 @@ static void ffc_backward(void* weights, void* activations, Prec grad, cudaStream
     FFCWeights* w = (FFCWeights*)weights;
     FFCActivations* a = (FFCActivations*)activations;
     NatureActivations* n = &a->net;
-    int B = n->output[3].shape[0];
-    puf_copy(&n->grad_output[3], &grad, stream);
-    for (int i = 3; i >= 0; i--) {
+    int end = w->net.count - 1;
+    NatureLayer last = w->net.layer[end];
+    int B = n->output[end].shape[0] / (last.oh * last.ow);
+    // The spatial API exposes B x (HWC), while conv GEMMs use (BHW) x C.
+    Prec incoming = grad;
+    incoming.shape[0] = B * last.oh * last.ow; incoming.shape[1] = last.co;
+    puf_copy(&n->grad_output[end], &incoming, stream);
+    for (int i = end; i >= 0; i--) {
         NatureLayer d = w->net.layer[i];
         int rows = B * d.oh * d.ow;
         nature_relu_backward<<<grid_size(rows * d.co), BLOCK_SIZE, 0, stream>>>(
@@ -196,11 +204,11 @@ static void ffc_rollout(void* weights, void* activations, Allocator* alloc, int 
         a->reduced = {.shape = {B, ((w->height + 3) / 4) * ((w->width + 3) / 4) * 3}};
         alloc_register(alloc, &a->reduced);
     }
-    if (w->model != 2) {
+    if (w->model != 2 && w->net.count == 4) {
         a->spatial = {.shape = {B, 256}};
         alloc_register(alloc, &a->spatial);
     }
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < w->net.count; i++) {
         NatureLayer d = w->net.layer[i];
         if (i < 3) {
             a->net.patches[i] = {.shape = {B * d.oh * d.ow, d.k * d.k * d.ci}};
@@ -216,18 +224,18 @@ static void ffc_train(void* weights, void* activations, Allocator* acts, Allocat
     FFCActivations* a = (FFCActivations*)activations;
     ffc_rollout(weights, activations, acts, B);
     if (w->input_grad) {
-        a->grad_input = {.shape = {B, w->height * w->width * 3}};
+        a->grad_input = {.shape = {B, w->height * w->width * w->net.layer[0].ci}};
         alloc_register(acts, &a->grad_input);
     }
     if (w->model && w->input_grad) {
         a->grad_reduced = {.shape = {B, ((w->height + 3) / 4) * ((w->width + 3) / 4) * 3}};
         alloc_register(acts, &a->grad_reduced);
     }
-    if (w->model != 2) {
+    if (w->model != 2 && w->net.count == 4) {
         a->grad_spatial = {.shape = {B, 256}};
         alloc_register(acts, &a->grad_spatial);
     }
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < w->net.count; i++) {
         NatureLayer d = w->net.layer[i];
         a->net.grad_output[i] = {.shape = {B * d.oh * d.ow, d.co}};
         alloc_register(acts, &a->net.grad_output[i]);

@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "binary_sha256": "045b384b7cb3b164ee6bd7424cfe692c6e2653fd12035db98e73479b73daaceb",
+  "process": {
+    "argv": [
+      "/home/claude/cnn/build/spatial-ae-5060-20261021-v10/annotation-check"
+    ],
+    "cwd": "/home/claude/cnn/build/spatial-ae-5060-20261021-v10/source",
+    "started_ns": 392922330645366,
+    "pid": 1617828,
+    "finished_ns": 392922362928135,
+    "returncode": 0,
+    "timeout": false,
+    "log_sha256": "bdbc2e4a9386f44fa13d6e8f85850017c0e1a2faf4e83347e8fe85f53e847096",
+    "interference": [],
+    "gpu_samples": [],
+    "expected_failure": false,
+    "seconds": 0.032282769
+  }
+}

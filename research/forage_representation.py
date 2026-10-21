@@ -24,8 +24,8 @@ CLASSES = ['ground', 'apple', 'pear', 'grapes', 'leaf', 'flower', 'beetle',
 SPLITS = ('train', 'validation', 'test')
 
 
-def prepare(out):
-    ae.prepare(out, ['sprite_forage'])
+def prepare(out, spatial=False):
+    ae.prepare(out, ['sprite_forage'], spatial=spatial)
     value = f.run_json([ae.trainer_binary(out), 'forage-host-checks'], out / 'source', out / 'forage-host-checks.log')
     require(value == dict(status='passed', skins=5, classes=13, cuda_execution=False), 'Annotation template check failed')
     command = ['clang', '-std=c11', '-D_POSIX_C_SOURCE=200809L', '-D_DEFAULT_SOURCE', '-O1', '-g',

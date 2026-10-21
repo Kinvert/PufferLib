@@ -40,6 +40,10 @@ void puf_normal_init(Prec* dst, float std, ulong seed, cudaStream_t stream) {
 #include "../ocean/connect4cnn/flex2.cu"
 #if defined(CNN_IMAGE_V1) && defined(CNN_COMPRESSION_RESEARCH)
 #include "../research/fullframe_compression.cu"
+#ifdef CNN_SPATIAL_RESEARCH
+#include <string>
+#include "../research/spatial_compression.cuh"
+#endif
 #endif
 #if defined(C4_IMPALA_CNN) || defined(C4_IMPOOLA_CNN)
 #include "../ocean/connect4cnn/impala.cu"
@@ -105,6 +109,12 @@ static void create_custom_encoder(Encoder* enc, Dict* policy = NULL) {
     DictItem* type = policy ? dict_find(policy, "encoder") : NULL;
 #if defined(CNN_IMAGE_V1) && defined(CNN_COMPRESSION_RESEARCH)
     if (type && type->value == 8) {
+#ifdef CNN_SPATIAL_RESEARCH
+        if (dict_get(policy, "compression_model") == 3) {
+            create_sc_policy_encoder(enc, policy);
+            return;
+        }
+#endif
         create_ffc_encoder(enc, policy);
         return;
     }

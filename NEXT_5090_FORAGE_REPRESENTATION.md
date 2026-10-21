@@ -1,5 +1,12 @@
 # 5090: does pretraining preserve Forage item identities?
 
+October 21: these commands describe the existing **vector-autoencoder pilot**.
+They do not implement the requested spatial compressor. Read
+`research/SPATIAL_AUTOENCODER.md` before preparing further experiments.
+The reconstruction objective and per-object/marking errors are the primary AE
+measurements; the linear classifier is a supporting diagnostic. Do not rerun a
+completed overnight pilot merely to follow this historical handoff.
+
 This is a bounded **perception diagnostic**, not an RL sweep or a game-win
 benchmark. Run the committed code without editing it on the 5090. Keep the
 existing CUDA/NCCL stack; no Torch, Docker or system changes are required.

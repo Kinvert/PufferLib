@@ -174,10 +174,10 @@ static void ae_write(const char* path, const void* data, size_t bytes) {
 
 struct AEStateHeader { uint64_t magic, version, parameters, step, seed; };
 
-static void ae_checkpoint(const char* folder, long step, uint64_t seed, Allocator* params, float* m, float* v) {
+static void ae_checkpoint(const char* folder, long step, uint64_t seed, Allocator* params, float* m, float* v, int version = 1) {
     char path[4096],tmp[4096];snprintf(path,sizeof(path),"%s/step-%012ld.state",folder,step);
     snprintf(tmp,sizeof(tmp),"%s.tmp",path);
-    AEStateHeader header={UINT64_C(0x31454146465550),1,(uint64_t)params->total_elems,(uint64_t)step,seed};
+    AEStateHeader header={UINT64_C(0x31454146465550),(uint64_t)version,(uint64_t)params->total_elems,(uint64_t)step,seed};
     size_t bytes=params->total_elems*4;
     std::vector<float> data(params->total_elems*3);
     ae_checked(cudaMemcpy(data.data(),params->mem,bytes,cudaMemcpyDeviceToHost));
@@ -197,6 +197,12 @@ static int ae_train(const char* recipe, const char* index, const char* folder, c
     float lr=dict_get(cfg,"learning_rate"), edge=dict_get(cfg,"edge_weight"), clip=dict_get(cfg,"max_grad_norm");
     int seconds=dict_get(cfg,"max_seconds");uint64_t seed=dict_get(cfg,"seed");
     int loss_mode=dict_find(cfg,"loss_mode")?dict_get(cfg,"loss_mode"):0;
+    int stride = dict_find(cfg,"latent_stride") ? dict_get(cfg,"latent_stride") : 0;
+    int channels = dict_find(cfg,"latent_channels") ? dict_get(cfg,"latent_channels") : 16;
+    int version = stride ? 2 : 1;
+#ifndef CNN_SPATIAL_RESEARCH
+    ffc_require(!stride, "spatial training needs CNN_SPATIAL_RESEARCH");
+#endif
     ffc_require(loss_mode==0 || loss_mode==1,"loss_mode must be 0 or 1");
 #ifdef AE_FORAGE
     float object_weight=dict_get(cfg,"object_weight"),background_weight=dict_get(cfg,"background_weight");
@@ -212,6 +218,12 @@ static int ae_train(const char* recipe, const char* index, const char* folder, c
     long allocated=0;
     for (AEStream* s:streams) {
         s->encoder=ffc_graph(0,s->H,s->W);s->decoder=ae_decoder(s->H,s->W);
+#ifdef CNN_SPATIAL_RESEARCH
+        if (stride) {
+            free(s->encoder); s->encoder=sc_graph(s->H,s->W,stride,channels);
+            s->decoder=ae_spatial_decoder(s->H,s->W,stride,channels);
+        }
+#endif
         ffc_params(s->encoder,&s->parameters);nature_reg_params(&s->decoder.net,&s->parameters);
         ffc_train(s->encoder,&s->encoder_acts,&s->activations,&s->gradients,B);
         ae_register(&s->decoder,&s->decoder_acts,&s->activations,&s->gradients,B);
@@ -232,13 +244,13 @@ static int ae_train(const char* recipe, const char* index, const char* folder, c
     ae_checked(cudaMalloc(&parts,512*4));ae_checked(cudaMalloc(&stats,2*4));ae_checked(cudaMalloc(&norm,4));
     ulong init_seed=seed;ffc_init(streams[0]->encoder,&init_seed,stream);nature_init_weights(&streams[0]->decoder.net,&init_seed,stream);
     // A linear RGB head uses a conservative initial gain; decoder is training-only.
-    puf_kaiming_init(&streams[0]->decoder.net.weight[3],.1f,init_seed++,stream);
+    puf_kaiming_init(&streams[0]->decoder.net.weight[streams[0]->decoder.net.count - 1],.1f,init_seed++,stream);
     ae_checked(cudaStreamSynchronize(stream));
     long step=0;
     if (strcmp(resume,"None")) {
         FILE* f=fopen(resume,"rb");AEStateHeader h;
         ffc_require(f && fread(&h,sizeof(h),1,f)==1 && h.magic==UINT64_C(0x31454146465550)
-            && h.version==1 && h.parameters==(uint64_t)params->total_elems && h.seed==seed && h.step<(uint64_t)target,"resume state contract");
+            && h.version==(uint64_t)version && h.parameters==(uint64_t)params->total_elems && h.seed==seed && h.step<(uint64_t)target,"resume state contract");
         std::vector<float> data(params->total_elems*3);
         ffc_require(fread(data.data(),4,data.size(),f)==data.size() && fgetc(f)==EOF && !fclose(f),"resume state length");
         for (float x:data) ffc_require(isfinite(x),"nonfinite resume state");
@@ -246,7 +258,7 @@ static int ae_train(const char* recipe, const char* index, const char* folder, c
         ae_checked(cudaMemcpy(m,data.data()+params->total_elems,params->total_bytes,cudaMemcpyHostToDevice));
         ae_checked(cudaMemcpy(v,data.data()+2*params->total_elems,params->total_bytes,cudaMemcpyHostToDevice));step=h.step;
     }
-    ae_checkpoint(folder,step,seed,params,m,v);
+    ae_checkpoint(folder,step,seed,params,m,v,version);
     auto forward=[&](AEStream* s,int active) {
         Prec z=ffc_forward(s->encoder,&s->encoder_acts,s->input,stream);
         Prec y=ae_forward(&s->decoder,&s->decoder_acts,z,stream);
@@ -254,7 +266,7 @@ static int ae_train(const char* recipe, const char* index, const char* folder, c
 #ifdef AE_FORAGE
         if(loss_mode) {forage_weights(s,B,object_weight,background_weight);pixel_weights=s->pixel_weights;}
 #endif
-        ae_loss<<<256,256,0,stream>>>(y.data,s->input.data,s->decoder_acts.net.grad_output[3].data,
+        ae_loss<<<256,256,0,stream>>>(y.data,s->input.data,s->decoder_acts.net.grad_output[s->decoder.net.count - 1].data,
             parts,B*s->H*s->W*3,active*s->H*s->W*3,s->H,s->W,edge,pixel_weights);
         muon_sum_sq_reduce<<<1,256,0,stream>>>(stats,parts,256);
         muon_sum_sq_reduce<<<1,256,0,stream>>>(stats+1,parts+256,256);
@@ -293,7 +305,7 @@ static int ae_train(const char* recipe, const char* index, const char* folder, c
         if (step%cadence==0 || step==target || ae_now()-start>=seconds) {
             printf("{\"training_step\":%ld,\"stream\":\"%s\",\"mse\":%.12g,\"objective\":%.12g,\"seconds\":%.6f}\n",
                 step,s->name.c_str(),loss.first,loss.second,ae_now()-start);
-            ae_checkpoint(folder,step,seed,params,m,v);validate();
+            ae_checkpoint(folder,step,seed,params,m,v,version);validate();
         }
     }
     printf("{\"status\":\"%s\",\"final_step\":%ld,\"target_steps\":%d,\"allocated_activation_bytes\":%ld}\n",
@@ -334,8 +346,31 @@ static void ae_manifest(int H,int W) {
 #ifdef AE_FORAGE
 #include "forage_encoder_probe.cuh"
 #endif
+#ifdef CNN_SPATIAL_RESEARCH
+#include "spatial_autoencoder_checks.cuh"
+#endif
 
 int main(int argc,char** argv) {
+#ifdef CNN_SPATIAL_RESEARCH
+    if(argc>=2 && !strcmp(argv[1],"policy")) {
+        argv[1]=argv[0];return ae_unused_puffer_main(argc-1,argv+1);
+    }
+    // Native PROTEIN execs this same binary with `train --section.key=...`.
+    // Distinguish those children from the positional AE train ... v1 protocol.
+    if(argc>=2 && ((!strcmp(argv[1],"train") && !(argc==7 && !strcmp(argv[6],"v1")))
+        || !strcmp(argv[1],"sweep") || !strcmp(argv[1],"eval"))) return ae_unused_puffer_main(argc,argv);
+    if(argc==6 && !strcmp(argv[1],"spatial-manifest")) {
+        FFCWeights* w=sc_graph(atoi(argv[2]),atoi(argv[3]),atoi(argv[4]),atoi(argv[5]));
+        cJSON* root=sc_manifest(w);char* json=cJSON_PrintUnformatted(root);puts(json);free(json);cJSON_Delete(root);free(w);return 0;
+    }
+    if(argc==8 && !strcmp(argv[1],"spatial-math"))
+        return ae_math(atoi(argv[2]),atoi(argv[3]),atoi(argv[4]),argv[7],atoi(argv[5]),atoi(argv[6]));
+#ifdef AE_FORAGE
+    if(argc==7 && !strcmp(argv[1],"spatial-reconstruct"))
+        return sc_reconstruct(argv[2],argv[3],argv[4],argv[5],argv[6]);
+#endif
+    if(argc==5 && !strcmp(argv[1],"spatial-policy-check")) return sc_policy_check(argv[2],argv[3],atoi(argv[4]));
+#endif
 #ifdef AE_FORAGE
     if(argc==2 && !strcmp(argv[1],"forage-host-checks")) {
         ffc_require(!forage_annotation_checks(),"Forage pixel masks differ from native templates");

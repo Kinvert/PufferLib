@@ -1,0 +1,23 @@
+{
+  "schema": "native-autoencoder-packet-v1",
+  "sources_sha256": "e8bc579c0429df540d7a96b4a58575e3fe7fa4db9dbbf63bb722f62a8913fc85",
+  "external_sha256": "7e6ea335e0f845341f17ff5a0ba2bbfb8fbe40dbd4a87d7274e1f2864d8e576c",
+  "binaries": {
+    "sprite_forage": "54da25153f7b03a6a2cdedf9d8f5b193242eb8996af456ad38d88ea7c8e1283e"
+  },
+  "manifests": {
+    "sprite_forage.json": "673e5f65ab7842d3cc9e16b56474c205be5c6bf83b861f10682ae15613547b9f"
+  },
+  "configs": {
+    "sprite_forage.ini": "551529b04dba2927ded81702a1722e09ec37ed73ff3403ff6e7913565edf8187"
+  },
+  "games": {
+    "sprite_forage": [
+      480,
+      640,
+      5
+    ]
+  },
+  "spatial": true,
+  "gpu_execution": false
+}

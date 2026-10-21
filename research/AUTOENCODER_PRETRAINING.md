@@ -1,5 +1,15 @@
 # Optional native autoencoder pretraining
 
+October 21 target clarification: Kinvert wants a **spatial image compressor**:
+full image -> encoder -> smaller feature grid -> downstream CNN/policy. During
+pretraining a decoder reconstructs the image, with object-weighted loss and
+held-out object/marking reconstruction metrics. Classification is an optional
+diagnostic. Read [the intended spatial design](SPATIAL_AUTOENCODER.md).
+The vector-based implementation documented below is retained historical work.
+The new opt-in spatial code, native CNN consumer and size-bank sweep path have
+their own [5090 instructions](../NEXT_5090_SPATIAL_AUTOENCODER.md) and fresh
+qualification; they do not inherit old vector-model acceptance.
+
 October20,2026. Implementation work for Kinvert's optional5090pretraining request.
 This work does not repair or waive the earlier compression memcheck failure.
 No dataset collection or long pretraining is launched by preparing the tools.

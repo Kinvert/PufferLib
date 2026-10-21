@@ -1,0 +1,26 @@
+test_episode_separation_does_not_hide_duplicate_images (test_autoencoder_pretrain.DataContracts.test_episode_separation_does_not_hide_duplicate_images) ... ok
+test_missing_split_is_rejected (test_autoencoder_pretrain.DataContracts.test_missing_split_is_rejected) ... ok
+test_modified_frame_bytes_are_rejected (test_autoencoder_pretrain.DataContracts.test_modified_frame_bytes_are_rejected) ... ok
+test_paths_cannot_escape_dataset (test_autoencoder_pretrain.DataContracts.test_paths_cannot_escape_dataset) ... ok
+test_world_seed_leakage_is_rejected (test_autoencoder_pretrain.DataContracts.test_world_seed_leakage_is_rejected) ... ok
+test_integer_scalar_normalization_buffers_are_inventory_only (test_autoencoder_pretrain.SafeWeights.test_integer_scalar_normalization_buffers_are_inventory_only) ... ok
+test_safetensors_inventory_is_data_only (test_autoencoder_pretrain.SafeWeights.test_safetensors_inventory_is_data_only) ... ok
+test_safetensors_overlap_is_rejected (test_autoencoder_pretrain.SafeWeights.test_safetensors_overlap_is_rejected) ... ok
+test_export_rejects_changed_recipe_before_loading_weights (test_autoencoder_pretrain.StateContracts.test_export_rejects_changed_recipe_before_loading_weights) ... ok
+test_optimizer_state_is_included_and_nonfinite_values_rejected (test_autoencoder_pretrain.StateContracts.test_optimizer_state_is_included_and_nonfinite_values_rejected) ... ok
+test_resume_extends_steps_but_cannot_change_learning_recipe (test_autoencoder_pretrain.StateContracts.test_resume_extends_steps_but_cannot_change_learning_recipe) ... ok
+test_truncated_or_extended_state_is_rejected (test_autoencoder_pretrain.StateContracts.test_truncated_or_extended_state_is_rejected) ... ok
+test_candidate_grid_rejects_invalid_or_duplicate_shapes (test_spatial_autoencoder.SpatialContracts.test_candidate_grid_rejects_invalid_or_duplicate_shapes) ... ok
+test_correct_background_cannot_hide_marking_error (test_spatial_autoencoder.SpatialContracts.test_correct_background_cannot_hide_marking_error) ... ok
+test_missing_feature_hash_is_rejected (test_spatial_autoencoder.SpatialContracts.test_missing_feature_hash_is_rejected) ... ok
+test_missing_or_duplicate_cells_are_rejected (test_spatial_autoencoder.SpatialContracts.test_missing_or_duplicate_cells_are_rejected) ... ok
+test_native_bank_sweep_has_required_fields_and_only_architecture_axis (test_spatial_autoencoder.SpatialContracts.test_native_bank_sweep_has_required_fields_and_only_architecture_axis) ... ok
+test_preview_preserves_pixel_order_with_padded_bmp_rows (test_spatial_autoencoder.SpatialContracts.test_preview_preserves_pixel_order_with_padded_bmp_rows) ... ok
+test_state_binds_width_optimizer_and_finiteness (test_spatial_autoencoder.SpatialContracts.test_state_binds_width_optimizer_and_finiteness) ... ok
+test_vector_state_is_not_silently_treated_as_spatial (test_spatial_autoencoder.SpatialContracts.test_vector_state_is_not_silently_treated_as_spatial) ... ok
+test_wrong_skin_truth_or_frame_quota_is_rejected (test_spatial_autoencoder.SpatialContracts.test_wrong_skin_truth_or_frame_quota_is_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 21 tests in 0.039s
+
+OK

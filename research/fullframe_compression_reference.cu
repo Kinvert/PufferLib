@@ -55,16 +55,17 @@ struct FFCReference {
     std::vector<FFCRefNode> nodes;
     int batch,parameters=0;
 
-    FFCReference(int model,int H,int W,int B):batch(B) {
-        nodes.push_back({0,H,W,3,-1});
+    FFCReference(int model,int H,int W,int B,int spatial_stride=0,int spatial_channels=16,int input_channels=3,bool consumer=false):batch(B) {
+        nodes.push_back({0,H,W,input_channels,-1});
         if(model) mean(true);
         if(model==2) {
             conv(32,8,4,false,0);conv(64,4,2,false,1);conv(64,3,1,false,2);
         } else {
-            conv(8,model?3:4,model?1:4,true,0);
-            conv(16,3,2,true,1);conv(16,3,2,true,2);mean(false);
+            conv(8,consumer?3:model?3:4,consumer?1:model?1:4,true,0);
+            conv(16,3,2,true,1);conv(spatial_stride?spatial_channels:16,spatial_stride?4:3,spatial_stride?spatial_stride/8:2,true,2);
+            if(!spatial_stride)mean(false);
         }
-        conv(128,1,1,false,3,true);
+        if(!spatial_stride)conv(128,1,1,false,3,true);
         for(auto& n:nodes) {
             int size=B*n.h*n.w*n.c;
             n.y=storage.add(size);n.g=storage.add(size);n.delta=storage.add(size);
@@ -85,13 +86,14 @@ struct FFCReference {
     }
     void run(const double* input,const double* weights,const double* up,double* gradient,
             const float* const* branches=nullptr) {
-        checked(cudaMemcpy(nodes[0].y,input,batch*nodes[0].h*nodes[0].w*3*sizeof(double),cudaMemcpyDeviceToDevice));
+        checked(cudaMemcpy(nodes[0].y,input,batch*nodes[0].h*nodes[0].w*nodes[0].c*sizeof(double),cudaMemcpyDeviceToDevice));
         for(int i=1;i<(int)nodes.size();i++) {
             auto& n=nodes[i];auto& p=nodes[i-1];int size=batch*n.h*n.w*n.c;
             if(n.op==3) forward<<<(size+127)/128,128>>>(p.y,weights,n.y,n.layer,batch);
             else ffc_ref_mean<<<(size+127)/128,128>>>(p.y,n.y,batch,p.h,p.w,p.c,n.op==1);
         }
-        checked(cudaMemcpy(nodes.back().g,up,batch*128*sizeof(double),cudaMemcpyDeviceToDevice));
+        auto last=nodes.back();
+        checked(cudaMemcpy(nodes.back().g,up,batch*last.h*last.w*last.c*sizeof(double),cudaMemcpyDeviceToDevice));
         for(int i=nodes.size()-1;i>0;i--) {
             auto& n=nodes[i];auto& p=nodes[i-1];int size=batch*n.h*n.w*n.c;
             if(n.op==3) {

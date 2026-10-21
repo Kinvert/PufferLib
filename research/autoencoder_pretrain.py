@@ -43,7 +43,7 @@ def digest(value):
     return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(',', ':'), allow_nan=False).encode()).hexdigest()
 
 
-def prepare(out, games=None):
+def prepare(out, games=None, spatial=False):
     games = games or list(f.GAMES)
     require(games and len(set(games)) == len(games) and all(g in GAME_SPECS for g in games), 'Unknown/duplicate game')
     require('sprite_forage' not in games or len(games) == 1, 'Annotated Forage uses its own packet')
@@ -56,6 +56,10 @@ def prepare(out, games=None):
     for folder in ('src', 'ocean/connect4cnn', 'ocean/flappycnn', 'ocean/pongcnn'):
         files += [p for p in (ROOT / folder).rglob('*') if p.is_file() and p.suffix in ('.h', '.c', '.cu', '.sh')]
     files += [ROOT / 'research' / n for n in NATIVE]
+    if spatial:
+        require(games == ['sprite_forage'], 'Spatial pilot currently targets annotated Forage')
+        files += [ROOT / 'research' / n for n in ('spatial_compression.cuh', 'spatial_autoencoder_checks.cuh',
+            'spatial_autoencoder.py', 'spatial_autoencoder.sh', 'recipes/spatial_autoencoder.ini')]
     files += [ROOT / 'research/fullframe_compression.py', ROOT / 'research/recipes/autoencoder.ini']
     files += [ROOT / 'config/default.ini'] + [ROOT / f'config/{g}.ini' for g in f.GAMES]
     if 'sprite_forage' in specs:
@@ -93,6 +97,8 @@ def prepare(out, games=None):
             '-L' + str(cuda / 'lib64'), '-L' + str(cuda / 'lib64/stubs'), '-L' + str(nccl / 'lib'),
             '-lcudart', '-lcublas', '-lcurand', '-lcusolver', '-lnccl', '-lnvidia-ml', '-lGL', '-lpthread', '-ldl', '-lrt',
             '-o', str(folder / 'autoencoder')]
+        if spatial:
+            cmd.insert(1, '-DCNN_SPATIAL_RESEARCH')
         f.process(cmd, source, folder / 'build.log', 300)
         binaries[game] = sha(folder / 'autoencoder')
         value = f.run_json([folder / 'autoencoder', 'describe'], source, folder / 'describe.log')
@@ -109,7 +115,8 @@ def prepare(out, games=None):
     save(out / 'plan.json', dict(schema='native-autoencoder-packet-v1', sources_sha256=sha(out / 'sources.json'),
         external_sha256=sha(out / 'external.json'), binaries=binaries,
         manifests={p.name: sha(p) for p in (out / 'manifests').glob('*.json')},
-        configs={p.name: sha(p) for p in (out / 'configs').glob('*.ini')}, games=specs, gpu_execution=False))
+        configs={p.name: sha(p) for p in (out / 'configs').glob('*.ini')}, games=specs,
+        spatial=spatial, gpu_execution=False))
     return inspect(out)
 
 
@@ -268,6 +275,7 @@ def write_index(data, data_root, path, include_test=False):
 def train(packet, data_root, recipe, out, hardware, resume=None, qualification_gpu=None):
     inspect(packet); require(not out.exists(), 'Fresh training output required')
     data = dataset(data_root); cfg = f.config(recipe); settings = cfg['autoencoder']
+    require(settings.getint('latent_stride', fallback=0) == 0, 'Use spatial_autoencoder.py for spatial artifacts/qualification')
     require(settings.getint('seed') == 7 and 1 <= settings.getint('batch') <= 16
         and 1 <= settings.getint('steps') <= 10000000 and 1 <= settings.getint('max_seconds') <= 43200,
         'Pretraining seed/budget contract')

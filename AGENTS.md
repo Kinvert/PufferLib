@@ -1,5 +1,35 @@
 # Working preferences
 
+- October 21 spatial AE delivery: Kinvert explicitly requests implementation,
+  instructions and push to Kinvert/PufferLib cnn-research. Read
+  `NEXT_5090_SPATIAL_AUTOENCODER.md`. Opt-in CNN_SPATIAL_RESEARCH adds spatial
+  reconstruction pretraining, configurable stride/channels, strict encoder-only
+  artifacts and compression_model3: spatial prefix -> small CNN -> normal core.
+  Frozen/fine-tuned modes are separate; a frozen prefix stays external to policy
+  checkpoints. Numeric compression_variant selects a pretrained artifact bank
+  for native PROTEIN; no seed/learner sweep. New spatial runner never fits a
+  classifier. Existing vector schemas/results stay separate. Qualification on
+  the target GPU, including memory instrumentation, must pass before its pilot;
+  unsupported tools are not waived. Preparation starts no GPU job. Consult the
+  new result receipt for actual local smoke scope, not old vector acceptance.
+  Local v10 four-size paired plain/object smoke and separate additional CUDA
+  shapes/vector regression PASS; read research/results/spatial-autoencoder-
+  20261021/README.md. Actual native bank-PROTEIN three-trial canary, policy
+  train/reload, exact AE repeat/resume/export features and the crop viewer pass.
+  Full target/memory qualification and larger 5090 run remain UNEXECUTED here.
+  No learning/Pareto claim, no automatic local restart, no task GPU reserved.
+
+- October 21 autoencoder clarification: read `research/SPATIAL_AUTOENCODER.md`.
+  Kinvert wants full-frame RGB -> learned smaller spatial feature grid -> CNN/
+  policy, pretrained by decoding back to the image with heavily object-weighted
+  reconstruction. Preserve object identity, position and lookalike markings;
+  background fidelity must not dominate the verdict. Classifier F1 is optional
+  diagnostic evidence, not the AE objective. Retained model0 pools/projects to
+  128 values and does not implement the intended spatial export/consumer.
+  Preserve that vector-model experiment and its receipts; a new spatial path
+  needs its own training/export/consumer and validation. No GPU job or restart
+  follows from this documentation update.
+
 - October 20 Forage representation implementation: read
   `NEXT_5090_FORAGE_REPRESENTATION.md`, `research/FORAGE_REPRESENTATION_PILOT.md`
   and its build/host result receipt. New research-only full-640x480 pixel data,

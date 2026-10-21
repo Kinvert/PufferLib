@@ -32,38 +32,45 @@ struct AEReferenceDecoder {
     Storage storage;
     Layer layers[4];
     double *resized[4],*grad_resized[4],*output[4],*g[4],*delta[4],*grad_latent;
-    int sh[4],sw[4],B;
-    AEReferenceDecoder(int H,int W,int batch):B(batch) {
+    int sh[4],sw[4],B,count=4,latent=128;
+    AEReferenceDecoder(int H,int W,int batch,int stride=0,int channels=16):B(batch) {
         int hs[]={1,(H+15)/16,(H+3)/4,H},ws[]={1,(W+15)/16,(W+3)/4,W},cs[]={16,8,8,3};
+        if(stride) {
+            count=3; latent=((H+stride-1)/stride)*((W+stride-1)/stride)*channels;
+            hs[0]=(H+3)/4;hs[1]=(H+1)/2;hs[2]=H;
+            ws[0]=(W+3)/4;ws[1]=(W+1)/2;ws[2]=W;
+            cs[0]=16;cs[1]=8;cs[2]=3;
+        }
         int offset=0;
-        for(int i=0;i<4;i++) {
-            int ci=i?cs[i-1]:128,co=i?cs[i]:256,k=i?3:1;
-            layers[i]={hs[i],ws[i],ci,hs[i],ws[i],co,k,1,i?1:0,i?1:0,offset};
+        for(int i=0;i<count;i++) {
+            int ci=i?cs[i-1]:(stride?channels:128),co=i||stride?cs[i]:256,k=i||stride?3:1;
+            layers[i]={hs[i],ws[i],ci,hs[i],ws[i],co,k,1,k==3?1:0,k==3?1:0,offset};
             offset+=co*(k*k*ci+1);
             int n=B*hs[i]*ws[i]*co;
             output[i]=storage.add(n);g[i]=storage.add(n);delta[i]=storage.add(n);
             resized[i]=storage.add(B*hs[i]*ws[i]*ci);grad_resized[i]=storage.add(B*hs[i]*ws[i]*ci);
-            sh[i]=i==1?4:i?hs[i-1]:1;sw[i]=i==1?4:i?ws[i-1]:1;
+            sh[i]=stride?(i?hs[i-1]:(H+stride-1)/stride):i==1?4:i?hs[i-1]:1;
+            sw[i]=stride?(i?ws[i-1]:(W+stride-1)/stride):i==1?4:i?ws[i-1]:1;
         }
-        grad_latent=storage.add(B*128);
+        grad_latent=storage.add(B*latent);
     }
     void run(const double* z,const double* w,const double* up,double* dw) {
-        for(int i=0;i<4;i++) {
+        for(int i=0;i<count;i++) {
             Layer l=layers[i];int size=B*l.oh*l.ow*l.co;
-            if(!i) checked(cudaMemcpy(resized[i],z,B*128*8,cudaMemcpyDeviceToDevice));
-            else ae_ref_expand<<<(B*l.h*l.w*l.ci+127)/128,128>>>(output[i-1],resized[i],B,sh[i],sw[i],l.h,l.w,l.ci);
-            ae_ref_convolution<<<(size+127)/128,128>>>(resized[i],w,output[i],l,B,i!=3);
+            if(!i && count==4) checked(cudaMemcpy(resized[i],z,B*128*8,cudaMemcpyDeviceToDevice));
+            else ae_ref_expand<<<(B*l.h*l.w*l.ci+127)/128,128>>>(i?output[i-1]:z,resized[i],B,sh[i],sw[i],l.h,l.w,l.ci);
+            ae_ref_convolution<<<(size+127)/128,128>>>(resized[i],w,output[i],l,B,i!=count-1);
         }
-        Layer last=layers[3];checked(cudaMemcpy(g[3],up,B*last.oh*last.ow*3*8,cudaMemcpyDeviceToDevice));
-        for(int i=3;i>=0;i--) {
+        Layer last=layers[count-1];checked(cudaMemcpy(g[count-1],up,B*last.oh*last.ow*3*8,cudaMemcpyDeviceToDevice));
+        for(int i=count-1;i>=0;i--) {
             Layer l=layers[i];int size=B*l.oh*l.ow*l.co;
-            if(i==3) checked(cudaMemcpy(delta[i],g[i],size*8,cudaMemcpyDeviceToDevice));
+            if(i==count-1) checked(cudaMemcpy(delta[i],g[i],size*8,cudaMemcpyDeviceToDevice));
             else relu_backward<<<(size+127)/128,128>>>(output[i],g[i],delta[i],size);
-            int count=l.co*l.k*l.k*l.ci;
-            weight_backward<<<(count+127)/128,128>>>(resized[i],delta[i],dw,l,B);
+            int weights=l.co*l.k*l.k*l.ci;
+            weight_backward<<<(weights+127)/128,128>>>(resized[i],delta[i],dw,l,B);
             bias_backward<<<(l.co+127)/128,128>>>(delta[i],dw,l,B);
             input_backward<<<(B*l.h*l.w*l.ci+127)/128,128>>>(w,delta[i],grad_resized[i],l,B);
-            if(i) ae_ref_expand_back<<<(B*sh[i]*sw[i]*l.ci+127)/128,128>>>(grad_resized[i],g[i-1],B,sh[i],sw[i],l.h,l.w,l.ci);
+            if(i || count==3) ae_ref_expand_back<<<(B*sh[i]*sw[i]*l.ci+127)/128,128>>>(grad_resized[i],i?g[i-1]:grad_latent,B,sh[i],sw[i],l.h,l.w,l.ci);
             else checked(cudaMemcpy(grad_latent,grad_resized[0],B*128*8,cudaMemcpyDeviceToDevice));
         }
         checked(cudaDeviceSynchronize());
@@ -86,14 +93,18 @@ static double ae_compare(const std::vector<float>& actual,const std::vector<doub
     ffc_require(!bad,name);return worst;
 }
 
-static int ae_math(int H,int W,int B,const char* folder) {
+static int ae_math(int H,int W,int B,const char* folder,int stride=0,int channels=16) {
     ffc_require(H>=144&&W>=144&&H<=640&&W<=640&&(B==1||B==2),"math fixture bounds");
     ffc_require(!mkdir(folder,0700),"fresh math output");
     cublas_init_handle();cudaStream_t stream;checked(cudaStreamCreate(&stream));
     FFCWeights* e=ffc_graph(0,H,W);e->input_grad=true;FFCActivations ea={};AEDecoder d=ae_decoder(H,W);AEActivations da={};
+#ifdef CNN_SPATIAL_RESEARCH
+    if(stride) {free(e);e=sc_graph(H,W,stride,channels);e->input_grad=true;d=ae_spatial_decoder(H,W,stride,channels);}
+#endif
     Allocator p={},a={},g={};ffc_params(e,&p);nature_reg_params(&d.net,&p);ffc_train(e,&ea,&a,&g,B);ae_register(&d,&da,&a,&g,B);
     alloc_create(&p);alloc_create(&a);alloc_create(&g);
-    long N=(long)B*H*W*3,P=p.total_elems,E=36776;
+    long N=(long)B*H*W*3,P=p.total_elems,E=0;
+    for(int i=0;i<e->net.count;i++)E+=numel(e->net.weight[i].shape)+numel(e->net.bias[i].shape);
     std::vector<float> hw(P),hx(N),hu(N),y(N),dw(P),dx(N);
     std::vector<double> rw(P),rx(N),ru(N),ry(N),rdw(P),rdx(N);
     for(long i=0;i<P;i++)rw[i]=hw[i]=.005f+(i%17)*.0001f;
@@ -103,18 +114,32 @@ static int ae_math(int H,int W,int B,const char* folder) {
     checked(cudaMemcpy(p.mem,hw.data(),P*4,cudaMemcpyHostToDevice));
     float* up;checked(cudaMalloc(&up,N*4));checked(cudaMemcpy(up,hu.data(),N*4,cudaMemcpyHostToDevice));
     auto native_forward=[&](){Prec z=ffc_forward(e,&ea,input,stream);return ae_forward(&d,&da,z,stream);};
-    auto native=[&](){Prec out=native_forward();checked(cudaMemcpyAsync(da.net.grad_output[3].data,up,N*4,cudaMemcpyDeviceToDevice,stream));
+    auto native=[&](){Prec out=native_forward();checked(cudaMemcpyAsync(da.net.grad_output[d.net.count-1].data,up,N*4,cudaMemcpyDeviceToDevice,stream));
         Prec dz=ae_backward(&d,&da,stream);ffc_backward(e,&ea,dz,stream);return out;};
-    Prec output=native();checked(cudaStreamSynchronize(stream));
+    // Synchronize the first eager pass at the boundary that failed, rather than
+    // attributing an asynchronous device error to a later oracle allocation.
+    Prec first_z=ffc_forward(e,&ea,input,stream);
+    ffc_require(cudaStreamSynchronize(stream)==cudaSuccess,"AE math encoder forward device error");
+    Prec output=ae_forward(&d,&da,first_z,stream);
+    ffc_require(cudaStreamSynchronize(stream)==cudaSuccess,"AE math decoder forward device error");
+    checked(cudaMemcpyAsync(da.net.grad_output[d.net.count-1].data,up,N*4,cudaMemcpyDeviceToDevice,stream));
+    Prec first_dz=ae_backward(&d,&da,stream);
+    ffc_require(cudaStreamSynchronize(stream)==cudaSuccess,"AE math decoder backward device error");
+    ffc_backward(e,&ea,first_dz,stream);
+    ffc_require(cudaStreamSynchronize(stream)==cudaSuccess,"AE math encoder backward device error");
     checked(cudaMemcpy(y.data(),output.data,N*4,cudaMemcpyDeviceToHost));
     checked(cudaMemcpy(dw.data(),g.mem,P*4,cudaMemcpyDeviceToHost));checked(cudaMemcpy(dx.data(),ea.grad_input.data,N*4,cudaMemcpyDeviceToHost));
-    FFCReference er(0,H,W,B);AEReferenceDecoder dr(H,W,B);Storage memory;
-    double *obs=memory.add(N),*weights=memory.add(P),*upstream=memory.add(N),*gradient=memory.add(P),*zero=memory.add(B*128);
+    FFCReference er(0,H,W,B,stride,channels);AEReferenceDecoder dr(H,W,B,stride,channels);Storage memory;
+    double *obs=memory.add(N),*weights=memory.add(P),*upstream=memory.add(N),*gradient=memory.add(P),*zero=memory.add(B*d.latent_values);
     checked(cudaMemcpy(obs,rx.data(),N*8,cudaMemcpyHostToDevice));checked(cudaMemcpy(weights,rw.data(),P*8,cudaMemcpyHostToDevice));
-    checked(cudaMemcpy(upstream,ru.data(),N*8,cudaMemcpyHostToDevice));checked(cudaMemset(zero,0,B*128*8));
+    checked(cudaMemcpy(upstream,ru.data(),N*8,cudaMemcpyHostToDevice));checked(cudaMemset(zero,0,B*d.latent_values*8));
     er.run(obs,weights,zero,gradient);dr.run(er.nodes.back().y,weights+E,upstream,gradient+E);
+    std::vector<float> native_dz(B*d.latent_values);std::vector<double> reference_dz(B*d.latent_values);
+    checked(cudaMemcpy(native_dz.data(),da.grad_latent.data,native_dz.size()*4,cudaMemcpyDeviceToHost));
+    checked(cudaMemcpy(reference_dz.data(),dr.grad_latent,reference_dz.size()*8,cudaMemcpyDeviceToHost));
+    ae_compare(native_dz,reference_dz,"AE latent derivative");
     er.run(obs,weights,dr.grad_latent,gradient);
-    checked(cudaMemcpy(ry.data(),dr.output[3],N*8,cudaMemcpyDeviceToHost));checked(cudaMemcpy(rdw.data(),gradient,P*8,cudaMemcpyDeviceToHost));
+    checked(cudaMemcpy(ry.data(),dr.output[dr.count-1],N*8,cudaMemcpyDeviceToHost));checked(cudaMemcpy(rdw.data(),gradient,P*8,cudaMemcpyDeviceToHost));
     checked(cudaMemcpy(rdx.data(),er.nodes[0].g,N*8,cudaMemcpyDeviceToHost));
     double ey=ae_compare(y,ry,"AE forward"),eg=ae_compare(dw,rdw,"AE gradient"),ex=ae_compare(dx,rdx,"AE input gradient");
     int probes=0;double fd_error=0;

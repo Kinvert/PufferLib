@@ -1,0 +1,4 @@
+AE latent derivative[0] 0.080416187644 != 0.0122386320407
+AE latent derivative[1] 0.0805819258094 != 0.0122807230507
+AE latent derivative[2] 0.0807491913438 != 0.0123232195726
+fullframe compression: AE latent derivative

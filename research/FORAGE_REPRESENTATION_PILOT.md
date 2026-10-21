@@ -1,5 +1,15 @@
 # Native Forage representation pilot
 
+October 21 clarification: this pilot trains reconstruction autoencoders; its
+classifier is a separate diagnostic, not their training objective or the primary
+reconstruction verdict. Kinvert's intended deliverable is a smaller **spatial
+feature grid** consumed by another CNN, not the current 128-value export. See
+[the spatial compressor contract](SPATIAL_AUTOENCODER.md) for the next design.
+Keep object/marking reconstruction results distinct from classifier results.
+The new spatial implementation runs through
+[NEXT_5090_SPATIAL_AUTOENCODER.md](../NEXT_5090_SPATIAL_AUTOENCODER.md); commands
+on this page remain the retained vector-model diagnostic.
+
 Implementation entry points:
 
 |File|Role|
