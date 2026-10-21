@@ -1,5 +1,12 @@
 # CNN research workspace
 
+- [Does the encoder preserve useful game information?](ENCODER_INFORMATION_EVALUATION.md):
+  current MSE limitations, proposed object/ROI metrics, frozen-feature probes,
+  evaluator failure fixtures and downstream RL confirmation. Includes an
+  [annotated primary-paper review](ENCODER_EVALUATION_LITERATURE_20261020.md)
+  covering AtariARI/ST-DIM, Segmentation Dreamer, DBC and related work.
+  Research/design only; no new evaluation implementation or GPU run.
+
 - [Optional native autoencoder pretraining](AUTOENCODER_PRETRAINING.md) and
   [5090 commands](../NEXT_5090_AUTOENCODER.md): implemented collection, shared
   variable-shape CUDA encoder/decoder training, deterministic optimizer resume

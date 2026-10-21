@@ -11,6 +11,13 @@ PufferLib upstream. Pull the implementation before following these commands.
 If pull refuses local changes or divergent history, preserve them and report;
 do not reset, overwrite or edit around the failure on the 5090.
 
+**Evaluation clarification:** the reconstruction-decrease canary below verifies
+short training behavior, not useful perception. Read
+`research/ENCODER_INFORMATION_EVALUATION.md` and
+`research/ENCODER_EVALUATION_LITERATURE_20261020.md` before choosing a long run.
+The proposed object/position probes and background-resistant metrics are not yet
+implemented. Existing `qualify` does not certify them or downstream usefulness.
+
 ## 1. Pull, build and inspect — no dataset or GPU work
 
 Use the5090research checkout and its existing working runtime. No installs of

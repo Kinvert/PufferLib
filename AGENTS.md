@@ -1,5 +1,15 @@
 # Working preferences
 
+- October 20 encoder-evaluation research: read
+  `research/ENCODER_INFORMATION_EVALUATION.md` and
+  `research/ENCODER_EVALUATION_LITERATURE_20261020.md`. Falling global MSE and
+  existing autoencoder canaries do not establish useful perception. Proposed
+  diagnostics separately measure critical objects/context, exported frozen-latent
+  probes and paired nuisance/relevant changes, followed by downstream score/time
+  curves. ROI masks are evaluation/auxiliary targets, not oracle policy inputs.
+  These diagnostics are NOT IMPLEMENTED by the documentation update; no dataset
+  collection, GPU run, dependency change or numerical-gate waiver is implied.
+
 - October 20 optional autoencoder implementation: read
   `NEXT_5090_AUTOENCODER.md` and `research/AUTOENCODER_PRETRAINING.md`.
   Native CUDA reconstruction training, multi-shape shared weights, deterministic
