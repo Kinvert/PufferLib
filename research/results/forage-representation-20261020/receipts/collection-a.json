@@ -1,0 +1,179 @@
+{
+  "schema": "native-game-frames-v1",
+  "dtype": "float32",
+  "layout": "NHWC",
+  "value_range": [
+    0,
+    1
+  ],
+  "source_manifest_sha256": "ea4ade57249eb6eca2ca0e5c535c83091bf0c2310db60864dba741ba6d240503",
+  "annotation": "forage-visible-grid-v1",
+  "classes": [
+    "ground",
+    "apple",
+    "pear",
+    "grapes",
+    "leaf",
+    "flower",
+    "beetle",
+    "striped mushroom",
+    "spotted apple",
+    "wasp",
+    "spotted toadstool",
+    "tree",
+    "explorer"
+  ],
+  "collection_plan_sha256": "b0654531d2af8eb67d067f32b2651513fae70fc8440bb6ded3d598951d1131df",
+  "episodes": [
+    {
+      "id": "sprite_forage:train:0:skin-0",
+      "world_id": "sprite_forage:train:0",
+      "game": "sprite_forage",
+      "split": "train",
+      "env_seed": 3388974701,
+      "action_seed": 10014842214978950972,
+      "skin": 0,
+      "path": "train/world-0000/skin-0/frames.f32",
+      "shape_hwc": [
+        480,
+        640,
+        3
+      ],
+      "frames": 2,
+      "sha256": "a9f795e3eddf045d2f5580e80ca2a34456b88b5fb41776745bea9446e6f32afe",
+      "frame_sha256": [
+        "7529fe506233793dc2568d7f72515e16af7350e5d8804d8c574e2784f7dd502f",
+        "4e4887263e3f6514906a087ebfc47398053aaf621dfb4cf98a658111395e86d8"
+      ],
+      "labels_path": "train/world-0000/skin-0/frames.f32.labels",
+      "labels_sha256": "0282d68b43e9ff9c945a21f2490f609a67617a618674172d52289315ff9682ed",
+      "decisions": 2,
+      "terminal": false
+    },
+    {
+      "id": "sprite_forage:train:0:skin-4",
+      "world_id": "sprite_forage:train:0",
+      "game": "sprite_forage",
+      "split": "train",
+      "env_seed": 3388974701,
+      "action_seed": 10014842214978950972,
+      "skin": 4,
+      "path": "train/world-0000/skin-4/frames.f32",
+      "shape_hwc": [
+        480,
+        640,
+        3
+      ],
+      "frames": 2,
+      "sha256": "ccf746b6d21d665f52ef99a08bde4f0e8c57462d929f7c9a75fe575e863c1043",
+      "frame_sha256": [
+        "962206cab3677bc000a5c1f05b4ea4e54407d5954d9228950fa401ada7a0f3b3",
+        "c64bcdb06b7f4f42f33e33b1f0de7447de3402bf893b05722d9a369b9f7c4704"
+      ],
+      "labels_path": "train/world-0000/skin-4/frames.f32.labels",
+      "labels_sha256": "0282d68b43e9ff9c945a21f2490f609a67617a618674172d52289315ff9682ed",
+      "decisions": 2,
+      "terminal": false
+    },
+    {
+      "id": "sprite_forage:validation:0:skin-0",
+      "world_id": "sprite_forage:validation:0",
+      "game": "sprite_forage",
+      "split": "validation",
+      "env_seed": 2121930516,
+      "action_seed": 10160236211061829573,
+      "skin": 0,
+      "path": "validation/world-0000/skin-0/frames.f32",
+      "shape_hwc": [
+        480,
+        640,
+        3
+      ],
+      "frames": 2,
+      "sha256": "936e85ce49cdf49af71d51c1b26b058907b87ebe301c5a247424d15e1a9d31af",
+      "frame_sha256": [
+        "697af43d393b939e71ce5344f7bbd52af9fa8ad74d216ab269c8fb347b3435b9",
+        "3055b7266f446a41707a3a737e74b5d508700dcdfd5b49960c0d20f6835d6247"
+      ],
+      "labels_path": "validation/world-0000/skin-0/frames.f32.labels",
+      "labels_sha256": "d3e304ceff09702868b022ed0ba3dff60dc69b782353e6e1d511da332cb63fbd",
+      "decisions": 2,
+      "terminal": false
+    },
+    {
+      "id": "sprite_forage:validation:0:skin-4",
+      "world_id": "sprite_forage:validation:0",
+      "game": "sprite_forage",
+      "split": "validation",
+      "env_seed": 2121930516,
+      "action_seed": 10160236211061829573,
+      "skin": 4,
+      "path": "validation/world-0000/skin-4/frames.f32",
+      "shape_hwc": [
+        480,
+        640,
+        3
+      ],
+      "frames": 2,
+      "sha256": "beb13428c615bb40f3775d3c98f7fa4ce26456669cc72d6958d1b7a4f4966df3",
+      "frame_sha256": [
+        "99b807b5858ecd47e3ca3039c3513d23330e8f7c2c26a58ff5a4a60050643b5d",
+        "a2494d0de41ebc02eedfa91605ebcd831210090e835a3f3aa9502493327f1e15"
+      ],
+      "labels_path": "validation/world-0000/skin-4/frames.f32.labels",
+      "labels_sha256": "d3e304ceff09702868b022ed0ba3dff60dc69b782353e6e1d511da332cb63fbd",
+      "decisions": 2,
+      "terminal": false
+    },
+    {
+      "id": "sprite_forage:test:0:skin-0",
+      "world_id": "sprite_forage:test:0",
+      "game": "sprite_forage",
+      "split": "test",
+      "env_seed": 318723470,
+      "action_seed": 6358462009356525947,
+      "skin": 0,
+      "path": "test/world-0000/skin-0/frames.f32",
+      "shape_hwc": [
+        480,
+        640,
+        3
+      ],
+      "frames": 2,
+      "sha256": "cce2ac88b394117860eb3307494fdeadfb22871adb4aa583498fb57125c07224",
+      "frame_sha256": [
+        "c1cd8e17d644c90c839ff0e1dce17007243384742b54c556072c06fa528aba5c",
+        "191f338e3b1c740aa61206bc008b94e42f49361f1a04a35c21a30cbb0b26e28f"
+      ],
+      "labels_path": "test/world-0000/skin-0/frames.f32.labels",
+      "labels_sha256": "03286d74c0f4c2f4ab5c331eb27ef7e7b0cee8c0ad929a314778afef62f2bd9b",
+      "decisions": 2,
+      "terminal": false
+    },
+    {
+      "id": "sprite_forage:test:0:skin-4",
+      "world_id": "sprite_forage:test:0",
+      "game": "sprite_forage",
+      "split": "test",
+      "env_seed": 318723470,
+      "action_seed": 6358462009356525947,
+      "skin": 4,
+      "path": "test/world-0000/skin-4/frames.f32",
+      "shape_hwc": [
+        480,
+        640,
+        3
+      ],
+      "frames": 2,
+      "sha256": "a89b853bfcf62452f84c701f66b335d914ab0f179953d6b9c4fafebe3973aef5",
+      "frame_sha256": [
+        "3282ed86618366c35e5632193f6b19c70fcb3166e6f16c978b7e9dc12df11831",
+        "78b03c2fea4f9e0c24930a3217c379043feaaca7c7974350325fef1cef66e19b"
+      ],
+      "labels_path": "test/world-0000/skin-4/frames.f32.labels",
+      "labels_sha256": "03286d74c0f4c2f4ab5c331eb27ef7e7b0cee8c0ad929a314778afef62f2bd9b",
+      "decisions": 2,
+      "terminal": false
+    }
+  ]
+}

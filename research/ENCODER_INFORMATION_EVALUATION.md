@@ -1,8 +1,11 @@
 # Measure preserved game information before scaling pretraining
 
-October 20, 2026. Proposed evaluation/implementation contract, **not implemented
-or executed** by this research update. No dataset, GPU run, dependency change or
-training-code change is part of this note. Literature and primary sources are in
+October 20, 2026. The initial [Forage representation pilot](FORAGE_REPRESENTATION_PILOT.md)
+now implements object/mark reconstruction metrics, a frozen full-frame grid-identity
+probe, controls and a 5090 runner. That page/result receipts distinguish implemented
+checks from checks actually executed. The broader localization/history/paired-distance
+tests below remain proposals. No corpus or GPU run is launched by this document.
+Literature and primary sources are in
 [the companion reading notes](ENCODER_EVALUATION_LITERATURE_20261020.md).
 
 ## What our current measurements actually mean

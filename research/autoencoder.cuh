@@ -122,7 +122,7 @@ static Prec ae_backward(AEDecoder* d, AEActivations* a, cudaStream_t stream) {
 }
 
 __global__ void ae_loss(const float* y, const float* target, float* dy, float* parts,
-        int n, int active, int H, int W, float edge_weight) {
+        int n, int active, int H, int W, float edge_weight, const float* pixel_weights = NULL) {
     __shared__ float sums[512];
     float raw = 0, weighted = 0;
     for (int i = blockIdx.x * blockDim.x + threadIdx.x; i < n; i += blockDim.x * gridDim.x) {
@@ -131,7 +131,8 @@ __global__ void ae_loss(const float* y, const float* target, float* dy, float* p
             int x = i / 3 % W, yy = i / (3 * W) % H;
             bool edge = (x && fabsf(target[i] - target[i - 3]) > .05f)
                 || (yy && fabsf(target[i] - target[i - 3 * W]) > .05f);
-            float error = y[i] - target[i], weight = 1 + edge_weight * edge;
+            float error = y[i] - target[i];
+            float weight = pixel_weights ? pixel_weights[i / 3] : 1 + edge_weight * edge;
             raw += error * error;
             weighted += weight * error * error;
             grad = 2 * weight * error / active;

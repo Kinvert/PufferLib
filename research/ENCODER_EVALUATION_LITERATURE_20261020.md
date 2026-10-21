@@ -4,6 +4,9 @@ Research checked October 20, 2026. These are original reading notes, not full
 paper transcriptions or reproduced experiments. The proposed PufferLib work is
 specified in [ENCODER_INFORMATION_EVALUATION.md](ENCODER_INFORMATION_EVALUATION.md).
 Published results below concern their own algorithms, inputs and hardware.
+An initial [native Forage pilot](FORAGE_REPRESENTATION_PILOT.md) now implements
+object/mark metrics, identity probes and a bounded 5090 runner; see its separate
+receipts for actual build/host/GPU execution scope.
 
 ## Finding
 

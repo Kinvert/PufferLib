@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "binary_sha256": "5f7b011b7842ec85291eac4e48dfbd25fbb8f1ec4e89c898b25a7edda4b37f22",
+  "process": {
+    "argv": [
+      "/home/claude/cnn/build/forage-representation-20261020-v5/annotation-check"
+    ],
+    "cwd": "/home/claude/cnn/build/forage-representation-20261020-v5/source",
+    "started_ns": 334261648833084,
+    "pid": 1481058,
+    "finished_ns": 334261680726297,
+    "returncode": 0,
+    "timeout": false,
+    "log_sha256": "bdbc2e4a9386f44fa13d6e8f85850017c0e1a2faf4e83347e8fe85f53e847096",
+    "interference": [],
+    "gpu_samples": [],
+    "expected_failure": false,
+    "seconds": 0.031893213
+  }
+}

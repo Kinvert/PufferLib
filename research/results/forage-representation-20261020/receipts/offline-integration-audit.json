@@ -1,0 +1,111 @@
+{
+  "status": "passed",
+  "cases": {
+    "constant": {
+      "status": "complete",
+      "frames": 12,
+      "head_updates": 4,
+      "encoder_decoder_unchanged": true,
+      "artifacts": {
+        "frames.tsv": "c1f4697e5b2d85df8098762fe28233ba9e4da5dd190de10a0bb4980462f7f16d",
+        "predictions.csv": "3654ae09f941c721c1b7b90e05cb811108753b3cd19de9233abd1d3fcc36f605",
+        "request.json": "3f0fff72331aeaefed1b0b894d8ed606cee438616e950cbbcaa505a24a6d967f",
+        "native.json": "cfdb301ca4574ca2d6d14774f8069d4980d9b1b26bf13091888f8dc3d23d5383",
+        "index.tsv": "a629b4141792a052807a5a0a4fbbf904d56956455c1e4498051c3835c60299e1",
+        "features.f32": "fd9243e1ba57263ed469c3bdbd7ade6ec5254e7ed924a9f5737fa44749933cc0",
+        "normalization.f32": "b621b8f3882cde02bd62c4b0aaa92541d7d96df04070100c705aa1284c297def",
+        "labels.u8": "c23a99a168ff3d80acb5a1e84aa0036219fdaf11702a7ccd1630b1a3263df99a",
+        "recipe.ini": "a58f9902ca996d60f0fb87180f80a0856552753883ce11c7148a737dbab874eb",
+        "native.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "head.f32": "d51c179b66edeb716bad1ad24b6ca204e064a81befe87ee564215dd2b120498e",
+        "native.process.json": "587a75de22f50f0dca9fecaffbf7edceed2f0b1a28246ce96b5ac326c0723a1f",
+        "native.started.json": "6356cc23f52c61efdd5755eab56e5a8375e702d41e1ea36fbddd90a246ef61c7"
+      }
+    },
+    "random": {
+      "status": "complete",
+      "frames": 12,
+      "head_updates": 4,
+      "encoder_decoder_unchanged": true,
+      "artifacts": {
+        "frames.tsv": "c1f4697e5b2d85df8098762fe28233ba9e4da5dd190de10a0bb4980462f7f16d",
+        "predictions.csv": "393953f650f28c8bc4cbb77cd947afd499665a71f54916d09dd7a6aa52b3883b",
+        "request.json": "efaf70737b7a4a7eb5b3880313a210089aed5edf96da915b4bb2aee971852019",
+        "native.json": "21b3a279b0d83e721c8891218429758e0b8bf7a9cb38c1ae8b08d61fe89afabc",
+        "index.tsv": "a629b4141792a052807a5a0a4fbbf904d56956455c1e4498051c3835c60299e1",
+        "features.f32": "3ff995c521805f9c00f4731f386eb1c4af908dafaa6f75854d915442d0001bf9",
+        "normalization.f32": "b045a5a4b5536bdd42be9faf0e9126bfbfdf70f54480f8bc5f500148c4f58445",
+        "labels.u8": "c23a99a168ff3d80acb5a1e84aa0036219fdaf11702a7ccd1630b1a3263df99a",
+        "recipe.ini": "a58f9902ca996d60f0fb87180f80a0856552753883ce11c7148a737dbab874eb",
+        "native.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "head.f32": "eb7cbb83ee8a0e787e84c09af28d32fc8d98b0d19ee6fbd1a08d29032a643c65",
+        "native.process.json": "88c07f8c85fb929eccd20207cf3917271bcae7b4845c0dc585be1bb2ccdb3e7b",
+        "native.started.json": "56aa373bf178a2dfbd2be2613867e4460bd48d207414c9e89eb11dae52521b45"
+      }
+    },
+    "plain": {
+      "status": "complete",
+      "frames": 12,
+      "head_updates": 4,
+      "encoder_decoder_unchanged": true,
+      "artifacts": {
+        "frames.tsv": "c1f4697e5b2d85df8098762fe28233ba9e4da5dd190de10a0bb4980462f7f16d",
+        "predictions.csv": "175c8fe50a4ccd9d02a5bff05ca744ebc519f6304ec79b160abb79d1a10ddd1e",
+        "request.json": "c2728abd6e729682a95825cf2fa3c71d47c6d117b16d1b9891412ed24297139d",
+        "native.json": "7d7857f4fdf5658d94fef7a831f2a2179f47506144d5f45378cbb4b5a816c883",
+        "index.tsv": "a629b4141792a052807a5a0a4fbbf904d56956455c1e4498051c3835c60299e1",
+        "features.f32": "c536f68d475dea4a7f4a6df74957e774eeabcf60d82ca40a4cdcb55b68c72847",
+        "normalization.f32": "7dd899bacb1b768ca162310e15038c307bb9d1fa98966ca80d6fc5340363b52c",
+        "labels.u8": "c23a99a168ff3d80acb5a1e84aa0036219fdaf11702a7ccd1630b1a3263df99a",
+        "recipe.ini": "a58f9902ca996d60f0fb87180f80a0856552753883ce11c7148a737dbab874eb",
+        "native.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "head.f32": "3199e7d2a9b0c874ea50f664dcb506c9fbfd50140b0b58e3f98dd30996f34ea4",
+        "native.process.json": "51b33af4830368f3ce959794ba366122c6750f17f16cf5cba22f048ff7ea9d8a",
+        "native.started.json": "2f71ce54238506af836bc3e187ddd6e1f94a7ab0d918a8806f02e4691182e626"
+      }
+    },
+    "object-balanced": {
+      "status": "complete",
+      "frames": 12,
+      "head_updates": 4,
+      "encoder_decoder_unchanged": true,
+      "artifacts": {
+        "frames.tsv": "c1f4697e5b2d85df8098762fe28233ba9e4da5dd190de10a0bb4980462f7f16d",
+        "predictions.csv": "665d53c606a0eebb0c8ae4d94e6c1d30040908679e452eda72731e23ae573284",
+        "request.json": "2ec3b170160ec70f1bea828bc5ba73e34bd1291ef733c3eb60b98438c2615bf7",
+        "native.json": "8bebc0b642c07a64edf2d08f6b2bf770d076473a4918aa19d89b81634b0a9c1c",
+        "index.tsv": "a629b4141792a052807a5a0a4fbbf904d56956455c1e4498051c3835c60299e1",
+        "features.f32": "3022ea1a4a0f0eaafdb2e019b031c9e29f8a73bd2c9b4ac046a12123e0b392e1",
+        "normalization.f32": "2b48230891235a326f4c9485822d853a220c9de0b327d07c7319ac768e320298",
+        "labels.u8": "c23a99a168ff3d80acb5a1e84aa0036219fdaf11702a7ccd1630b1a3263df99a",
+        "recipe.ini": "a58f9902ca996d60f0fb87180f80a0856552753883ce11c7148a737dbab874eb",
+        "native.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "head.f32": "0b6be82d1de99c7ee8ec29de79eb2133ec70a4d50aa6bcc779335ad98aa04baa",
+        "native.process.json": "c95fce9cd23a21ccda8c2fb9565117000697325a1ca3e577a4a4ce489adf19c0",
+        "native.started.json": "c2919f1f0849a0eafdadfdef1de70bd0c3bb265ef59f72e6ea12b542be607747"
+      }
+    },
+    "repeat": {
+      "status": "complete",
+      "frames": 12,
+      "head_updates": 4,
+      "encoder_decoder_unchanged": true,
+      "artifacts": {
+        "frames.tsv": "c1f4697e5b2d85df8098762fe28233ba9e4da5dd190de10a0bb4980462f7f16d",
+        "predictions.csv": "665d53c606a0eebb0c8ae4d94e6c1d30040908679e452eda72731e23ae573284",
+        "request.json": "2ec3b170160ec70f1bea828bc5ba73e34bd1291ef733c3eb60b98438c2615bf7",
+        "native.json": "ca816a502fea2ca2166223150696d12a4355e277c192c97bc3a33735ee9459dd",
+        "index.tsv": "a629b4141792a052807a5a0a4fbbf904d56956455c1e4498051c3835c60299e1",
+        "features.f32": "3022ea1a4a0f0eaafdb2e019b031c9e29f8a73bd2c9b4ac046a12123e0b392e1",
+        "normalization.f32": "2b48230891235a326f4c9485822d853a220c9de0b327d07c7319ac768e320298",
+        "labels.u8": "c23a99a168ff3d80acb5a1e84aa0036219fdaf11702a7ccd1630b1a3263df99a",
+        "recipe.ini": "a58f9902ca996d60f0fb87180f80a0856552753883ce11c7148a737dbab874eb",
+        "native.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "head.f32": "0b6be82d1de99c7ee8ec29de79eb2133ec70a4d50aa6bcc779335ad98aa04baa",
+        "native.process.json": "969d434d5eebef01095b1a516687f545840166bc93c4e641be82616b50fe4f30",
+        "native.started.json": "0b9f050efaba2aa8ed6a27e0e7bb7ff31e10d780ee711c3deeec50b7681ce29c"
+      }
+    }
+  },
+  "no_quality_claim": true
+}

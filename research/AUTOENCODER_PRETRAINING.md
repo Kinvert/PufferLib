@@ -7,11 +7,13 @@ No dataset collection or long pretraining is launched by preparing the tools.
 October 20 evaluation clarification: a falling validation MSE is only a canary
 for training-loop behavior, not encoder accuracy or proof that the ball survives
 compression. Read [the literature review](ENCODER_EVALUATION_LITERATURE_20261020.md)
-and [the proposed information-preservation evaluation](ENCODER_INFORMATION_EVALUATION.md)
-before choosing an overnight pretraining objective. Per-object masks, latent
-probes and paired nuisance tests are proposed there; they are not implemented by
-the existing qualification command. Mathematical correctness and useful game
-information are separate requirements.
+and [the information-preservation evaluation](ENCODER_INFORMATION_EVALUATION.md)
+before choosing an overnight pretraining objective. The initial
+[Forage pilot](FORAGE_REPRESENTATION_PILOT.md) now implements item/mark metrics,
+object-balanced loss and frozen full-grid identity probes. Its separate Forage
+qualification includes short probe checks. The broader Pong/Flappy localization,
+history and paired-distance protocol remains proposed. Mathematical correctness
+and useful game information are separate requirements.
 
 The initial student is fullframe encoder8/compression_model0:full rendered RGB,
 three narrow strided convolutions,4x4x16spatial pooling,128latent values. Reuse

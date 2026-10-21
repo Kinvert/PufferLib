@@ -1,5 +1,25 @@
 # Working preferences
 
+- October 20 Forage representation implementation: read
+  `NEXT_5090_FORAGE_REPRESENTATION.md`, `research/FORAGE_REPRESENTATION_PILOT.md`
+  and its build/host result receipt. New research-only full-640x480 pixel data,
+  visible item labels/masks, object-balanced loss, frozen full-grid identity
+  probes and constant/random controls are implemented. The Forage PR environment
+  is unchanged; no oracle crop/label enters the encoder. Pair recognition is
+  conditional on true object cells and is not detection or game success.
+  No new corpus, GPU execution, pretraining or system/CUDA change starts from
+  preparation. Required numerical/repeat/resume/import/memory gates remain;
+  do not restart completed/failed packets or bypass WDDM/tool failures. Scope
+  is a bounded perception pilot, not RL/Pareto/generalization evidence.
+  Local v5 primitive/integration/network/export smokes are COMPLETE: 13 native GPU
+  processes, 24 selected finite differences, 20 bad-reconstruction controls,
+  two 2-update AE canaries and five 4-update head fits, including exact repeat.
+  Three B1 encoder/decoder math shapes pass, including 480x640. Read the receipt
+  for native encoder-byte/core/head/RNG import checks on both tiny checkpoints and
+  for scoped tolerances/branches. No full pilot, full GPU/memory qualification,
+  seven-seed confirmation or new GPU allocation follows automatically. No task
+  GPU remains reserved. Preserve these completed packets.
+
 - October 20 encoder-evaluation research: read
   `research/ENCODER_INFORMATION_EVALUATION.md` and
   `research/ENCODER_EVALUATION_LITERATURE_20261020.md`. Falling global MSE and

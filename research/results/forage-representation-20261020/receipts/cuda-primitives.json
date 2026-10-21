@@ -1,0 +1,31 @@
+{
+  "status": "passed",
+  "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151 MiB",
+  "result": {
+    "status": "passed",
+    "head_gradient_error": 1.3892145184213334e-08,
+    "finite_difference_error": 2.6239442456103823e-05,
+    "finite_difference_probes": 8,
+    "region_controls": 20,
+    "object_weight_sum": 1.1,
+    "inactive_tail_checked": true,
+    "train_only_normalization": true
+  },
+  "process": {
+    "argv": [
+      "/home/claude/cnn/build/forage-representation-20261020-v5/builds/sprite_forage/autoencoder",
+      "forage-checks"
+    ],
+    "cwd": "/home/claude/cnn/build/forage-representation-20261020-v5/source",
+    "started_ns": 334591984812421,
+    "pid": 1484030,
+    "finished_ns": 334593252197706,
+    "returncode": 0,
+    "timeout": false,
+    "log_sha256": "b3f395e1ac4b50d2d4c4aad6513aa9251a436c54abcda3e3ad8d006f95ae71ac",
+    "interference": [],
+    "gpu_samples": [],
+    "expected_failure": false,
+    "seconds": 1.267385285
+  }
+}

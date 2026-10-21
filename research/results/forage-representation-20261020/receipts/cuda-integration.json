@@ -1,0 +1,91 @@
+{
+  "driver_sha256": "4222cc05b68b6ae25ca0ae49afc77af3192f4802fcb4f5de7c79c22984326982",
+  "training": {
+    "plain": {
+      "state": {
+        "parameters": 71763,
+        "step": 2,
+        "seed": 7,
+        "sha256": "a8389be211e74aad9a5526675b4b21ada4305fb705cd3fe139cdc0019be95a6e"
+      },
+      "process": {
+        "argv": [
+          "/home/claude/cnn/build/forage-representation-20261020-v5/builds/sprite_forage/autoencoder",
+          "train",
+          "/home/claude/cnn/build/forage-representation-20261020-v5/integration-smoke/plain.ini",
+          "/home/claude/cnn/build/forage-representation-20261020-v5/integration-smoke/train.tsv",
+          "/home/claude/cnn/build/forage-representation-20261020-v5/integration-smoke/plain",
+          "None",
+          "v1"
+        ],
+        "cwd": "/home/claude/cnn/build/forage-representation-20261020-v5/source",
+        "started_ns": 334777060597715,
+        "pid": 1485700,
+        "finished_ns": 334777676376439,
+        "returncode": 0,
+        "timeout": false,
+        "log_sha256": "168b01648b316760a144003a8d88e3bb5e19e4d98392d4a3f3940707bb09d673",
+        "interference": [],
+        "gpu_samples": [],
+        "expected_failure": false,
+        "seconds": 0.615778724
+      },
+      "initial_objective": 0.0713954158127,
+      "final_objective": 0.0710764788091
+    },
+    "object-balanced": {
+      "state": {
+        "parameters": 71763,
+        "step": 2,
+        "seed": 7,
+        "sha256": "943fc31737d4686c61965b42c4a42884c2aed11b8a5b6e6461d674f468944e1a"
+      },
+      "process": {
+        "argv": [
+          "/home/claude/cnn/build/forage-representation-20261020-v5/builds/sprite_forage/autoencoder",
+          "train",
+          "/home/claude/cnn/build/forage-representation-20261020-v5/integration-smoke/object-balanced.ini",
+          "/home/claude/cnn/build/forage-representation-20261020-v5/integration-smoke/train.tsv",
+          "/home/claude/cnn/build/forage-representation-20261020-v5/integration-smoke/object-balanced",
+          "None",
+          "v1"
+        ],
+        "cwd": "/home/claude/cnn/build/forage-representation-20261020-v5/source",
+        "started_ns": 334777828433041,
+        "pid": 1485719,
+        "finished_ns": 334778394083219,
+        "returncode": 0,
+        "timeout": false,
+        "log_sha256": "091b2bb6093430e4b4cf9e352d196d06e65ea60b73f958387a5c37e380e09a0f",
+        "interference": [],
+        "gpu_samples": [],
+        "expected_failure": false,
+        "seconds": 0.565650178
+      },
+      "initial_objective": 0.200442809612,
+      "final_objective": 0.199892163277
+    }
+  },
+  "probes": {
+    "constant": {
+      "report_sha256": "36ec85c80255745fc719ed513d6aaaf4dfa737a6b48f1f2963eb887f21870a92",
+      "process_seconds": 0.515328801
+    },
+    "random": {
+      "report_sha256": "41c5110c203b1226d3b3275fa52cf4531bb169364e9eecae265797a211a5ca90",
+      "process_seconds": 0.565519708
+    },
+    "plain": {
+      "report_sha256": "a5a6f2f98eeb2000475c65872913a63eb86a5a75cc75bc00cf6e547c7c7a4262",
+      "process_seconds": 0.565632084
+    },
+    "object-balanced": {
+      "report_sha256": "3d77ccd07576f3b00146b030e5ca678e8a79020048bea8ce56ea205ff8bfc6d4",
+      "process_seconds": 0.565494855
+    }
+  },
+  "status": "passed",
+  "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151 MiB",
+  "independent_training_seeds": 1,
+  "no_quality_or_frontier_claim": true
+}

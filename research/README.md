@@ -1,5 +1,11 @@
 # CNN research workspace
 
+- [Forage item-recognition pilot](FORAGE_REPRESENTATION_PILOT.md) and
+  [5090 commands](../NEXT_5090_FORAGE_REPRESENTATION.md): native full-frame
+  plain/object-balanced reconstruction pretraining, random/constant controls,
+  frozen-feature item-identity probes and per-lookalike-mark reconstruction scores.
+  Build/host checks and actual GPU qualification have separate result receipts.
+
 - [Does the encoder preserve useful game information?](ENCODER_INFORMATION_EVALUATION.md):
   current MSE limitations, proposed object/ROI metrics, frozen-feature probes,
   evaluator failure fixtures and downstream RL confirmation. Includes an

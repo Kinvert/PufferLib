@@ -1,0 +1,20 @@
+test_annotation_hashes_are_rebound (test_forage_representation.AnnotationContracts.test_annotation_hashes_are_rebound) ... ok
+test_cross_split_duplicate_images_are_reported (test_forage_representation.AnnotationContracts.test_cross_split_duplicate_images_are_reported) ... ok
+test_final_worlds_must_not_be_training_worlds (test_forage_representation.AnnotationContracts.test_final_worlds_must_not_be_training_worlds) ... ok
+test_invalid_identity_is_rejected_even_with_matching_hash (test_forage_representation.AnnotationContracts.test_invalid_identity_is_rejected_even_with_matching_hash) ... ok
+test_absent_classes_are_not_perfect (test_forage_representation.Metrics.test_absent_classes_are_not_perfect) ... ok
+test_empty_space_cannot_make_item_f1_good (test_forage_representation.Metrics.test_empty_space_cannot_make_item_f1_good) ... ok
+test_fine_identity_errors_are_visible (test_forage_representation.Metrics.test_fine_identity_errors_are_visible) ... ok
+test_changed_native_command_is_rejected (test_forage_representation.ReceiptAudit.test_changed_native_command_is_rejected) ... ok
+test_changed_retained_feature_bytes_are_rejected (test_forage_representation.ReceiptAudit.test_changed_retained_feature_bytes_are_rejected) ... ok
+test_full_quota_and_known_confusion (test_forage_representation.ReceiptAudit.test_full_quota_and_known_confusion) ... ok
+test_missing_object_metric_is_rejected (test_forage_representation.ReceiptAudit.test_missing_object_metric_is_rejected) ... ok
+test_missing_row_is_not_silently_averaged (test_forage_representation.ReceiptAudit.test_missing_row_is_not_silently_averaged) ... ok
+test_nonfinite_feature_is_rejected (test_forage_representation.ReceiptAudit.test_nonfinite_feature_is_rejected) ... ok
+test_test_frames_cannot_enter_autoencoder_training_index (test_forage_representation.ReceiptAudit.test_test_frames_cannot_enter_autoencoder_training_index) ... ok
+test_wrong_truth_is_rejected (test_forage_representation.ReceiptAudit.test_wrong_truth_is_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.257s
+
+OK

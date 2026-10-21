@@ -1,0 +1,128 @@
+{
+  "status": "passed",
+  "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151 MiB",
+  "driver_sha256": "a6d41eb97f0d82f41cc019f3806b096cc4bd2f76880a927f17074a53480d601b",
+  "cases": [
+    {
+      "result": {
+        "status": "passed",
+        "height": 160,
+        "width": 192,
+        "batch": 1,
+        "parameters": 71763,
+        "forward_error": 1.235259466936256e-08,
+        "gradient_error": 8.48378986120224e-05,
+        "input_gradient_error": 1.8093012461514735e-10,
+        "finite_difference_probes": 16,
+        "finite_difference_error": 0.005155290182067063,
+        "eager_graph_repeats": 3,
+        "output_sha256": "159cbcda35a1fe87696ce552c9d79980e545c148f4b7d4eb1a15d13acf4bdc33",
+        "gradient_sha256": "f317502b079269789c80b64b7a2335bf1f060fcc152a0fe680722dbc1fa1e7b4",
+        "input_gradient_sha256": "6763c4a002a4405197b91ada5f087c796b4e8c1480c1fb5a0a3494f8ba1efd6b"
+      },
+      "process": {
+        "argv": [
+          "/home/claude/cnn/build/forage-representation-20261020-v5/builds/sprite_forage/autoencoder",
+          "math",
+          "160",
+          "192",
+          "1",
+          "/home/claude/cnn/build/forage-representation-20261020-v5/network-smoke/h160-w192-b1"
+        ],
+        "cwd": "/home/claude/cnn/build/forage-representation-20261020-v5/source",
+        "started_ns": 334949746208569,
+        "pid": 1487259,
+        "finished_ns": 334950613093041,
+        "returncode": 0,
+        "timeout": false,
+        "log_sha256": "289b1d376dd631d40431186aabafa94123d3c747ecb7f04c8e203fc468cfdfd2",
+        "interference": [],
+        "gpu_samples": [],
+        "expected_failure": false,
+        "seconds": 0.866884472
+      },
+      "result_sha256": "c2e0a09c57a9c7b65b065f273cd1ed8f31003fb1c5be8055a7f140c6a8da7537"
+    },
+    {
+      "result": {
+        "status": "passed",
+        "height": 161,
+        "width": 193,
+        "batch": 1,
+        "parameters": 71763,
+        "forward_error": 1.1691089402132704e-08,
+        "gradient_error": 5.034357309341431e-05,
+        "input_gradient_error": 2.0719891145708214e-10,
+        "finite_difference_probes": 0,
+        "finite_difference_error": 0,
+        "eager_graph_repeats": 3,
+        "output_sha256": "a5243d9d1adc42b1e868eceeb551fe91345f57e3ca836e15760ddcb215845f17",
+        "gradient_sha256": "99ba30bb25b565410929e9f0d8bd445c47b08e7e170fa0d57ca745948ef2472e",
+        "input_gradient_sha256": "888cfada222cfb428500eadfe79855b6b58bc4a05a96dfb75814d09dedb3c171"
+      },
+      "process": {
+        "argv": [
+          "/home/claude/cnn/build/forage-representation-20261020-v5/builds/sprite_forage/autoencoder",
+          "math",
+          "161",
+          "193",
+          "1",
+          "/home/claude/cnn/build/forage-representation-20261020-v5/network-smoke/h161-w193-b1"
+        ],
+        "cwd": "/home/claude/cnn/build/forage-representation-20261020-v5/source",
+        "started_ns": 334950769905061,
+        "pid": 1487278,
+        "finished_ns": 334951335475800,
+        "returncode": 0,
+        "timeout": false,
+        "log_sha256": "63f83b1027602b7f10c762106c5af0ca4fa39d66e27c5b6c8482d47759e9ee6d",
+        "interference": [],
+        "gpu_samples": [],
+        "expected_failure": false,
+        "seconds": 0.565570739
+      },
+      "result_sha256": "2d749d0ae76315c2fc7b4b58ded283ef78388450224aa46541d68d93f71f9513"
+    },
+    {
+      "result": {
+        "status": "passed",
+        "height": 480,
+        "width": 640,
+        "batch": 1,
+        "parameters": 71763,
+        "forward_error": 1.259709508927287e-08,
+        "gradient_error": 0.001444092020392418,
+        "input_gradient_error": 2.3613544388075003e-10,
+        "finite_difference_probes": 0,
+        "finite_difference_error": 0,
+        "eager_graph_repeats": 3,
+        "output_sha256": "38483c7beb8db284db7732dcec80f922482235c18f9ea8dcd1438d0a04dcf7ba",
+        "gradient_sha256": "13332d361e60ca73349ae55268326e1889506d79b171270f3553e0abed4ddb74",
+        "input_gradient_sha256": "b78e9f7b4a630b8208762c04cda7f8f88b9126b395d569e66ee1c43895d4192d"
+      },
+      "process": {
+        "argv": [
+          "/home/claude/cnn/build/forage-representation-20261020-v5/builds/sprite_forage/autoencoder",
+          "math",
+          "480",
+          "640",
+          "1",
+          "/home/claude/cnn/build/forage-representation-20261020-v5/network-smoke/h480-w640-b1"
+        ],
+        "cwd": "/home/claude/cnn/build/forage-representation-20261020-v5/source",
+        "started_ns": 334951462012641,
+        "pid": 1487288,
+        "finished_ns": 334952178264950,
+        "returncode": 0,
+        "timeout": false,
+        "log_sha256": "ff446f9d15deaf4efac62422eae357128f9d55aa54b17f5befbe53c2ad08a109",
+        "interference": [],
+        "gpu_samples": [],
+        "expected_failure": false,
+        "seconds": 0.716252309
+      },
+      "result_sha256": "49983d37f72939cf7da8bc46283e3c4d6491e71610b4e3b067ac71b1016d329e"
+    }
+  ],
+  "full_qualification": false
+}

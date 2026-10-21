@@ -9,6 +9,9 @@
 #include <string>
 #include <vector>
 #include <sys/stat.h>
+#ifdef AE_FORAGE
+#include "forage_annotations.h"
+#endif
 
 static void ae_checked(cudaError_t error) { ffc_require(error == cudaSuccess, cudaGetErrorString(error)); }
 
@@ -41,11 +44,19 @@ static int ae_collect(int argc, char** argv) {
     int sizes[] = ACT_SIZES, steps = atoi(argv[7]), cadence = atoi(argv[8]), maximum = atoi(argv[9]);
     ffc_require(steps > 0 && steps <= 65536 && cadence > 0 && maximum > 0, "collection bounds");
     FILE* file = fopen(argv[3], "wx"); ffc_require(file, "fresh collection file");
+#ifdef AE_FORAGE
+    std::string label_path = std::string(argv[3]) + ".labels";
+    FILE* label_file = fopen(label_path.c_str(), "wx"); ffc_require(label_file, "fresh annotation file");
+#endif
     int frames = 0, decisions = 0;
     for (int step = 0; step < steps && frames < maximum; step++) {
         if (step % cadence == 0) {
             for (float v : frame) ffc_require(isfinite(v) && v >= 0 && v <= 1, "invalid frame RGB");
             ffc_require(fwrite(frame.data(), sizeof(float), frame.size(), file) == frame.size(), "write frame");
+#ifdef AE_FORAGE
+            unsigned char labels[FORAGE_AREA]; forage_visible_labels(env, labels);
+            ffc_require(fwrite(labels, 1, FORAGE_AREA, label_file) == FORAGE_AREA, "write pixel-grid labels");
+#endif
             frames++;
         }
         action = ae_random(&policy_rng) % sizes[0];
@@ -53,16 +64,19 @@ static int ae_collect(int argc, char** argv) {
         if (terminal) break; // Do not record an automatic reset under this episode.
     }
     ffc_require(!fclose(file) && frames > 0, "close frame shard");
+#ifdef AE_FORAGE
+    ffc_require(!fclose(label_file), "close annotation shard");
+#endif
     printf("{\"frames\":%d,\"decisions\":%d,\"shape_hwc\":[%d,%d,3],\"terminal\":%s,\"cuda_execution\":false}\n",
         frames, decisions, OBS_HEIGHT, OBS_WIDTH, terminal ? "true" : "false");
     puf_close(env); free(env); puf_ini_free(&ini); return 0;
 }
 
-struct AEFrame { std::string path; long frame; };
+struct AEFrame { std::string path; long frame; std::string labels; int skin = 0; };
 struct AEStream {
     std::string name;
     int H, W;
-    std::vector<AEFrame> training, validation;
+    std::vector<AEFrame> training, validation, test;
     std::vector<long> order;
     long epoch = -1;
     FFCWeights* encoder;
@@ -72,6 +86,14 @@ struct AEStream {
     Allocator parameters = {}, gradients = {}, activations = {};
     Prec input;
     float* host;
+#ifdef AE_FORAGE
+    unsigned char* labels_device = NULL;
+    unsigned char* masks_device = NULL;
+    float* factors_device = NULL;
+    float* pixel_weights = NULL;
+    std::vector<unsigned char> labels_host;
+    std::vector<int> skins;
+#endif
 };
 
 static std::vector<AEStream*> ae_index(const char* path) {
@@ -82,7 +104,7 @@ static std::vector<AEStream*> ae_index(const char* path) {
         if (line.empty()) continue;
         std::vector<std::string> parts; size_t start = 0, end;
         while ((end = line.find('\t', start)) != std::string::npos) { parts.push_back(line.substr(start, end-start)); start=end+1; }
-        parts.push_back(line.substr(start)); ffc_require(parts.size() == 6, "dataset index columns");
+        parts.push_back(line.substr(start)); ffc_require(parts.size() == 6 || parts.size() == 8, "dataset index columns");
         int H = std::stoi(parts[2]), W = std::stoi(parts[3]), count = std::stoi(parts[4]);
         ffc_require(H >= 144 && W >= 144 && H <= 1024 && W <= 1024 && count > 0, "dataset shape/count");
         if (!streams.count(parts[1])) {
@@ -91,9 +113,9 @@ static std::vector<AEStream*> ae_index(const char* path) {
         }
         AEStream* stream = streams[parts[1]];
         ffc_require(stream->H == H && stream->W == W, "stream raw shape changed");
-        ffc_require(parts[0] == "train" || parts[0] == "validation", "dataset split");
-        auto& target = parts[0] == "train" ? stream->training : stream->validation;
-        for (int i=0;i<count;i++) target.push_back({parts[5],i});
+        ffc_require(parts[0] == "train" || parts[0] == "validation" || parts[0] == "test", "dataset split");
+        auto& target = parts[0] == "train" ? stream->training : parts[0] == "validation" ? stream->validation : stream->test;
+        for (int i=0;i<count;i++) target.push_back({parts[5],i,parts.size()==8?parts[6]:"",parts.size()==8?std::stoi(parts[7]):0});
     }
     std::vector<AEStream*> result;
     for (auto& pair : streams) {
@@ -104,14 +126,14 @@ static std::vector<AEStream*> ae_index(const char* path) {
     ffc_require(!result.empty() && result.size() <= 8, "dataset streams");return result;
 }
 
-static void ae_load(AEStream* s, int B, long cursor, bool validation, uint64_t seed, int stream_id) {
-    auto& frames = validation ? s->validation : s->training;
-    int active = validation ? min((long)B, (long)frames.size()-cursor) : B;
+static void ae_load(AEStream* s, int B, long cursor, int split, uint64_t seed, int stream_id) {
+    auto& frames = split == 2 ? s->test : split ? s->validation : s->training;
+    int active = split ? min((long)B, (long)frames.size()-cursor) : B;
     ffc_require(active > 0, "nonempty batch");
     long pixels = (long)s->H*s->W*3;
     for (int b=0;b<B;b++) {
         long index;
-        if (validation) index=cursor+min(b,active-1);
+        if (split) index=cursor+min(b,active-1);
         else {
             long epoch=(cursor+b)/frames.size();
             if (s->epoch != epoch) {
@@ -128,6 +150,16 @@ static void ae_load(AEStream* s, int B, long cursor, bool validation, uint64_t s
             && fread(s->host+b*pixels,4,pixels,f)==(size_t)pixels && !fclose(f),"read frame shard");
         for (long i=0;i<pixels;i++) ffc_require(isfinite(s->host[b*pixels+i])
             && s->host[b*pixels+i]>=0 && s->host[b*pixels+i]<=1,"invalid training pixels");
+#ifdef AE_FORAGE
+        ffc_require(!frame.labels.empty() && frame.skin >= 0 && frame.skin < FORAGE_REPRESENTATIONS,
+            "Forage requires pixel annotations and valid skin");
+        if (s->labels_host.empty()) {s->labels_host.resize(B*FORAGE_AREA);s->skins.resize(B);}
+        FILE* labels=fopen(frame.labels.c_str(),"rb");
+        ffc_require(labels && !fseeko(labels,frame.frame*FORAGE_AREA,SEEK_SET)
+            && fread(s->labels_host.data()+b*FORAGE_AREA,1,FORAGE_AREA,labels)==FORAGE_AREA && !fclose(labels),"read annotations");
+        for(int i=0;i<FORAGE_AREA;i++) ffc_require(s->labels_host[b*FORAGE_AREA+i]<FORAGE_TILE_TYPES,"invalid tile identity");
+        s->skins[b]=frame.skin;
+#endif
     }
     ae_checked(cudaMemcpy(s->input.data,s->host,pixels*B*4,cudaMemcpyHostToDevice));
 }
@@ -135,6 +167,10 @@ static void ae_load(AEStream* s, int B, long cursor, bool validation, uint64_t s
 static void ae_write(const char* path, const void* data, size_t bytes) {
     FILE* f=fopen(path,"wx");ffc_require(f && fwrite(data,1,bytes,f)==bytes && !fclose(f),"fresh output write");
 }
+
+#ifdef AE_FORAGE
+#include "forage_region_weights.cuh"
+#endif
 
 struct AEStateHeader { uint64_t magic, version, parameters, step, seed; };
 
@@ -160,6 +196,15 @@ static int ae_train(const char* recipe, const char* index, const char* folder, c
     int B=dict_get(cfg,"batch"), target=dict_get(cfg,"steps"), cadence=dict_get(cfg,"checkpoint_interval");
     float lr=dict_get(cfg,"learning_rate"), edge=dict_get(cfg,"edge_weight"), clip=dict_get(cfg,"max_grad_norm");
     int seconds=dict_get(cfg,"max_seconds");uint64_t seed=dict_get(cfg,"seed");
+    int loss_mode=dict_find(cfg,"loss_mode")?dict_get(cfg,"loss_mode"):0;
+    ffc_require(loss_mode==0 || loss_mode==1,"loss_mode must be 0 or 1");
+#ifdef AE_FORAGE
+    float object_weight=dict_get(cfg,"object_weight"),background_weight=dict_get(cfg,"background_weight");
+    ffc_require(!loss_mode || (edge==0 && object_weight>0 && background_weight>=0
+        && isfinite(object_weight) && isfinite(background_weight)),"object-balanced loss configuration");
+#else
+    ffc_require(!loss_mode,"object-balanced loss requires annotated Forage build");
+#endif
     ffc_require(B>=1 && B<=16 && target>0 && target<=10000000 && cadence>0 && lr>0 && lr<=.1f
         && edge>=0 && edge<=100 && clip>0 && seconds>0 && seconds<=43200,"pretraining bounds");
     auto streams=ae_index(index);cublas_init_handle();cudaStream_t stream;ae_checked(cudaStreamCreate(&stream));
@@ -205,8 +250,12 @@ static int ae_train(const char* recipe, const char* index, const char* folder, c
     auto forward=[&](AEStream* s,int active) {
         Prec z=ffc_forward(s->encoder,&s->encoder_acts,s->input,stream);
         Prec y=ae_forward(&s->decoder,&s->decoder_acts,z,stream);
+        const float* pixel_weights=NULL;
+#ifdef AE_FORAGE
+        if(loss_mode) {forage_weights(s,B,object_weight,background_weight);pixel_weights=s->pixel_weights;}
+#endif
         ae_loss<<<256,256,0,stream>>>(y.data,s->input.data,s->decoder_acts.net.grad_output[3].data,
-            parts,B*s->H*s->W*3,active*s->H*s->W*3,s->H,s->W,edge);
+            parts,B*s->H*s->W*3,active*s->H*s->W*3,s->H,s->W,edge,pixel_weights);
         muon_sum_sq_reduce<<<1,256,0,stream>>>(stats,parts,256);
         muon_sum_sq_reduce<<<1,256,0,stream>>>(stats+1,parts+256,256);
         float loss[2];ae_checked(cudaMemcpyAsync(loss,stats,8,cudaMemcpyDeviceToHost,stream));
@@ -282,8 +331,19 @@ static void ae_manifest(int H,int W) {
 }
 
 #include "autoencoder_checks.cuh"
+#ifdef AE_FORAGE
+#include "forage_encoder_probe.cuh"
+#endif
 
 int main(int argc,char** argv) {
+#ifdef AE_FORAGE
+    if(argc==2 && !strcmp(argv[1],"forage-host-checks")) {
+        ffc_require(!forage_annotation_checks(),"Forage pixel masks differ from native templates");
+        puts("{\"status\":\"passed\",\"skins\":5,\"classes\":13,\"cuda_execution\":false}");return 0;
+    }
+    if(argc==2 && !strcmp(argv[1],"forage-checks"))return forage_probe_checks();
+    if(argc==7 && !strcmp(argv[1],"forage-probe"))return forage_probe(argv[2],argv[3],argv[4],argv[5],argv[6]);
+#endif
     if(argc==2 && !strcmp(argv[1],"auxiliary")) return ae_auxiliary();
     if(argc==4 && !strcmp(argv[1],"import-check")) return ae_import_check(argv[2],argv[3]);
     if(argc==6 && !strcmp(argv[1],"math")) return ae_math(atoi(argv[2]),atoi(argv[3]),atoi(argv[4]),argv[5]);

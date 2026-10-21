@@ -15,8 +15,10 @@ do not reset, overwrite or edit around the failure on the 5090.
 short training behavior, not useful perception. Read
 `research/ENCODER_INFORMATION_EVALUATION.md` and
 `research/ENCODER_EVALUATION_LITERATURE_20261020.md` before choosing a long run.
-The proposed object/position probes and background-resistant metrics are not yet
-implemented. Existing `qualify` does not certify them or downstream usefulness.
+The first Forage-specific item/mark metrics and identity probes are now implemented
+in `NEXT_5090_FORAGE_REPRESENTATION.md`. That is a separate packet; the broader
+Pong/Flappy position/history protocol remains proposed. Existing generic `qualify`
+does not certify useful perception or downstream performance.
 
 ## 1. Pull, build and inspect — no dataset or GPU work
 

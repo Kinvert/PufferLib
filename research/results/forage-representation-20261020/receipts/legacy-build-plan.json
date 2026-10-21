@@ -1,0 +1,30 @@
+{
+  "schema": "native-autoencoder-packet-v1",
+  "sources_sha256": "470db46f773059a894e6c8f3ad7c1cf3c8fce7208c2740026a19cc0847b4c782",
+  "external_sha256": "7e6ea335e0f845341f17ff5a0ba2bbfb8fbe40dbd4a87d7274e1f2864d8e576c",
+  "binaries": {
+    "flappycnn": "d98780a3008eda350362d19baadbc307ac44824e1840407ee4d92c4308d095ab",
+    "pongcnn": "333fda0bb725d29232fa5f37e4d6b376bbc7ff9e5dd923a52fad8c2c76b4ef9f"
+  },
+  "manifests": {
+    "flappycnn.json": "72b46038c62bd1a94f10eeb2f2032c2e9369bfe88b2c7b6158da11aa596a9672",
+    "pongcnn.json": "d69f8f3a49a34eb88ae51941e6658f22d3f702cd08fbeadad3c4723d0a6d5840"
+  },
+  "configs": {
+    "pongcnn.ini": "10372c56b5c3711a6b0889278801b0d8c9e5fef9457f80c78d1bf88f51bd86f8",
+    "flappycnn.ini": "ff86b23c1c92e0cd36848dc1a89fbc9f4da9439ff16530f9fd4a445e15287939"
+  },
+  "games": {
+    "flappycnn": [
+      640,
+      420,
+      2
+    ],
+    "pongcnn": [
+      640,
+      620,
+      3
+    ]
+  },
+  "gpu_execution": false
+}

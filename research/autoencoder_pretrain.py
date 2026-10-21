@@ -29,13 +29,25 @@ NATIVE = ['autoencoder.cuh', 'pretrain_autoencoder.cu', 'fullframe_compression.c
     'fullframe_compression_io.h', 'autoencoder_checks.cuh', 'fullframe_compression_reference.cu',
     'native_encoder_reference.cu', 'autoencoder_pretrain.py', 'autoencoder_pretrain.sh']
 DECODER_PARAMETERS = 128 * 256 + 256 + 8 * (9 * 16 + 1) + 8 * (9 * 8 + 1) + 3 * (9 * 8 + 1)
+GAME_SPECS = dict(f.GAMES, sprite_forage=(480, 640, 5))
+FORAGE_SOURCES = ['forage_encoder_env.h', 'forage_annotations.h', 'forage_region_weights.cuh',
+    'forage_encoder_probe.cuh', 'forage_representation.py', 'forage_representation.sh',
+    'forage_probe_checks.cuh', 'test_forage_annotations.c']
+
+
+def packet_games(packet):
+    return {k: tuple(v) for k, v in read(packet / 'plan.json').get('games', f.GAMES).items()}
 
 
 def digest(value):
     return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(',', ':'), allow_nan=False).encode()).hexdigest()
 
 
-def prepare(out):
+def prepare(out, games=None):
+    games = games or list(f.GAMES)
+    require(games and len(set(games)) == len(games) and all(g in GAME_SPECS for g in games), 'Unknown/duplicate game')
+    require('sprite_forage' not in games or len(games) == 1, 'Annotated Forage uses its own packet')
+    specs = {g: GAME_SPECS[g] for g in games}
     require(not out.exists(), 'Fresh packet required')
     require(sys.byteorder == 'little' and os.environ.get('NVCC_ARCH') == 'sm_120', 'Need little-endian host and NVCC_ARCH=sm_120')
     require(not any(os.environ.get(k) for k in ('NVCC_EXTRA', 'NVCC_APPEND_FLAGS', 'NVCC_PREPEND_FLAGS')), 'Unrecorded compiler flags refused')
@@ -46,6 +58,10 @@ def prepare(out):
     files += [ROOT / 'research' / n for n in NATIVE]
     files += [ROOT / 'research/fullframe_compression.py', ROOT / 'research/recipes/autoencoder.ini']
     files += [ROOT / 'config/default.ini'] + [ROOT / f'config/{g}.ini' for g in f.GAMES]
+    if 'sprite_forage' in specs:
+        files += [p for p in (ROOT / 'ocean/sprite_forage').rglob('*') if p.is_file() and p.suffix in ('.h', '.c', '.cu')]
+        files += [ROOT / 'research' / n for n in FORAGE_SOURCES]
+        files += [ROOT / 'config/sprite_forage.ini', ROOT / 'research/recipes/forage_representation.ini']
     hashes = {}
     for p in sorted(set(files)):
         rel = p.relative_to(ROOT); target = source / rel
@@ -63,15 +79,16 @@ def prepare(out):
         status=subprocess.check_output(['git', 'status', '--short'], cwd=ROOT, text=True),
         nvcc_sha256=sha(cuda / 'bin/nvcc'), compiler=subprocess.check_output([cuda / 'bin/nvcc', '--version'], text=True)))
     binaries = {}
-    for game, (H, W, _) in f.GAMES.items():
+    for game, (H, W, _) in specs.items():
         folder = out / 'builds' / game; folder.mkdir(parents=True)
         cmd = [str(cuda / 'bin/nvcc'), '-O2', '-std=c++17', '-arch=sm_120', '--threads', '1',
             '-Xcompiler=-fopenmp', '-Xcompiler=-Wno-narrowing', '--diag-suppress=2361', '--diag-suppress=111', '--diag-suppress=128',
             '-I.', '-Iresearch', '-Isrc', '-Ivendor', '-Iraylib-5.5_linux_amd64/include',
             '-I' + str(cuda / 'include/cccl'), '-I' + str(nccl / 'include'),
             '-DCNN_IMAGE_V1', '-DCNN_COMPRESSION_RESEARCH', f'-DCNN_IMAGE_HEIGHT={H}', f'-DCNN_IMAGE_WIDTH={W}', '-DCNN_IMAGE_CHANNELS=3',
-            '-DPUFFERLIB_BUILD_MAIN', '-DPRECISION_FLOAT', '-DPUFFER_' + game.upper(),
-            '-DENV_HEADER="ocean/' + game + '/' + game + '.h"', '-DPUFFER_ENV_NAME="' + game + '"',
+            '-DPUFFERLIB_BUILD_MAIN', '-DPRECISION_FLOAT', '-DPUFFER_' + ('FORAGECNN' if game == 'sprite_forage' else game.upper()),
+            '-DENV_HEADER="' + ('research/forage_encoder_env.h' if game == 'sprite_forage' else 'ocean/' + game + '/' + game + '.h') + '"',
+            '-DPUFFER_ENV_NAME="' + game + '"',
             'research/pretrain_autoencoder.cu', 'raylib-5.5_linux_amd64/lib/libraylib.a',
             '-L' + str(cuda / 'lib64'), '-L' + str(cuda / 'lib64/stubs'), '-L' + str(nccl / 'lib'),
             '-lcudart', '-lcublas', '-lcurand', '-lcusolver', '-lnccl', '-lnvidia-ml', '-lGL', '-lpthread', '-ldl', '-lrt',
@@ -83,13 +100,16 @@ def prepare(out):
         manifest = f.run_json([folder / 'autoencoder', 'manifest', H, W], source, folder / 'encoder-manifest.log')
         require(manifest['elements'] == 36776 and len(manifest['tensors']) == 8, 'Encoder registration differs')
         save(out / f'manifests/{game}.json', manifest)
-        f.write_config(out / f'configs/{game}.ini', f.common_config(game, 0))
+        cfg = f.common_config(game, 0)
+        if game == 'sprite_forage':
+            cfg['env'].update(observation_mode='1', partial_observation='0')
+        f.write_config(out / f'configs/{game}.ini', cfg)
     for rel, value in hashes.items():
         require(sha(ROOT / rel) == value and sha(source / rel) == value, 'Source changed during preparation')
     save(out / 'plan.json', dict(schema='native-autoencoder-packet-v1', sources_sha256=sha(out / 'sources.json'),
         external_sha256=sha(out / 'external.json'), binaries=binaries,
         manifests={p.name: sha(p) for p in (out / 'manifests').glob('*.json')},
-        configs={p.name: sha(p) for p in (out / 'configs').glob('*.ini')}, gpu_execution=False))
+        configs={p.name: sha(p) for p in (out / 'configs').glob('*.ini')}, games=specs, gpu_execution=False))
     return inspect(out)
 
 
@@ -118,23 +138,26 @@ def frame_hashes(path, elements):
     return whole.hexdigest(), frames
 
 
-def collect(packet, out, training, validation, maximum, steps, cadence, cap):
+def collect(packet, out, training, validation, maximum, steps, cadence, cap, test=0):
     inspect(packet)
     require(not out.exists() and 1 <= training <= 10000 and 1 <= validation <= 10000
         and 1 <= maximum <= 1024 and 1 <= steps <= 65536 and 1 <= cadence <= steps, 'Collection bounds/fresh output')
-    worst = (training + validation) * maximum * sum(H * W * 3 * 4 for H, W, _ in f.GAMES.values())
+    games = packet_games(packet)
+    require(0 <= test <= 10000, 'Test episode bounds')
+    worst = (training + validation + test) * maximum * sum(H * W * 3 * 4 + (300 if g == 'sprite_forage' else 0)
+        for g, (H, W, _) in games.items())
     require(worst <= cap and cap <= 256 * 2**30 and shutil.disk_usage(out.parent).free >= worst + 20 * 2**30, 'Collection exceeds disk budget/reserve')
     out.mkdir(parents=True); episodes = []
     save(out / 'collection-plan.json', dict(training_episodes=training, validation_episodes=validation,
         maximum_frames=maximum, max_steps=steps, cadence=cadence, worst_bytes=worst, byte_cap=cap,
         action_policy='fixed-random-splitmix64-v1', source_manifest_sha256=sha(packet / 'sources.json')))
-    for game, (H, W, _) in f.GAMES.items():
-        for split, count, base in (('train', training, 7), ('validation', validation, 420)):
+    for game, (H, W, _) in games.items():
+        for split, count, base in (('train', training, 7), ('validation', validation, 420), ('test', test, 1337)):
             for episode in range(count):
                 identity = f'{game}:{split}:{episode}'
                 seed = int.from_bytes(hashlib.sha256(f'{base}:{game}:{episode}:env'.encode()).digest()[:4], 'little')
                 action_seed = int.from_bytes(hashlib.sha256(f'{base}:{game}:{episode}:actions'.encode()).digest()[:8], 'little')
-                skin = episode % 7
+                skin = episode % (5 if game == 'sprite_forage' else 7)
                 folder = out / game / split / f'episode-{episode:06d}'; folder.mkdir(parents=True)
                 path = folder / 'frames.f32'
                 require(shutil.disk_usage(out).free > maximum * H * W * 12 + 20 * 2**30, 'Collection reserve reached')
@@ -146,6 +169,9 @@ def collect(packet, out, training, validation, maximum, steps, cadence, cap):
                 episodes.append(dict(id=identity, game=game, split=split, env_seed=seed, action_seed=action_seed,
                     skin=skin, path=str(path.relative_to(out)), shape_hwc=[H, W, 3], frames=len(hashes),
                     sha256=file_hash, frame_sha256=hashes, decisions=result['decisions'], terminal=result['terminal']))
+                if game == 'sprite_forage':
+                    labels = path.with_suffix('.f32.labels')
+                    episodes[-1].update(labels_path=str(labels.relative_to(out)), labels_sha256=sha(labels))
                 save(out / 'progress.json', dict(episodes=episodes))
     save(out / 'dataset.json', dict(schema='native-game-frames-v1', dtype='float32', layout='NHWC', value_range=[0, 1],
         source_manifest_sha256=sha(packet / 'sources.json'), collection_plan_sha256=sha(out / 'collection-plan.json'), episodes=episodes))
@@ -156,7 +182,7 @@ def dataset(root):
     value = read(root / 'dataset.json')
     require(value['schema'] == 'native-game-frames-v1' and value['dtype'] == 'float32'
         and value['layout'] == 'NHWC' and value['value_range'] == [0, 1], 'Dataset pixel contract')
-    ids, seeds, splits, images = set(), {}, {}, {'train': set(), 'validation': set()}
+    ids, seeds, splits, images = set(), {}, {}, {'train': set(), 'validation': set(), 'test': set()}
     total = 0
     for ep in value['episodes']:
         require(ep['id'] not in ids and ep['split'] in images, 'Duplicate episode/invalid split')
@@ -170,10 +196,17 @@ def dataset(root):
         require(path.stat().st_size == ep['frames'] * H * W * 3 * 4, 'Frame shard size differs')
         file_hash, hashes = frame_hashes(path, H * W * 3)
         require(file_hash == ep['sha256'] and hashes == ep['frame_sha256'], 'Changed frame shard')
+        if ep['game'] == 'sprite_forage':
+            labels = (root / ep['labels_path']).resolve()
+            require(labels.is_relative_to(root.resolve()) and '\t' not in str(labels) and '\n' not in str(labels)
+                and labels.stat().st_size == ep['frames'] * 300 and sha(labels) == ep['labels_sha256'], 'Changed/invalid annotation shard')
+            require([H, W, C] == [480, 640, 3] and 0 <= ep['skin'] < 5
+                and all(k < 13 for k in labels.read_bytes()), 'Forage pixel-label contract')
         images[ep['split']].update(hashes); total += path.stat().st_size
-    require(splits and len(splits) <= 8 and all(s == {'train', 'validation'} for s in splits.values()), 'Missing stream/split')
+    require(splits and len(splits) <= 8 and all({'train', 'validation'} <= s for s in splits.values()), 'Missing stream/split')
     return dict(manifest=value, manifest_sha256=sha(root / 'dataset.json'), bytes=total,
         exact_frame_overlap=len(images['train'] & images['validation']),
+        test_train_overlap=len(images['test'] & images['train']), test_validation_overlap=len(images['test'] & images['validation']),
         stream_keys=sorted(splits), generalization_claim=False)
 
 
@@ -209,7 +242,27 @@ def training_contract(packet, recipe, data):
     for key in ('steps', 'max_seconds'):
         values.pop(key)
     return dict(recipe=values, dataset_manifest_sha256=data['manifest_sha256'],
-        sources_sha256=sha(packet / 'sources.json'), binary_sha256=sha(packet / 'builds/flappycnn/autoencoder'))
+        sources_sha256=sha(packet / 'sources.json'), binary_sha256=sha(trainer_binary(packet)))
+
+
+def trainer_binary(packet):
+    # Also works for legacy packets and the small host-contract test fixtures.
+    legacy = packet / 'builds/flappycnn/autoencoder'
+    return legacy if legacy.exists() else packet / 'builds' / sorted(packet_games(packet))[0] / 'autoencoder'
+
+
+def write_index(data, data_root, path, include_test=False):
+    lines = ['fullframe-autoencoder-index-v1']
+    for ep in sorted(data['manifest']['episodes'], key=lambda e: e['id']):
+        if ep['split'] == 'test' and not include_test:
+            continue
+        H, W, _ = ep['shape_hwc']; name = ep['game'] + f'-{H}x{W}'
+        require(name.replace('-', '').replace('_', '').isalnum(), 'Unsafe stream name')
+        row = [ep['split'], name, H, W, ep['frames'], (data_root / ep['path']).resolve()]
+        if ep['game'] == 'sprite_forage':
+            row += [(data_root / ep['labels_path']).resolve(), ep['skin']]
+        lines.append('\t'.join(map(str, row)))
+    path.write_text('\n'.join(lines) + '\n')
 
 
 def train(packet, data_root, recipe, out, hardware, resume=None, qualification_gpu=None):
@@ -222,20 +275,18 @@ def train(packet, data_root, recipe, out, hardware, resume=None, qualification_g
         proof = audit_qualification(packet)
         require(hardware in proof['hardware'], 'Qualify on the target hardware before pretraining')
     else:
-        require(qualification_gpu.stage == 'qualify' and qualification_gpu.out == packet,
+        require(qualification_gpu.stage in ('qualify', 'forage-campaign') and qualification_gpu.out == packet,
             'Internal qualification context differs')
+        if qualification_gpu.stage != 'qualify':
+            proof = audit_qualification(packet)
+            require(hardware in proof['hardware'], 'Qualify campaign hardware first')
     contract = training_contract(packet, recipe, data)
     if resume:
         previous = read(resume.with_suffix('.json'))
         require(previous['contract'] == contract and previous['state'] == state(resume)[0], 'Resume data/optimizer/config binding differs')
     out.mkdir(parents=True)
     shutil.copyfile(recipe, out / 'recipe.ini'); save(out / 'dataset-review.json', data)
-    lines = ['fullframe-autoencoder-index-v1']
-    for ep in sorted(data['manifest']['episodes'], key=lambda e: e['id']):
-        H, W, _ = ep['shape_hwc']; name = ep['game'] + f'-{H}x{W}'
-        require(name.replace('-', '').replace('_', '').isalnum(), 'Unsafe stream name')
-        lines.append('\t'.join(map(str, (ep['split'], name, H, W, ep['frames'], (data_root / ep['path']).resolve()))))
-    (out / 'index.tsv').write_text('\n'.join(lines) + '\n')
+    write_index(data, data_root, out / 'index.tsv')
     save(out / 'request.json', dict(contract=contract, packet=str(packet), recipe_sha256=sha(out / 'recipe.ini'),
         index_sha256=sha(out / 'index.tsv'), resume=str(resume) if resume else None,
         resume_sha256=sha(resume) if resume else None))
@@ -243,7 +294,7 @@ def train(packet, data_root, recipe, out, hardware, resume=None, qualification_g
     require(all(c.isalnum() or c in '-_.' for c in stage), 'Safe run name required')
     context = contextlib.nullcontext(qualification_gpu) if qualification_gpu else Reservation(packet, hardware, stage, settings.getint('max_seconds') + 60)
     with context as gpu:
-        receipt = gpu.run([packet / 'builds/flappycnn/autoencoder', 'train', out / 'recipe.ini', out / 'index.tsv',
+        receipt = gpu.run([trainer_binary(packet), 'train', out / 'recipe.ini', out / 'index.tsv',
             out, resume or 'None', 'v1'], out / 'train.log', settings.getint('max_seconds') + 60)
     require(sha(out / 'recipe.ini') == read(out / 'request.json')['recipe_sha256']
         and sha(out / 'index.tsv') == read(out / 'request.json')['index_sha256'], 'Training inputs changed')
@@ -282,7 +333,7 @@ def export(packet, run, stream, out):
     _, H, W = candidates[0]
     temporary = out.with_name(out.name + '.tmp'); require(not temporary.exists(), 'Unfinished export exists')
     temporary.mkdir(parents=True)
-    manifest = f.run_json([packet / 'builds/flappycnn/autoencoder', 'manifest', H, W], packet / 'source', temporary / 'manifest.log')
+    manifest = f.run_json([trainer_binary(packet), 'manifest', H, W], packet / 'source', temporary / 'manifest.log')
     blocks = [raw[STATE.size + t['offset'] * 4:STATE.size + (t['offset'] + t['elements']) * 4] for t in manifest['tensors']]
     payload = b''.join(blocks); require(len(payload) == manifest['elements'] * 4, 'Native encoder extraction differs')
     (temporary / 'encoder.bin').write_bytes(payload)
@@ -294,9 +345,10 @@ def export(packet, run, stream, out):
 
 def qualify(packet, hardware):
     inspect(packet)
-    progress = dict(math=[], auxiliary=[], runs=[], imports=[], memory=[])
+    games = packet_games(packet)
+    progress = dict(math=[], auxiliary=[], runs=[], imports=[], memory=[], recognition=[], probe_runs=[])
     with Reservation(packet, hardware, 'qualify', 300 if hardware == '5060' else 900) as gpu:
-        for game, (H, W, _) in f.GAMES.items():
+        for game, (H, W, _) in games.items():
             binary = packet / f'builds/{game}/autoencoder'
             cases = [(h, w, b) for h, w in ((160, 192), (161, 193), (H, W)) for b in (1, 2)]
             for h, w, batch in cases:
@@ -316,14 +368,25 @@ def qualify(packet, hardware):
             value = json.loads((packet / f'logs/qualify/{game}-auxiliary.log').read_text())
             require(value['status'] == 'passed' and value['inactive_tail_checked'], 'MSE/Adam qualification failed')
             progress['auxiliary'].append(dict(game=game, result=value, process=receipt))
+            if game == 'sprite_forage':
+                pair = []
+                for repeat in range(2):
+                    log = packet / f'logs/qualify/recognition-{repeat}.log'
+                    receipt = gpu.run([binary, 'forage-checks'], log, 60)
+                    value = json.loads(log.read_text()); require(value['status'] == 'passed', 'Forage recognition math failed')
+                    pair.append(value); progress['recognition'].append(dict(result=value, process=receipt))
+                require(pair[0] == pair[1], 'Forage math fresh-process repeat differs')
         save(packet / 'qualification-progress.json', progress)
 
         # Tiny explicit test fixture, not a pretraining corpus. Raw native frames,
         # both aspect ratios, disjoint episodes, and a real shard-reader canary.
         fixture = packet / 'qualification/fixture'
-        collect(packet, fixture, 1, 1, 2, 4, 1, 128 * 2**20)
+        forage = 'sprite_forage' in games
+        collect(packet, fixture, 1, 1, 2, 4, 1, 128 * 2**20, test=1 if forage else 0)
         cfg = f.config(packet / 'source/research/recipes/autoencoder.ini')
         cfg['autoencoder'].update(batch='1', steps='8', checkpoint_interval='4', max_seconds='60')
+        if 'sprite_forage' in games:
+            cfg['autoencoder'].update(loss_mode='1', object_weight='1', background_weight='0.1')
         recipe = packet / 'qualification/canary.ini'; f.write_config(recipe, cfg)
         for name in ('full', 'repeat'):
             folder = packet / 'qualification' / name
@@ -344,9 +407,9 @@ def qualify(packet, hardware):
             progress['runs'][0]['report']['checkpoints'][-1]['sha256'], 'Resume weights/moments/data-order differ')
         progress['runs'].append(dict(name='resumed', report=value, report_sha256=sha(resumed / 'REPORT.json')))
         full = progress['runs'][0]['report']
-        for game, (H, W, _) in f.GAMES.items():
+        for game, (H, W, _) in games.items():
             stream = game + f'-{H}x{W}'
-            values = [r['mse'] for r in full['rows'] if r.get('validation') == stream]
+            values = [r['objective'] for r in full['rows'] if r.get('validation') == stream]
             require(len(values) >= 2 and values[-1] < values[0], 'Canary reconstruction did not improve')
             directory = packet / f'qualification/exports/{game}'
             manifest = export(packet, packet / 'qualification/full', stream, directory)
@@ -362,11 +425,25 @@ def qualify(packet, hardware):
             require('incompatible encoder manifest' in log.read_text(), 'Wrong-shape import failed for unexpected reason')
             progress['imports'].append(dict(game=game, rejected=True, process=receipt))
         save(packet / 'qualification-progress.json', progress)
+        if forage:
+            import forage_representation as fr
+            cfg['probe'] = dict(batch='2', steps='4', learning_rate='.003', max_seconds='60')
+            probe_recipe = packet / 'qualification/probe.ini'; f.write_config(probe_recipe, cfg)
+            for repeat in range(2):
+                folder = packet / f'qualification/probe-{repeat}'
+                checkpoint = packet / 'qualification/full' / full['checkpoints'][-1]['path']
+                result = fr.probe(packet, fixture, probe_recipe, checkpoint, folder, gpu)
+                require(result['status'] == 'complete', 'Short recognition probe incomplete')
+                progress['probe_runs'].append(dict(name=folder.name, report_sha256=sha(folder / 'REPORT.json')))
+            for name in ('features.f32', 'head.f32', 'normalization.f32', 'labels.u8', 'predictions.csv'):
+                require(sha(packet / 'qualification/probe-0' / name) == sha(packet / 'qualification/probe-1' / name),
+                    'Actual recognition training/reload repeat differs: ' + name)
+            save(packet / 'qualification-progress.json', progress)
         # Memory instrumentation is mandatory for enabling the optional long job.
         # Keep useful short canary receipts even when WSL cannot initialize it.
         sanitizer = Path(os.environ['CUDA_HOME']) / 'bin/compute-sanitizer'
         require(sanitizer.is_file(), 'Existing compute-sanitizer required; install/change nothing')
-        for game in f.GAMES:
+        for game in games:
             folder = packet / f'qualification/memcheck/{game}'; folder.parent.mkdir(parents=True, exist_ok=True)
             log = packet / f'logs/qualify/{game}-memcheck.log'
             receipt = gpu.run([sanitizer, '--tool', 'memcheck', '--error-exitcode', '99', packet / f'builds/{game}/autoencoder',
@@ -375,12 +452,26 @@ def qualify(packet, hardware):
                 'Device memory gate failed/unsupported')
             progress['memory'].append(dict(game=game, process=receipt))
             save(packet / 'qualification-progress.json', progress)
+        if 'sprite_forage' in games:
+            log = packet / 'logs/qualify/recognition-memcheck.log'
+            receipt = gpu.run([sanitizer, '--tool', 'memcheck', '--error-exitcode', '99',
+                packet / 'builds/sprite_forage/autoencoder', 'forage-checks'], log, 120)
+            require('ERROR SUMMARY: 0 errors' in log.read_text(), 'Recognition memory gate failed')
+            progress['memory'].append(dict(game='recognition', process=receipt))
+            folder = packet / 'qualification/probe-memcheck'; folder.mkdir()
+            log = packet / 'logs/qualify/recognition-training-memcheck.log'
+            receipt = gpu.run([sanitizer, '--tool', 'memcheck', '--error-exitcode', '99',
+                trainer_binary(packet), 'forage-probe', packet / 'configs/sprite_forage.ini',
+                packet / 'qualification/probe-0/index.tsv', checkpoint, probe_recipe, folder], log, 120)
+            require('ERROR SUMMARY: 0 errors' in log.read_text() and read(folder / 'native.json')['status'] == 'complete',
+                'Actual recognition training memory gate failed')
+            progress['memory'].append(dict(game='recognition-training', process=receipt))
         cfg['autoencoder']['steps'] = '2'
         memory_recipe = packet / 'qualification/memory-train.ini'; f.write_config(memory_recipe, cfg)
         folder = packet / 'qualification/memory-train'; folder.mkdir()
         log = packet / 'logs/qualify/train-memcheck.log'
         receipt = gpu.run([sanitizer, '--tool', 'memcheck', '--error-exitcode', '99',
-            packet / 'builds/flappycnn/autoencoder', 'train', memory_recipe,
+            trainer_binary(packet), 'train', memory_recipe,
             packet / 'qualification/full/index.tsv', folder, 'None', 'v1'], log, 120)
         require('ERROR SUMMARY: 0 errors' in log.read_text()
             and state(folder / 'step-000000000002.state')[0]['step'] == 2,
@@ -403,8 +494,11 @@ def audit_qualification(packet):
     started = read(packet / 'stages/qualify.started.json')
     require(sha(packet / 'stages/qualify.supervisor.py') == started['supervisor_sha256'], 'Qualification supervisor changed')
     evidence = proof['evidence']
-    require(len(evidence['math']) == 24 and len(evidence['auxiliary']) == 2 and len(evidence['runs']) == 4
-        and len(evidence['imports']) == 4 and len(evidence['memory']) == 3, 'Qualification coverage missing')
+    games = packet_games(packet); forage = 'sprite_forage' in games
+    require(len(evidence['math']) == 12 * len(games) and len(evidence['auxiliary']) == len(games) and len(evidence['runs']) == 4
+        and len(evidence['imports']) == 2 * len(games) and len(evidence['memory']) == len(games) + 1 + 2 * forage
+        and len(evidence.get('recognition', [])) == (2 if forage else 0)
+        and len(evidence.get('probe_runs', [])) == (2 if forage else 0), 'Qualification coverage missing')
     for row in evidence['math']:
         file = packet / f'qualification/math/{row["name"]}/result.json'
         require(read(file) == row['result'] and sha(file) == row['result_sha256'], 'Changed numerical evidence')
@@ -414,7 +508,15 @@ def audit_qualification(packet):
         for checkpoint in row['report']['checkpoints']:
             current = state(directory / checkpoint['path'])[0]
             require(all(current[k] == checkpoint[k] for k in current), 'Changed canary checkpoint/moments')
-    require({r['game'] for r in evidence['memory']} == set(f.GAMES) | {'mixed-shape-training'}, 'Missing memory suite')
+    if forage:
+        import forage_representation as fr
+        for row in evidence['probe_runs']:
+            folder = packet / 'qualification' / row['name']
+            require(sha(folder / 'REPORT.json') == row['report_sha256']
+                and fr.audit_probe(packet, packet / 'qualification/fixture', folder) == read(folder / 'REPORT.json'),
+                'Actual recognition probe receipt differs')
+    require({r['game'] for r in evidence['memory']} == set(games) | {'mixed-shape-training'}
+        | ({'recognition', 'recognition-training'} if forage else set()), 'Missing memory suite')
     for row in evidence['memory']:
         name = 'train' if row['game'] == 'mixed-shape-training' else row['game']
         log = packet / f'logs/qualify/{name}-memcheck.log'
@@ -455,11 +557,12 @@ def main():
     parser.add_argument('--validation-episodes', type=int, default=4)
     parser.add_argument('--max-frames', type=int, default=32); parser.add_argument('--max-steps', type=int, default=256)
     parser.add_argument('--cadence', type=int, default=4); parser.add_argument('--max-gib', type=int, default=8)
+    parser.add_argument('--games', default=','.join(f.GAMES), help='Prepared games, e.g. sprite_forage')
     args = parser.parse_args()
     for name in ('packet', 'out', 'dataset', 'run', 'recipe', 'resume'):
         if getattr(args, name): setattr(args, name, getattr(args, name).resolve())
     if args.command == 'prepare':
-        require(args.out is not None, 'Need --out'); result = prepare(args.out)
+        require(args.out is not None, 'Need --out'); result = prepare(args.out, args.games.split(','))
     elif args.command == 'dataset':
         require(args.dataset is not None, 'Need --dataset'); result = dataset(args.dataset)
     else:

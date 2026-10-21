@@ -1,0 +1,376 @@
+{
+  "status": "passed",
+  "hardware": "NVIDIA GeForce RTX 5060, GPU-56b0df25-b4c9-46eb-e498-bc5c71904097, 610.88, 8151 MiB",
+  "driver_sha256": "bcdc0a009986aead56acba9608c86dc95fc6f78431191b5d3e4bcc89ca480c9e",
+  "cases": [
+    {
+      "name": "plain",
+      "manifest": {
+        "schema": "fullframe-compression-encoder-v1",
+        "dtype": "float32",
+        "layout": "NHWC",
+        "range": "0,1",
+        "model": 0,
+        "height": 480,
+        "width": 640,
+        "channels": 3,
+        "activation": "relu-zero-derivative-0",
+        "area": "box4-rowmajor-partial-edge",
+        "adaptive": "floor-start-ceil-end-4x4",
+        "padding": "same-trailing-extra-or-nature-valid",
+        "elements": 36776,
+        "layers": [
+          [
+            480,
+            640,
+            3,
+            8,
+            4,
+            4,
+            120,
+            160,
+            0,
+            0
+          ],
+          [
+            120,
+            160,
+            8,
+            16,
+            3,
+            2,
+            60,
+            80,
+            0,
+            0
+          ],
+          [
+            60,
+            80,
+            16,
+            16,
+            3,
+            2,
+            30,
+            40,
+            0,
+            0
+          ],
+          [
+            1,
+            1,
+            256,
+            128,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0
+          ]
+        ],
+        "tensors": [
+          {
+            "name": "weight_0",
+            "offset": 0,
+            "elements": 384,
+            "shape": [
+              8,
+              48
+            ]
+          },
+          {
+            "name": "bias_0",
+            "offset": 384,
+            "elements": 8,
+            "shape": [
+              8
+            ]
+          },
+          {
+            "name": "weight_1",
+            "offset": 392,
+            "elements": 1152,
+            "shape": [
+              16,
+              72
+            ]
+          },
+          {
+            "name": "bias_1",
+            "offset": 1544,
+            "elements": 16,
+            "shape": [
+              16
+            ]
+          },
+          {
+            "name": "weight_2",
+            "offset": 1560,
+            "elements": 2304,
+            "shape": [
+              16,
+              144
+            ]
+          },
+          {
+            "name": "bias_2",
+            "offset": 3864,
+            "elements": 16,
+            "shape": [
+              16
+            ]
+          },
+          {
+            "name": "weight_3",
+            "offset": 3880,
+            "elements": 32768,
+            "shape": [
+              128,
+              256
+            ]
+          },
+          {
+            "name": "bias_3",
+            "offset": 36648,
+            "elements": 128,
+            "shape": [
+              128
+            ]
+          }
+        ],
+        "sha256": "24a705fca77e199aaf286e87eedc5dcb17eda8c6fecda896cf2796592d8ea1c8",
+        "initialization": "autoencoder-reconstruction-v1",
+        "source_checkpoint_sha256": "a8389be211e74aad9a5526675b4b21ada4305fb705cd3fe139cdc0019be95a6e",
+        "source_manifest_sha256": "ea4ade57249eb6eca2ca0e5c535c83091bf0c2310db60864dba741ba6d240503",
+        "pretraining_contract": {
+          "recipe": {
+            "seed": "7",
+            "batch": "1",
+            "checkpoint_interval": "1",
+            "learning_rate": "0.0003",
+            "max_grad_norm": "1.0",
+            "edge_weight": "0",
+            "loss_mode": "0",
+            "object_weight": "1.0",
+            "background_weight": "0.1"
+          },
+          "dataset_manifest_sha256": "40a7a00765e5ec04a001291163011f92f36d9ae7a41155772cad8e43e17b09ed",
+          "sources_sha256": "ea4ade57249eb6eca2ca0e5c535c83091bf0c2310db60864dba741ba6d240503",
+          "binary_sha256": "c8c4f3787200ff505e232a635b6d1a7497c9051d048279d49ac3ba2f8644c1ab"
+        },
+        "step": 2
+      },
+      "process": {
+        "argv": [
+          "/home/claude/cnn/build/forage-representation-20261020-v5/builds/sprite_forage/autoencoder",
+          "import-check",
+          "/home/claude/cnn/build/forage-representation-20261020-v5/configs/sprite_forage.ini",
+          "/home/claude/cnn/build/forage-representation-20261020-v5/export-smoke/plain-encoder"
+        ],
+        "cwd": "/home/claude/cnn/build/forage-representation-20261020-v5/source",
+        "started_ns": 335314502849642,
+        "pid": 1490462,
+        "finished_ns": 335315018382656,
+        "returncode": 0,
+        "timeout": false,
+        "log_sha256": "6de2b173f219ec8dfd8181977a55acc2103f5571b41e2b815fd3225fe7fe79a8",
+        "interference": [],
+        "gpu_samples": [],
+        "expected_failure": false,
+        "seconds": 0.515533014
+      },
+      "result": {
+        "status": "passed",
+        "core_head_unchanged": true,
+        "rng_unchanged": true,
+        "encoder_exact": true
+      }
+    },
+    {
+      "name": "object-balanced",
+      "manifest": {
+        "schema": "fullframe-compression-encoder-v1",
+        "dtype": "float32",
+        "layout": "NHWC",
+        "range": "0,1",
+        "model": 0,
+        "height": 480,
+        "width": 640,
+        "channels": 3,
+        "activation": "relu-zero-derivative-0",
+        "area": "box4-rowmajor-partial-edge",
+        "adaptive": "floor-start-ceil-end-4x4",
+        "padding": "same-trailing-extra-or-nature-valid",
+        "elements": 36776,
+        "layers": [
+          [
+            480,
+            640,
+            3,
+            8,
+            4,
+            4,
+            120,
+            160,
+            0,
+            0
+          ],
+          [
+            120,
+            160,
+            8,
+            16,
+            3,
+            2,
+            60,
+            80,
+            0,
+            0
+          ],
+          [
+            60,
+            80,
+            16,
+            16,
+            3,
+            2,
+            30,
+            40,
+            0,
+            0
+          ],
+          [
+            1,
+            1,
+            256,
+            128,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0
+          ]
+        ],
+        "tensors": [
+          {
+            "name": "weight_0",
+            "offset": 0,
+            "elements": 384,
+            "shape": [
+              8,
+              48
+            ]
+          },
+          {
+            "name": "bias_0",
+            "offset": 384,
+            "elements": 8,
+            "shape": [
+              8
+            ]
+          },
+          {
+            "name": "weight_1",
+            "offset": 392,
+            "elements": 1152,
+            "shape": [
+              16,
+              72
+            ]
+          },
+          {
+            "name": "bias_1",
+            "offset": 1544,
+            "elements": 16,
+            "shape": [
+              16
+            ]
+          },
+          {
+            "name": "weight_2",
+            "offset": 1560,
+            "elements": 2304,
+            "shape": [
+              16,
+              144
+            ]
+          },
+          {
+            "name": "bias_2",
+            "offset": 3864,
+            "elements": 16,
+            "shape": [
+              16
+            ]
+          },
+          {
+            "name": "weight_3",
+            "offset": 3880,
+            "elements": 32768,
+            "shape": [
+              128,
+              256
+            ]
+          },
+          {
+            "name": "bias_3",
+            "offset": 36648,
+            "elements": 128,
+            "shape": [
+              128
+            ]
+          }
+        ],
+        "sha256": "2c0feff89ce5728b7642b192165ebf6c6ce697ee47698a39a6a076bef51a26e7",
+        "initialization": "autoencoder-reconstruction-v1",
+        "source_checkpoint_sha256": "943fc31737d4686c61965b42c4a42884c2aed11b8a5b6e6461d674f468944e1a",
+        "source_manifest_sha256": "ea4ade57249eb6eca2ca0e5c535c83091bf0c2310db60864dba741ba6d240503",
+        "pretraining_contract": {
+          "recipe": {
+            "seed": "7",
+            "batch": "1",
+            "checkpoint_interval": "1",
+            "learning_rate": "0.0003",
+            "max_grad_norm": "1.0",
+            "edge_weight": "0",
+            "loss_mode": "1",
+            "object_weight": "1.0",
+            "background_weight": "0.1"
+          },
+          "dataset_manifest_sha256": "40a7a00765e5ec04a001291163011f92f36d9ae7a41155772cad8e43e17b09ed",
+          "sources_sha256": "ea4ade57249eb6eca2ca0e5c535c83091bf0c2310db60864dba741ba6d240503",
+          "binary_sha256": "c8c4f3787200ff505e232a635b6d1a7497c9051d048279d49ac3ba2f8644c1ab"
+        },
+        "step": 2
+      },
+      "process": {
+        "argv": [
+          "/home/claude/cnn/build/forage-representation-20261020-v5/builds/sprite_forage/autoencoder",
+          "import-check",
+          "/home/claude/cnn/build/forage-representation-20261020-v5/configs/sprite_forage.ini",
+          "/home/claude/cnn/build/forage-representation-20261020-v5/export-smoke/object-balanced-encoder"
+        ],
+        "cwd": "/home/claude/cnn/build/forage-representation-20261020-v5/source",
+        "started_ns": 335315140035376,
+        "pid": 1490482,
+        "finished_ns": 335315555281870,
+        "returncode": 0,
+        "timeout": false,
+        "log_sha256": "6de2b173f219ec8dfd8181977a55acc2103f5571b41e2b815fd3225fe7fe79a8",
+        "interference": [],
+        "gpu_samples": [],
+        "expected_failure": false,
+        "seconds": 0.415246494
+      },
+      "result": {
+        "status": "passed",
+        "core_head_unchanged": true,
+        "rng_unchanged": true,
+        "encoder_exact": true
+      }
+    }
+  ],
+  "full_qualification": false
+}
