@@ -1,0 +1,26 @@
+{
+  "state": {
+    "parameters": 6163,
+    "step": 0,
+    "seed": 7,
+    "sha256": "a7d50691f381728a710004dbe77c5d3bfc4ee9a54ba6d348f309368112bc7904"
+  },
+  "contract": {
+    "recipe": {
+      "seed": "7",
+      "batch": "2",
+      "checkpoint_interval": "128",
+      "learning_rate": "0.0003",
+      "max_grad_norm": "1.0",
+      "edge_weight": "0",
+      "loss_mode": "1",
+      "object_weight": "1.0",
+      "background_weight": "0.1",
+      "latent_stride": "16",
+      "latent_channels": "8"
+    },
+    "dataset_manifest_sha256": "42d477fa3582f6a9e1c46638302571f8888aaf7cfdd3605f1d938cbe2ac6aa5b",
+    "sources_sha256": "e5ea05eb4f42920d48649a0a71889b6816d756880ec07c2547ad0b524246c3ed",
+    "binary_sha256": "bf11738221888beef3ad42daf2494b113af1aff07924fe4d2aa7b872be3508a1"
+  }
+}

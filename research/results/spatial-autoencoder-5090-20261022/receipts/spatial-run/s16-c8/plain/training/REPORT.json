@@ -1,0 +1,290 @@
+{
+  "status": "complete",
+  "hardware": "NVIDIA GeForce RTX 5090, GPU-87022f1b-da24-3ddc-cc42-aed4aca77a6a, 580.105.08, 32607 MiB",
+  "contract": {
+    "recipe": {
+      "seed": "7",
+      "batch": "2",
+      "checkpoint_interval": "128",
+      "learning_rate": "0.0003",
+      "max_grad_norm": "1.0",
+      "edge_weight": "0",
+      "loss_mode": "0",
+      "object_weight": "1.0",
+      "background_weight": "0.1",
+      "latent_stride": "16",
+      "latent_channels": "8"
+    },
+    "dataset_manifest_sha256": "42d477fa3582f6a9e1c46638302571f8888aaf7cfdd3605f1d938cbe2ac6aa5b",
+    "sources_sha256": "e5ea05eb4f42920d48649a0a71889b6816d756880ec07c2547ad0b524246c3ed",
+    "binary_sha256": "bf11738221888beef3ad42daf2494b113af1aff07924fe4d2aa7b872be3508a1"
+  },
+  "process": {
+    "argv": [
+      "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/builds/sprite_forage/autoencoder",
+      "train",
+      "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/spatial-run/s16-c8/plain/training/recipe.ini",
+      "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/spatial-run/s16-c8/plain/training/index.tsv",
+      "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/spatial-run/s16-c8/plain/training",
+      "None",
+      "v1"
+    ],
+    "cwd": "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/source",
+    "started_ns": 4177823841830493,
+    "pid": 2107892,
+    "finished_ns": 4177830517483490,
+    "returncode": 0,
+    "timeout": false,
+    "log_sha256": "a850a78dfff568319583a1f4a2618f771325489544c173aa9b733dea8ecad382",
+    "interference": [],
+    "gpu_samples": [
+      {
+        "monotonic_ns": 4177828857035476,
+        "foreign": []
+      }
+    ],
+    "expected_failure": false,
+    "seconds": 6.675652997
+  },
+  "rows": [
+    {
+      "checkpoint": "step-000000000000.state",
+      "step": 0,
+      "parameters": 6163
+    },
+    {
+      "validation": "sprite_forage-480x640",
+      "step": 0,
+      "frames": 48,
+      "mse": 0.0505079990253,
+      "objective": 0.0505079990253
+    },
+    {
+      "training_step": 128,
+      "stream": "sprite_forage-480x640",
+      "mse": 0.00904036965221,
+      "objective": 0.00904036965221,
+      "seconds": 0.971693
+    },
+    {
+      "checkpoint": "step-000000000128.state",
+      "step": 128,
+      "parameters": 6163
+    },
+    {
+      "validation": "sprite_forage-480x640",
+      "step": 128,
+      "frames": 48,
+      "mse": 0.00918128259946,
+      "objective": 0.00918128259946
+    },
+    {
+      "training_step": 256,
+      "stream": "sprite_forage-480x640",
+      "mse": 0.00676614651456,
+      "objective": 0.00676614651456,
+      "seconds": 1.758665
+    },
+    {
+      "checkpoint": "step-000000000256.state",
+      "step": 256,
+      "parameters": 6163
+    },
+    {
+      "validation": "sprite_forage-480x640",
+      "step": 256,
+      "frames": 48,
+      "mse": 0.00703734169171,
+      "objective": 0.00703734169171
+    },
+    {
+      "training_step": 384,
+      "stream": "sprite_forage-480x640",
+      "mse": 0.00543817039579,
+      "objective": 0.00543817039579,
+      "seconds": 2.528657
+    },
+    {
+      "checkpoint": "step-000000000384.state",
+      "step": 384,
+      "parameters": 6163
+    },
+    {
+      "validation": "sprite_forage-480x640",
+      "step": 384,
+      "frames": 48,
+      "mse": 0.00574690088009,
+      "objective": 0.00574690088009
+    },
+    {
+      "training_step": 512,
+      "stream": "sprite_forage-480x640",
+      "mse": 0.00431903358549,
+      "objective": 0.00431903358549,
+      "seconds": 3.306984
+    },
+    {
+      "checkpoint": "step-000000000512.state",
+      "step": 512,
+      "parameters": 6163
+    },
+    {
+      "validation": "sprite_forage-480x640",
+      "step": 512,
+      "frames": 48,
+      "mse": 0.00500950904097,
+      "objective": 0.00500950904097
+    },
+    {
+      "training_step": 640,
+      "stream": "sprite_forage-480x640",
+      "mse": 0.00490422919393,
+      "objective": 0.00490422919393,
+      "seconds": 4.080497
+    },
+    {
+      "checkpoint": "step-000000000640.state",
+      "step": 640,
+      "parameters": 6163
+    },
+    {
+      "validation": "sprite_forage-480x640",
+      "step": 640,
+      "frames": 48,
+      "mse": 0.0045761676156,
+      "objective": 0.0045761676156
+    },
+    {
+      "training_step": 768,
+      "stream": "sprite_forage-480x640",
+      "mse": 0.00372690567747,
+      "objective": 0.00372690567747,
+      "seconds": 4.868303
+    },
+    {
+      "checkpoint": "step-000000000768.state",
+      "step": 768,
+      "parameters": 6163
+    },
+    {
+      "validation": "sprite_forage-480x640",
+      "step": 768,
+      "frames": 48,
+      "mse": 0.00420262002929,
+      "objective": 0.00420262002929
+    },
+    {
+      "training_step": 896,
+      "stream": "sprite_forage-480x640",
+      "mse": 0.00401521287858,
+      "objective": 0.00401521287858,
+      "seconds": 5.650696
+    },
+    {
+      "checkpoint": "step-000000000896.state",
+      "step": 896,
+      "parameters": 6163
+    },
+    {
+      "validation": "sprite_forage-480x640",
+      "step": 896,
+      "frames": 48,
+      "mse": 0.00388718244115,
+      "objective": 0.00388718244115
+    },
+    {
+      "training_step": 1024,
+      "stream": "sprite_forage-480x640",
+      "mse": 0.00375995598733,
+      "objective": 0.00375995598733,
+      "seconds": 6.43051
+    },
+    {
+      "checkpoint": "step-000000001024.state",
+      "step": 1024,
+      "parameters": 6163
+    },
+    {
+      "validation": "sprite_forage-480x640",
+      "step": 1024,
+      "frames": 48,
+      "mse": 0.00363240831454,
+      "objective": 0.00363240831454
+    },
+    {
+      "status": "complete",
+      "final_step": 1024,
+      "target_steps": 1024,
+      "allocated_activation_bytes": 672998400
+    }
+  ],
+  "checkpoints": [
+    {
+      "path": "step-000000000000.state",
+      "parameters": 6163,
+      "step": 0,
+      "seed": 7,
+      "sha256": "a7d50691f381728a710004dbe77c5d3bfc4ee9a54ba6d348f309368112bc7904"
+    },
+    {
+      "path": "step-000000000128.state",
+      "parameters": 6163,
+      "step": 128,
+      "seed": 7,
+      "sha256": "809f857e3d7616ac79261925d7bd9700be19068d4636a1f88ca1a5abab2e2c62"
+    },
+    {
+      "path": "step-000000000256.state",
+      "parameters": 6163,
+      "step": 256,
+      "seed": 7,
+      "sha256": "0bdc1166d74df8c98fb04f2b2f0b1828122b7e9a2e82de83b64c34ca65c2c866"
+    },
+    {
+      "path": "step-000000000384.state",
+      "parameters": 6163,
+      "step": 384,
+      "seed": 7,
+      "sha256": "04d8bc0f157ed00ecf38335a8db581cf92d59ba3b7b6d3e16ea04068f1039047"
+    },
+    {
+      "path": "step-000000000512.state",
+      "parameters": 6163,
+      "step": 512,
+      "seed": 7,
+      "sha256": "1428155d7e233f77772568bb810c286ef69a521239e128c985c33bbfa1287532"
+    },
+    {
+      "path": "step-000000000640.state",
+      "parameters": 6163,
+      "step": 640,
+      "seed": 7,
+      "sha256": "17475ff4a10f9f7071762c5ef209e88fe45b19abcc08385862580d15b745be19"
+    },
+    {
+      "path": "step-000000000768.state",
+      "parameters": 6163,
+      "step": 768,
+      "seed": 7,
+      "sha256": "82f9e78c1b85355e5ffc058ffb4b970d18c3c69381ae98ffde15f087ac4902e8"
+    },
+    {
+      "path": "step-000000000896.state",
+      "parameters": 6163,
+      "step": 896,
+      "seed": 7,
+      "sha256": "0002e3667aa30da6a71a86c35b4fa564ae26f7b1bf442710316ff40c29dd7602"
+    },
+    {
+      "path": "step-000000001024.state",
+      "parameters": 6163,
+      "step": 1024,
+      "seed": 7,
+      "sha256": "24c13dedb22deba5c7388becdc54b947f7c580d3019d4e3efadfc0cf114bcb23"
+    }
+  ],
+  "training_images": 2048,
+  "exact_frame_overlap": 0,
+  "learning_or_frontier_claim": false,
+  "process_images_per_second": 306.7864673194307
+}

@@ -1,0 +1,29 @@
+{
+  "schema": "native-spatial-ae-packet-v1",
+  "variants": [
+    [
+      8,
+      8
+    ],
+    [
+      16,
+      8
+    ],
+    [
+      16,
+      16
+    ],
+    [
+      32,
+      16
+    ]
+  ],
+  "recipe_sha256": "4739b6086e58c17a1942a4a7808688d8eb13fc958917d1384d4d217056403041",
+  "manifests": {
+    "s8-c8": "1a48e0a4d9e6ee4fa592ae711b16915b464d33db3e6684cb2e2d28b3c900fbbb",
+    "s16-c8": "50b8ec5196398de7262599c4ae911097d0b2d478415d2173551d581c7f966758",
+    "s16-c16": "e049f78bd85159a703b42100956e39bff9f8b9fe90659fbb4a515f9519df5623",
+    "s32-c16": "83ce7ac54be933a95a423e9dfb52d76b64c454a4727124e6d8dd1bc0759c0f48"
+  },
+  "gpu_execution": false
+}

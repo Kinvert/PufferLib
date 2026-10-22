@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/builds/sprite_forage/autoencoder",
+    "train",
+    "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/spatial-run/s16-c16/objects/training/recipe.ini",
+    "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/spatial-run/s16-c16/objects/training/index.tsv",
+    "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/spatial-run/s16-c16/objects/training",
+    "None",
+    "v1"
+  ],
+  "cwd": "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/source",
+  "started_ns": 4177860608245446,
+  "pid": 2108481,
+  "finished_ns": 4177867834971962,
+  "returncode": 0,
+  "timeout": false,
+  "log_sha256": "0b8c3a0e284124e70e1deda5533e851d010af986e8122cebcaf745e5dc262364",
+  "interference": [],
+  "gpu_samples": [
+    {
+      "monotonic_ns": 4177865623777391,
+      "foreign": []
+    }
+  ],
+  "expected_failure": false,
+  "seconds": 7.226726516
+}

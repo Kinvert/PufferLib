@@ -1,0 +1,6 @@
+{
+  "head": "623b7cb90d5a2559cf93f7497ddf8ba2903ce0db",
+  "status": "?? raylib-5.5_linux_amd64\n",
+  "nvcc_sha256": "6ce80365abc2f14ff5f9e069fe687a93d4eaacc555dbf1d1696ee899d39df52a",
+  "compiler": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2025 NVIDIA Corporation\nBuilt on Tue_Dec_16_07:23:41_PM_PST_2025\nCuda compilation tools, release 13.1, V13.1.115\nBuild cuda_13.1.r13.1/compiler.37061995_0\n"
+}

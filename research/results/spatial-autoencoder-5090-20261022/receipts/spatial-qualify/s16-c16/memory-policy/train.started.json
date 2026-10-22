@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/usr/local/cuda-13.1/bin/compute-sanitizer",
+    "--tool",
+    "memcheck",
+    "--error-exitcode",
+    "99",
+    "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/builds/sprite_forage/autoencoder",
+    "policy",
+    "train",
+    "--headless"
+  ],
+  "cwd": "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/spatial-qualify/s16-c16/memory-policy",
+  "started_ns": 4175073589683110
+}

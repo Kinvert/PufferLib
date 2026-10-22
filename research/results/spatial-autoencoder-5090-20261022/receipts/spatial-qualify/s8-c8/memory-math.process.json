@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "/usr/local/cuda-13.1/bin/compute-sanitizer",
+    "--tool",
+    "memcheck",
+    "--error-exitcode",
+    "99",
+    "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/builds/sprite_forage/autoencoder",
+    "spatial-math",
+    "161",
+    "193",
+    "1",
+    "8",
+    "8",
+    "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/spatial-qualify/s8-c8/memory-math"
+  ],
+  "cwd": "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/source",
+  "started_ns": 4174902279346459,
+  "pid": 2075693,
+  "finished_ns": 4174903294915619,
+  "returncode": 0,
+  "timeout": false,
+  "log_sha256": "e2728f796c19ddbba4f9e09deb38b2b79f11161e28ee5ce2a958290d7372bdc0",
+  "interference": [],
+  "gpu_samples": [],
+  "expected_failure": false,
+  "seconds": 1.01556916
+}

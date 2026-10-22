@@ -1,0 +1,131 @@
+{
+  "schema": "spatial-compressor-v1",
+  "dtype": "float32",
+  "layout": "NHWC",
+  "input_range": "0,1",
+  "activation": "relu-zero-derivative-0",
+  "padding": "same-trailing-extra",
+  "height": 480,
+  "width": 640,
+  "channels": 3,
+  "latent_hwc": [
+    30,
+    40,
+    8
+  ],
+  "latent_stride": 16,
+  "elements": 3616,
+  "layers": [
+    [
+      480,
+      640,
+      3,
+      8,
+      4,
+      4,
+      120,
+      160,
+      0,
+      0
+    ],
+    [
+      120,
+      160,
+      8,
+      16,
+      3,
+      2,
+      60,
+      80,
+      0,
+      0
+    ],
+    [
+      60,
+      80,
+      16,
+      8,
+      4,
+      2,
+      30,
+      40,
+      1,
+      1
+    ]
+  ],
+  "tensors": [
+    {
+      "name": "weight_0",
+      "offset": 0,
+      "elements": 384,
+      "shape": [
+        8,
+        48
+      ]
+    },
+    {
+      "name": "bias_0",
+      "offset": 384,
+      "elements": 8,
+      "shape": [
+        8
+      ]
+    },
+    {
+      "name": "weight_1",
+      "offset": 392,
+      "elements": 1152,
+      "shape": [
+        16,
+        72
+      ]
+    },
+    {
+      "name": "bias_1",
+      "offset": 1544,
+      "elements": 16,
+      "shape": [
+        16
+      ]
+    },
+    {
+      "name": "weight_2",
+      "offset": 1560,
+      "elements": 2048,
+      "shape": [
+        8,
+        256
+      ]
+    },
+    {
+      "name": "bias_2",
+      "offset": 3608,
+      "elements": 8,
+      "shape": [
+        8
+      ]
+    }
+  ],
+  "sha256": "8449c84f95abfedffc2353dc397a5a50936d0e68e0cae16c158e653432c6609c",
+  "source_checkpoint_sha256": "87147bf992e6d3f121528b70762530a6af73edf70bc3c068f8ac9f8f3c162578",
+  "source_manifest_sha256": "e5ea05eb4f42920d48649a0a71889b6816d756880ec07c2547ad0b524246c3ed",
+  "pretraining_contract": {
+    "recipe": {
+      "seed": "7",
+      "batch": "1",
+      "checkpoint_interval": "2",
+      "learning_rate": "0.0003",
+      "max_grad_norm": "1.0",
+      "edge_weight": "0",
+      "loss_mode": "1",
+      "object_weight": "1.0",
+      "background_weight": "0.1",
+      "latent_stride": "16",
+      "latent_channels": "8"
+    },
+    "dataset_manifest_sha256": "20c3911960a7b20c5b4fba7fa7c8110d0ddba8de282eb257526a73b84c972933",
+    "sources_sha256": "e5ea05eb4f42920d48649a0a71889b6816d756880ec07c2547ad0b524246c3ed",
+    "binary_sha256": "bf11738221888beef3ad42daf2494b113af1aff07924fe4d2aa7b872be3508a1"
+  },
+  "step": 4
+}

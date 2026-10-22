@@ -1,0 +1,129 @@
+{
+  "status": "complete",
+  "hardware": "NVIDIA GeForce RTX 5090, GPU-87022f1b-da24-3ddc-cc42-aed4aca77a6a, 580.105.08, 32607 MiB",
+  "contract": {
+    "recipe": {
+      "seed": "7",
+      "batch": "1",
+      "checkpoint_interval": "2",
+      "learning_rate": "0.0003",
+      "max_grad_norm": "1.0",
+      "edge_weight": "0",
+      "loss_mode": "1",
+      "object_weight": "1.0",
+      "background_weight": "0.1",
+      "latent_stride": "16",
+      "latent_channels": "16"
+    },
+    "dataset_manifest_sha256": "20c3911960a7b20c5b4fba7fa7c8110d0ddba8de282eb257526a73b84c972933",
+    "sources_sha256": "e5ea05eb4f42920d48649a0a71889b6816d756880ec07c2547ad0b524246c3ed",
+    "binary_sha256": "bf11738221888beef3ad42daf2494b113af1aff07924fe4d2aa7b872be3508a1"
+  },
+  "process": {
+    "argv": [
+      "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/builds/sprite_forage/autoencoder",
+      "train",
+      "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/spatial-qualify/s16-c16/full/recipe.ini",
+      "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/spatial-qualify/s16-c16/full/index.tsv",
+      "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/spatial-qualify/s16-c16/full",
+      "None",
+      "v1"
+    ],
+    "cwd": "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/source",
+    "started_ns": 4175059436842519,
+    "pid": 2077376,
+    "finished_ns": 4175059751212542,
+    "returncode": 0,
+    "timeout": false,
+    "log_sha256": "8fc41e32398d5a47ca8b39ae321c7e2744f61ca8e546bb3ea35ef92efb13b70a",
+    "interference": [],
+    "gpu_samples": [],
+    "expected_failure": false,
+    "seconds": 0.314370023
+  },
+  "rows": [
+    {
+      "checkpoint": "step-000000000000.state",
+      "step": 0,
+      "parameters": 9371
+    },
+    {
+      "validation": "sprite_forage-480x640",
+      "step": 0,
+      "frames": 2,
+      "mse": 0.0504835937172,
+      "objective": 0.219910830259
+    },
+    {
+      "training_step": 2,
+      "stream": "sprite_forage-480x640",
+      "mse": 0.0503475628793,
+      "objective": 0.219620019197,
+      "seconds": 0.15061
+    },
+    {
+      "checkpoint": "step-000000000002.state",
+      "step": 2,
+      "parameters": 9371
+    },
+    {
+      "validation": "sprite_forage-480x640",
+      "step": 2,
+      "frames": 2,
+      "mse": 0.0502053368837,
+      "objective": 0.219311982393
+    },
+    {
+      "training_step": 4,
+      "stream": "sprite_forage-480x640",
+      "mse": 0.0500516816974,
+      "objective": 0.218972966075,
+      "seconds": 0.159054
+    },
+    {
+      "checkpoint": "step-000000000004.state",
+      "step": 4,
+      "parameters": 9371
+    },
+    {
+      "validation": "sprite_forage-480x640",
+      "step": 4,
+      "frames": 2,
+      "mse": 0.0498837605119,
+      "objective": 0.218601897359
+    },
+    {
+      "status": "complete",
+      "final_step": 4,
+      "target_steps": 4,
+      "allocated_activation_bytes": 348902400
+    }
+  ],
+  "checkpoints": [
+    {
+      "path": "step-000000000000.state",
+      "parameters": 9371,
+      "step": 0,
+      "seed": 7,
+      "sha256": "6e704579788a1bdec217267d530c3b8fec724d2107c3ab801562d1966df455f7"
+    },
+    {
+      "path": "step-000000000002.state",
+      "parameters": 9371,
+      "step": 2,
+      "seed": 7,
+      "sha256": "65cf92831202187762b04765d45eede1c67f2dc1b75fa48713ace0589cc50c11"
+    },
+    {
+      "path": "step-000000000004.state",
+      "parameters": 9371,
+      "step": 4,
+      "seed": 7,
+      "sha256": "65967489b1b533e4658284cc7569a813349e3a518f7685cbbbf2c7c3028c074d"
+    }
+  ],
+  "training_images": 4,
+  "exact_frame_overlap": 0,
+  "learning_or_frontier_claim": false,
+  "process_images_per_second": 12.723859488345681
+}

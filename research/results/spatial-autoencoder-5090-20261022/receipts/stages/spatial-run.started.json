@@ -1,0 +1,8 @@
+{
+  "hardware": "NVIDIA GeForce RTX 5090, GPU-87022f1b-da24-3ddc-cc42-aed4aca77a6a, 580.105.08, 32607 MiB",
+  "started_ns": 4177788823724633,
+  "supervisor_sha256": "e8819339d2cc6e57c45b0563275b035c17a69ef0f4bbc55060f48125e9c40f02",
+  "exclusive_gpu": false,
+  "concurrency_context": "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-desktop-623b7cb9-01-run/execution.json",
+  "launch_wrapper_sha256": "68b563b5a58010511c9dea0953123fceec368600c38e4d06739f8d177ab9317b"
+}

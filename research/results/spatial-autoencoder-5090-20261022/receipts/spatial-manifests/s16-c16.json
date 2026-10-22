@@ -1,0 +1,109 @@
+{
+  "schema": "spatial-compressor-v1",
+  "dtype": "float32",
+  "layout": "NHWC",
+  "input_range": "0,1",
+  "activation": "relu-zero-derivative-0",
+  "padding": "same-trailing-extra",
+  "height": 480,
+  "width": 640,
+  "channels": 3,
+  "latent_hwc": [
+    30,
+    40,
+    16
+  ],
+  "latent_stride": 16,
+  "elements": 5672,
+  "layers": [
+    [
+      480,
+      640,
+      3,
+      8,
+      4,
+      4,
+      120,
+      160,
+      0,
+      0
+    ],
+    [
+      120,
+      160,
+      8,
+      16,
+      3,
+      2,
+      60,
+      80,
+      0,
+      0
+    ],
+    [
+      60,
+      80,
+      16,
+      16,
+      4,
+      2,
+      30,
+      40,
+      1,
+      1
+    ]
+  ],
+  "tensors": [
+    {
+      "name": "weight_0",
+      "offset": 0,
+      "elements": 384,
+      "shape": [
+        8,
+        48
+      ]
+    },
+    {
+      "name": "bias_0",
+      "offset": 384,
+      "elements": 8,
+      "shape": [
+        8
+      ]
+    },
+    {
+      "name": "weight_1",
+      "offset": 392,
+      "elements": 1152,
+      "shape": [
+        16,
+        72
+      ]
+    },
+    {
+      "name": "bias_1",
+      "offset": 1544,
+      "elements": 16,
+      "shape": [
+        16
+      ]
+    },
+    {
+      "name": "weight_2",
+      "offset": 1560,
+      "elements": 4096,
+      "shape": [
+        16,
+        256
+      ]
+    },
+    {
+      "name": "bias_2",
+      "offset": 5656,
+      "elements": 16,
+      "shape": [
+        16
+      ]
+    }
+  ]
+}

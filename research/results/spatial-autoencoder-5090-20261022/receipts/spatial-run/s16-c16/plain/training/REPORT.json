@@ -1,0 +1,290 @@
+{
+  "status": "complete",
+  "hardware": "NVIDIA GeForce RTX 5090, GPU-87022f1b-da24-3ddc-cc42-aed4aca77a6a, 580.105.08, 32607 MiB",
+  "contract": {
+    "recipe": {
+      "seed": "7",
+      "batch": "2",
+      "checkpoint_interval": "128",
+      "learning_rate": "0.0003",
+      "max_grad_norm": "1.0",
+      "edge_weight": "0",
+      "loss_mode": "0",
+      "object_weight": "1.0",
+      "background_weight": "0.1",
+      "latent_stride": "16",
+      "latent_channels": "16"
+    },
+    "dataset_manifest_sha256": "42d477fa3582f6a9e1c46638302571f8888aaf7cfdd3605f1d938cbe2ac6aa5b",
+    "sources_sha256": "e5ea05eb4f42920d48649a0a71889b6816d756880ec07c2547ad0b524246c3ed",
+    "binary_sha256": "bf11738221888beef3ad42daf2494b113af1aff07924fe4d2aa7b872be3508a1"
+  },
+  "process": {
+    "argv": [
+      "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/builds/sprite_forage/autoencoder",
+      "train",
+      "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/spatial-run/s16-c16/plain/training/recipe.ini",
+      "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/spatial-run/s16-c16/plain/training/index.tsv",
+      "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/spatial-run/s16-c16/plain/training",
+      "None",
+      "v1"
+    ],
+    "cwd": "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/source",
+    "started_ns": 4177847890901638,
+    "pid": 2108262,
+    "finished_ns": 4177855167967512,
+    "returncode": 0,
+    "timeout": false,
+    "log_sha256": "dba8f64fa34e24d7febb0128b941b2a3ffb754af8b7a65c2604624b2640cca5d",
+    "interference": [],
+    "gpu_samples": [
+      {
+        "monotonic_ns": 4177852906665719,
+        "foreign": []
+      }
+    ],
+    "expected_failure": false,
+    "seconds": 7.277065874
+  },
+  "rows": [
+    {
+      "checkpoint": "step-000000000000.state",
+      "step": 0,
+      "parameters": 9371
+    },
+    {
+      "validation": "sprite_forage-480x640",
+      "step": 0,
+      "frames": 48,
+      "mse": 0.05048233519,
+      "objective": 0.05048233519
+    },
+    {
+      "training_step": 128,
+      "stream": "sprite_forage-480x640",
+      "mse": 0.00953966751695,
+      "objective": 0.00953966751695,
+      "seconds": 1.066226
+    },
+    {
+      "checkpoint": "step-000000000128.state",
+      "step": 128,
+      "parameters": 9371
+    },
+    {
+      "validation": "sprite_forage-480x640",
+      "step": 128,
+      "frames": 48,
+      "mse": 0.00953219582637,
+      "objective": 0.00953219582637
+    },
+    {
+      "training_step": 256,
+      "stream": "sprite_forage-480x640",
+      "mse": 0.00740467850119,
+      "objective": 0.00740467850119,
+      "seconds": 1.925067
+    },
+    {
+      "checkpoint": "step-000000000256.state",
+      "step": 256,
+      "parameters": 9371
+    },
+    {
+      "validation": "sprite_forage-480x640",
+      "step": 256,
+      "frames": 48,
+      "mse": 0.00761160611485,
+      "objective": 0.00761160611485
+    },
+    {
+      "training_step": 384,
+      "stream": "sprite_forage-480x640",
+      "mse": 0.00576670700684,
+      "objective": 0.00576670700684,
+      "seconds": 2.778823
+    },
+    {
+      "checkpoint": "step-000000000384.state",
+      "step": 384,
+      "parameters": 9371
+    },
+    {
+      "validation": "sprite_forage-480x640",
+      "step": 384,
+      "frames": 48,
+      "mse": 0.00609987855811,
+      "objective": 0.00609987855811
+    },
+    {
+      "training_step": 512,
+      "stream": "sprite_forage-480x640",
+      "mse": 0.00451049488038,
+      "objective": 0.00451049488038,
+      "seconds": 3.635041
+    },
+    {
+      "checkpoint": "step-000000000512.state",
+      "step": 512,
+      "parameters": 9371
+    },
+    {
+      "validation": "sprite_forage-480x640",
+      "step": 512,
+      "frames": 48,
+      "mse": 0.00515228480799,
+      "objective": 0.00515228480799
+    },
+    {
+      "training_step": 640,
+      "stream": "sprite_forage-480x640",
+      "mse": 0.00484336912632,
+      "objective": 0.00484336912632,
+      "seconds": 4.497496
+    },
+    {
+      "checkpoint": "step-000000000640.state",
+      "step": 640,
+      "parameters": 9371
+    },
+    {
+      "validation": "sprite_forage-480x640",
+      "step": 640,
+      "frames": 48,
+      "mse": 0.00459240860073,
+      "objective": 0.00459240860073
+    },
+    {
+      "training_step": 768,
+      "stream": "sprite_forage-480x640",
+      "mse": 0.00373856630176,
+      "objective": 0.00373856630176,
+      "seconds": 5.357258
+    },
+    {
+      "checkpoint": "step-000000000768.state",
+      "step": 768,
+      "parameters": 9371
+    },
+    {
+      "validation": "sprite_forage-480x640",
+      "step": 768,
+      "frames": 48,
+      "mse": 0.00413120562249,
+      "objective": 0.00413120562249
+    },
+    {
+      "training_step": 896,
+      "stream": "sprite_forage-480x640",
+      "mse": 0.00387489190325,
+      "objective": 0.00387489190325,
+      "seconds": 6.220405
+    },
+    {
+      "checkpoint": "step-000000000896.state",
+      "step": 896,
+      "parameters": 9371
+    },
+    {
+      "validation": "sprite_forage-480x640",
+      "step": 896,
+      "frames": 48,
+      "mse": 0.00379669580919,
+      "objective": 0.00379669580919
+    },
+    {
+      "training_step": 1024,
+      "stream": "sprite_forage-480x640",
+      "mse": 0.00369187770411,
+      "objective": 0.00369187770411,
+      "seconds": 7.06933
+    },
+    {
+      "checkpoint": "step-000000001024.state",
+      "step": 1024,
+      "parameters": 9371
+    },
+    {
+      "validation": "sprite_forage-480x640",
+      "step": 1024,
+      "frames": 48,
+      "mse": 0.00354691336785,
+      "objective": 0.00354691336785
+    },
+    {
+      "status": "complete",
+      "final_step": 1024,
+      "target_steps": 1024,
+      "allocated_activation_bytes": 697804800
+    }
+  ],
+  "checkpoints": [
+    {
+      "path": "step-000000000000.state",
+      "parameters": 9371,
+      "step": 0,
+      "seed": 7,
+      "sha256": "6e704579788a1bdec217267d530c3b8fec724d2107c3ab801562d1966df455f7"
+    },
+    {
+      "path": "step-000000000128.state",
+      "parameters": 9371,
+      "step": 128,
+      "seed": 7,
+      "sha256": "8693156c23d179d8c353b0a66ca2fd619e1c27a7aa30c2521d3550ee30671cb8"
+    },
+    {
+      "path": "step-000000000256.state",
+      "parameters": 9371,
+      "step": 256,
+      "seed": 7,
+      "sha256": "748ea1b5f3361cefccd30671241dcdf0ad2814dc01aeffd6660a396acd021a2f"
+    },
+    {
+      "path": "step-000000000384.state",
+      "parameters": 9371,
+      "step": 384,
+      "seed": 7,
+      "sha256": "973be1b5800683b225b5787d1c133c32299841196c32f062fd93f7aabdd52754"
+    },
+    {
+      "path": "step-000000000512.state",
+      "parameters": 9371,
+      "step": 512,
+      "seed": 7,
+      "sha256": "647ea2d00f86e5582916fd6352fa1746aadad364be505b29dbd14ff0afab6953"
+    },
+    {
+      "path": "step-000000000640.state",
+      "parameters": 9371,
+      "step": 640,
+      "seed": 7,
+      "sha256": "1719b8d9707a2717dec72a904413f68a20b6d81611aec6c7ecf58dc63598525b"
+    },
+    {
+      "path": "step-000000000768.state",
+      "parameters": 9371,
+      "step": 768,
+      "seed": 7,
+      "sha256": "5f245a3ebb9625cb007cd15f06055cef2fd84ced191c632e45528427dd11fc1a"
+    },
+    {
+      "path": "step-000000000896.state",
+      "parameters": 9371,
+      "step": 896,
+      "seed": 7,
+      "sha256": "6c97123c468129a4d921a09a6a4441b2252cae603ccbe368f1be959f877697d6"
+    },
+    {
+      "path": "step-000000001024.state",
+      "parameters": 9371,
+      "step": 1024,
+      "seed": 7,
+      "sha256": "5dd77f72ce2f6957f8262efc4d2f66b2849b8865df0dcaf2ccfc52da7f25340f"
+    }
+  ],
+  "training_images": 2048,
+  "exact_frame_overlap": 0,
+  "learning_or_frontier_claim": false,
+  "process_images_per_second": 281.43210951507734
+}

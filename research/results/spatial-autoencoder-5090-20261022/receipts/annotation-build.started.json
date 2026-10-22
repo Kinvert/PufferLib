@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "clang",
+    "-std=c11",
+    "-D_POSIX_C_SOURCE=200809L",
+    "-D_DEFAULT_SOURCE",
+    "-O1",
+    "-g",
+    "-fsanitize=address,undefined",
+    "-fno-omit-frame-pointer",
+    "-I.",
+    "-Isrc",
+    "-Iresearch",
+    "-Iraylib-5.5_linux_amd64/include",
+    "research/test_forage_annotations.c",
+    "raylib-5.5_linux_amd64/lib/libraylib.a",
+    "-lGL",
+    "-lpthread",
+    "-ldl",
+    "-lrt",
+    "-lm",
+    "-o",
+    "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/annotation-check"
+  ],
+  "cwd": "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/source",
+  "started_ns": 4173786144736740
+}

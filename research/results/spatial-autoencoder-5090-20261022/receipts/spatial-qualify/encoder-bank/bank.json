@@ -1,0 +1,25 @@
+{
+  "schema": "spatial-compressor-bank-v1",
+  "variants": [
+    {
+      "stride": 8,
+      "channels": 8,
+      "sha256": "8e363c75fd58e9f38c36bd54a4c2f9a680c256634eca9b47dda179254f997338"
+    },
+    {
+      "stride": 16,
+      "channels": 8,
+      "sha256": "8449c84f95abfedffc2353dc397a5a50936d0e68e0cae16c158e653432c6609c"
+    },
+    {
+      "stride": 16,
+      "channels": 16,
+      "sha256": "94afa1d08fee65651f23aa8ac156225638cc82caa067f878ff635e9e56783549"
+    },
+    {
+      "stride": 32,
+      "channels": 16,
+      "sha256": "933419be9ed28b20285bd2202e6ea9791d425e1316bcc9b0958d8ad402bc0f66"
+    }
+  ]
+}

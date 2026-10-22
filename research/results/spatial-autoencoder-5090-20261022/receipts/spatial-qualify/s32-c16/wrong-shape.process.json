@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/builds/sprite_forage/autoencoder",
+    "spatial-policy-check",
+    "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/spatial-qualify/s32-c16/policy.ini",
+    "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/spatial-qualify/s32-c16/wrong-shape",
+    "1"
+  ],
+  "cwd": "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/source",
+  "started_ns": 4175134695421718,
+  "pid": 2078235,
+  "finished_ns": 4175135009654996,
+  "returncode": 1,
+  "timeout": false,
+  "log_sha256": "244a5584e890debbb72fc472f5053be82db04e0e4a84c80cb40db93b31b6b14a",
+  "interference": [],
+  "gpu_samples": [],
+  "expected_failure": true,
+  "seconds": 0.314233278
+}

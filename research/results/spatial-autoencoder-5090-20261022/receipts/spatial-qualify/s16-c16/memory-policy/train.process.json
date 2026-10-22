@@ -1,0 +1,69 @@
+{
+  "argv": [
+    "/usr/local/cuda-13.1/bin/compute-sanitizer",
+    "--tool",
+    "memcheck",
+    "--error-exitcode",
+    "99",
+    "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/builds/sprite_forage/autoencoder",
+    "policy",
+    "train",
+    "--headless"
+  ],
+  "cwd": "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/spatial-qualify/s16-c16/memory-policy",
+  "started_ns": 4175073589683110,
+  "pid": 2077705,
+  "finished_ns": 4175128938386772,
+  "returncode": 0,
+  "timeout": false,
+  "log_sha256": "7f41e2e911629b2c889ad3c86db4d09c897c558dea093202626f966a524322ad",
+  "interference": [],
+  "gpu_samples": [
+    {
+      "monotonic_ns": 4175078604390251,
+      "foreign": []
+    },
+    {
+      "monotonic_ns": 4175083619060816,
+      "foreign": []
+    },
+    {
+      "monotonic_ns": 4175088635617205,
+      "foreign": []
+    },
+    {
+      "monotonic_ns": 4175093650804029,
+      "foreign": []
+    },
+    {
+      "monotonic_ns": 4175098666487166,
+      "foreign": []
+    },
+    {
+      "monotonic_ns": 4175103682780527,
+      "foreign": []
+    },
+    {
+      "monotonic_ns": 4175108697882587,
+      "foreign": []
+    },
+    {
+      "monotonic_ns": 4175113712946313,
+      "foreign": []
+    },
+    {
+      "monotonic_ns": 4175118727961643,
+      "foreign": []
+    },
+    {
+      "monotonic_ns": 4175123744857138,
+      "foreign": []
+    },
+    {
+      "monotonic_ns": 4175128770521681,
+      "foreign": []
+    }
+  ],
+  "expected_failure": false,
+  "seconds": 55.348703662
+}

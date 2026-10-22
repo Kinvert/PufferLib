@@ -1,0 +1,290 @@
+{
+  "status": "complete",
+  "hardware": "NVIDIA GeForce RTX 5090, GPU-87022f1b-da24-3ddc-cc42-aed4aca77a6a, 580.105.08, 32607 MiB",
+  "contract": {
+    "recipe": {
+      "seed": "7",
+      "batch": "2",
+      "checkpoint_interval": "128",
+      "learning_rate": "0.0003",
+      "max_grad_norm": "1.0",
+      "edge_weight": "0",
+      "loss_mode": "1",
+      "object_weight": "1.0",
+      "background_weight": "0.1",
+      "latent_stride": "16",
+      "latent_channels": "8"
+    },
+    "dataset_manifest_sha256": "42d477fa3582f6a9e1c46638302571f8888aaf7cfdd3605f1d938cbe2ac6aa5b",
+    "sources_sha256": "e5ea05eb4f42920d48649a0a71889b6816d756880ec07c2547ad0b524246c3ed",
+    "binary_sha256": "bf11738221888beef3ad42daf2494b113af1aff07924fe4d2aa7b872be3508a1"
+  },
+  "process": {
+    "argv": [
+      "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/builds/sprite_forage/autoencoder",
+      "train",
+      "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/spatial-run/s16-c8/objects/training/recipe.ini",
+      "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/spatial-run/s16-c8/objects/training/index.tsv",
+      "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/spatial-run/s16-c8/objects/training",
+      "None",
+      "v1"
+    ],
+    "cwd": "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/source",
+    "started_ns": 4177835894029859,
+    "pid": 2108088,
+    "finished_ns": 4177842519297992,
+    "returncode": 0,
+    "timeout": false,
+    "log_sha256": "3bad9d10cb044257dbf3de3ec8002693a9b0c2b069f744ad4733bf828605211e",
+    "interference": [],
+    "gpu_samples": [
+      {
+        "monotonic_ns": 4177840909914790,
+        "foreign": []
+      }
+    ],
+    "expected_failure": false,
+    "seconds": 6.625268133
+  },
+  "rows": [
+    {
+      "checkpoint": "step-000000000000.state",
+      "step": 0,
+      "parameters": 6163
+    },
+    {
+      "validation": "sprite_forage-480x640",
+      "step": 0,
+      "frames": 48,
+      "mse": 0.0505079990253,
+      "objective": 0.220002161339
+    },
+    {
+      "training_step": 128,
+      "stream": "sprite_forage-480x640",
+      "mse": 0.0142999086529,
+      "objective": 0.0762858316302,
+      "seconds": 0.962888
+    },
+    {
+      "checkpoint": "step-000000000128.state",
+      "step": 128,
+      "parameters": 6163
+    },
+    {
+      "validation": "sprite_forage-480x640",
+      "step": 128,
+      "frames": 48,
+      "mse": 0.0142896374843,
+      "objective": 0.0779347072045
+    },
+    {
+      "training_step": 256,
+      "stream": "sprite_forage-480x640",
+      "mse": 0.0104070389643,
+      "objective": 0.0673971623182,
+      "seconds": 1.723664
+    },
+    {
+      "checkpoint": "step-000000000256.state",
+      "step": 256,
+      "parameters": 6163
+    },
+    {
+      "validation": "sprite_forage-480x640",
+      "step": 256,
+      "frames": 48,
+      "mse": 0.0105306629169,
+      "objective": 0.0686236818631
+    },
+    {
+      "training_step": 384,
+      "stream": "sprite_forage-480x640",
+      "mse": 0.00871499162167,
+      "objective": 0.058484390378,
+      "seconds": 2.504636
+    },
+    {
+      "checkpoint": "step-000000000384.state",
+      "step": 384,
+      "parameters": 6163
+    },
+    {
+      "validation": "sprite_forage-480x640",
+      "step": 384,
+      "frames": 48,
+      "mse": 0.00916097297644,
+      "objective": 0.0594563184616
+    },
+    {
+      "training_step": 512,
+      "stream": "sprite_forage-480x640",
+      "mse": 0.00879238545895,
+      "objective": 0.0466669648886,
+      "seconds": 3.274828
+    },
+    {
+      "checkpoint": "step-000000000512.state",
+      "step": 512,
+      "parameters": 6163
+    },
+    {
+      "validation": "sprite_forage-480x640",
+      "step": 512,
+      "frames": 48,
+      "mse": 0.00941496905095,
+      "objective": 0.0510477923478
+    },
+    {
+      "training_step": 640,
+      "stream": "sprite_forage-480x640",
+      "mse": 0.00902477093041,
+      "objective": 0.0473560541868,
+      "seconds": 4.047619
+    },
+    {
+      "checkpoint": "step-000000000640.state",
+      "step": 640,
+      "parameters": 6163
+    },
+    {
+      "validation": "sprite_forage-480x640",
+      "step": 640,
+      "frames": 48,
+      "mse": 0.00883242709097,
+      "objective": 0.0458891157371
+    },
+    {
+      "training_step": 768,
+      "stream": "sprite_forage-480x640",
+      "mse": 0.00788854807615,
+      "objective": 0.0406365022063,
+      "seconds": 4.824804
+    },
+    {
+      "checkpoint": "step-000000000768.state",
+      "step": 768,
+      "parameters": 6163
+    },
+    {
+      "validation": "sprite_forage-480x640",
+      "step": 768,
+      "frames": 48,
+      "mse": 0.00829629988099,
+      "objective": 0.0428000832908
+    },
+    {
+      "training_step": 896,
+      "stream": "sprite_forage-480x640",
+      "mse": 0.00810283236206,
+      "objective": 0.0407992899418,
+      "seconds": 5.611262
+    },
+    {
+      "checkpoint": "step-000000000896.state",
+      "step": 896,
+      "parameters": 6163
+    },
+    {
+      "validation": "sprite_forage-480x640",
+      "step": 896,
+      "frames": 48,
+      "mse": 0.00799071160145,
+      "objective": 0.0405674396704
+    },
+    {
+      "training_step": 1024,
+      "stream": "sprite_forage-480x640",
+      "mse": 0.00789148081094,
+      "objective": 0.039511308074,
+      "seconds": 6.387738
+    },
+    {
+      "checkpoint": "step-000000001024.state",
+      "step": 1024,
+      "parameters": 6163
+    },
+    {
+      "validation": "sprite_forage-480x640",
+      "step": 1024,
+      "frames": 48,
+      "mse": 0.0077041113982,
+      "objective": 0.0386498117199
+    },
+    {
+      "status": "complete",
+      "final_step": 1024,
+      "target_steps": 1024,
+      "allocated_activation_bytes": 672998400
+    }
+  ],
+  "checkpoints": [
+    {
+      "path": "step-000000000000.state",
+      "parameters": 6163,
+      "step": 0,
+      "seed": 7,
+      "sha256": "a7d50691f381728a710004dbe77c5d3bfc4ee9a54ba6d348f309368112bc7904"
+    },
+    {
+      "path": "step-000000000128.state",
+      "parameters": 6163,
+      "step": 128,
+      "seed": 7,
+      "sha256": "ca7066d662497c2522377e716d2543aaf582e7df5a0f974d58c1f3edf7e19345"
+    },
+    {
+      "path": "step-000000000256.state",
+      "parameters": 6163,
+      "step": 256,
+      "seed": 7,
+      "sha256": "2cebb371bdcbda3f233b7ac7238d33656a10ce5b57fa8e45f3729a786c8e3e03"
+    },
+    {
+      "path": "step-000000000384.state",
+      "parameters": 6163,
+      "step": 384,
+      "seed": 7,
+      "sha256": "8f478d1e06f5532ac6a22439c57d541e1951d1147ceee7d70263bc3dc2618f5f"
+    },
+    {
+      "path": "step-000000000512.state",
+      "parameters": 6163,
+      "step": 512,
+      "seed": 7,
+      "sha256": "84a44cc68df3838a008ec90a8c2d3e9defb4f17c00b690c8ca400d07ff2509e6"
+    },
+    {
+      "path": "step-000000000640.state",
+      "parameters": 6163,
+      "step": 640,
+      "seed": 7,
+      "sha256": "1a0e49396f5a8e577083f97afe8781fee07921396f47503419b6791dfa389e63"
+    },
+    {
+      "path": "step-000000000768.state",
+      "parameters": 6163,
+      "step": 768,
+      "seed": 7,
+      "sha256": "62d29706cae593677d588219533f37b61508b535b2dd057e0b52eed41657126b"
+    },
+    {
+      "path": "step-000000000896.state",
+      "parameters": 6163,
+      "step": 896,
+      "seed": 7,
+      "sha256": "4e9ab23681fc0cb07e8a831b48070e8746a6f32e4f961d910177d159bb0ded44"
+    },
+    {
+      "path": "step-000000001024.state",
+      "parameters": 6163,
+      "step": 1024,
+      "seed": 7,
+      "sha256": "051e28b2bb97791c7cc69dbb8e52ef63b1998cb8de35229cbb64d4e51e8d5a8b"
+    }
+  ],
+  "training_images": 2048,
+  "exact_frame_overlap": 0,
+  "learning_or_frontier_claim": false,
+  "process_images_per_second": 309.11956450472616
+}

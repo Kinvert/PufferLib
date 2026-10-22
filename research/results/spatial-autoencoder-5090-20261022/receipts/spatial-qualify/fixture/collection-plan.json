@@ -1,0 +1,11 @@
+{
+  "training_episodes": 1,
+  "validation_episodes": 1,
+  "maximum_frames": 2,
+  "max_steps": 4,
+  "cadence": 1,
+  "worst_bytes": 22120200,
+  "byte_cap": 134217728,
+  "action_policy": "fixed-random-splitmix64-v1",
+  "source_manifest_sha256": "e5ea05eb4f42920d48649a0a71889b6816d756880ec07c2547ad0b524246c3ed"
+}

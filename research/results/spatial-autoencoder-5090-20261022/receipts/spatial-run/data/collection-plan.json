@@ -1,0 +1,28 @@
+{
+  "recipe_sha256": "4739b6086e58c17a1942a4a7808688d8eb13fc958917d1384d4d217056403041",
+  "source_manifest_sha256": "e5ea05eb4f42920d48649a0a71889b6816d756880ec07c2547ad0b524246c3ed",
+  "worst_bytes": 1474680000,
+  "classes": [
+    "ground",
+    "apple",
+    "pear",
+    "grapes",
+    "leaf",
+    "flower",
+    "beetle",
+    "striped mushroom",
+    "spotted apple",
+    "wasp",
+    "spotted toadstool",
+    "tree",
+    "explorer"
+  ],
+  "input": "full-640x480-RGB",
+  "target": "visible cell identity; not a reward tier",
+  "fixed_split_bases": {
+    "train": 7,
+    "validation": 420,
+    "test": 1337
+  },
+  "seed_sweep": false
+}

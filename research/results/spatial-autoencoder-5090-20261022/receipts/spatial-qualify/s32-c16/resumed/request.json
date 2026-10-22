@@ -1,0 +1,24 @@
+{
+  "contract": {
+    "recipe": {
+      "seed": "7",
+      "batch": "1",
+      "checkpoint_interval": "2",
+      "learning_rate": "0.0003",
+      "max_grad_norm": "1.0",
+      "edge_weight": "0",
+      "loss_mode": "1",
+      "object_weight": "1.0",
+      "background_weight": "0.1",
+      "latent_stride": "32",
+      "latent_channels": "16"
+    },
+    "dataset_manifest_sha256": "20c3911960a7b20c5b4fba7fa7c8110d0ddba8de282eb257526a73b84c972933",
+    "sources_sha256": "e5ea05eb4f42920d48649a0a71889b6816d756880ec07c2547ad0b524246c3ed",
+    "binary_sha256": "bf11738221888beef3ad42daf2494b113af1aff07924fe4d2aa7b872be3508a1"
+  },
+  "recipe_sha256": "090e12c8cbe8b00cd1d6263cf691094456768677b7c7af24b2efeda7057cae9f",
+  "index_sha256": "cfdb982ac27ebcbf79c8d20532f213d81afbe9d22e99ba74d4d41078b39ce187",
+  "resume": "/home/keith/Git/ml/cnn-5090-learning/build/spatial-ae-delivery-623b7cb9/build/spatial-ae-5090-623b7cb9-01/spatial-qualify/s32-c16/half/step-000000000002.state",
+  "resume_sha256": "32a4b6d5efacec80406ab654f11e32e5ea46763c4802500dc818293a5e429920"
+}
