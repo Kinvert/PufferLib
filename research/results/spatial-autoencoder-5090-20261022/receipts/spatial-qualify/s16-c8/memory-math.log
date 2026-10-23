@@ -1,0 +1,4 @@
+========= COMPUTE-SANITIZER
+{"status":"passed","height":161,"width":193,"batch":1,"parameters":6163,"forward_error":1.5588563634372221e-08,"gradient_error":5.0343573093414307e-05,"input_gradient_error":2.4644539469050042e-10,"finite_difference_probes":0,"finite_difference_error":0,"eager_graph_repeats":3,"output_sha256":"56d23bb14c152237f74660ddf9d79e42d7372a10f409f6169abaf1028208b33a","gradient_sha256":"a2c0d0357b9f83b710e659ab928b35619949b3499e21300218c5a2adfc4367bf","input_gradient_sha256":"98dbdb100e2bcbbc83cafd8872c87d0c418f5ed3da3f6b18eb6a7d81860d7429"}
+
+========= ERROR SUMMARY: 0 errors

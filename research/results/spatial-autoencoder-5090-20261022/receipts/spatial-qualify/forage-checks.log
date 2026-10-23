@@ -1,0 +1,1 @@
+{"status":"passed","head_gradient_error":1.3892145184213334e-08,"finite_difference_error":2.6239442456103823e-05,"finite_difference_probes":8,"region_controls":20,"object_weight_sum":1.1,"inactive_tail_checked":true,"train_only_normalization":true}

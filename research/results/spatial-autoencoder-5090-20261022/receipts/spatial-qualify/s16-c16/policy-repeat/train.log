@@ -1,0 +1,44 @@
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0               🐡 GPU:  12%   VRAM:   6.7/31G    RAM:  0.6G     │
+│                                                                              │
+│ Env       sprite_forage    Evaluate       78ms  83%    Losses       0.172    │
+│ Params            87.5K      Model        59ms  62%    policy       0.067    │
+│ Steps             256.0      Env           0ms   0%    value        0.057    │
+│ SPS                2.7K      Copy         18ms  19%    entropy      1.600    │
+│ Epoch                 1    Train          16ms  16%    old_kl       0.000    │
+│ Uptime             94ms      Model        14ms  15%    kl           0.001    │
+│ To go          2s 899ms      Misc          1ms   1%    clipfrac     0.000    │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+PUFFER_CHECKPOINT steps=4096 bytes=349856 monotonic_ns=4175065313124700
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0              🐡  GPU:  12%   VRAM:   6.7/31G    RAM:  0.6G     │
+│                                                                              │
+│ Env       sprite_forage    Evaluate      373ms  62%    Losses       0.033    │
+│ Params            87.5K      Model        87ms  14%    policy      -0.003    │
+│ Steps              4.1K      Env           4ms   0%    value        0.023    │
+│ SPS                6.4K      Copy        277ms  46%    entropy      1.545    │
+│ Epoch                16    Train         225ms  37%    old_kl       0.001    │
+│ Uptime            696ms      Model       207ms  34%    kl           0.002    │
+│ To go             643ms      Misc         18ms   3%    clipfrac     0.022    │
+│                                                                              │
+│ perf                          0.047   score                         0.125    │
+│ episode_return                0.125   episode_length               85.750    │
+│ deaths                        0.750   successes                     0.250    │
+╰──────────────────────────────────────────────────────────────────────────────╯
+PUFFER_CHECKPOINT steps=8192 bytes=349856 monotonic_ns=4175065943848565
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0             🐡   GPU:  98%   VRAM:   6.7/31G    RAM:  0.6G     │
+│                                                                              │
+│ Env       sprite_forage    Evaluate      389ms  61%    Losses       0.013    │
+│ Params            87.5K      Model        92ms  14%    policy      -0.002    │
+│ Steps              8.2K      Env           3ms   0%    value        0.012    │
+│ SPS                6.5K      Copy        287ms  45%    entropy      1.518    │
+│ Epoch                32    Train         240ms  38%    old_kl      -0.000    │
+│ Uptime         1s 327ms      Model       221ms  35%    kl           0.000    │
+│ To go               0ms      Misc         20ms   3%    clipfrac     0.000    │
+│                                                                              │
+│ perf                          0.000   score                        -1.416    │
+│ episode_return               -1.416   episode_length              166.600    │
+│ deaths                        0.800   successes                     0.200    │
+╰──────────────────────────────────────────────────────────────────────────────╯

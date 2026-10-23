@@ -1,0 +1,15 @@
+========= COMPUTE-SANITIZER
+PUFFER_CHECKPOINT steps=256 bytes=347552 monotonic_ns=4175059141797238
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0               🐡 GPU:  99%   VRAM:   7.0/31G    RAM:  0.7G     │
+│                                                                              │
+│ Env       sprite_forage    Evaluate      608ms  35%    Losses       0.166    │
+│ Params            86.9K      Model       579ms  34%    policy       0.067    │
+│ Steps             256.0      Env           0ms   0%    value        0.054    │
+│ SPS               143.8      Copy         19ms   1%    entropy      1.600    │
+│ Epoch                 1    Train        1s 095  64%    old_kl       0.000    │
+│ Uptime         1s 780ms      Model      1s 014  59%    kl           0.001    │
+│ To go               0ms      Misc         81ms   4%    clipfrac     0.000    │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+========= ERROR SUMMARY: 0 errors

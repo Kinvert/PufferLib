@@ -1,0 +1,13 @@
+PUFFER_CHECKPOINT steps=256 bytes=372544 monotonic_ns=4175069293230556
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0               🐡 GPU:  99%   VRAM:   6.6/31G    RAM:  0.6G     │
+│                                                                              │
+│ Env       sprite_forage    Evaluate       76ms  66%    Losses       0.225    │
+│ Params            93.1K      Model        56ms  48%    policy       0.069    │
+│ Steps             256.0      Env           0ms   0%    value        0.083    │
+│ SPS                2.2K      Copy         20ms  17%    entropy      1.599    │
+│ Epoch                 1    Train          38ms  33%    old_kl       0.000    │
+│ Uptime            115ms      Model        37ms  32%    kl           0.001    │
+│ To go               0ms      Misc          1ms   1%    clipfrac     0.000    │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯

@@ -1,0 +1,8 @@
+========= COMPUTE-SANITIZER
+{"checkpoint":"step-000000000000.state","step":0,"parameters":6163}
+{"validation":"sprite_forage-480x640","step":0,"frames":2,"mse":0.0505081750453,"objective":0.219964660704}
+{"training_step":2,"stream":"sprite_forage-480x640","mse":0.0503766685724,"objective":0.219652086496,"seconds":0.810336}
+{"checkpoint":"step-000000000002.state","step":2,"parameters":6163}
+{"validation":"sprite_forage-480x640","step":2,"frames":2,"mse":0.0502441693097,"objective":0.219333052635}
+{"status":"complete","final_step":2,"target_steps":2,"allocated_activation_bytes":336499200}
+========= ERROR SUMMARY: 0 errors

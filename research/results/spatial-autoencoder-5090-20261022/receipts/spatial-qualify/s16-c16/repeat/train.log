@@ -1,0 +1,9 @@
+{"checkpoint":"step-000000000000.state","step":0,"parameters":9371}
+{"validation":"sprite_forage-480x640","step":0,"frames":2,"mse":0.0504835937172,"objective":0.219910830259}
+{"training_step":2,"stream":"sprite_forage-480x640","mse":0.0503475628793,"objective":0.219620019197,"seconds":0.154517}
+{"checkpoint":"step-000000000002.state","step":2,"parameters":9371}
+{"validation":"sprite_forage-480x640","step":2,"frames":2,"mse":0.0502053368837,"objective":0.219311982393}
+{"training_step":4,"stream":"sprite_forage-480x640","mse":0.0500516816974,"objective":0.218972966075,"seconds":0.163466}
+{"checkpoint":"step-000000000004.state","step":4,"parameters":9371}
+{"validation":"sprite_forage-480x640","step":4,"frames":2,"mse":0.0498837605119,"objective":0.218601897359}
+{"status":"complete","final_step":4,"target_steps":4,"allocated_activation_bytes":348902400}

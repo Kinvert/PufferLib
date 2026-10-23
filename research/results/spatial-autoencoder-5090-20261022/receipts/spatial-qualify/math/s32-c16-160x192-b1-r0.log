@@ -1,0 +1,2 @@
+{"status":"passed","height":160,"width":192,"batch":1,"parameters":9371,"forward_error":2.0548237167350436e-08,"gradient_error":8.48378986120224e-05,"input_gradient_error":6.8251140112815523e-10,"finite_difference_probes":12,"finite_difference_error":0.011284733116587287,"eager_graph_repeats":3,"output_sha256":"afb8218747d9dc81989e9d181b84261b0132b53558c5998fc9ad3b76338c32c0","gradient_sha256":"baa6e157e6399fad3dece6b640f569ffd7e82d89e60ed6d65860cc11ff676b73","input_gradient_sha256":"ef8e1c53b28e89a1c9cf26dcd0bcbfa1748fb0ee1329965c5842b4be89f09d6c"}
+

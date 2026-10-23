@@ -1,0 +1,6 @@
+{"checkpoint":"step-000000000000.state","step":0,"parameters":9371}
+{"validation":"sprite_forage-480x640","step":0,"frames":2,"mse":0.0504822116345,"objective":0.219925910234}
+{"training_step":2,"stream":"sprite_forage-480x640","mse":0.0503488257527,"objective":0.219624102116,"seconds":0.186965}
+{"checkpoint":"step-000000000002.state","step":2,"parameters":9371}
+{"validation":"sprite_forage-480x640","step":2,"frames":2,"mse":0.050209807232,"objective":0.2193120718}
+{"status":"complete","final_step":2,"target_steps":2,"allocated_activation_bytes":346886400}
